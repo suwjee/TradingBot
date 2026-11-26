@@ -1,6 +1,6 @@
 # CP292 — Current chronology rebaseline supplement
 
-Baseline: `c99b4c957e932d9ee70c492ca03ce80711447fc1`. **RB07 INCOMPLETE**; scoped source review only. This supplement refines existing CH37–CH45 and CH120–CH123; it does not replace historical evidence or assert full site-level equivalence.
+Baseline: `c99b4c957e932d9ee70c492ca03ce80711447fc1`. **RB07 INCOMPLETE**; scoped source review only. This supplement refines existing CH37–CH45 and CH120–CH123; it does not replace historical evidence or assert full site-level equivalence. **Current-baseline precedence:** see [CP350 current semantic qualifications](35_W2_Semantic_Closure_Reconciliation.md) together with CP292 current anchor transfer and CP334–349 direct rechecks. Historical wording below is retained as historical evidence; current qualifications control where they differ.
 
 ## C01 — CH37
 

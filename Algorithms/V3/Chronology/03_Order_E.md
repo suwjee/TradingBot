@@ -40,7 +40,7 @@ E first strict crossing is in half-open lower positions, indexed or linear; no m
 
 ## CH25
 
-E parent-stop public S/E call scans [max(parent decision event,range start),range end); the primitive's source_time parameter is supplied with that decision event, not the parent source open. Parent and opposite Order have separate directional stop policies; optional continuation retains exact event and main owner. Live E Order crossing caches raw (start,level) membership including null, clamps search start separately, and reads main time from times[index]; nonlive inherited Order crossing uses candle.timestamp. W2 must reconcile owner time representations.
+E parent-stop public S/E call scans [max(parent decision event,range start),range end); the primitive's source_time parameter is supplied with that decision event, not the parent source open. Parent and opposite Order have separate directional stop policies; optional continuation retains exact event and main owner. Live E Order crossing caches raw (start,level) membership including null, clamps search start separately, and reads main time from times[index]; nonlive inherited Order crossing uses candle.timestamp. CP350 reconciles these main-time representations under the same coherent candle chronology; different or externally mutated sequences are outside that condition.
 
 [Source engine/pipeline/e_zone_detector.py:507–557](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L507-L557)
 

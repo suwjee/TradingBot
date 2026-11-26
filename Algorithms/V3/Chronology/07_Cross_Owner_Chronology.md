@@ -1,6 +1,6 @@
 # Cross-owner chronology and replay boundaries
 
-Reviewed source-derived clauses; full semantic closure is not asserted. Baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`.
+Reviewed source-derived clauses; full semantic closure is not asserted. Baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`. **Current-baseline precedence:** see [CP350 current semantic qualifications](35_W2_Semantic_Closure_Reconciliation.md) together with CP292 current anchor transfer and CP334–349 direct rechecks. Historical wording below is retained as historical evidence; current qualifications control where they differ.
 
 ## CH76 — Order gate restart versus continue
 

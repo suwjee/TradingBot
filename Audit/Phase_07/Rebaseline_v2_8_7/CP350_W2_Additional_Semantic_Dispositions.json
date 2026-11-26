@@ -1,0 +1,2417 @@
+{
+  "checkpoint": 350,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Semantic qualification of actual discovered nonmatrix handoff forms, current historical chronology clarifications, and uncovered operational boundaries; lexical discovery not an execution trace.",
+  "nonmatrix_handoffs": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 851,
+      "source_text": "lo, hi = chronology.lower_bounds(",
+      "transition_ids": [
+        "CP323-S07"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S07",
+          "review": {
+            "checkpoint": 335,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP335_W2_Reaction_Queue_Reconciliation.json",
+            "blob": "9084d43df6ff1f053eb363d89a19dcce0da0172e"
+          },
+          "semantic_review": "Presentation clone, missing Break or invalid bounds returns unchanged before direction validation. Clip only if opposite source==Break, seed First main then strict pre-Break extrema, scan lower Break open to end and update opposite before same-row confirmation; absent strict hit returns clone. First==Break seeds full main extreme, so clipping is not universal.",
+          "handoff": "Public clone and native canonical append are separate; behavior containment uses published box, not rewritten native geometry."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 99,
+      "source_text": "left, right = chronology.lower_bounds(start_time, end_time)",
+      "transition_ids": [
+        "CP323-S18"
+      ],
+      "consumer_groups": [
+        "CP332-G28"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S18",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Default native confirmation called at both 97 and 168; cap lower evidence by <= returned confirmation even if fallback open. Skip entire Break row if missing prefix; pending may confirm on main color. Lower pending rescue scans from pending main source, penetration added before same-row break, first qualifying crossing picks directional extreme with first input tie, maps via main_index and raises if missing.",
+          "handoff": "Reaction confirmation provider, A false-flag route and Bridge public proof have different semantics; no inference from full Break OHLC."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 131,
+      "source_text": "source_position = chronology.main_index(decisive_time)",
+      "transition_ids": [
+        "CP323-S18"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S18",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Default native confirmation called at both 97 and 168; cap lower evidence by <= returned confirmation even if fallback open. Skip entire Break row if missing prefix; pending may confirm on main color. Lower pending rescue scans from pending main source, penetration added before same-row break, first qualifying crossing picks directional extreme with first input tie, maps via main_index and raises if missing.",
+          "handoff": "Reaction confirmation provider, A false-flag route and Bridge public proof have different semantics; no inference from full Break OHLC."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 169,
+      "source_text": "break_left, break_right = chronology.lower_bounds(",
+      "transition_ids": [
+        "CP323-S18"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S18",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Default native confirmation called at both 97 and 168; cap lower evidence by <= returned confirmation even if fallback open. Skip entire Break row if missing prefix; pending may confirm on main color. Lower pending rescue scans from pending main source, penetration added before same-row break, first qualifying crossing picks directional extreme with first input tie, maps via main_index and raises if missing.",
+          "handoff": "Reaction confirmation provider, A false-flag route and Bridge public proof have different semantics; no inference from full Break OHLC."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 122,
+      "source_text": "return self.chronology.main_index(timestamp)",
+      "transition_ids": [
+        "CP323-S20"
+      ],
+      "consumer_groups": [
+        "CP332-G25"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S20",
+          "review": {
+            "checkpoint": 347,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP347_W2_Historical_Linked_Reaction_Blue_A_S_Recheck.json",
+            "blob": "1cb776f43db8e15fc9c73205c5ed3b7a907dad51"
+          },
+          "semantic_review": "Direction exact validation, copy native Reactions, stable Blue sort int ordinal/source time/str kind, chronology refs. First and Break main arrays and native A confirmation precomputed, independent ordered-naive flags. BlueState and AZone field contracts separate exact/main events; optional presentation fields not acceptance keys.",
+          "handoff": "A owns pairing and uses full Blue ordering including invalid/internal; policy/chronology primitives delegated."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 127,
+      "source_text": "return self.chronology.lower_window(start, end)",
+      "transition_ids": [
+        "CP323-S20"
+      ],
+      "consumer_groups": [
+        "CP332-G25"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S20",
+          "review": {
+            "checkpoint": 347,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP347_W2_Historical_Linked_Reaction_Blue_A_S_Recheck.json",
+            "blob": "1cb776f43db8e15fc9c73205c5ed3b7a907dad51"
+          },
+          "semantic_review": "Direction exact validation, copy native Reactions, stable Blue sort int ordinal/source time/str kind, chronology refs. First and Break main arrays and native A confirmation precomputed, independent ordered-naive flags. BlueState and AZone field contracts separate exact/main events; optional presentation fields not acceptance keys.",
+          "handoff": "A owns pairing and uses full Blue ordering including invalid/internal; policy/chronology primitives delegated."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 148,
+      "source_text": "return self._main_index(event_time), event_time, value",
+      "transition_ids": [
+        "CP323-S21"
+      ],
+      "consumer_groups": [
+        "CP332-G26"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S21",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Strict crossing lower [start,end), indexed/linear; nonempty miss never coarse fallback. Empty lower scans main starts within bounds. Inclusive extreme adds one microsecond, rejects reversed range, earliest equal input owner. Empty lower uses entire containing main candles; lower returns mapped position, coarse crossing returns candle.index.",
+          "handoff": "Native lower index versus linear/coarse owner and exact event proof distinct; no universal intrabar freeze."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 155,
+      "source_text": "return self._main_index(event_time), event_time, value",
+      "transition_ids": [
+        "CP323-S21"
+      ],
+      "consumer_groups": [
+        "CP332-G26"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S21",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Strict crossing lower [start,end), indexed/linear; nonempty miss never coarse fallback. Empty lower scans main starts within bounds. Inclusive extreme adds one microsecond, rejects reversed range, earliest equal input owner. Empty lower uses entire containing main candles; lower returns mapped position, coarse crossing returns candle.index.",
+          "handoff": "Native lower index versus linear/coarse owner and exact event proof distinct; no universal intrabar freeze."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 177,
+      "source_text": "left, right = self.chronology.lower_bounds(start, window_end)",
+      "transition_ids": [
+        "CP323-S21"
+      ],
+      "consumer_groups": [
+        "CP332-G27"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S21",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Strict crossing lower [start,end), indexed/linear; nonempty miss never coarse fallback. Empty lower scans main starts within bounds. Inclusive extreme adds one microsecond, rejects reversed range, earliest equal input owner. Empty lower uses entire containing main candles; lower returns mapped position, coarse crossing returns candle.index.",
+          "handoff": "Native lower index versus linear/coarse owner and exact event proof distinct; no universal intrabar freeze."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 185,
+      "source_text": "source_index = self._main_index(self.lower_times[position])",
+      "transition_ids": [
+        "CP323-S21"
+      ],
+      "consumer_groups": [
+        "CP332-G27"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S21",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Strict crossing lower [start,end), indexed/linear; nonempty miss never coarse fallback. Empty lower scans main starts within bounds. Inclusive extreme adds one microsecond, rejects reversed range, earliest equal input owner. Empty lower uses entire containing main candles; lower returns mapped position, coarse crossing returns candle.index.",
+          "handoff": "Native lower index versus linear/coarse owner and exact event proof distinct; no universal intrabar freeze."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 196,
+      "source_text": "source_index = self._main_index(getattr(source, \"timestamp\"))",
+      "transition_ids": [
+        "CP323-S21"
+      ],
+      "consumer_groups": [
+        "CP332-G27"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP323-S21",
+          "review": {
+            "checkpoint": 334,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP334_W2_Blue_A_Queue_Reconciliation.json",
+            "blob": "6ca56594ac44cfc580e83698c254a158b23912bd"
+          },
+          "semantic_review": "Strict crossing lower [start,end), indexed/linear; nonempty miss never coarse fallback. Empty lower scans main starts within bounds. Inclusive extreme adds one microsecond, rejects reversed range, earliest equal input owner. Empty lower uses entire containing main candles; lower returns mapped position, coarse crossing returns candle.index.",
+          "handoff": "Native lower index versus linear/coarse owner and exact event proof distinct; no universal intrabar freeze."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 179,
+      "source_text": "return self.chronology.main_index(timestamp)",
+      "transition_ids": [],
+      "consumer_groups": [],
+      "providers": [
+        "CP332-P11"
+      ],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [],
+      "provider_group_refs": [
+        {
+          "id": "CP332-P11",
+          "contract": "Main lookup uses native unclamped default; lower window delegates. Reaction confirmation default true flag, reset via native resolver, public adapter delegates; A confirmation valid 1-based ordinal or ValueError, no false-flag freeze."
+        }
+      ],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 184,
+      "source_text": "return self.chronology.lower_window(start, end)",
+      "transition_ids": [],
+      "consumer_groups": [],
+      "providers": [
+        "CP332-P11"
+      ],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.lower_bounds / lower_window",
+      "qualification": "Half-open lower positions; caller chooses start/end and whether an empty window permits fallback; no lower-row coverage guarantee.",
+      "source_review_refs": [],
+      "provider_group_refs": [
+        {
+          "id": "CP332-P11",
+          "contract": "Main lookup uses native unclamped default; lower window delegates. Reaction confirmation default true flag, reset via native resolver, public adapter delegates; A confirmation valid 1-based ordinal or ValueError, no false-flag freeze."
+        }
+      ],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 389,
+      "source_text": "end_index = self._main_index(self._reset_time(reset))",
+      "transition_ids": [
+        "CP324-S05"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S05",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Reset owner via First map; absent or mapped Reset main before owner Break null. Last tie inclusive owner Break..Reset main. Trend qualifier strictly after A stop and <=crossing.",
+          "handoff": "Native Reset fallback allowed; distinct from Order_B proof."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 436,
+      "source_text": "decision_index = self._main_index(crossing)",
+      "transition_ids": [
+        "CP324-S06"
+      ],
+      "consumer_groups": [
+        "CP332-G33"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S06",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Type3 sorted Reset in (A-stop,deadline); owner confirmation exists <=A stop, earliest owner reset must >A stop. First strict lower [reset,deadline), direct index call no null guard or coarse fallback. First crossing rejected without trend qualification, no recross. Earliest exact event, stable reset tie.",
+          "handoff": "Reset owner/time feed order-free S; distinct from B boundary break."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 522,
+      "source_text": "decision_index = self._main_index(crossing_event)",
+      "transition_ids": [
+        "CP324-S07"
+      ],
+      "consumer_groups": [
+        "CP332-G34"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S07",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Type4 public valid Blue >=candidate source main and <=cross. Aligned trend confirmation in (A-stop,deadline), Break>=stop index, sorted rows. Last-tie source stop..Break, candidate equality-derived time may fallback; scan [max(confirmation,candidate event,A stop),min(next FILTERED aligned confirmation,deadline)). Equal window skips. Direct first strict hit without Blue discards until next aligned reaction; no recross or main fallback.",
+          "handoff": "Type4 public-only differs from ordinary Reset Blue map, which may include internal."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 612,
+      "source_text": "containing_index = self._main_index(order_confirmation_time)",
+      "transition_ids": [
+        "CP324-S09"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S09",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "After-Order source start=clamp(bisect_left(main times,confirmation),stage start,First). Anchor accepted on index>=start alone, no upper anchor bound or exact-time recheck; normalized anchor_value required. Else earliest main extreme then if containing main earlier than start, scan lower remainder from confirmation and replace on strict improvement OR equality, returns containing main source.",
+          "handoff": "Docstring strictly after confirmation not universally established; computed source may be unused in final non-pre red."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 943,
+      "source_text": "index = self._main_index(event_time)",
+      "transition_ids": [
+        "CP324-S14"
+      ],
+      "consumer_groups": [
+        "CP332-G35"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S14",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Order strict stop independently queried [max(start,range_start),range_end). Candidate gate=max(scan start,candidate_start or scan start). Normal qualifier earliest nonnull aligned Reset Blue or first trend strictly after behavior start, then max gate; fallback starts ungated by qualifier. Both null or same lower position rejects; distinct rows with equal timestamp do not satisfy tie guard. Order earlier red; candidate winner fallback upgrades only if Blue/ordinary qualifier by event.",
+          "handoff": "Same-position tie not timestamp equality."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 954,
+      "source_text": "index = self._main_index(event_time)",
+      "transition_ids": [
+        "CP324-S14"
+      ],
+      "consumer_groups": [
+        "CP332-G35"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S14",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Order strict stop independently queried [max(start,range_start),range_end). Candidate gate=max(scan start,candidate_start or scan start). Normal qualifier earliest nonnull aligned Reset Blue or first trend strictly after behavior start, then max gate; fallback starts ungated by qualifier. Both null or same lower position rejects; distinct rows with equal timestamp do not satisfy tie guard. Order earlier red; candidate winner fallback upgrades only if Blue/ordinary qualifier by event.",
+          "handoff": "Same-position tie not timestamp equality."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 1066,
+      "source_text": "self._order_stop(order_number, order)",
+      "transition_ids": [
+        "CP324-S17"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S17",
+          "review": {
+            "checkpoint": 336,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP336_W2_S_Queue_Reconciliation.json",
+            "blob": "7e36d4160c89966aabddd68ef74d297cb2002033"
+          },
+          "semantic_review": "Canonical Order stop then timing. Pre-order simple attempt with ordinal zero and candidate event as behavior start, fallback enabled; null ends, fallback clears decision, other wins preserve pre source. Else Advanced nested uses Order opposite source MAIN extreme and nested confirmation gate; simple requires later aligned trend, last-tie Break..Break, evaluates after-Order source if no pre source even though final non-pre red ignores it. Normal race if needed. Red preserves pre source only when pre chosen, otherwise earliest extreme Order Break..decision main. Blue keeps chosen source. No new Order discovery.",
+          "handoff": "Creation versus consumption distinct; computing unused candidate may still raise."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 233,
+      "source_text": "opposite = chronology.opposite_direction(direction)",
+      "transition_ids": [
+        "CP325-S05"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.opposite_direction / directional policy",
+      "qualification": "Choose opposite direction; no lifecycle ranking.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S05",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Validate direction before empty shortcut; missing stops/anchors empty. Truthy boundary/cross callback selected; default upper bound excludes Reset-equal rows. Returned callback values trusted except downstream explicit gates.",
+          "handoff": "Native/live dispatch conditional; no universal guarantee for arbitrary callbacks."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 329,
+      "source_text": "strict_break_index = chronology.main_index(strict_break_time, clamp=True)",
+      "transition_ids": [
+        "CP325-S08"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S08",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Map nonnull break to main. Next accepted A trigger strictly after current First expires when mapped main<=break main. First sorted opposite First>=break main and confirmation>exact break; same-main First eligible. Preserve ordinal and all provenance, no leg dedup.",
+          "handoff": "Accepted A expiry main-owned, confirmation lower chronology-owned."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 343,
+      "source_text": "and chronology.main_index(a_times[next_a_position], clamp=True)",
+      "transition_ids": [
+        "CP325-S08"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S08",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Map nonnull break to main. Next accepted A trigger strictly after current First expires when mapped main<=break main. First sorted opposite First>=break main and confirmation>exact break; same-main First eligible. Preserve ordinal and all provenance, no leg dedup.",
+          "handoff": "Accepted A expiry main-owned, confirmation lower chronology-owned."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 623,
+      "source_text": "self._confirmation(item) for item in self.opposite_reactions",
+      "transition_ids": [
+        "CP325-S13"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Native chronology confirmation through host",
+      "qualification": "Native opposite confirmation using host direction/flag, fallback possible; cache and exact event conditions in row review.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S13",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Four input-order First/confirmation passes; only trend triples stable-sorted by confirmation. Group opposite resets supplied order; last duplicate First mapping, first duplicate identity position. Fresh ledger/index/caches; immutability and aligned sorted arrays owner premises.",
+          "handoff": "E constructor sorts resets and S roots, supplies initial audit and callbacks."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 639,
+      "source_text": ").append(self._reset_time(reset))",
+      "transition_ids": [
+        "CP325-S13"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.reset_time / detector delegate",
+      "qualification": "Precise second_time then display time then stored timestamp; parse/lookup is not independent physical crossing.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S13",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Four input-order First/confirmation passes; only trend triples stable-sorted by confirmation. Group opposite resets supplied order; last duplicate First mapping, first duplicate identity position. Fresh ledger/index/caches; immutability and aligned sorted arrays owner premises.",
+          "handoff": "E constructor sorts resets and S roots, supplies initial audit and callbacks."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 664,
+      "source_text": "result = self.chronology.canonical_order_stop(",
+      "transition_ids": [
+        "CP325-S14"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S14",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Ignore context start. Cache stop by valid one-based ordinal only when exact canonical object matches; noncanonical geometry delegates uncached. No synthetic contextual stop.",
+          "handoff": "Chronology canonical_order_stop owns price/source."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 673,
+      "source_text": "return self.chronology.canonical_order_stop(",
+      "transition_ids": [
+        "CP325-S14"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S14",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Ignore context start. Cache stop by valid one-based ordinal only when exact canonical object matches; noncanonical geometry delegates uncached. No synthetic contextual stop.",
+          "handoff": "Chronology canonical_order_stop owns price/source."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 686,
+      "source_text": "return self._order_stop(reaction_number, reaction)",
+      "transition_ids": [
+        "CP325-S14"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S14",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Ignore context start. Cache stop by valid one-based ordinal only when exact canonical object matches; noncanonical geometry delegates uncached. No synthetic contextual stop.",
+          "handoff": "Chronology canonical_order_stop owns price/source."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 704,
+      "source_text": "search_index = self._main_index(start)",
+      "transition_ids": [
+        "CP325-S15"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S15",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "No finder null. Blocked First at original gate advances First+1. Prior owner latest confirmation<=event; first stored Reset with event<Reset<=confirmation restarts at Reset main/exact event. Canonical physical identity required; stored confirmation returned without repeat checks. Bounded flag unused locally, no progress guard.",
+          "handoff": "E direct geometry callback supplies candidate only."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 716,
+      "source_text": "and first == self.times[self._main_index(start)]",
+      "transition_ids": [
+        "CP325-S15"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S15",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "No finder null. Blocked First at original gate advances First+1. Prior owner latest confirmation<=event; first stored Reset with event<Reset<=confirmation restarts at Reset main/exact event. Canonical physical identity required; stored confirmation returned without repeat checks. Bounded flag unused locally, no progress guard.",
+          "handoff": "E direct geometry callback supplies candidate only."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 740,
+      "source_text": "search_index = self._main_index(reset_before_confirmation)",
+      "transition_ids": [
+        "CP325-S15"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S15",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "No finder null. Blocked First at original gate advances First+1. Prior owner latest confirmation<=event; first stored Reset with event<Reset<=confirmation restarts at Reset main/exact event. Canonical physical identity required; stored confirmation returned without repeat checks. Bounded flag unused locally, no progress guard.",
+          "handoff": "E direct geometry callback supplies candidate only."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 931,
+      "source_text": "level, source, source_time = self._order_stop(number, reaction)",
+      "transition_ids": [
+        "CP325-S17"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S17",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Compute stop/cross before duplicate rank. Per identity strict earlier confirmation/First/Break replaces entire match. Candidate-map parent owner min rank, strip losing label, retain independent reset-leg with null parent cause time or delete. Zero owner allowed.",
+          "handoff": "Candidate reduction distinct from OA40 supplement and OA70 final arbitration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 932,
+      "source_text": "crossed = self._cross_order(confirmation, level)",
+      "transition_ids": [
+        "CP325-S17"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S17",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Compute stop/cross before duplicate rank. Per identity strict earlier confirmation/First/Break replaces entire match. Candidate-map parent owner min rank, strip losing label, retain independent reset-leg with null parent cause time or delete. Zero owner allowed.",
+          "handoff": "Candidate reduction distinct from OA40 supplement and OA70 final arbitration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1283,
+      "source_text": "level, source, source_time = self._order_stop(number, reaction)",
+      "transition_ids": [
+        "CP325-S22"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S22",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "PH bearish / PL bullish only. Strict lower stop (decision,range_end), direct confirmation threshold requested but no universal final recheck after blocked skips. Reparent before null-direct return. Dependency stop/null or repr/direct, string level/source/cross. Registration retains existing geometry and indexes new physical row.",
+          "handoff": "Primary callback owns activation; Order owns actual direct registration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1284,
+      "source_text": "return stop, repr(direct), str(level), source, source_time, self._cross_order(confirmation, level)",
+      "transition_ids": [
+        "CP325-S22"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S22",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "PH bearish / PL bullish only. Strict lower stop (decision,range_end), direct confirmation threshold requested but no universal final recheck after blocked skips. Reparent before null-direct return. Dependency stop/null or repr/direct, string level/source/cross. Registration retains existing geometry and indexes new physical row.",
+          "handoff": "Primary callback owns activation; Order owns actual direct registration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1297,
+      "source_text": "level, source, source_time = self._order_stop(number, reaction)",
+      "transition_ids": [
+        "CP325-S22"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S22",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "PH bearish / PL bullish only. Strict lower stop (decision,range_end), direct confirmation threshold requested but no universal final recheck after blocked skips. Reparent before null-direct return. Dependency stop/null or repr/direct, string level/source/cross. Registration retains existing geometry and indexes new physical row.",
+          "handoff": "Primary callback owns activation; Order owns actual direct registration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1302,
+      "source_text": "\"stop_cross\": self._cross_order(confirmation, level), \"causes\": set(),",
+      "transition_ids": [
+        "CP325-S22"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S22",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "PH bearish / PL bullish only. Strict lower stop (decision,range_end), direct confirmation threshold requested but no universal final recheck after blocked skips. Reparent before null-direct return. Dependency stop/null or repr/direct, string level/source/cross. Registration retains existing geometry and indexes new physical row.",
+          "handoff": "Primary callback owns activation; Order owns actual direct registration."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1364,
+      "source_text": "level, source, source_time = self._order_stop(direct[0], direct[1])",
+      "transition_ids": [
+        "CP325-S24"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S24",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "S creator veto by exact invalid/occupied E pair then hard reset (source,stop]. Query S/E flags, supplement absent direct identity even after deadline/one-owner reduction, no repeat enforcement. Register parent-stop labels only; preserve geometry, exact cause, E number or sequence StopAll override. Carried invalidation new identity or earlier parent event; later/equal cannot change earliest creation. Optional append same ledger and expected count.",
+          "handoff": "E registers before post-stop query; final prepared audit separately filters per cause."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1367,
+      "source_text": "self._cross_order(direct[2], level), (\"parent-stop\",),",
+      "transition_ids": [
+        "CP325-S24"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S24",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "S creator veto by exact invalid/occupied E pair then hard reset (source,stop]. Query S/E flags, supplement absent direct identity even after deadline/one-owner reduction, no repeat enforcement. Register parent-stop labels only; preserve geometry, exact cause, E number or sequence StopAll override. Carried invalidation new identity or earlier parent event; later/equal cannot change earliest creation. Optional append same ledger and expected count.",
+          "handoff": "E registers before post-stop query; final prepared audit separately filters per cause."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1450,
+      "source_text": "level, source, source_time = self._order_stop(number, reaction)",
+      "transition_ids": [
+        "CP325-S25"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S25",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Static helper explicit self; first opposite First>=start and confirmation>=start; singleton stop/cross (possibly null), false flag. No reset/blocked/acceptance filtering or ledger mutation.",
+          "handoff": "Visual selection is not creation."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1451,
+      "source_text": "crossed = self._cross_order(confirmation, level)",
+      "transition_ids": [
+        "CP325-S25"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S25",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Static helper explicit self; first opposite First>=start and confirmation>=start; singleton stop/cross (possibly null), false flag. No reset/blocked/acceptance filtering or ledger mutation.",
+          "handoff": "Visual selection is not creation."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1474,
+      "source_text": "index = self._main_index(event)",
+      "transition_ids": [
+        "CP325-S26"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S26",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Cache strict opposite crossing (start,level) incl null. Lower half-open [max(start,range_start),range_end), less unless bearish. Map hit to main timestamp/exact event, no coarse fallback. Public delegate unchanged.",
+          "handoff": "E first-cross service owns indexed-vs-linear dispatch; time equality to start possible."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1484,
+      "source_text": "return self._cross_order(confirmation_time, stop_level)",
+      "transition_ids": [
+        "CP325-S26"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S26",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Cache strict opposite crossing (start,level) incl null. Lower half-open [max(start,range_start),range_end), less unless bearish. Map hit to main timestamp/exact event, no coarse fallback. Public delegate unchanged.",
+          "handoff": "E first-cross service owns indexed-vs-linear dispatch; time equality to start possible."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1499,
+      "source_text": "crossed = self._cross_order(confirmation, stop_level)",
+      "transition_ids": [
+        "CP325-S27"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S27",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Exact blue S and nonnull confirmation/level. Crossing must exist and >=parent stop. Copy recorded geometry namespace, no canonical remap, carried-live null creation.",
+          "handoff": "Inherited consumption does not create Order."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1548,
+      "source_text": "crossed = self._cross_order(confirmation, level)",
+      "transition_ids": [
+        "CP325-S28"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S28",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Lazy initial ledger materialization normalizes level and computes crossing; sort First time,confirm,First,Break; First buckets and confirmation view reuse records. Match conversion preserves geometry and supplies route/null creation. Assumes immutable initial mapping.",
+          "handoff": "Initial A source-filtered ledger owned by S/Bridge."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1604,
+      "source_text": "crossed = self._cross_order(confirmation, level)",
+      "transition_ids": [
+        "CP325-S28"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S28",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Lazy initial ledger materialization normalizes level and computes crossing; sort First time,confirm,First,Break; First buckets and confirmation view reuse records. Match conversion preserves geometry and supplies route/null creation. Assumes immutable initial mapping.",
+          "handoff": "Initial A source-filtered ledger owned by S/Bridge."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1616,
+      "source_text": "gate_time = self.times[self._main_index(parent_stop)]",
+      "transition_ids": [
+        "CP325-S29"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S29",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Gate-owned initial First exact main, confirmation/cross>=parent stop, min cross then First. Carried creation list earliest parent-stop cause plus each B physical confirmation, no dedup here.",
+          "handoff": "Gate-owned route later used as veto, not extra creator."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 1863,
+      "source_text": "crossed = self._cross_order(confirmation, as_decimal(level_value))",
+      "transition_ids": [
+        "CP325-S33"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S33",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Eager accepted route initial confirmations strictly later; ledger tuple bound sentinel, no universal current-row confirmation recheck. Skip incomplete geometry, recompute malformed/null crossing locally; crossing>both stop and own confirmation, reject reset (stop,cross]. Dedup earlier rank, final sort cross,confirm,later First. Key stop/index length, list copies.",
+          "handoff": "Physical membership and reset invalidation critical; E reorders equal-cross groups."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2091,
+      "source_text": "stop = self._parent_stop(parent_type, parent)",
+      "transition_ids": [
+        "CP325-S38"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S38",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Set accepted E pairs, project invalid/occupied S to times. Snapshot filtered parent-stop causes (B shallow), clear/index rebuild, register B then original S and numbered E/StopAll parents. Supplemental S not registration list; skip absent-identity recovery when present.",
+          "handoff": "Invalid S cause filter time-only differs from registration pair veto."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2189,
+      "source_text": "exact_cross = self._cross_order(",
+      "transition_ids": [
+        "CP325-S39"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "OrderAuditEngineMixin strict Order crossing, E native or optional live override",
+      "qualification": "Strict lower event in route's bounded interval, cache includes null; distinguishes geometry from actual crossing; consumer may reject or accept independently. Does not manufacture cause.",
+      "source_review_refs": [
+        {
+          "id": "CP325-S39",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Recover prior valid parent causes and initial accepted A nonnull pairs. Only absent causes plus carried-live S enables exact original/supplemental S match to recover A. Explicit nonnull cause marker enables parent creation with zone stop event, E number or StopAll label. Refilter; no valid causes no insertion. Compute crossing, preserve stored level, insert/index.",
+          "handoff": "Consumption alone never manufactures parent cause; retention preserves independently valid identity."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2609,
+      "source_text": "gate_index = self._main_index(a_stop_event_time)",
+      "transition_ids": [
+        "CP324-S26"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S26",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Native stopped-A selection sorted primarily by confirmation; upper bound excludes equal stop, scan for First>=gate main. Cache exact stop including null. Not earliest First globally.",
+          "handoff": "S gate and chronology provider; independent callback evaluated separately."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2635,
+      "source_text": ") = self._order_stop(order_number, order)",
+      "transition_ids": [
+        "CP324-S27"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S27",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Normalize A price, resolve A confirmation/first strict stop, first physical match; null at either gate means no record. Compute canonical stop even for existing identity. First geometry and A pair retained; distinct source/stop pairs append. No crossing or E index created.",
+          "handoff": "A→S creation precedes eligibility/visibility filters; accepted A causes later filtered."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2673,
+      "source_text": "return self.chronology.canonical_order_stop(",
+      "transition_ids": [
+        "CP324-S28"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Reaction MarketChronology.canonical_order_stop / Order audit host adapter",
+      "qualification": "Canonical physical stop geometry and Decimal price, not proof of actual later crossing; cache/number and cause ownership are governed by the reviewed route.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S28",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Canonical stop provider unchanged. Opposite bearish High>level else Low<level; exact lower [max(confirm,range_start),range_end). Index used for nonempty interval, miss returns null without scan. Else sequential first strict crossing, map main and exact event. Can hit confirmation row.",
+          "handoff": "S/E share stop geometry, consumption gates own strict event threshold."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2704,
+      "source_text": "index = self._main_index(event_time)",
+      "transition_ids": [
+        "CP324-S28"
+      ],
+      "consumer_groups": [
+        "CP332-G39"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S28",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Canonical stop provider unchanged. Opposite bearish High>level else Low<level; exact lower [max(confirm,range_start),range_end). Index used for nonempty interval, miss returns null without scan. Else sequential first strict crossing, map main and exact event. Can hit confirmation row.",
+          "handoff": "S/E share stop geometry, consumption gates own strict event threshold."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2710,
+      "source_text": "index = self._main_index(event_time)",
+      "transition_ids": [
+        "CP324-S28"
+      ],
+      "consumer_groups": [
+        "CP332-G39"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "Order mixin host S or E main-index adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP324-S28",
+          "review": {
+            "checkpoint": 337,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP337_W2_Order_Ledger_Queue_Reconciliation.json",
+            "blob": "603fecf539bd591fda0760c987f6cb8f2c4c123c"
+          },
+          "semantic_review": "Canonical stop provider unchanged. Opposite bearish High>level else Low<level; exact lower [max(confirm,range_start),range_end). Index used for nonempty interval, miss returns null without scan. Else sequential first strict crossing, map main and exact event. Can hit confirmation row.",
+          "handoff": "S/E share stop geometry, consumption gates own strict event threshold."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 223,
+      "source_text": "return detector._compute_reconciliation(candidates)[0]",
+      "transition_ids": [
+        "CP326-S06"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S06",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Empty candidates call native compute. For physical First/Break sorted identities, distinguish entry presence, initial membership, B cause and parent-cause set. Group ordered repr, gate veto, both priorities and affected parent index; retain S source/A/decision/color, resets, validity. Exact key uses object IDs and ordered groups; cache hit restores candidates/accepted set and unions visual starts.",
+          "handoff": "Ledger evidence precedes reuse; no broad independent runtime equivalence claim; cache key and scoped lookup distinct."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 237,
+      "source_text": "repr(zone), ledger[order], detector._blocked_by_gate_owned_order(zone),",
+      "transition_ids": [
+        "CP326-S06"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S06",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Empty candidates call native compute. For physical First/Break sorted identities, distinguish entry presence, initial membership, B cause and parent-cause set. Group ordered repr, gate veto, both priorities and affected parent index; retain S source/A/decision/color, resets, validity. Exact key uses object IDs and ordered groups; cache hit restores candidates/accepted set and unions visual starts.",
+          "handoff": "Ledger evidence precedes reuse; no broad independent runtime equivalence claim; cache key and scoped lookup distinct."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 238,
+      "source_text": "detector.sequence_priority(zone.parent_type, \"red\"),",
+      "transition_ids": [
+        "CP326-S06"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S06",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Empty candidates call native compute. For physical First/Break sorted identities, distinguish entry presence, initial membership, B cause and parent-cause set. Group ordered repr, gate veto, both priorities and affected parent index; retain S source/A/decision/color, resets, validity. Exact key uses object IDs and ordered groups; cache hit restores candidates/accepted set and unions visual starts.",
+          "handoff": "Ledger evidence precedes reuse; no broad independent runtime equivalence claim; cache key and scoped lookup distinct."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 239,
+      "source_text": "detector.sequence_priority(zone.parent_type, \"blue\"),",
+      "transition_ids": [
+        "CP326-S06"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S06",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Empty candidates call native compute. For physical First/Break sorted identities, distinguish entry presence, initial membership, B cause and parent-cause set. Group ordered repr, gate veto, both priorities and affected parent index; retain S source/A/decision/color, resets, validity. Exact key uses object IDs and ordered groups; cache hit restores candidates/accepted set and unions visual starts.",
+          "handoff": "Ledger evidence precedes reuse; no broad independent runtime equivalence claim; cache key and scoped lookup distinct."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 273,
+      "source_text": "frontier = detector._main_index(self._dirty)",
+      "transition_ids": [
+        "CP326-S07"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S07",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Replay compatible validity: rewind from dirty for changed candidate/parent groups, S groups and reset difference; bisect steps, take boundary checkpoint or terminal fallback. Only _ReopenedERace caught, restart without checkpoint. Save only non-reopened result with original input/native/numbered/evidence.",
+          "handoff": "Dirty frontier is owner premise, not proof; checkpoint reuse is conditional, no general exception suppression."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 284,
+      "source_text": "frontier = min(frontier, detector._main_index(instant))",
+      "transition_ids": [
+        "CP326-S07"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S07",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Replay compatible validity: rewind from dirty for changed candidate/parent groups, S groups and reset difference; bisect steps, take boundary checkpoint or terminal fallback. Only _ReopenedERace caught, restart without checkpoint. Save only non-reopened result with original input/native/numbered/evidence.",
+          "handoff": "Dirty frontier is owner premise, not proof; checkpoint reuse is conditional, no general exception suppression."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 293,
+      "source_text": "numbered, native = detector._compute_reconciliation(",
+      "transition_ids": [
+        "CP326-S07"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S07",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Replay compatible validity: rewind from dirty for changed candidate/parent groups, S groups and reset difference; bisect steps, take boundary checkpoint or terminal fallback. Only _ReopenedERace caught, restart without checkpoint. Save only non-reopened result with original input/native/numbered/evidence.",
+          "handoff": "Dirty frontier is owner premise, not proof; checkpoint reuse is conditional, no general exception suppression."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 300,
+      "source_text": "numbered, native = detector._compute_reconciliation(candidates, steps=steps)",
+      "transition_ids": [
+        "CP326-S07"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E native reconciliation / gate ownership / supplied sequence priority",
+      "qualification": "Conditional continuation may reuse only under matching evidence; native reconciliation, prepared order gate and supplied priority remain distinct, callback availability is not proof of dispatch.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S07",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Replay compatible validity: rewind from dirty for changed candidate/parent groups, S groups and reset difference; bisect steps, take boundary checkpoint or terminal fallback. Only _ReopenedERace caught, restart without checkpoint. Save only non-reopened result with original input/native/numbered/evidence.",
+          "handoff": "Dirty frontier is owner premise, not proof; checkpoint reuse is conditional, no general exception suppression."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 417,
+      "source_text": "return self.chronology.main_index(value, clamp=True)",
+      "transition_ids": [
+        "CP326-S10"
+      ],
+      "consumer_groups": [
+        "CP332-G42"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S10",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Reset delegate unchanged; clamped main index delegates underflow clamp only. Lower index non-null selects strict first_less/greater and returns result even miss; otherwise linear half-open strict Decimal predicate. Policy extreme normalized.",
+          "handoff": "CP322-E11 provider fallback time is not independent strict lower proof. CP332-G42 index owner."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 586,
+      "source_text": "start_index = max(self.start_index, self._main_index(start))",
+      "transition_ids": [
+        "CP326-S14"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S14",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Map parent stop/end to main positions; lower bound start, upper bound end, promote reversed end to start with no reclamp. Live or shared native range includes both entire OHLC candles, else sparse earliest strict extreme. Source can use full main candle after exact decision tick.",
+          "handoff": "Geometry source differs from exact chronology; no intrabar truncation or later-source price renormalization."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 587,
+      "source_text": "end_index = min(self.end_index, self._main_index(end))",
+      "transition_ids": [
+        "CP326-S14"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S14",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Map parent stop/end to main positions; lower bound start, upper bound end, promote reversed end to start with no reclamp. Live or shared native range includes both entire OHLC candles, else sparse earliest strict extreme. Source can use full main candle after exact decision tick.",
+          "handoff": "Geometry source differs from exact chronology; no intrabar truncation or later-source price renormalization."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 689,
+      "source_text": "decision_index = self._main_index(decision_event)",
+      "transition_ids": [
+        "CP326-S16"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S16",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Assert crossing, decision=max(parent stop,cross exact), map decision and parent stop to main. Store supplied frozen source tuple, normalized parent/box prices; retain match stop level/source and cause tuple unchanged, map First/Break/box indexes to detector times. No extra stop/source query.",
+          "handoff": "No new Order creation and no EZone separate Order-cross field; exact decision not inferred from main time."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 692,
+      "source_text": "parent_stop_index = self._main_index(stop_event)",
+      "transition_ids": [
+        "CP326-S16"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S16",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Assert crossing, decision=max(parent stop,cross exact), map decision and parent stop to main. Store supplied frozen source tuple, normalized parent/box prices; retain match stop level/source and cause tuple unchanged, map First/Break/box indexes to detector times. No extra stop/source query.",
+          "handoff": "No new Order creation and no EZone separate Order-cross field; exact decision not inferred from main time."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 781,
+      "source_text": "stopped = self._parent_stop(\"S\", s_zone)",
+      "transition_ids": [
+        "CP326-S18"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S18",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Reject S same physical source as owner or already E owned. Strict stop required; inherit owner family/number+1. Iterate _zone with owned times including owner; null/repeated index stops, invalid S without cause needs independent A identity, reset (parent source,zone source] terminates. Append then next strict stop, increment after success.",
+          "handoff": "Creation effects from _zone precede rejection; no rollback in helper; no fixed depth cap."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 816,
+      "source_text": "next_stop = self._parent_stop(\"E\", zone)",
+      "transition_ids": [
+        "CP326-S18"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S18",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "Reject S same physical source as owner or already E owned. Strict stop required; inherit owner family/number+1. Iterate _zone with owned times including owner; null/repeated index stops, invalid S without cause needs independent A identity, reset (parent source,zone source] terminates. Append then next strict stop, increment after success.",
+          "handoff": "Creation effects from _zone precede rejection; no rollback in helper; no fixed depth cap."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 1045,
+      "source_text": "stop = self._parent_stop(\"S\", s_zone)",
+      "transition_ids": [
+        "CP326-S23"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S23",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "First pass strict stops and register all stopped S before any chains; registration may decline. Second pass independent chains start color/1, collect provisional _zone results, stop on null/repeated index or no strict E stop. Mark owned source times, no direct E41 or sequence reset gate in loop.",
+          "handoff": "Discovery is provisional, not public or accepted ledger; no artificial cap."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 1078,
+      "source_text": "next_stop = self._parent_stop(\"E\", zone)",
+      "transition_ids": [
+        "CP326-S23"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S23",
+          "review": {
+            "checkpoint": 338,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP338_W2_E_Queue_Reconciliation.json",
+            "blob": "ac28586a711311af4dbea425b025c5aca204c268"
+          },
+          "semantic_review": "First pass strict stops and register all stopped S before any chains; registration may decline. Second pass independent chains start color/1, collect provisional _zone results, stop on null/repeated index or no strict E stop. Mark owned source times, no direct E41 or sequence reset gate in loop.",
+          "handoff": "Discovery is provisional, not public or accepted ledger; no artificial cap."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 1457,
+      "source_text": "next_stop = self._parent_stop(\"E\", numbered_zone) if zone in regenerated else None",
+      "transition_ids": [
+        "CP326-S33"
+      ],
+      "consumer_groups": [],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "E host parent-stop adapter",
+      "qualification": "Start from exact parent's decision; S/E type label is not a separate price rule. Strict lower stop only; no source-open substitution or cause creation.",
+      "source_review_refs": [
+        {
+          "id": "CP326-S33",
+          "review": {
+            "checkpoint": 348,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP348_W2_Historical_Linked_Order_E_Recheck.json",
+            "blob": "dda9819f9bbeb69f1fc49d41c5d797c961840043"
+          },
+          "semantic_review": "Only regenerated accepted parent queries next stop; if hit flag reopened, race child using current family,number+1 and accepted source times; enqueue only nonnull child source index>current.",
+          "handoff": "Original native descendants already pending. Hard reset does not skip regeneration stop query."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 183,
+      "source_text": "index = self.chronology.main_index(event, clamp=True)",
+      "transition_ids": [
+        "CP327-S05"
+      ],
+      "consumer_groups": [
+        "CP332-G43"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "MarketChronology.main_index / detector adapter",
+      "qualification": "Containing main upper-bound minus one; exact event remains separate. E and direct clamp=True call clamp; S/A native delegates without clamp; mixin uses receiving host. Position mapping is not strict crossing proof.",
+      "source_review_refs": [
+        {
+          "id": "CP327-S05",
+          "review": {
+            "checkpoint": 339,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP339_W2_Lifecycle_Queue_Reconciliation.json",
+            "blob": "b6ffea47eb894668026db566e3ab6241363d45bc"
+          },
+          "semantic_review": "Lower-bound decision start inclusive, required index first_less bullish or first_greater bearish, right len(lower). Miss returns None, no linear/coarse retry. Map exact event clamped main index/time. E dominance same family strictly higher number; different only red over blue.",
+          "handoff": "Index owner guarantees coherent lower arrays; priority not direction-mirrored; equality price not a strict stop."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1020,
+      "source_text": "s_detector._a_confirmation_time(item),",
+      "transition_ids": [
+        "CP329-S13"
+      ],
+      "consumer_groups": [
+        "CP332-G02"
+      ],
+      "providers": [],
+      "matrix_ids": [],
+      "classification": "REFERENCED_FOR_SEMANTIC_CLOSURE",
+      "provider": "S native A confirmation adapter",
+      "qualification": "S native A confirmation chosen for actual stop projection, default A intrabar semantics; not proof by displayed Break open.",
+      "source_review_refs": [
+        {
+          "id": "CP329-S13",
+          "review": {
+            "checkpoint": 346,
+            "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP346_W2_Historical_Linked_Bridge_Recheck.json",
+            "blob": "d8a42520d7b55e1905317d0e83e22af9c715ea0e"
+          },
+          "semantic_review": "Existing E parent stop catches AttributeError/TypeError/ValueError only around call; unpack/conversion/bounds afterward. S A stop catches those plus IndexError; unpack outside. Stop mapping uses proof plus independent string price.",
+          "handoff": "Owner method may execute native lookup/cache; no independent new stop selection or detector reconstruction."
+        }
+      ],
+      "provider_group_refs": [],
+      "disposition": "RECONCILED_SOURCE_CONDITIONAL"
+    }
+  ],
+  "chronology_qualifications": [
+    {
+      "clause": "CH13",
+      "path": "Algorithms/V3/Chronology/02_Blue_A_S.md",
+      "meaning": "Break-open confirmation means false use_intrabar_start, not that confirmation necessarily equals Break open. First strict lower crossing in the full Break window wins; missing crossing returns Break open. Reset Blue and actual stop are independent.",
+      "rows": [
+        "CP323-S20",
+        "CP323-S21"
+      ],
+      "source": [
+        "engine/pipeline/reaction_engine.py:1257–1302",
+        "engine/pipeline/a_zone_detector.py:157–169"
+      ]
+    },
+    {
+      "clause": "CH25",
+      "path": "Algorithms/V3/Chronology/03_Order_E.md",
+      "meaning": "Public E parent stop begins at parent's exact decision. Native and live main times agree under the same coherent candle chronology; live retains detector.times[index], inherited native reads the owning candle timestamp. Do not equate different or externally mutated sequences.",
+      "rows": [
+        "CP326-S12",
+        "CP326-S13"
+      ],
+      "source": [
+        "engine/pipeline/e_zone_detector.py:478–578",
+        "engine/pipeline/order_audit_engine.py:1459–1484"
+      ]
+    },
+    {
+      "clause": "CH39",
+      "path": "Algorithms/V3/Chronology/05_Projection_Live_TF.md",
+      "meaning": "Positive integral numeric equality is checked after int conversion; not an exact Python int-type requirement for rows. Nondecreasing accepts equality. Inner rollback try follows publication of new keys/suffix/time; earlier assignments outside, outer protected block discards views; original lineage has separate strictly increasing rule.",
+      "rows": [
+        "CP330-S06",
+        "CP330-S07",
+        "CP330-S08",
+        "CP323-S42",
+        "CP330-S28"
+      ],
+      "source": [
+        "engine/bridge/trading_pipeline.py:229–303",
+        "engine/bridge/live_pipeline.py:35–70",
+        "engine/bridge/live_pipeline.py:148–156"
+      ]
+    },
+    {
+      "clause": "CH69",
+      "path": "Algorithms/V3/Chronology/06_Additional_Owner_Boundaries.md",
+      "meaning": "An old nonnull exact hit can be reused when effective dirty is null or hit<dirty; prefix equality needs max(source,decision)<dirty only if dirty nonnull. Covered horizon caps dirty when available.",
+      "rows": [
+        "CP327-S16",
+        "CP327-S17"
+      ],
+      "source": [
+        "engine/pipeline/lifecycle_engine.py:550–590"
+      ]
+    },
+    {
+      "clause": "CH86",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "A fallback extreme is entire mapped start..end main range inclusive, not lower-proven; start=max(0,upper_bound(start)-1), end=min(last,max(start,upper_bound(end)-1)); an owning boundary is not independently validated by a lower hit. Native A confirmation starts at Break open (flag false), later strict hit or fallback.",
+      "rows": [
+        "CP323-S21",
+        "CP323-S20"
+      ],
+      "source": [
+        "engine/pipeline/a_zone_detector.py:171–214"
+      ]
+    },
+    {
+      "clause": "CH96",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "S continuation Type3/4 directly use decision time; Order-backed guard requires a lower row at/after clamped Order confirmation and no later than decision, not a strict crossing proof. Reuse additionally requires key/dependencies and frontier<dirty.",
+      "rows": [
+        "CP324-S21",
+        "CP324-S22"
+      ],
+      "source": [
+        "engine/pipeline/s_zone_detector.py:1469–1525"
+      ]
+    },
+    {
+      "clause": "CH99",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "Direct parent stop confirmation_after is optional. Native threshold loop precedes same-gate blocked-First skipping and threshold is not reapplied afterward. E exact exception checks > start; geometry callback conditions and preference separate.",
+      "rows": [
+        "CP325-S16"
+      ],
+      "source": [
+        "engine/pipeline/order_audit_engine.py:829–918"
+      ]
+    },
+    {
+      "clause": "CH101",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "Eager accepted-live initial records bisect confirmation > parent_stop, audit index bisects tuple with 2**63-1 sentinel; add_match itself checks crossed>parent_stop and crossed>match confirmation, reset gate, physical dedup. No independent blanket confirmation recheck of each audit entry; optimized native route must be described separately.",
+      "rows": [
+        "CP325-S33",
+        "CP325-S34",
+        "CP325-S35"
+      ],
+      "source": [
+        "engine/pipeline/order_audit_engine.py:1798–1878"
+      ]
+    },
+    {
+      "clause": "CH113",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "LC40 calculates once per invocation; TB74 calls it once per enabled feedback pass (up to 8). Final visibility uses converged objects without extra StopAll detection.",
+      "rows": [
+        "CP327-S30",
+        "CP323-S28"
+      ],
+      "source": [
+        "engine/pipeline/lifecycle_engine.py:1377–1409",
+        "engine/bridge/trading_pipeline.py:2569–2645"
+      ]
+    },
+    {
+      "clause": "CH115",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "PH commitment clears pending proposals only when commit_high is non-null, after callback; reflected adapter always exposes a method, but external owner mutation depends on supplied callback. PL commitment does not clear others.",
+      "rows": [
+        "CP328-S11",
+        "CP328-S25"
+      ],
+      "source": [
+        "engine/pipeline/PL_PH_detector.py:380–402",
+        "engine/pipeline/PL_PH_detector.py:770–801"
+      ]
+    },
+    {
+      "clause": "CH119",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "Bridge passes frozenset of accepted A physical identities, not global accepted-only creation permission. Inside continuation, invalid-S-only/no other creation cause can survive only with independent accepted A identity; ordinary other valid causes remain eligible. Match current E owner by exact source index/time, then rebuild ledger from actual resulting state and supplemental evidence.",
+      "rows": [
+        "CP323-S28",
+        "CP326-S18"
+      ],
+      "source": [
+        "engine/bridge/trading_pipeline.py:2507–2555",
+        "engine/pipeline/e_zone_detector.py:770–823"
+      ]
+    },
+    {
+      "clause": "CH120",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "meaning": "Equality of sorted 17-field signature including multiplicity terminates, repeated unequal signature or 8-pass exhaustion raises. Not full dataclass equality. CP292 C07 current-source supplement takes precedence.",
+      "rows": [
+        "CP325-S12",
+        "CP323-S28"
+      ],
+      "source": [
+        "engine/pipeline/order_audit_engine.py:531–550",
+        "engine/bridge/trading_pipeline.py:2569–2645"
+      ]
+    },
+    {
+      "clause": "C01 / C04 / C05",
+      "path": "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md",
+      "meaning": "Projection proof checks returned timestamp, even native fallback can verify; C04/05 transaction wording is limited by actual try boundaries (CH37/39/40 and CP342/345). No substitute event, external callback rollback or early assignment rollback guarantee.",
+      "rows": [
+        "CP329-S07",
+        "CP329-S10",
+        "CP330-S06",
+        "CP323-S42"
+      ],
+      "source": [
+        "engine/bridge/trading_pipeline.py:690–783",
+        "engine/bridge/trading_pipeline.py:229–303",
+        "engine/bridge/live_pipeline.py:35–70"
+      ]
+    }
+  ],
+  "extra_gap_reviews": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        175,
+        183
+      ],
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "meaning": "Cache key id(candles) plus identity check; timestamp list shared by reference, fresh list on miss, registry retains object reference; native immutable-source premise and scope clearing CP332-P12 / RE45–47 / TB97–101.",
+      "disposition": "SOURCE_REVIEWED_PROVIDER_BOUNDARY"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        342,
+        345
+      ],
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "meaning": "detect delegates to own _scan(first_only=first_only) unchanged; no additional cross-owner semantics.",
+      "disposition": "SOURCE_REVIEWED_LOCAL_DISPATCH"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        365,
+        373
+      ],
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "meaning": "When either bound absent select without int(index); only both present apply inclusive int index range, selected lists used by legacy and Bridge output. No calculation filter.",
+      "disposition": "SOURCE_REVIEWED_PROJECTION_BOUNDARY"
+    }
+  ],
+  "validation": {
+    "nonmatrix_calls": 75,
+    "missing_disposition": 0,
+    "chronology_qualification_items": 13,
+    "operational_gap_reviews": 3,
+    "heading_rows": 316,
+    "chronology_clauses": 123
+  }
+}

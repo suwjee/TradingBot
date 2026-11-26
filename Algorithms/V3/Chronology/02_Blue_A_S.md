@@ -28,7 +28,7 @@ A extreme range includes exact endpoints (end + one microsecond), rejects revers
 
 ## CH13
 
-Scale Blue formation/stop scan use A's Break-open confirmation. Reset Blue forms at first strict lower Reset crossing or source open fallback; stop scan starts at source open + timeframe.
+Scale Blue formation/stop scan use A's native confirmation with intrabar start disabled: search begins at Break open, returns the first strict lower hit or Break-open fallback if absent. Reset Blue forms at first strict lower Reset crossing or source open fallback; stop scan starts at source open + timeframe.
 
 [Source engine/pipeline/a_zone_detector.py:216–243](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L216-L243)
 
