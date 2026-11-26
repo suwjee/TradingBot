@@ -221,3 +221,33 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **Blue full ordinal (1170–1179).** Stable sort by int reaction number, source_time, str(kind), enumerate from one; full rather than visible list.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L988-L1181). [CP303 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP303_Completion.json).
+
+## CP304 source-only clarification — A/S/E/StopAll Parent and Behavior Projection
+
+**A Blue ordinal (1182–1201).** Stored int ordinals lookup full map; missing lines null formation; discard formation event part.
+
+**A stop and Reaction (1202–1212).** Native A stop plus proof; bounded 1-based reaction number, optional route.
+
+**A formation and Blue stops (1213–1244).** Ordinary/double-stop Type-1/2 else null; source time/price; Blue formed time and native stop main/event with proof, level string.
+
+**A parent/current Order (1245–1269).** Native reaction first/break times, proof if reaction found with intrabar false; parent null; current A/None-family exact cause, own stop.
+
+**S formation (1272–1292).** E parent_stop S and proof; only lowercase blue maps simple/advanced/type3/type4 to Type-1–4, others null.
+
+**S parent (1293–1325).** Source price/time, color label; native A parent geometry/stop, recorded parent Order; current exact S/native color string; own stop.
+
+**Source identity (1328–1333).** Missing index/time null; else int index and original time pair.
+
+**E parent lookup (1336–1361).** Exact type and native source pair; S color, E family/number, StopAll number from lookup, missing null. Unknown type retained.
+
+**E parent geometry (1362–1377).** Child native parent time/price/stop fields, not reconstructed from parent lookup; stop proof.
+
+**E projection (1380–1424).** Native E stop/proof; family label, int number, source price/time; parent behavior and physical Order separate; current E+number and native family; own stop.
+
+**StopAll donor and gate (1427–1446).** Read optional immutable donor fields; own native stop proof; exact gate mapping sequence-group-stop Type-1, stopall-stop Type-2, opposite-s-group-stop Type-3; unknown null.
+
+**StopAll parent (1447–1479).** Native number/source, donor type/color/number/time/nullable price and independently proved stop; never infer donor stop from gate; recorded parent Order.
+
+**StopAll current Order (1480–1493).** Exact StopAll+number, None family, own proven event; own stop view; required attr failures propagate.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1182-L1495). [CP304 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP304_Completion.json).
