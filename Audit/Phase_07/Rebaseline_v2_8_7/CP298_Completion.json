@@ -1,0 +1,210 @@
+{
+  "checkpoint": 298,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_PRIMARY_AND_REVERSAL_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "17ab1cf7f0c3e210e11590742809655682297428",
+  "validated_algorithm": "2f65675311ccff8309a22379a165f065c09dcc68",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      3405,
+      3460
+    ],
+    [
+      3461,
+      3501
+    ],
+    [
+      3502,
+      3530
+    ],
+    [
+      3531,
+      3632
+    ]
+  ],
+  "scope": "All four complete primary/orchestration/reversal procedures; local source contract and site reconciliation, not W2/W3/W4 or runtime acceptance.",
+  "counts": {
+    "w1_this_checkpoint": 189,
+    "w1_previous": 1043,
+    "w1_reviewed": 1232,
+    "w1_denominator": 2317,
+    "w1_remaining": 1085,
+    "by_category": {
+      "branches": {
+        "reviewed": 345,
+        "total": 562,
+        "remaining": 217
+      },
+      "comparisons": {
+        "reviewed": 197,
+        "total": 337,
+        "remaining": 140
+      },
+      "arithmetic": {
+        "reviewed": 93,
+        "total": 173,
+        "remaining": 80
+      },
+      "calls": {
+        "reviewed": 597,
+        "total": 1245,
+        "remaining": 648
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 668,
+      "effects": 55,
+      "exits": 14,
+      "total": 737
+    },
+    "additional_cumulative": 4954,
+    "additional_cumulative_by_category": {
+      "accesses": 4568,
+      "effects": 297,
+      "exits": 89
+    },
+    "all_sites_this_checkpoint": 926,
+    "all_sites_cumulative": 6186,
+    "contracts_this_checkpoint": 25,
+    "contracts_cumulative": 167,
+    "historical_w1_continuity": 174,
+    "new_w1_sites": 15,
+    "retired_historical_w1": 11,
+    "new_additional_sites": 31,
+    "retired_historical_additional": 23,
+    "duplicate_or_prior_overlap": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP298_B09_Primary_Reversal_Review.json": "ee7bf7e9c865df016abf677ce15634644c75506e",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP298_B09_Primary_Reversal_Additional_Sites.json": "88e0add75350a04044d5418861466d69b3182611",
+    "Algorithms/V3/17_Trading_Bridge.md": "e80379cfda761fb525e470e3077c66b38804951b"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_source_relocation": true,
+    "historical_range": [
+      3371,
+      3593
+    ],
+    "historical_inventory_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+    "historical_census": {
+      "branches": 58,
+      "comparisons": 33,
+      "arithmetic": 9,
+      "calls": 85,
+      "accesses": 660,
+      "effects": 55,
+      "exits": 14
+    },
+    "historical_mapped_and_retired_partition_complete": true,
+    "cp292_current_complement_complete": true,
+    "row_node_scope_span_and_access_anchor_readback": true,
+    "prior_CP293_CP294_CP295_CP296_CP297_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remote_readback": true,
+    "production_source_raw_unchanged": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        1756,
+        1826,
+        1860,
+        1874,
+        2837,
+        2939,
+        3113,
+        3283,
+        3756
+      ],
+      "finding": "Closed-prefix cache stages only used keys on normal exit, prefix slices exclude transition and new regime includes it; absolute projection copies list/dict tree and preserves noncontainer values; transition serializer already offsets indexes; current active runner supplies no live continuation."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "anchors": [
+        128,
+        141,
+        198,
+        287,
+        624,
+        743
+      ],
+      "finding": "Native owner resolves final physical primary labels and public StopAll ownership through horizon; resolver reads native audit by conceptual owner and invokes on_high; bullish native mirror keeps physical prices/identity and time."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "anchors": [
+        1250,
+        1260,
+        1312,
+        1316,
+        2442
+      ],
+      "finding": "Primary registration validates owner and point kind; reconciliation relabels existing audit, not rediscovery. Audit prepare merges canonical ledger and required identities."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "anchors": [
+        59
+      ],
+      "finding": "Canonical physical identity converts First and Break to int."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "anchors": [
+        1125,
+        2837
+      ],
+      "finding": "Native release removes sequence-owned caches by identity; live fallback delegates same helper."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "anchors": [
+        18
+      ],
+      "finding": "prepare_order_audit is imported native audit owner."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP298-F01",
+      "detail": "Primary groups retain aliases; full group audit snapshots and post-reconcile visibility audit are not guaranteed identical."
+    },
+    {
+      "id": "CP298-F02",
+      "detail": "StopAll public removal uses native physical source identity and visible decision horizon, not deletion of historical lifecycle state."
+    },
+    {
+      "id": "CP298-F03",
+      "detail": "Cached independent prefix still requires exact Primary3 number, source time and price; no additional index match or tolerance."
+    },
+    {
+      "id": "CP298-F04",
+      "detail": "Indexed segment selection uses explicit closed_regime; selected resolver uses live precedence. Current production runner passes explicit cache only, not active continuation."
+    },
+    {
+      "id": "CP298-F05",
+      "detail": "Reversal excludes boundary from historical prefix and includes it in new regime; incoming absolute transition inserted after recursive list/dict projection; merge retains original segment row references."
+    }
+  ],
+  "documentation_changes": 5,
+  "limitations": [
+    "No independent full current AST regeneration; historical canonical inventory, exact source relocation, CP287 and CP292 projected new-site complement support scoped acceptance.",
+    "Dependency interface review only, no runtime, RAW or byte-equivalence testing; W2/W3/W4 remain NOT RUN.",
+    "Combined additional-site validation and publication exceeded connector call limit after successful census; recomputed and published separately, then remote readback independently confirmed all rows and zero overlap.",
+    "Explicit pinned GitHub baseline supersedes older ZIP workflow; no production edits or ZIP. Presentation preferences not added to GitHub."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP299 / RB08 / W1 / B09 — build_response_payload (3633–3712), _market_calculation_scope (3713–3730), calculate_live_from_raw (3731–3737), calculate_live_from_buckets (3738–3755), _run_live_calculation (3756–3769), main and module entry (3770–3810). Check existing CP293 coverage first and count only previously unaccepted rows; complete whole-procedure review and identify all remaining earlier bridge owners."
+}
