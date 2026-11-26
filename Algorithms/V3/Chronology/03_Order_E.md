@@ -28,9 +28,9 @@ Order_B latest post-stop and anchor strictly before Reset Reaction First main ti
 
 ## CH23
 
-Order_A post-stop: First >= gate main, confirmation strictly later. Native search uses upper bound of stop on confirmations. Independent geometry may map to canonical identity or number zero; wins only if (First,confirmation) lexicographically earlier.
+Stopped-A Order_A selection (SOrderAuditMixin): native confirmation strictly after the A stop and First >= gate main. Independent geometry also requires First >= gate main and initial confirmation strictly after the A stop; a canonical identity remap recomputes confirmation without reapplying that local strict threshold. Independent geometry may map to canonical identity or retain number zero; it wins only if (First,confirmation) is lexicographically earlier. This clause does not impose a universal strict post-parent-stop confirmation gate on the S/E direct Order_A route: `_compute_direct_parent_stop_order` begins at the containing main First and applies `confirmation_after` only when supplied (the later blocked-First skip does not reapply the initial threshold). `order_candidates` ordinarily calls it without that optional threshold. Order_B's strictly later confirmation is relative to its exact boundary break, not a generic parent stop.
 
-[Source engine/pipeline/order_audit_engine.py:2546–2620](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2546-L2620)
+[Historical source engine/pipeline/order_audit_engine.py:2546–2620](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/order_audit_engine.py#L2546-L2620)
 
 ## CH24
 
@@ -61,3 +61,7 @@ E four merged consumption routes: direct, inherited, carried, post-stop accepted
 E decision event is max(parent stop,Order stop). Source, decision, confirmation and stop remain separate. EZone does not store a separate exact Order-crossing field; preserve supplied match stop/source fields and prospective source price, and derive First/Break/box-source main times from detector.times.
 
 [Source engine/pipeline/e_zone_detector.py:677–730](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L677-L730)
+
+### CP332 current-baseline clarification
+
+The CH23 wording above is narrowed to the actual stopped-A route. See [current direct parent-stop selection](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L829-L918), [candidate dispatch](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L982-L1068), and [stopped-A selection](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/order_audit_engine.py#L2546-L2620). The previous wording is retained in the CP332 correction record; no production rule was changed.

@@ -16,7 +16,7 @@
 | Blue | Penetration recorded before breakout check on same row. |
 | A | Trigger confirmation equality allowed; crossing and extreme end bounds differ. |
 | S | Same lower position rejects; same main row rejects only in no-lower fallback. |
-| Order A/B | Strictly later exact confirmation; same main First permitted. |
+| Order A/B | Route-specific: stopped-A native/initial independent confirmation strictly after A stop (canonical remap is not rechecked); Order_B confirmation strictly after its exact boundary crossing. S/E direct parent-stop selection starts from a main-candle First gate, with an optional exact confirmation threshold; no universal post-parent-stop confirmation predicate. |
 | E | Earliest exact stop then latest First. |
 | StopAll | E before S at same source time in iteration. |
 | Primary | PH equality allowed; PL strictly later; equal seek or cancel/winner ambiguous. |
@@ -39,3 +39,7 @@ Distinguish lower position, timestamp, source/decision/confirmation/stop, main b
 ## CP292 scoped acceptance update
 
 [Completion evidence](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP292_Completion.json) reconciles all 123 chronology clauses, 124 source anchors and 589 Bridge gap sites. RB07 scoped source chronology/gap linkage PASS; W1–W4 and overall Phase 07 semantic closure remain incomplete. Full canonical inventory replay and runtime verification are not asserted.
+
+## CP331–CP332 W2 closure assessment and source supplement
+
+[CP331 assessment](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP331_W2_Closure_Gate_Assessment.json) reconciles 316 transition records and 20 independent accessor sites against the current pinned source. [CP332 provider/consumer supplement](17_W2_Provider_Consumer_Supplement.md) corrects the route-specific Order_A timing summary, normalizes provider anchors and records selected direct/bound/conditional dependencies. W2 remains **INCOMPLETE** pending the semantic closure matrix (CP331-F05). Earlier scoped evidence remains immutable.

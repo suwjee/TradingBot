@@ -1,0 +1,2567 @@
+{
+  "checkpoint": 332,
+  "status": "PASS_SCOPED_W2_PROVIDER_CONSUMER_SUPPLEMENT",
+  "w2_acceptance": "NOT_ACCEPTED_F05_OPEN",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "25909e7d3087afba84eca4eed8820b44ad92dc19",
+  "entry_tree": "f9ef00522dd92302f6bdca9ac8a81f5442f7d0d0",
+  "prior_assessment": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP331_W2_Closure_Gate_Assessment.json",
+    "blob": "f7327e4a1ea9a190b420aeae72b4997e73f7ec5f"
+  },
+  "accessor_evidence": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_W2_Chronology_Accessor_Edges.json",
+    "blob": "bde767dbcf80522c0561ec7dd2efe2b26b6ba57e",
+    "normalized_providers": [
+      {
+        "path": "engine/pipeline/reaction_engine.py",
+        "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+        "range": [
+          1185,
+          1302
+        ],
+        "contract": "main_index right-bisect minus one, only underflow optionally clamps to zero, no upper-bound check; lower_bounds left-bisect both endpoints, missing end len(seconds). Reset key includes index/from_first, second/display/timestamp/broken-level string; cached non-None wins, then truthy second_time parsed, else truthy display parsed, else timestamp. Confirmation key direction/flag/First/Break/box strings/conditional intrabar start; valid intrabar start in [Break open,end), otherwise Break open; false disables intrabar start. Strict high>top bullish else low<bottom, first row in half-open bounds; no hit returns and caches Break open. Fallback not proof.",
+        "prior_provider_ordinal": 1
+      },
+      {
+        "range": [
+          691,
+          783
+        ],
+        "contract": "Upper horizon last selected main timestamp+tf exclusive, no lower-bound gate in helper. Null level/time or time >= horizon -> None. bisect_left exact timestamp; examine all duplicate timestamp rows until strict hit or timestamp changes. bearish high>level else low<level. Reaction proof passes opposite direction to stop predicate; never substitutes a later/earlier event. Stop view separately gates main stop time. A fallback coinciding with actual strict timestamp can pass predicate, so no blanket claim that every fallback is null.",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "prior_provider_ordinal": 2
+      },
+      {
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "range": [
+          139,
+          165
+        ],
+        "contract": "Truthy precise second_time trusted through native resolver; otherwise strict Reset crossing in owning main half-open interval, no display/open fallback; index or linear branch; absent hit None.",
+        "prior_provider_ordinal": 3
+      },
+      {
+        "path": "engine/pipeline/a_zone_detector.py",
+        "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+        "range": [
+          216,
+          245
+        ],
+        "contract": "Scale formation uses A false-flag confirmation and starts stop scan there; reset formation independently searches strict crossing of broken level in source main interval, falls back to open, stop scan starts next main open.",
+        "prior_provider_ordinal": 4
+      },
+      {
+        "range": [
+          1111,
+          1131
+        ],
+        "contract": "Reset display reads display_time and second_time separately, no crossing recovery here; previous Reaction First bounded by main list.",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "prior_provider_ordinal": 5
+      }
+    ]
+  },
+  "scope": "Resolve bounded CP331 F01–F04 by static provider/consumer source review, cross-owner anchors and active summary correction. No new transition-row count.",
+  "providers": [
+    {
+      "id": "CP332-P01",
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        17,
+        41
+      ],
+      "kind": "Containment",
+      "contract": "Split runs on decreasing start OR end, preserve original caller order; first bound excludes equal start, end bound includes equality. Does not itself check price containment.",
+      "owner_batch": "B01"
+    },
+    {
+      "id": "CP332-P02",
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        44,
+        48
+      ],
+      "kind": "Bisect eligibility",
+      "contract": "Require exact datetime, naive, nondecreasing (empty passes), no sorting or repair.",
+      "owner_batch": "B01"
+    },
+    {
+      "id": "CP332-P03",
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "range": [
+        19,
+        70
+      ],
+      "kind": "Directional primitives",
+      "contract": "Policy selector exact bullish/bearish else ValueError. Direction-specific strict stop and better extreme (< for bullish; > bearish), opposite confirmation (> bullish, < bearish); min/max returns first equal operand. Direct construction of unsupported policy direction takes nonbullish branches, not validated by dataclass.",
+      "owner_batch": "B01"
+    },
+    {
+      "id": "CP332-P04",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        886,
+        940
+      ],
+      "kind": "Index construction",
+      "contract": "Power-of-two capacity at least1, optional retained crossing dict, source-sequence reference, position timestamps, normalized Decimal Low/High leaves. None padding; left child owns equal low/high, first actual position retained.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P05",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        941,
+        972
+      ],
+      "kind": "Index refresh and query dispatch",
+      "contract": "Require 0<=dirty<=old length<=new length<=capacity; no-op at new length. Clear crossing history only dirty<old length-1; refresh timestamps, leaves and affected ancestors. Strict crossing exclusion ge/le (equality excluded); min/max query dispatch distinct.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P06",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        973,
+        1018
+      ],
+      "kind": "Range validation / strict query",
+      "contract": "Extrema reject invalid half-open bounds and empty result; numeric improvement then earlier position on equality. First crossing clamps left/right and returns None for empty. Retention path conditional on crossing map, not all callers.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P07",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1019,
+        1069
+      ],
+      "kind": "Retained crossing / chronological search",
+      "contract": "Key (left,level,exclusion) without right; cached hit eligible only if <right. Cache settled hit or examined prefix (length-1 exclusive), not mutable final row. FIFO pop oldest when above limit. Native chronological segment traversal left first then deferred right nodes in reverse; descend left unless excluded. No main fallback.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P08",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1077,
+        1129
+      ],
+      "kind": "Identity registry / reflection / release",
+      "contract": "Prepared index requires exact sequence object identity; shared lookup confirms identity; fresh index if miss. Reflected view swaps less/greater and min/max using copy_negate with original position; retains base times. Clear all three registries or pop specified sequence ids; no universal mutation rollback.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P09",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1153,
+        1184
+      ],
+      "kind": "Chronology ownership",
+      "contract": "Fresh chronology uses supplied time arrays where present; lower_index truthiness selects prepared or shared, main index retained as supplied. Fresh confirmation/reset/extremes caches; optional index histories distinct. Direction delegates policy.",
+      "owner_batch": "B02"
+    },
+    {
+      "id": "CP332-P10",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2462,
+        2505
+      ],
+      "kind": "Accepted A filter",
+      "contract": "Truthy a_causes else single legacy cause; filter source TIME membership in original order; no accepted cause -> None. First accepted pair selected; same selected values and full cause list equal returns original entry object, else shallow dict and fresh filtered list. Mapping preserves physical key and surviving insertion order; no new stop/geometry.",
+      "owner_batch": "B05"
+    },
+    {
+      "id": "CP332-P11",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        178,
+        208
+      ],
+      "kind": "S chronology adapter",
+      "contract": "Main lookup uses native unclamped default; lower window delegates. Reaction confirmation default true flag, reset via native resolver, public adapter delegates; A confirmation valid 1-based ordinal or ValueError, no false-flag freeze.",
+      "owner_batch": "B04"
+    },
+    {
+      "id": "CP332-P12",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        217,
+        257
+      ],
+      "kind": "S first A stop adapter",
+      "contract": "Owner strict crossing from max(start,range_start) through exclusive range_end; index when nonempty and present; nonempty miss no coarse fallback, empty lower window uses main scan beginning at max(stage start,bisect_left(original start)). Triple main index/open/exact; fallback duplicates main time. Public adapter no extra rule.",
+      "owner_batch": "B04"
+    },
+    {
+      "id": "CP332-P13",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        691,
+        783
+      ],
+      "kind": "Bridge proof provider",
+      "contract": "Horizon exclusive upper only. Null value/event rejected; inspect only exact equal lower timestamp rows for strict predicate. Recorded fallback may pass if actual exact row proves crossing; no substitution. Stop main time independent gate. Reaction confirmation native chosen flag then opposite-direction proof; narrow exception guard around native access and box read.",
+      "owner_batch": "B09"
+    },
+    {
+      "id": "CP332-P14",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1111,
+        1131
+      ],
+      "kind": "Bridge Reset projection",
+      "contract": "Stored display_time/second_time formatted independently; previous First main bounded, no event recovery.",
+      "owner_batch": "B09"
+    }
+  ],
+  "consumer_groups": [
+    {
+      "id": "CP332-G01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        347,
+        364
+      ],
+      "kind": "Retained market views",
+      "contract": "Index new if absent or capacity exceeded (retained crossing flag true); else refresh after replacing suffix. TF1 lower/main aliases. Native refresh has stricter admissibility; outer append discards view after protected error.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP330-S11"
+      ]
+    },
+    {
+      "id": "CP332-G02",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        988,
+        1027
+      ],
+      "kind": "Projection stop adapters",
+      "contract": "Parent stop from existing E detector returns pair -> bounded main and exact; A stop uses S's private A confirmation and public triple. Distinct narrow catch sets; underlying methods may execute owner queries. No substitute event or new detector.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP329-S13"
+      ]
+    },
+    {
+      "id": "CP332-G03",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1788,
+        1857
+      ],
+      "kind": "Independent market windows",
+      "contract": "Clamped first crossing translated, strict extreme bounds translated with same Decimal/position; nested windows flatten offsets. Indexed segment uses bound registration alias twice, prepared lower/main sequences must match exactly. Fresh chronology local coordinates.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP330-S13",
+        "CP330-S14"
+      ]
+    },
+    {
+      "id": "CP332-G04",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2055,
+        2079
+      ],
+      "kind": "Batch/live index setup",
+      "contract": "Batch shared lower index, TF1 aliases; fresh chronology. Live suffix update then register both exact prepared sequences, new chronology; not optional detector continuation.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP330-S19"
+      ]
+    },
+    {
+      "id": "CP332-G05",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2284,
+        2304
+      ],
+      "kind": "Initial accepted A handoff",
+      "contract": "Take eligible A source times from S; call accepted audit map filter, pass filtered physical ledger to E. A display eligibility not substituted.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S27"
+      ]
+    },
+    {
+      "id": "CP332-G06",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2350,
+        2381
+      ],
+      "kind": "A invalidation callback",
+      "contract": "Lifecycle split sees every S-eligible A and provisional S/E. S/E parent stop pair routed by a_source_time presence; trend confirmation adapter passed; A stop uses Decimal(str(price)) and default S reaction confirmation from ordinal−1. No local ordinal bounds guard in lambda.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S27"
+      ]
+    },
+    {
+      "id": "CP332-G07",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2420,
+        2444
+      ],
+      "kind": "Invalid-leg block callback",
+      "contract": "Different A start: source_time, not its confirmation. Accepted E stop exact events via pair[1], opposite native default confirmation lambda; exact exception set passed to lifecycle and recreated E.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S27"
+      ]
+    },
+    {
+      "id": "CP332-G08",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2510,
+        2527
+      ],
+      "kind": "Consumed S owner evidence",
+      "contract": "Pass calculation S candidates, accepted S/E and E exact stop pair to lifecycle; preserve independent accepted A physical identities; continuation later uses them.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S28"
+      ]
+    },
+    {
+      "id": "CP332-G09",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2897,
+        2922
+      ],
+      "kind": "Range native S dispatch",
+      "contract": "S enabled only: reusable context returns full candidate/accepted/eligible A references; else instantiate S over full market 0..last with opposite native reactions/resets and initial Order geometry, detect then store detector and candidates as accepted. No optional live branch here.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S30"
+      ]
+    },
+    {
+      "id": "CP332-G10",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2958,
+        2980
+      ],
+      "kind": "Visibility stop callback",
+      "contract": "If E exists select S/E parent service by attribute; otherwise use S first_a_stop(price,item.decision_event_time), not A confirmation. Capture accepted objects before clipping.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-S31"
+      ]
+    },
+    {
+      "id": "CP332-G11",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3568,
+        3630
+      ],
+      "kind": "Regime cleanup",
+      "contract": "Resolve optional release_market_indexes from reaction engine once; finally release prefix/new segment sequences; if missing and live supplied use LiveReactionContinuation._release_indexes fallback. Cache closure and independent proof separate.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP323-P28"
+      ]
+    },
+    {
+      "id": "CP332-G12",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3714,
+        3728
+      ],
+      "kind": "Calculation scope cleanup",
+      "contract": "Optional clear_market_indexes before protected work and in finally; timestamp caches before and after. Setup outside try, cleanup failure not suppressed.",
+      "owner_batch": "B09",
+      "prior_transition_ids": [
+        "CP330-S22"
+      ]
+    },
+    {
+      "id": "CP332-G13",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        138,
+        174
+      ],
+      "kind": "Reaction bootstrap",
+      "contract": "Exact opposite direction via policy; DetectorBase obtains shared lower index and shared times; duration inferred from first main pair or one second, positive required.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S01"
+      ]
+    },
+    {
+      "id": "CP332-G14",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        202,
+        235
+      ],
+      "kind": "Reaction main extrema",
+      "contract": "Inclusive main endpoints. If difference>=16 use shared native range index; reflected sequence queries original opposite extreme and negates, same position; short scan strict improvement, first tie.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S02"
+      ]
+    },
+    {
+      "id": "CP332-G15",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        246,
+        341
+      ],
+      "kind": "Reaction intrabar races",
+      "contract": "Breakout strict first high, inclusive lower prefix min through crossing; owner main must exist. Invalidation and confirmed Reset race check equal lower position in favor of invalidation/Reset; absence rules differ, post-break reset starts event+1us.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S03"
+      ]
+    },
+    {
+      "id": "CP332-G16",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        736,
+        749
+      ],
+      "kind": "Reaction mirror index",
+      "contract": "Bearish reference uses reflected lower index over original; physical positions and timestamps unchanged.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S06"
+      ]
+    },
+    {
+      "id": "CP332-G17",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1077,
+        1092
+      ],
+      "kind": "Shared index creation",
+      "contract": "Native register returns prepared with identical candles, identity cache hit or constructs new index, no equality-based cross-market reuse.",
+      "owner_batch": "B02",
+      "prior_transition_ids": []
+    },
+    {
+      "id": "CP332-G18",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1095,
+        1116
+      ],
+      "kind": "Reflected range operations",
+      "contract": "Swap strict crossing and extrema direction and negate via copy_negate; positions preserved.",
+      "owner_batch": "B02",
+      "prior_transition_ids": []
+    },
+    {
+      "id": "CP332-G19",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1153,
+        1184
+      ],
+      "kind": "Market chronology adapter",
+      "contract": "New chronology can share supplied lower/main index but clears own caches; absent/falsy lower invokes registry.",
+      "owner_batch": "B02",
+      "prior_transition_ids": []
+    },
+    {
+      "id": "CP332-G20",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1371,
+        1408
+      ],
+      "kind": "Internal Reaction path",
+      "contract": "Published clipped box plus raw default confirmation; observed lower path inclusive confirmation via bisect_right. Both min/max over nonempty observed rows, box/price containment inclusive; absence rejects, no gap-free claim.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S08"
+      ]
+    },
+    {
+      "id": "CP332-G21",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1433,
+        1478
+      ],
+      "kind": "Internal ownership containment",
+      "contract": "Only exact naive timestamps permit interval index; fallback original opposite order. Strict outer First, inclusive end then full geometry/path containment; first qualifying owner establishes internal identity.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S09"
+      ]
+    },
+    {
+      "id": "CP332-G22",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1802,
+        1851
+      ],
+      "kind": "Confirmation remainder",
+      "contract": "Correct color and exact analysis needed; strict later breach after event+1us rejects next First; else full Break lower extremes, exact ties earliest timestamp.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S12"
+      ]
+    },
+    {
+      "id": "CP332-G23",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2132,
+        2202
+      ],
+      "kind": "Gate restart/continue race",
+      "contract": "Outer main boundary through max(First,gate−1), gate opposite edge. Search exact event or gate open to selected end exclusive; strict outer/restart wins same lower-position tie; restart advances owning main+1; no lower evidence no result.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-S15"
+      ]
+    },
+    {
+      "id": "CP332-G24",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2792,
+        2864
+      ],
+      "kind": "Committed continuation",
+      "contract": "Validate direction via policy, full extension contract; release sequence indexes via owner helper. No active-worker assumption.",
+      "owner_batch": "B02",
+      "prior_transition_ids": [
+        "CP323-P10"
+      ]
+    },
+    {
+      "id": "CP332-G25",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        69,
+        128
+      ],
+      "kind": "A ordering and direction",
+      "contract": "Validate policy; stable full Blue sort ordinal/source/kind; exact naive nondecreasing eligibility flags on First/Break/confirmation separate; use native chronology and directional strict comparison, no reordering of reactions.",
+      "owner_batch": "B03",
+      "prior_transition_ids": [
+        "CP323-S20"
+      ]
+    },
+    {
+      "id": "CP332-G26",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        129,
+        169
+      ],
+      "kind": "A strict crossing",
+      "contract": "Half-open lower range; use index only nonempty, null hit final; linear nonempty miss final; only empty lower scan main opens [start,end), first strict crossing, returns position/main event/value.",
+      "owner_batch": "B03",
+      "prior_transition_ids": [
+        "CP323-S21"
+      ]
+    },
+    {
+      "id": "CP332-G27",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        171,
+        214
+      ],
+      "kind": "A extreme",
+      "contract": "Reject reversed timestamps; include endpoint by +1us. Indexed min/max or linear lower first tie. Only empty lower falls back to complete containing main endpoints, clamp lower start and upper end; preserve Decimal and owning main.",
+      "owner_batch": "B03",
+      "prior_transition_ids": [
+        "CP323-S21"
+      ]
+    },
+    {
+      "id": "CP332-G28",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        62,
+        110
+      ],
+      "kind": "Blue policy",
+      "contract": "Strict source-extreme stop checks first main crossing equals required end index; Fibonacci directional formula selects box edge. Intrabar pending route obtains policy and default native confirmation, observed lower range; not shared stop race.",
+      "owner_batch": "B03",
+      "prior_transition_ids": [
+        "CP323-S17",
+        "CP323-S18"
+      ]
+    },
+    {
+      "id": "CP332-G29",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        526,
+        590
+      ],
+      "kind": "Blue containment",
+      "contract": "Build interval index lazily only exact naive owner times; source must exact naive to use it; fallback original list. Owner ordinal internal OR geometric same box with source>First and <=confirmation and both semantic/rendered prices strictly inside. Set internal flag only.",
+      "owner_batch": "B03",
+      "prior_transition_ids": [
+        "CP323-S19"
+      ]
+    },
+    {
+      "id": "CP332-G30",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        80,
+        176
+      ],
+      "kind": "S eligibility and policy",
+      "contract": "Direction validated; source streams copied; exact-naive nondecreasing confirmation flag only for ordered optimization. Invalid/internal distinctions of Blue retained; same direction provider; opposite direction separate.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP323-S34"
+      ]
+    },
+    {
+      "id": "CP332-G31",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        209,
+        257
+      ],
+      "kind": "A stop consumer",
+      "contract": "Directional extreme and strict predicate; lower window [max(start,range_start),range_end); index miss final, linear nonempty miss final, only empty lower fallback main with duplicate exact/main.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP323-S35",
+        "CP324-S02"
+      ]
+    },
+    {
+      "id": "CP332-G32",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        279,
+        313
+      ],
+      "kind": "S source ties",
+      "contract": "Earliest source for strict better_extreme scan; separate _candidate_source_last uses inclusive <=/>= and latest equal. No universal extrema tie.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP324-S03"
+      ]
+    },
+    {
+      "id": "CP332-G33",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        403,
+        450
+      ],
+      "kind": "S Type3 Reset crossing",
+      "contract": "Reset exact window (A-stop,deadline); owner confirmed <=A-stop and no earlier reset. Index lower [Reset,deadline); no alternative recross if qualifier fails. Earliest exact cross wins, first full tie.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP324-S06"
+      ]
+    },
+    {
+      "id": "CP332-G34",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        464,
+        533
+      ],
+      "kind": "S Type4 candidate replacement",
+      "contract": "Aligned confirmations strict after A stop and before deadline, last-equal main candidate through Break. Search max(confirmation,candidate event,A stop) to min(next confirmation,deadline) exclusive; strict crossing must have Blue; failure advances next aligned candidate.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP324-S07"
+      ]
+    },
+    {
+      "id": "CP332-G35",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        870,
+        960
+      ],
+      "kind": "S decision race",
+      "contract": "First strict opposite Order stop independent; candidate qualified by earliest Blue/trend after behavior start or fallback. Same lower position rejects; Order earlier -> red, candidate earlier -> blue/fallback. No timestamp-only conflation.",
+      "owner_batch": "B04",
+      "prior_transition_ids": [
+        "CP324-S14"
+      ]
+    },
+    {
+      "id": "CP332-G36",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        139,
+        195
+      ],
+      "kind": "Order_B Reset and boundary",
+      "contract": "Truthy precise Reset trusts native resolver; otherwise strict [Reset main open,open+TF), index or linear; no open fallback. Anchor boundary strict improvement earliest tie; post-Reset crossing uses supplied left and strict direction, index or linear.",
+      "owner_batch": "B05",
+      "prior_transition_ids": [
+        "CP325-S04"
+      ]
+    },
+    {
+      "id": "CP332-G37",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        442,
+        520
+      ],
+      "kind": "Order_B lifecycle inputs",
+      "contract": "Accepted A by exact pair, default trend confirmation with unguarded ordinal−1; S first A stop triple[2]. S/E parent stop pair[1], StopAll explicit event. Open lifetimes retained; independent anchor selection; owner rules in CP325.",
+      "owner_batch": "B05",
+      "prior_transition_ids": [
+        "CP325-S11"
+      ]
+    },
+    {
+      "id": "CP332-G38",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2462,
+        2505
+      ],
+      "kind": "Accepted causes",
+      "contract": "Physical identity remains map key; first retained source-time cause, original entry if unchanged otherwise shallow copy; filtering does not recompute or reown geometry.",
+      "owner_batch": "B05",
+      "prior_transition_ids": []
+    },
+    {
+      "id": "CP332-G39",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2688,
+        2712
+      ],
+      "kind": "S shared accepted Order stop",
+      "contract": "Strict opposite crossing from max(confirmation,range_start) inclusive, exclusive range end. Indexed nonempty miss returns null; linear path no main fallback. May hit confirmation row; downstream gate decides acceptance.",
+      "owner_batch": "B05",
+      "prior_transition_ids": [
+        "CP324-S28"
+      ]
+    },
+    {
+      "id": "CP332-G40",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        176,
+        194
+      ],
+      "kind": "Live E source extreme",
+      "contract": "Only settled end<dirty reuse; own main index lazily constructed; choose direction min/max inclusive via end+1; owner main index/time/price retained.",
+      "owner_batch": "B06",
+      "prior_transition_ids": [
+        "CP326-S04"
+      ]
+    },
+    {
+      "id": "CP332-G41",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        313,
+        392
+      ],
+      "kind": "E direction ownership",
+      "contract": "Require valid direction and sequence priority callback; retain coherent chronology; use policy for source extreme, not arbitrary opposite stop predicate.",
+      "owner_batch": "B06",
+      "prior_transition_ids": [
+        "CP326-S08"
+      ]
+    },
+    {
+      "id": "CP332-G42",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        413,
+        438
+      ],
+      "kind": "E strict search",
+      "contract": "Index if present, strict directional lower range; linear fallback if no index, no retry after indexed miss. E main_index clamps underflow; no coarse fallback.",
+      "owner_batch": "B06",
+      "prior_transition_ids": [
+        "CP326-S10"
+      ]
+    },
+    {
+      "id": "CP332-G43",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        170,
+        186
+      ],
+      "kind": "StopAll strict stop",
+      "contract": "Inclusive exact start via lower bound through all lower rows, strict direction, map clamped main and exact event, no coarse fallback.",
+      "owner_batch": "B07",
+      "prior_transition_ids": [
+        "CP327-S05"
+      ]
+    },
+    {
+      "id": "CP332-G44",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        606,
+        693
+      ],
+      "kind": "Lifecycle accepted Order context",
+      "contract": "Filter accepted A via helper per physical key; then provisional blocks and exact E exceptions; preserve original geometry. A accepted First exemption independent of public visibility.",
+      "owner_batch": "B07",
+      "prior_transition_ids": [
+        "CP325-S44"
+      ]
+    },
+    {
+      "id": "CP332-G45",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        749,
+        765
+      ],
+      "kind": "Lifecycle directional boundary",
+      "contract": "strictly_beyond_boundary delegates exact policy crossing; owner priority separate, not mirror of lifecycle family.",
+      "owner_batch": "B07",
+      "prior_transition_ids": [
+        "CP323-S39"
+      ]
+    },
+    {
+      "id": "CP332-G46",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        101,
+        125
+      ],
+      "kind": "Primary local strict-cross function",
+      "contract": "Same name strict_cross is local Primary timestamp crossing, NOT DirectionPolicy method; PH3 upper/later, PL3 lower/later, earliest event/source/cycle tie; optional callback only bullish transition helper.",
+      "owner_batch": "B08",
+      "prior_transition_ids": [
+        "CP328-S02"
+      ]
+    },
+    {
+      "id": "CP332-G47",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        222,
+        245
+      ],
+      "kind": "Primary strict later cross",
+      "contract": "bisect_right event excludes all equal timestamps; bound method above/below, no coarse fallback; containing main clamped. Full main extrema inclusive, first equal via min/max.",
+      "owner_batch": "B08",
+      "prior_transition_ids": [
+        "CP328-S06"
+      ]
+    },
+    {
+      "id": "CP332-G48",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        716,
+        724
+      ],
+      "kind": "Primary reflection",
+      "contract": "Swap original lower index strict method with exact negated level, preserve physical positions and chronology.",
+      "owner_batch": "B08",
+      "prior_transition_ids": [
+        "CP328-S22"
+      ]
+    },
+    {
+      "id": "CP332-G49",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        18,
+        30
+      ],
+      "kind": "T/F repair search",
+      "contract": "Capture inclusive through upper bound once; lower bound converted start, policy chooses bound strict search, Decimal(level), returns original epoch. No substitute main crossing.",
+      "owner_batch": "B10",
+      "prior_transition_ids": [
+        "CP329-S35"
+      ]
+    },
+    {
+      "id": "CP332-G50",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        58,
+        92
+      ],
+      "kind": "T/F direction normalization",
+      "contract": "Policy only determines lower-is-further and exact copy_negate; Basic ranks and reset/repair counters separate from directional price normalization.",
+      "owner_batch": "B10",
+      "prior_transition_ids": [
+        "CP329-S37"
+      ]
+    }
+  ],
+  "selected_symbol_families": [
+    "first_less",
+    "first_greater",
+    "range_minimum",
+    "range_maximum",
+    "shared_lower_timeframe_index",
+    "refresh_suffix",
+    "release_market_indexes",
+    "clear_market_indexes",
+    "ChronologicalContainmentIndex",
+    "enclosing",
+    "ordered_naive_datetimes",
+    "policy_for",
+    "strict_cross",
+    "better_extreme",
+    "choose_extreme",
+    "confirmation_cross",
+    "accepted_audit_entry",
+    "accepted_audit_entries",
+    "first_a_stop",
+    "reaction_confirmation_time",
+    "parent_stop",
+    "LowerTimeframeIndex",
+    "ReflectedLowerTimeframeIndex",
+    "MarketIndexWindow",
+    "MarketChronology"
+  ],
+  "sites": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 145,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G13"
+      ],
+      "id": "CP332-E001"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 162,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G13"
+      ],
+      "id": "CP332-E002"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 205,
+      "target": "range_maximum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E003"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 205,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E004"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 208,
+      "target": "range_minimum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E005"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 208,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E006"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 221,
+      "target": "range_minimum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E007"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 221,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E008"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 224,
+      "target": "range_maximum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E009"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 224,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G14"
+      ],
+      "id": "CP332-E010"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 258,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E011"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 261,
+      "target": "range_minimum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E012"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 294,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E013"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 297,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E014"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 317,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E015"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 318,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E016"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 340,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G15"
+      ],
+      "id": "CP332-E017"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 748,
+      "target": "ReflectedLowerTimeframeIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G16"
+      ],
+      "id": "CP332-E018"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1090,
+      "target": "LowerTimeframeIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G17"
+      ],
+      "id": "CP332-E019"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1105,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G18"
+      ],
+      "id": "CP332-E020"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1108,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G18"
+      ],
+      "id": "CP332-E021"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1111,
+      "target": "range_maximum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G18"
+      ],
+      "id": "CP332-E022"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1115,
+      "target": "range_minimum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G18"
+      ],
+      "id": "CP332-E023"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1172,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G19"
+      ],
+      "id": "CP332-E024"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1401,
+      "target": "range_minimum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G20"
+      ],
+      "id": "CP332-E025"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1402,
+      "target": "range_maximum",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G20"
+      ],
+      "id": "CP332-E026"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1455,
+      "target": "ChronologicalContainmentIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G21"
+      ],
+      "id": "CP332-E027"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1465,
+      "target": "enclosing",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G21"
+      ],
+      "id": "CP332-E028"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1824,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G22"
+      ],
+      "id": "CP332-E029"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1827,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G22"
+      ],
+      "id": "CP332-E030"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2155,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G23"
+      ],
+      "id": "CP332-E031"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2158,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G23"
+      ],
+      "id": "CP332-E032"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2162,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G23"
+      ],
+      "id": "CP332-E033"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2165,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G23"
+      ],
+      "id": "CP332-E034"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2797,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G24"
+      ],
+      "id": "CP332-E035"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 2838,
+      "target": "release_market_indexes",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B02",
+      "groups": [
+        "CP332-G24"
+      ],
+      "id": "CP332-E036"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 69,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G28"
+      ],
+      "id": "CP332-E037"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 73,
+      "target": "strict_cross",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G28"
+      ],
+      "id": "CP332-E038"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 79,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G28"
+      ],
+      "id": "CP332-E039"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 96,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G28"
+      ],
+      "id": "CP332-E040"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 552,
+      "target": "ChronologicalContainmentIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G29"
+      ],
+      "id": "CP332-E041"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 574,
+      "target": "enclosing",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G29"
+      ],
+      "id": "CP332-E042"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 79,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E043"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 107,
+      "target": "ordered_naive_datetimes",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E044"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 108,
+      "target": "ordered_naive_datetimes",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E045"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 109,
+      "target": "ordered_naive_datetimes",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E046"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 116,
+      "target": "strict_cross",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E047"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 119,
+      "target": "better_extreme",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G25"
+      ],
+      "id": "CP332-E048"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 139,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G26"
+      ],
+      "id": "CP332-E049"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 141,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G26"
+      ],
+      "id": "CP332-E050"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 180,
+      "target": "range_minimum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G27"
+      ],
+      "id": "CP332-E051"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 182,
+      "target": "range_maximum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B03",
+      "groups": [
+        "CP332-G27"
+      ],
+      "id": "CP332-E052"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 83,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G30"
+      ],
+      "id": "CP332-E053"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 145,
+      "target": "ordered_naive_datetimes",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G30"
+      ],
+      "id": "CP332-E054"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 215,
+      "target": "strict_cross",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G31"
+      ],
+      "id": "CP332-E055"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 225,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G31"
+      ],
+      "id": "CP332-E056"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 227,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G31"
+      ],
+      "id": "CP332-E057"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 288,
+      "target": "better_extreme",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G32"
+      ],
+      "id": "CP332-E058"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 427,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G33"
+      ],
+      "id": "CP332-E059"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 429,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G33"
+      ],
+      "id": "CP332-E060"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 510,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G34"
+      ],
+      "id": "CP332-E061"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 512,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G34"
+      ],
+      "id": "CP332-E062"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 886,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E063"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 888,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E064"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 919,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E065"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 923,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E066"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 930,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E067"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 932,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B04",
+      "groups": [
+        "CP332-G35"
+      ],
+      "id": "CP332-E068"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 153,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G36"
+      ],
+      "id": "CP332-E069"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 155,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G36"
+      ],
+      "id": "CP332-E070"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 186,
+      "target": "first_less",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G36"
+      ],
+      "id": "CP332-E071"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 186,
+      "target": "first_greater",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G36"
+      ],
+      "id": "CP332-E072"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 471,
+      "target": "first_a_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G37"
+      ],
+      "id": "CP332-E073"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 477,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G37"
+      ],
+      "id": "CP332-E074"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2503,
+      "target": "accepted_audit_entry",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G38"
+      ],
+      "id": "CP332-E075"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2697,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G39"
+      ],
+      "id": "CP332-E076"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 2699,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B05",
+      "groups": [
+        "CP332-G39"
+      ],
+      "id": "CP332-E077"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 188,
+      "target": "LowerTimeframeIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G40"
+      ],
+      "id": "CP332-E078"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 189,
+      "target": "range_minimum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G40"
+      ],
+      "id": "CP332-E079"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 190,
+      "target": "range_maximum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G40"
+      ],
+      "id": "CP332-E080"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 339,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G41"
+      ],
+      "id": "CP332-E081"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 426,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G42"
+      ],
+      "id": "CP332-E082"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 428,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B06",
+      "groups": [
+        "CP332-G42"
+      ],
+      "id": "CP332-E083"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 176,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B07",
+      "groups": [
+        "CP332-G43"
+      ],
+      "id": "CP332-E084"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 178,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B07",
+      "groups": [
+        "CP332-G43"
+      ],
+      "id": "CP332-E085"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 631,
+      "target": "accepted_audit_entry",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B07",
+      "groups": [
+        "CP332-G44"
+      ],
+      "id": "CP332-E086"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 752,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B07",
+      "groups": [
+        "CP332-G45"
+      ],
+      "id": "CP332-E087"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "line": 752,
+      "target": "strict_cross",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B07",
+      "groups": [
+        "CP332-G45"
+      ],
+      "id": "CP332-E088"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 120,
+      "target": "strict_cross",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B08",
+      "groups": [
+        "CP332-G46"
+      ],
+      "id": "CP332-E089"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 230,
+      "target": "first_less",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B08",
+      "groups": [
+        "CP332-G47"
+      ],
+      "id": "CP332-E090"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 230,
+      "target": "first_greater",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B08",
+      "groups": [
+        "CP332-G47"
+      ],
+      "id": "CP332-E091"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 720,
+      "target": "first_less",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B08",
+      "groups": [
+        "CP332-G48"
+      ],
+      "id": "CP332-E092"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 723,
+      "target": "first_greater",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B08",
+      "groups": [
+        "CP332-G48"
+      ],
+      "id": "CP332-E093"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 351,
+      "target": "LowerTimeframeIndex",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G01"
+      ],
+      "id": "CP332-E094"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 352,
+      "target": "refresh_suffix",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G01"
+      ],
+      "id": "CP332-E095"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 998,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G02"
+      ],
+      "id": "CP332-E096"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1018,
+      "target": "first_a_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G02"
+      ],
+      "id": "CP332-E097"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1808,
+      "target": "first_less",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E098"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1811,
+      "target": "first_greater",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E099"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1820,
+      "target": "range_minimum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E100"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1823,
+      "target": "range_maximum",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E101"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1844,
+      "target": "MarketIndexWindow",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E102"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1845,
+      "target": "MarketIndexWindow",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E103"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1846,
+      "target": "shared_lower_timeframe_index",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G03"
+      ],
+      "id": "CP332-E104"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2067,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G04"
+      ],
+      "id": "CP332-E105"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2072,
+      "target": "MarketChronology",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G04"
+      ],
+      "id": "CP332-E106"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2077,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G04"
+      ],
+      "id": "CP332-E107"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2078,
+      "target": "shared_lower_timeframe_index",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G04"
+      ],
+      "id": "CP332-E108"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2079,
+      "target": "MarketChronology",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G04"
+      ],
+      "id": "CP332-E109"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2289,
+      "target": "accepted_audit_entries",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G05"
+      ],
+      "id": "CP332-E110"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2364,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G06"
+      ],
+      "id": "CP332-E111"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2368,
+      "target": "reaction_confirmation_time",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G06"
+      ],
+      "id": "CP332-E112"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2369,
+      "target": "first_a_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G06"
+      ],
+      "id": "CP332-E113"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2371,
+      "target": "reaction_confirmation_time",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G06"
+      ],
+      "id": "CP332-E114"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2425,
+      "target": "first_a_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G07"
+      ],
+      "id": "CP332-E115"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2432,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G07"
+      ],
+      "id": "CP332-E116"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2518,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G08"
+      ],
+      "id": "CP332-E117"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2968,
+      "target": "parent_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G10"
+      ],
+      "id": "CP332-E118"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2972,
+      "target": "first_a_stop",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G10"
+      ],
+      "id": "CP332-E119"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 3571,
+      "target": "release_market_indexes",
+      "kind": "CONDITIONAL_GETATTR",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G11"
+      ],
+      "id": "CP332-E120"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 3719,
+      "target": "clear_market_indexes",
+      "kind": "CONDITIONAL_GETATTR",
+      "owner_batch": "B09",
+      "groups": [
+        "CP332-G12"
+      ],
+      "id": "CP332-E121"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "line": 24,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B10",
+      "groups": [
+        "CP332-G49"
+      ],
+      "id": "CP332-E122"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "line": 25,
+      "target": "first_less",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B10",
+      "groups": [
+        "CP332-G49"
+      ],
+      "id": "CP332-E123"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "line": 26,
+      "target": "first_greater",
+      "kind": "BOUND_REFERENCE",
+      "owner_batch": "B10",
+      "groups": [
+        "CP332-G49"
+      ],
+      "id": "CP332-E124"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "line": 62,
+      "target": "policy_for",
+      "kind": "DIRECT_NAMED_FORM",
+      "owner_batch": "B10",
+      "groups": [
+        "CP332-G50"
+      ],
+      "id": "CP332-E125"
+    }
+  ],
+  "findings": [
+    {
+      "finding": "CP331-F01",
+      "status": "RESOLVED_SCOPED",
+      "evidence": "Five normalized CP322 providers, explicit Bridge path/blob for ordinal 2 and 5, original evidence unchanged."
+    },
+    {
+      "finding": "CP331-F02",
+      "status": "RESOLVED_SCOPED",
+      "evidence": "Source-derived provider contracts and grouped actual named direct and bound/conditional references for selected 25 symbol families. Local Primary strict_cross separated from DirectionPolicy; no assertion of unlisted transitive edge completeness."
+    },
+    {
+      "finding": "CP331-F03",
+      "status": "RESOLVED_SCOPED",
+      "evidence": "Exact A filter and S adapter contracts, Bridge initial/invalid/consumed/visibility/standalone range handoffs; no duplicate prior transition IDs."
+    },
+    {
+      "finding": "CP331-F04",
+      "status": "RESOLVED_SUBJECT_TO_DOC_PUBLICATION",
+      "evidence": "Correct active chronology README Order_A/B summary and CH23 wording with exact route-specific source anchors, preserving CP331 finding and prior audit files."
+    },
+    {
+      "finding": "CP331-F05",
+      "status": "OPEN",
+      "evidence": "Independent cross-owner semantic disposition matrix, all affected owner ledger/spec links, unclassified edge assessment and W2 final closure review remain."
+    }
+  ],
+  "validation": {
+    "retained_transition_rows": 316,
+    "retained_cp322_accessor_sites": 20,
+    "source_modules_reopened": 16,
+    "provider_contracts": 14,
+    "consumer_groups": 50,
+    "selected_named_and_bound_sites": 125,
+    "site_counts": {
+      "DIRECT_NAMED_FORM": 107,
+      "BOUND_REFERENCE": 16,
+      "CONDITIONAL_GETATTR": 2
+    },
+    "unlinked_selected_sites": 0,
+    "duplicate_sites": 0,
+    "normalized_cp322_providers": 5,
+    "open_cp331_findings_after_doc_publication": 1,
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "limitations": [
+    "Line-form census, not AST or complete dynamic call graph; exact selected families and group meanings reviewed from source. Repeated same-symbol references on one line counted once by path,line,target,kind. Bound/conditional references are not proven executed calls.",
+    "Previously recorded transition rows kept immutable; these are cross-owner provider/consumer links, not extra transition rows.",
+    "No W2 final acceptance or independent W3 claim."
+  ],
+  "remaining": "CP333 / W2 semantic closure matrix (CP331-F05). Reconcile all affected owner ledgers/specifications and cross-owner handoffs across Reaction/Reset, Blue/A, S/Order, E, lifecycle/StopAll, Primary/reversal, projection/live/T/F. Validate source-backed transitions and conditional dispatch, classify remaining gaps; no W2 acceptance until substantive completeness. Preserve 316 transitions, 20 CP322 accessors and CP332 provider/consumer supplement separately."
+}
