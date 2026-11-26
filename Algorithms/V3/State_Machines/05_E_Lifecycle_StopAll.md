@@ -48,15 +48,15 @@ Registers heap of source groups (earliest source time, earliest decision,source 
 | EQ07 | FILTER | Any remaining candidates not blocked by still-unaccepted later Red S before Blue E parent stop | Restrict to that subset; if subset empty retain original | SELECT | E44 |
 | EQ08 | FILTER or SELECT | No eligible candidate | Skip group | SOURCE | E44 |
 | EQ09 | SELECT | Candidate set nonempty | Choose highest parent ownership priority (actual active parent family when found), then earliest decision,parent stop; retain first tie | NUMBER | E44,E51 |
-| EQ10 | NUMBER | Winner E parent not actually active and not sequence_start | Skip winner (no detach) | SOURCE | E44 |
-| EQ11 | NUMBER | Valid winner | Collect active E strictly crossed by winner price AND winner decision>prior decision | NUMBER | E44,E50 |
+| EQ10 | NUMBER | Winner fails S OR sequence-start equality OR exact active parent gate | Skip entire source, no runner-up | SOURCE | E44 |
+| EQ11 | NUMBER | Selected winner before hard parent gate | Collect active E strictly crossed by winner price AND winner decision>prior decision | NUMBER | E44,E50 |
 | EQ12 | NUMBER | Actual parent Red OR any stopped Red | Family Red; number=max stopped Red+1 or 1 | COMMIT | E44 |
 | EQ13 | NUMBER | Otherwise parent Blue OR stopped Blue | Family Blue; number=max stopped Blue+1 or 1 | COMMIT | E44 |
 | EQ14 | NUMBER | Otherwise | Original family, number1 | COMMIT | E44 |
 | EQ15 | COMMIT | Winner accepted | Remove all stopped active identities, append immutable renumbered winner, index accepted source | COMMIT | E44,E45 |
 | EQ16 | COMMIT | Winner source is sequence reset | Clear active list, sequence_start=source; else append winner to active | CONTINUE | E44 |
-| EQ17 | CONTINUE | Regenerated winner and actual strict stop | Rerace child; enqueue only if child source index>current source | SOURCE | E44,E47 |
-| EQ18 | SOURCE | Heap exhausted | Collect lineage stops with seen set; retain native numbered tuple; project E parent label to StopAll at reset source; return | RETURN | E44,E52 |
+| EQ17 | CONTINUE | Regenerated original winner (including reset boundary) and actual strict stop | Rerace child; enqueue only if child source index>current source | SOURCE | E44,E47 |
+| EQ18 | SOURCE | Heap exhausted | Union lineage stops with shared seen set; append optional terminal step at candle count; retain native numbered tuple; project E parent label to StopAll at reset source; return | RETURN | E44,E52 |
 | EQ19 | REPLAY | Internal reopen signal | Restart full reconciliation rather than retain stale prefix | SOURCE | E07 |
 
 Family promotion is based on stopped active lineage and actual accepted parent, not most recent Red S label. Source-time and decision-time can differ; same-source family priority precedes earliest decision.

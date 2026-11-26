@@ -26,3 +26,7 @@ Before any applicable indicator runtime test, regression, reconstruction verific
 ## Permanent user reporting preference (2026-11-26)
 
 At the end of each completed work session, provide a very brief user-facing progress report (Persian for this user). Include: number and range of checkpoints actually completed and published; previous and current measured progress for the active work package and current owner, with compact horizontal progress bars and all owner/batch statuses when available; a short summary of what was reviewed and what was added or corrected in the algorithm documentation; next checkpoint, commit link, and any blockers or limitations. Distinguish local source review from runtime validation. Use actual evidence counts, not estimates or invented completion percentages; do not treat W1 coverage as overall Phase 07 completion. Keep the detailed technical evidence in GitHub, not in a long chat report.
+
+## Checkpoint cadence and verification (2026-11-26)
+
+Prefer five consecutive evidence-complete checkpoints per work session when feasible; never split or label incomplete work PASS merely to meet the count. End-of-session report must name each checkpoint number/title and its actual verification status, explicitly confirming PASS for completed scoped checkpoints only after evidence validation and publication. Disclose any incomplete checkpoint and next exact resume location. Phase, owner and runtime acceptance remain separate.

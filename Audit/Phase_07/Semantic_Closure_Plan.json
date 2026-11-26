@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 6861,
+  "verified_independent_site_rows_in_this_plan": 7059,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -1148,7 +1148,7 @@
     {
       "id": "B06",
       "title": "E",
-      "status": "INCOMPLETE",
+      "status": "PASS",
       "modules": [
         {
           "path": "engine/pipeline/e_zone_detector.py",
@@ -1162,12 +1162,12 @@
         }
       ],
       "site_category_rows": 1109,
-      "review_scope": "E W1 local owner review in progress; W2/W3/W4 open",
-      "reviewed_original_rows": 911,
-      "supplemental_items": 67,
-      "resolved_findings": 37,
-      "next_source_line": 1294,
-      "next_module": "engine/pipeline/e_zone_detector.py",
+      "review_scope": "E W1 local owner review complete; W2/W3/W4 open",
+      "reviewed_original_rows": 1109,
+      "supplemental_items": 81,
+      "resolved_findings": 47,
+      "next_source_line": null,
+      "next_module": null,
       "sub_batches": [
         {
           "id": "B06-01",
@@ -1488,8 +1488,89 @@
             "Audit/Phase_07/Semantic_Closure_B06_20.json",
             "Audit/Phase_07/Semantic_Closure_B06_20.md"
           ]
+        },
+        {
+          "id": "B06-21",
+          "status": "PASS",
+          "source_range": [
+            1294,
+            1327
+          ],
+          "procedures": "E44 heap replay and preliminary eligibility",
+          "original_rows": 35,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_21.json",
+            "Audit/Phase_07/Semantic_Closure_B06_21.md"
+          ]
+        },
+        {
+          "id": "B06-22",
+          "status": "PASS",
+          "source_range": [
+            1328,
+            1371
+          ],
+          "procedures": "E44 ownership filters, E51",
+          "original_rows": 45,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_22.json",
+            "Audit/Phase_07/Semantic_Closure_B06_22.md"
+          ]
+        },
+        {
+          "id": "B06-23",
+          "status": "PASS",
+          "source_range": [
+            1372,
+            1456
+          ],
+          "procedures": "E44 winner, family, number and reset",
+          "original_rows": 59,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_23.json",
+            "Audit/Phase_07/Semantic_Closure_B06_23.md"
+          ]
+        },
+        {
+          "id": "B06-24",
+          "status": "PASS",
+          "source_range": [
+            1457,
+            1494
+          ],
+          "procedures": "E44 completion, E52",
+          "original_rows": 40,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_24.json",
+            "Audit/Phase_07/Semantic_Closure_B06_24.md"
+          ]
+        },
+        {
+          "id": "B06-25",
+          "status": "PASS",
+          "source_range": [
+            1495,
+            1539
+          ],
+          "procedures": "E53–E54",
+          "original_rows": 19,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B06_25.json",
+            "Audit/Phase_07/Semantic_Closure_B06_25.md"
+          ]
         }
-      ]
+      ],
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B06_Completion.json"
     },
     {
       "id": "B07",
@@ -1647,5 +1728,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B06 E Zone continue E44 _compute_reconciliation outer heap loop from pinned engine/pipeline/e_zone_detector.py line 1294; E44 not complete; W2/W3/W4 open."
+  "next_action": "B07 Lifecycle and StopAll W1 local owner review from pinned engine/pipeline/lifecycle_engine.py line 1; W2/W3/W4 open."
 }

@@ -470,3 +470,27 @@ W1 cumulative 6717/11504. Next B06 E44, line 1132; W2/W3/W4 open.
 [Local review](Semantic_Closure_B06_20.md) and [site evidence](Semantic_Closure_B06_20.json): 66 original rows, 4 supplemental items, 3 resolved local clarifications; local partition PASS. E 911/1109. E44 outer procedure INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 6861/11504. Next B06 E44 heap loop, line 1294; W2/W3/W4 open.
+
+## Checkpoint 93 — Heap replay, reopen and initial Order eligibility
+
+[Local review](Semantic_Closure_B06_21.md) and [site evidence](Semantic_Closure_B06_21.json): 35 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. E 946/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 94 — Active-owner suppression and ownership priority
+
+[Local review](Semantic_Closure_B06_22.md) and [site evidence](Semantic_Closure_B06_22.json): 45 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. E 991/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 95 — Winner selection, family/number and active-state commit
+
+[Local review](Semantic_Closure_B06_23.md) and [site evidence](Semantic_Closure_B06_23.json): 59 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. E 1050/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 96 — Regenerated descendants, lineage and StopAll projection
+
+[Local review](Semantic_Closure_B06_24.md) and [site evidence](Semantic_Closure_B06_24.json): 40 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. E 1090/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 97 — Detector orchestration and public wrapper
+
+[Local review](Semantic_Closure_B06_25.md) and [site evidence](Semantic_Closure_B06_25.json): 19 original rows, 2 supplemental items, 2 resolved local clarifications; local partition PASS. E 1109/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## B06 local completion
+
+[Completion evidence](Semantic_Closure_B06_Completion.json): 1109/1109 original rows; W1 cumulative 7059/11504. E W1 PASS; W2/W3/W4 open. Next B07 engine/pipeline/lifecycle_engine.py line 1. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
