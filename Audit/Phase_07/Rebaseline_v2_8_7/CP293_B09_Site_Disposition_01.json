@@ -1,0 +1,3864 @@
+{
+  "checkpoint": 293,
+  "batch": "B09",
+  "part": "01-site-disposition",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "3b398220ce30c595cd69c83dc8fd18d746a827de",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "status": "PASS_SCOPED_SITE_RECONCILIATION",
+  "method": "After current source-first grouped review, compare each mapped W1 site with its historical site-specific interpretation using exact reverse node crosswalk and relocated source span. Retain the historical interpretation as continuity evidence, with current group contract as controlling semantics; cross-group span links preserve full body context. Newly inserted closed-regime constructor reviewed directly. No runtime dispatch or equivalence claim.",
+  "counts": {
+    "rows": 137,
+    "historical": 136,
+    "new": 1,
+    "multiple_contracts": 4
+  },
+  "historical_evidence_blobs": {
+    "Audit/Phase_07/Semantic_Closure_B09_05.json": "3f750ed54de3faedd4e8613904bfa845dcdb5f4f",
+    "Audit/Phase_07/Semantic_Closure_B09_06.json": "4c70dd2bb46bc0a896d08ca4ccf5edc5f6d30147",
+    "Audit/Phase_07/Semantic_Closure_B09_07.json": "1a26af5a7ea7ac6686784f0a014ae3594ea291b8",
+    "Audit/Phase_07/Semantic_Closure_B09_08.json": "175f1bd11e345a1bda3058015b89e16e2c4aee6b",
+    "Audit/Phase_07/Semantic_Closure_B09_09.json": "79cde957b0cf142e39cecf1551e6ff91209bcd88",
+    "Audit/Phase_07/Semantic_Closure_B09_10.json": "793b2a5364a3aed414fbf93144a3f9bbddece18e",
+    "Audit/Phase_07/Semantic_Closure_B09_11.json": "c59d0211f3246f0e4d98e54911050bf7036f41b8"
+  },
+  "rows": [
+    {
+      "category": "branches",
+      "row": 12,
+      "node": 465,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Lower output list empty only for null tail, otherwise contains original tail reference.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        146,
+        21,
+        146,
+        65
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 465,
+        "source_span": [
+          146,
+          21,
+          146,
+          65
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 13,
+      "node": 477,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Main output list empty only for null tail, otherwise contains original tail reference.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        148,
+        14,
+        148,
+        54
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 477,
+        "source_span": [
+          148,
+          14,
+          148,
+          54
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 14,
+      "node": 484,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02",
+        "B293-A03",
+        "B293-A04",
+        "B293-A05",
+        "B293-A06",
+        "B293-A07"
+      ],
+      "interpretation": "Traverse supplied rows in encounter order; no sorting.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        149,
+        4,
+        183,
+        36
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 484,
+        "source_span": [
+          149,
+          4,
+          183,
+          36
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 15,
+      "node": 522,
+      "contract": "B293-A03",
+      "related_contracts": [
+        "B293-A03",
+        "B293-A04"
+      ],
+      "interpretation": "New lower bucket when absent or timestamp differs; compare only current bucket, not global map.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        155,
+        8,
+        167,
+        43
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 522,
+        "source_span": [
+          155,
+          8,
+          167,
+          43
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 16,
+      "node": 523,
+      "contract": "B293-A03",
+      "related_contracts": [
+        "B293-A03"
+      ],
+      "interpretation": "New lower bucket when absent or timestamp differs; compare only current bucket, not global map.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        155,
+        11,
+        155,
+        72
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 523,
+        "source_span": [
+          155,
+          11,
+          155,
+          72
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 17,
+      "node": 575,
+      "contract": "B293-A05",
+      "related_contracts": [
+        "B293-A05"
+      ],
+      "interpretation": "Lower-only skips all main work for this row.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        168,
+        8,
+        169,
+        20
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 575,
+        "source_span": [
+          168,
+          8,
+          169,
+          20
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 18,
+      "node": 580,
+      "contract": "B293-A05",
+      "related_contracts": [
+        "B293-A05"
+      ],
+      "interpretation": "TF1 uses timestamp directly; otherwise integer floor division then multiply by timeframe.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        170,
+        22,
+        170,
+        89
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 580,
+        "source_span": [
+          170,
+          22,
+          170,
+          89
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 19,
+      "node": 590,
+      "contract": "B293-A06",
+      "related_contracts": [
+        "B293-A06",
+        "B293-A07"
+      ],
+      "interpretation": "New main bucket when absent or aligned key differs; no global consolidation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        171,
+        8,
+        183,
+        36
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 590,
+        "source_span": [
+          171,
+          8,
+          183,
+          36
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 20,
+      "node": 591,
+      "contract": "B293-A06",
+      "related_contracts": [
+        "B293-A06"
+      ],
+      "interpretation": "New main bucket when absent or aligned key differs; no global consolidation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        171,
+        11,
+        171,
+        60
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 591,
+        "source_span": [
+          171,
+          11,
+          171,
+          60
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 21,
+      "node": 693,
+      "contract": "B293-A09",
+      "related_contracts": [
+        "B293-A09"
+      ],
+      "interpretation": "Try existing cache subscription.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        195,
+        8,
+        200,
+        29
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 693,
+        "source_span": [
+          195,
+          8,
+          200,
+          29
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 22,
+      "node": 698,
+      "contract": "B293-A09",
+      "related_contracts": [
+        "B293-A09"
+      ],
+      "interpretation": "Only KeyError from cache lookup triggers normalization.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        197,
+        8,
+        200,
+        29
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 698,
+        "source_span": [
+          197,
+          8,
+          200,
+          29
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 23,
+      "node": 747,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        217,
+        8,
+        218,
+        92
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 747,
+        "source_span": [
+          217,
+          8,
+          218,
+          92
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 24,
+      "node": 748,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        217,
+        11,
+        217,
+        54
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 748,
+        "source_span": [
+          217,
+          11,
+          217,
+          54
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 25,
+      "node": 778,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "TF1 main list aliases lower list; otherwise fresh separate list.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        221,
+        40,
+        221,
+        85
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 778,
+        "source_span": [
+          221,
+          40,
+          221,
+          85
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 26,
+      "node": 811,
+      "contract": "B293-A12",
+      "related_contracts": [
+        "B293-A12"
+      ],
+      "interpretation": "Enter staged append context and return yielded delta after normal exit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        226,
+        8,
+        227,
+        24
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 811,
+        "source_span": [
+          226,
+          8,
+          227,
+          24
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 27,
+      "node": 840,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Falsy/empty rows take unchanged path.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        234,
+        8,
+        236,
+        18
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 840,
+        "source_span": [
+          234,
+          8,
+          236,
+          18
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 28,
+      "node": 844,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Yield delta with current lengths and return; no writes.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        235,
+        12,
+        235,
+        55
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 844,
+        "source_span": [
+          235,
+          12,
+          235,
+          55
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 29,
+      "node": 875,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        242,
+        8,
+        244,
+        56
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 875,
+        "source_span": [
+          242,
+          8,
+          244,
+          56
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 30,
+      "node": 876,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        242,
+        11,
+        242,
+        67
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 876,
+        "source_span": [
+          242,
+          11,
+          242,
+          67
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 31,
+      "node": 901,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        246,
+        8,
+        248,
+        52
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 901,
+        "source_span": [
+          246,
+          8,
+          248,
+          52
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 32,
+      "node": 902,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        246,
+        11,
+        246,
+        98
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 902,
+        "source_span": [
+          246,
+          11,
+          246,
+          98
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 33,
+      "node": 928,
+      "contract": "B293-A15",
+      "related_contracts": [
+        "B293-A15"
+      ],
+      "interpretation": "For shared main set dirty main equal dirty lower.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        250,
+        8,
+        251,
+        37
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 928,
+        "source_span": [
+          250,
+          8,
+          251,
+          37
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 34,
+      "node": 951,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Iterate incoming rows in original order.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        257,
+        12,
+        264,
+        25
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 951,
+        "source_span": [
+          257,
+          12,
+          264,
+          25
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 35,
+      "node": 961,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Reject int-converted timestamp unequal to original value OR nonpositive; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        259,
+        16,
+        260,
+        81
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 961,
+        "source_span": [
+          259,
+          16,
+          260,
+          81
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 36,
+      "node": 962,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Reject int-converted timestamp unequal to original value OR nonpositive; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        259,
+        19,
+        259,
+        51
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 962,
+        "source_span": [
+          259,
+          19,
+          259,
+          51
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 37,
+      "node": 975,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "When previous timestamp non-null, reject strict decrease; equality allowed.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        261,
+        16,
+        262,
+        89
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 975,
+        "source_span": [
+          261,
+          16,
+          262,
+          89
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 38,
+      "node": 976,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "When previous timestamp non-null, reject strict decrease; equality allowed.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        261,
+        19,
+        261,
+        69
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 976,
+        "source_span": [
+          261,
+          19,
+          261,
+          69
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 39,
+      "node": 991,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Update captured previous time before yielding original row.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        264,
+        16,
+        264,
+        25
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 991,
+        "source_span": [
+          264,
+          16,
+          264,
+          25
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 40,
+      "node": 1003,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Persistent cache membership takes priority.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        268,
+        12,
+        269,
+        40
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1003,
+        "source_span": [
+          268,
+          12,
+          269,
+          40
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 41,
+      "node": 1013,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Only locally absent keys normalize.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        270,
+        12,
+        271,
+        51
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1013,
+        "source_span": [
+          270,
+          12,
+          271,
+          51
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 42,
+      "node": 1055,
+      "contract": "B293-A19",
+      "related_contracts": [
+        "B293-A19"
+      ],
+      "interpretation": "Save main suffix only if lists not shared; otherwise empty list.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        279,
+        26,
+        279,
+        83
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1055,
+        "source_span": [
+          279,
+          26,
+          279,
+          83
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 43,
+      "node": 1081,
+      "contract": "B293-A19",
+      "related_contracts": [
+        "B293-A19"
+      ],
+      "interpretation": "Replace main suffix only for nonshared lists.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        283,
+        8,
+        284,
+        49
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1081,
+        "source_span": [
+          283,
+          8,
+          284,
+          49
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 44,
+      "node": 1095,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Try covers delta evaluation/yield after publication, not earlier mutations.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        286,
+        8,
+        295,
+        17
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1095,
+        "source_span": [
+          286,
+          8,
+          295,
+          17
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 45,
+      "node": 1097,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Yield freshly computed delta from dirty boundaries; body error enters rollback.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        287,
+        12,
+        287,
+        55
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1097,
+        "source_span": [
+          287,
+          12,
+          287,
+          55
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 46,
+      "node": 1103,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Catch BaseException from try; restore prior state and rethrow.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        288,
+        8,
+        295,
+        17
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1103,
+        "source_span": [
+          288,
+          8,
+          295,
+          17
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 47,
+      "node": 1112,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Restore main suffix only when not shared.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        290,
+        12,
+        291,
+        64
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1112,
+        "source_span": [
+          290,
+          12,
+          291,
+          64
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 48,
+      "node": 1126,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Delete each key added by this append; restore time and suffixes first.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        293,
+        12,
+        294,
+        39
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1126,
+        "source_span": [
+          293,
+          12,
+          294,
+          39
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 49,
+      "node": 1199,
+      "contract": "B293-A22",
+      "related_contracts": [
+        "B293-A22",
+        "B293-A23"
+      ],
+      "interpretation": "Enumerate supplied bucket order from start_index.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        314,
+        4,
+        332,
+        10
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1199,
+        "source_span": [
+          314,
+          4,
+          332,
+          10
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 50,
+      "node": 1300,
+      "contract": "B293-A25",
+      "related_contracts": [
+        "B293-A25"
+      ],
+      "interpretation": "Use supplied dirty index only when existing index non-null; otherwise rebuild from zero.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        348,
+        16,
+        348,
+        55
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1295,
+        "source_span": [
+          347,
+          16,
+          347,
+          55
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 51,
+      "node": 1320,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Create fresh index if absent or candle length strictly greater than capacity; equality reuses.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        350,
+        8,
+        351,
+        77
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1315,
+        "source_span": [
+          349,
+          8,
+          350,
+          77
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 52,
+      "node": 1321,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Create fresh index if absent or candle length strictly greater than capacity; equality reuses.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        350,
+        11,
+        350,
+        53
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1316,
+        "source_span": [
+          349,
+          11,
+          349,
+          53
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "branches",
+      "row": 53,
+      "node": 1373,
+      "contract": "B293-A28",
+      "related_contracts": [
+        "B293-A28"
+      ],
+      "interpretation": "At timeframe one alias main candle list and index to lower.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        359,
+        8,
+        364,
+        14
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1368,
+        "source_span": [
+          358,
+          8,
+          363,
+          14
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 8,
+      "node": 466,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Lower output list empty only for null tail, otherwise contains original tail reference.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        146,
+        27,
+        146,
+        46
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 466,
+        "source_span": [
+          146,
+          27,
+          146,
+          46
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 9,
+      "node": 478,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Main output list empty only for null tail, otherwise contains original tail reference.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        148,
+        20,
+        148,
+        37
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 478,
+        "source_span": [
+          148,
+          20,
+          148,
+          37
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 10,
+      "node": 524,
+      "contract": "B293-A03",
+      "related_contracts": [
+        "B293-A03"
+      ],
+      "interpretation": "New lower bucket when absent or timestamp differs; compare only current bucket, not global map.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        155,
+        11,
+        155,
+        33
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 524,
+        "source_span": [
+          155,
+          11,
+          155,
+          33
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 11,
+      "node": 527,
+      "contract": "B293-A03",
+      "related_contracts": [
+        "B293-A03"
+      ],
+      "interpretation": "New lower bucket when absent or timestamp differs; compare only current bucket, not global map.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        155,
+        37,
+        155,
+        72
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 527,
+        "source_span": [
+          155,
+          37,
+          155,
+          72
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 12,
+      "node": 581,
+      "contract": "B293-A05",
+      "related_contracts": [
+        "B293-A05"
+      ],
+      "interpretation": "TF1 uses timestamp directly; otherwise integer floor division then multiply by timeframe.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        170,
+        35,
+        170,
+        49
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 581,
+        "source_span": [
+          170,
+          35,
+          170,
+          49
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 13,
+      "node": 592,
+      "contract": "B293-A06",
+      "related_contracts": [
+        "B293-A06"
+      ],
+      "interpretation": "New main bucket when absent or aligned key differs; no global consolidation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        171,
+        11,
+        171,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 592,
+        "source_span": [
+          171,
+          11,
+          171,
+          26
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 14,
+      "node": 595,
+      "contract": "B293-A06",
+      "related_contracts": [
+        "B293-A06"
+      ],
+      "interpretation": "New main bucket when absent or aligned key differs; no global consolidation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        171,
+        30,
+        171,
+        60
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 595,
+        "source_span": [
+          171,
+          30,
+          171,
+          60
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 15,
+      "node": 749,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        217,
+        11,
+        217,
+        37
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 749,
+        "source_span": [
+          217,
+          11,
+          217,
+          37
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 16,
+      "node": 754,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        217,
+        41,
+        217,
+        54
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 754,
+        "source_span": [
+          217,
+          41,
+          217,
+          54
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 17,
+      "node": 779,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "TF1 main list aliases lower list; otherwise fresh separate list.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        221,
+        63,
+        221,
+        77
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 779,
+        "source_span": [
+          221,
+          63,
+          221,
+          77
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 18,
+      "node": 879,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        242,
+        35,
+        242,
+        67
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 879,
+        "source_span": [
+          242,
+          35,
+          242,
+          67
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 19,
+      "node": 897,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Shared main iff timeframe equals one.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        245,
+        22,
+        245,
+        41
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 897,
+        "source_span": [
+          245,
+          22,
+          245,
+          41
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 20,
+      "node": 907,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        246,
+        53,
+        246,
+        98
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 907,
+        "source_span": [
+          246,
+          53,
+          246,
+          98
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 21,
+      "node": 963,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Reject int-converted timestamp unequal to original value OR nonpositive; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        259,
+        19,
+        259,
+        38
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 963,
+        "source_span": [
+          259,
+          19,
+          259,
+          38
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 22,
+      "node": 968,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Reject int-converted timestamp unequal to original value OR nonpositive; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        259,
+        42,
+        259,
+        51
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 968,
+        "source_span": [
+          259,
+          42,
+          259,
+          51
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 23,
+      "node": 977,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "When previous timestamp non-null, reject strict decrease; equality allowed.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        261,
+        19,
+        261,
+        44
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 977,
+        "source_span": [
+          261,
+          19,
+          261,
+          44
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 24,
+      "node": 980,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "When previous timestamp non-null, reject strict decrease; equality allowed.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        261,
+        49,
+        261,
+        69
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 980,
+        "source_span": [
+          261,
+          49,
+          261,
+          69
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 25,
+      "node": 1004,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Persistent cache membership takes priority.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        268,
+        15,
+        268,
+        34
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1004,
+        "source_span": [
+          268,
+          15,
+          268,
+          34
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 26,
+      "node": 1014,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Only locally absent keys normalize.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        270,
+        15,
+        270,
+        36
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1014,
+        "source_span": [
+          270,
+          15,
+          270,
+          36
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 27,
+      "node": 1301,
+      "contract": "B293-A25",
+      "related_contracts": [
+        "B293-A25"
+      ],
+      "interpretation": "Use supplied dirty index only when existing index non-null; otherwise rebuild from zero.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        348,
+        31,
+        348,
+        48
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1296,
+        "source_span": [
+          347,
+          31,
+          347,
+          48
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 28,
+      "node": 1322,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Create fresh index if absent or candle length strictly greater than capacity; equality reuses.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        350,
+        11,
+        350,
+        24
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1317,
+        "source_span": [
+          349,
+          11,
+          349,
+          24
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 29,
+      "node": 1325,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Create fresh index if absent or candle length strictly greater than capacity; equality reuses.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        350,
+        28,
+        350,
+        53
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1320,
+        "source_span": [
+          349,
+          28,
+          349,
+          53
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "comparisons",
+      "row": 30,
+      "node": 1374,
+      "contract": "B293-A28",
+      "related_contracts": [
+        "B293-A28"
+      ],
+      "interpretation": "At timeframe one alias main candle list and index to lower.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        359,
+        11,
+        359,
+        25
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1369,
+        "source_span": [
+          358,
+          11,
+          358,
+          25
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 6,
+      "node": 448,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Optional tail dict type union, declaration only.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        142,
+        20,
+        142,
+        31
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 448,
+        "source_span": [
+          142,
+          20,
+          142,
+          31
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 7,
+      "node": 452,
+      "contract": "B293-A01",
+      "related_contracts": [
+        "B293-A01"
+      ],
+      "interpretation": "Optional tail dict type union, declaration only.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        142,
+        51,
+        142,
+        62
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 452,
+        "source_span": [
+          142,
+          51,
+          142,
+          62
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 8,
+      "node": 585,
+      "contract": "B293-A05",
+      "related_contracts": [
+        "B293-A05"
+      ],
+      "interpretation": "TF1 uses timestamp directly; otherwise integer floor division then multiply by timeframe.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        170,
+        55,
+        170,
+        89
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 585,
+        "source_span": [
+          170,
+          55,
+          170,
+          89
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 9,
+      "node": 586,
+      "contract": "B293-A05",
+      "related_contracts": [
+        "B293-A05"
+      ],
+      "interpretation": "TF1 uses timestamp directly; otherwise integer floor division then multiply by timeframe.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        170,
+        55,
+        170,
+        77
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 586,
+        "source_span": [
+          170,
+          55,
+          170,
+          77
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 10,
+      "node": 788,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Optional integer timestamp annotation, not arithmetic.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        222,
+        28,
+        222,
+        38
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 788,
+        "source_span": [
+          222,
+          28,
+          222,
+          38
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 11,
+      "node": 841,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Falsy/empty rows take unchanged path.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        234,
+        11,
+        234,
+        19
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 841,
+        "source_span": [
+          234,
+          11,
+          234,
+          19
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 12,
+      "node": 862,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Floor divide first time by stored timeframe then multiply for first main key.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        239,
+        23,
+        239,
+        68
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 862,
+        "source_span": [
+          239,
+          23,
+          239,
+          68
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 13,
+      "node": 863,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Floor divide first time by stored timeframe then multiply for first main key.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        239,
+        23,
+        239,
+        51
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 863,
+        "source_span": [
+          239,
+          23,
+          239,
+          51
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 14,
+      "node": 883,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Decrease dirty lower index by one.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        243,
+        12,
+        243,
+        29
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 883,
+        "source_span": [
+          243,
+          12,
+          243,
+          29
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 15,
+      "node": 893,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Copy last lower dictionary, negative-one indexing.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        244,
+        46,
+        244,
+        48
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 893,
+        "source_span": [
+          244,
+          46,
+          244,
+          48
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 16,
+      "node": 903,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        246,
+        11,
+        246,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 903,
+        "source_span": [
+          246,
+          11,
+          246,
+          26
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 17,
+      "node": 912,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        246,
+        71,
+        246,
+        73
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 912,
+        "source_span": [
+          246,
+          71,
+          246,
+          73
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 18,
+      "node": 916,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Decrease dirty main index by one.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        247,
+        12,
+        247,
+        27
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 916,
+        "source_span": [
+          247,
+          12,
+          247,
+          27
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 19,
+      "node": 926,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Copy last main dictionary via negative-one index.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        248,
+        42,
+        248,
+        44
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 926,
+        "source_span": [
+          248,
+          42,
+          248,
+          44
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 20,
+      "node": 1056,
+      "contract": "B293-A19",
+      "related_contracts": [
+        "B293-A19"
+      ],
+      "interpretation": "Save main suffix only if lists not shared; otherwise empty list.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        279,
+        60,
+        279,
+        75
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1056,
+        "source_span": [
+          279,
+          60,
+          279,
+          75
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 21,
+      "node": 1082,
+      "contract": "B293-A19",
+      "related_contracts": [
+        "B293-A19"
+      ],
+      "interpretation": "Replace main suffix only for nonshared lists.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        283,
+        11,
+        283,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1082,
+        "source_span": [
+          283,
+          11,
+          283,
+          26
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 22,
+      "node": 1113,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Restore main suffix only when not shared.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        290,
+        15,
+        290,
+        30
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1113,
+        "source_span": [
+          290,
+          15,
+          290,
+          30
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 23,
+      "node": 1150,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        19,
+        302,
+        47
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1150,
+        "source_span": [
+          302,
+          19,
+          302,
+          47
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "arithmetic",
+      "row": 24,
+      "node": 1159,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        57,
+        302,
+        83
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1159,
+        "source_span": [
+          302,
+          57,
+          302,
+          83
+        ]
+      },
+      "conditional_boundary": null
+    },
+    {
+      "category": "calls",
+      "row": 36,
+      "node": 489,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02"
+      ],
+      "interpretation": "Convert raw timestamp to integer; batch does not check numeric equality/positivity.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        150,
+        20,
+        150,
+        36
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 489,
+        "source_span": [
+          150,
+          20,
+          150,
+          36
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 37,
+      "node": 496,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02"
+      ],
+      "interpretation": "Normalize Open via supplied callback first.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        151,
+        12,
+        151,
+        39
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 496,
+        "source_span": [
+          151,
+          12,
+          151,
+          39
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 38,
+      "node": 503,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02"
+      ],
+      "interpretation": "Normalize High second.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        152,
+        15,
+        152,
+        42
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 503,
+        "source_span": [
+          152,
+          15,
+          152,
+          42
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 39,
+      "node": 510,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02"
+      ],
+      "interpretation": "Normalize Low third.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        153,
+        14,
+        153,
+        40
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 510,
+        "source_span": [
+          153,
+          14,
+          153,
+          40
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 40,
+      "node": 517,
+      "contract": "B293-A02",
+      "related_contracts": [
+        "B293-A02"
+      ],
+      "interpretation": "Normalize Close fourth.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        154,
+        16,
+        154,
+        44
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 517,
+        "source_span": [
+          154,
+          16,
+          154,
+          44
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 41,
+      "node": 546,
+      "contract": "B293-A03",
+      "related_contracts": [
+        "B293-A03"
+      ],
+      "interpretation": "Append new lower dict in traversal order.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        163,
+        12,
+        163,
+        49
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 546,
+        "source_span": [
+          163,
+          12,
+          163,
+          49
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 42,
+      "node": 554,
+      "contract": "B293-A04",
+      "related_contracts": [
+        "B293-A04"
+      ],
+      "interpretation": "Merge same-time High via max(previous,new), first tie.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        165,
+        37,
+        165,
+        70
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 554,
+        "source_span": [
+          165,
+          37,
+          165,
+          70
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 43,
+      "node": 564,
+      "contract": "B293-A04",
+      "related_contracts": [
+        "B293-A04"
+      ],
+      "interpretation": "Merge same-time Low via min(previous,new), first tie.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        166,
+        36,
+        166,
+        67
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 564,
+        "source_span": [
+          166,
+          36,
+          166,
+          67
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 44,
+      "node": 614,
+      "contract": "B293-A06",
+      "related_contracts": [
+        "B293-A06"
+      ],
+      "interpretation": "Append new main dict.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        179,
+        12,
+        179,
+        35
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 614,
+        "source_span": [
+          179,
+          12,
+          179,
+          35
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 45,
+      "node": 622,
+      "contract": "B293-A07",
+      "related_contracts": [
+        "B293-A07"
+      ],
+      "interpretation": "Merge main High via max(previous,new), first tie.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        181,
+        30,
+        181,
+        56
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 622,
+        "source_span": [
+          181,
+          30,
+          181,
+          56
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 46,
+      "node": 632,
+      "contract": "B293-A07",
+      "related_contracts": [
+        "B293-A07"
+      ],
+      "interpretation": "Merge main Low via min(previous,new), first tie.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        182,
+        29,
+        182,
+        53
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_05.json",
+        "original_id": 632,
+        "source_span": [
+          182,
+          29,
+          182,
+          53
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 47,
+      "node": 689,
+      "contract": "B293-A09",
+      "related_contracts": [
+        "B293-A09"
+      ],
+      "interpretation": "Key uses exact type and value equality; first representation retained.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        194,
+        15,
+        194,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 689,
+        "source_span": [
+          194,
+          15,
+          194,
+          26
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 48,
+      "node": 702,
+      "contract": "B293-A09",
+      "related_contracts": [
+        "B293-A09"
+      ],
+      "interpretation": "Normalize miss via bound as_decimal; cache result and return; conversion failure propagates.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        198,
+        25,
+        198,
+        42
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 702,
+        "source_span": [
+          198,
+          25,
+          198,
+          42
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 49,
+      "node": 714,
+      "contract": "B293-A10",
+      "related_contracts": [
+        "B293-A10"
+      ],
+      "interpretation": "Delegate same input rows/timeframe and local cached callback, forward lower_only.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        202,
+        11,
+        202,
+        92
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 714,
+        "source_span": [
+          202,
+          11,
+          202,
+          92
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 50,
+      "node": 734,
+      "contract": "B293-A10",
+      "related_contracts": [
+        "B293-A10"
+      ],
+      "interpretation": "Frozen slotted BucketAppend record; dirty indexes and exclusive settled boundaries.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        205,
+        1,
+        205,
+        35
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_06.json",
+        "original_id": 734,
+        "source_span": [
+          205,
+          1,
+          205,
+          35
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 51,
+      "node": 750,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        217,
+        11,
+        217,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 750,
+        "source_span": [
+          217,
+          11,
+          217,
+          26
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 52,
+      "node": 758,
+      "contract": "B293-A11",
+      "related_contracts": [
+        "B293-A11"
+      ],
+      "interpretation": "Raise ValueError on invalid timeframe.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        218,
+        18,
+        218,
+        92
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 758,
+        "source_span": [
+          218,
+          18,
+          218,
+          92
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 53,
+      "node": 812,
+      "contract": "B293-A12",
+      "related_contracts": [
+        "B293-A12"
+      ],
+      "interpretation": "Enter staged append context and return yielded delta after normal exit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        226,
+        13,
+        226,
+        36
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 812,
+        "source_span": [
+          226,
+          13,
+          226,
+          36
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 54,
+      "node": 830,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Initialize lower dirty index to current length.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        232,
+        23,
+        232,
+        47
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 830,
+        "source_span": [
+          232,
+          23,
+          232,
+          47
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 55,
+      "node": 836,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Initialize main dirty index to current length.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        233,
+        21,
+        233,
+        43
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 836,
+        "source_span": [
+          233,
+          21,
+          233,
+          43
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 56,
+      "node": 845,
+      "contract": "B293-A13",
+      "related_contracts": [
+        "B293-A13"
+      ],
+      "interpretation": "Yield delta with current lengths and return; no writes.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        235,
+        18,
+        235,
+        55
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 845,
+        "source_span": [
+          235,
+          18,
+          235,
+          55
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 57,
+      "node": 853,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Convert first raw timestamp before full validation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        238,
+        21,
+        238,
+        41
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 853,
+        "source_span": [
+          238,
+          21,
+          238,
+          41
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 58,
+      "node": 888,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Copy last lower dictionary, negative-one indexing.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        244,
+        26,
+        244,
+        56
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 888,
+        "source_span": [
+          244,
+          26,
+          244,
+          56
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 59,
+      "node": 921,
+      "contract": "B293-A14",
+      "related_contracts": [
+        "B293-A14"
+      ],
+      "interpretation": "Copy last main dictionary via negative-one index.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        248,
+        24,
+        248,
+        52
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_07.json",
+        "original_id": 921,
+        "source_span": [
+          248,
+          24,
+          248,
+          52
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 60,
+      "node": 956,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Convert timestamp with int.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        258,
+        23,
+        258,
+        39
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 956,
+        "source_span": [
+          258,
+          23,
+          258,
+          39
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 61,
+      "node": 972,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Raise ValueError for invalid time.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        260,
+        26,
+        260,
+        81
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 972,
+        "source_span": [
+          260,
+          26,
+          260,
+          81
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 62,
+      "node": 984,
+      "contract": "B293-A16",
+      "related_contracts": [
+        "B293-A16"
+      ],
+      "interpretation": "Raise ValueError on chronology decrease.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        262,
+        26,
+        262,
+        89
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 984,
+        "source_span": [
+          262,
+          26,
+          262,
+          89
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 63,
+      "node": 999,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Construct exact type/value cache key.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        267,
+        19,
+        267,
+        30
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 999,
+        "source_span": [
+          267,
+          19,
+          267,
+          30
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 64,
+      "node": 1021,
+      "contract": "B293-A17",
+      "related_contracts": [
+        "B293-A17"
+      ],
+      "interpretation": "Normalize with as_decimal, put into local additions; existing persistent cache untouched until commit.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        271,
+        34,
+        271,
+        51
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1021,
+        "source_span": [
+          271,
+          34,
+          271,
+          51
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 65,
+      "node": 1033,
+      "contract": "B293-A18",
+      "related_contracts": [
+        "B293-A18"
+      ],
+      "interpretation": "Aggregate with checked-row generator and local cached decimal; supplied copied tails; lower_only for shared main.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        274,
+        24,
+        277,
+        9
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1033,
+        "source_span": [
+          274,
+          24,
+          277,
+          9
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 66,
+      "node": 1035,
+      "contract": "B293-A18",
+      "related_contracts": [
+        "B293-A18"
+      ],
+      "interpretation": "Construct checked-row iterator; validation occurs during consumption.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        275,
+        12,
+        275,
+        26
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_08.json",
+        "original_id": 1035,
+        "source_span": [
+          275,
+          12,
+          275,
+          26
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 67,
+      "node": 1069,
+      "contract": "B293-A19",
+      "related_contracts": [
+        "B293-A19"
+      ],
+      "interpretation": "Publish local new price entries to persistent cache before suffix replacement.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        281,
+        8,
+        281,
+        39
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1069,
+        "source_span": [
+          281,
+          8,
+          281,
+          39
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 68,
+      "node": 1098,
+      "contract": "B293-A20",
+      "related_contracts": [
+        "B293-A20"
+      ],
+      "interpretation": "Yield freshly computed delta from dirty boundaries; body error enters rollback.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        287,
+        18,
+        287,
+        55
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1098,
+        "source_span": [
+          287,
+          18,
+          287,
+          55
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 69,
+      "node": 1143,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Construct BucketAppend with dirty indices and settled counts.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        300,
+        15,
+        303,
+        9
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1143,
+        "source_span": [
+          300,
+          15,
+          303,
+          9
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 70,
+      "node": 1147,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        12,
+        302,
+        48
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1147,
+        "source_span": [
+          302,
+          12,
+          302,
+          48
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 71,
+      "node": 1151,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        19,
+        302,
+        43
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1151,
+        "source_span": [
+          302,
+          19,
+          302,
+          43
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 72,
+      "node": 1156,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        50,
+        302,
+        84
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1156,
+        "source_span": [
+          302,
+          50,
+          302,
+          84
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 73,
+      "node": 1160,
+      "contract": "B293-A21",
+      "related_contracts": [
+        "B293-A21"
+      ],
+      "interpretation": "Each settled boundary=max(0,length−1), independent lower/main; exclusive, no missing-slot extrapolation.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        302,
+        57,
+        302,
+        79
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_09.json",
+        "original_id": 1160,
+        "source_span": [
+          302,
+          57,
+          302,
+          79
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 74,
+      "node": 1203,
+      "contract": "B293-A22",
+      "related_contracts": [
+        "B293-A22"
+      ],
+      "interpretation": "Enumerate supplied bucket order from start_index.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        314,
+        23,
+        314,
+        60
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1203,
+        "source_span": [
+          314,
+          23,
+          314,
+          60
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 75,
+      "node": 1210,
+      "contract": "B293-A22",
+      "related_contracts": [
+        "B293-A22"
+      ],
+      "interpretation": "Convert timestamp via bound local_datetime.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        315,
+        16,
+        315,
+        35
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1210,
+        "source_span": [
+          315,
+          16,
+          315,
+          35
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 76,
+      "node": 1216,
+      "contract": "B293-A23",
+      "related_contracts": [
+        "B293-A23"
+      ],
+      "interpretation": "Construct engine Candle and append to list; original OHLC passed directly.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        316,
+        8,
+        332,
+        10
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1216,
+        "source_span": [
+          316,
+          8,
+          332,
+          10
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 77,
+      "node": 1218,
+      "contract": "B293-A23",
+      "related_contracts": [
+        "B293-A23"
+      ],
+      "interpretation": "Construct engine Candle and append to list; original OHLC passed directly.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        316,
+        15,
+        332,
+        9
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1218,
+        "source_span": [
+          316,
+          15,
+          332,
+          9
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 78,
+      "node": 1225,
+      "contract": "B293-A23",
+      "related_contracts": [
+        "B293-A23"
+      ],
+      "interpretation": "Format six wall-time components with fixed zero-padded display format.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        319,
+        25,
+        326,
+        13
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1225,
+        "source_span": [
+          319,
+          25,
+          326,
+          13
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 79,
+      "node": 1240,
+      "contract": "B293-A23",
+      "related_contracts": [
+        "B293-A23"
+      ],
+      "interpretation": "Call engine color classifier with original Open and Close.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        327,
+        16,
+        327,
+        53
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_10.json",
+        "original_id": 1240,
+        "source_span": [
+          327,
+          16,
+          327,
+          53
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 80,
+      "node": 1290,
+      "contract": "B293-A24",
+      "related_contracts": [
+        "B293-A24"
+      ],
+      "interpretation": "Construct a fresh per-view LiveClosedRegimes instance and store reference on the owning LiveMarketViews; initially empty published map.",
+      "disposition": "VERIFIED",
+      "source": [
+        344,
+        30,
+        344,
+        49
+      ],
+      "prior": null
+    },
+    {
+      "category": "calls",
+      "row": 81,
+      "node": 1311,
+      "contract": "B293-A25",
+      "related_contracts": [
+        "B293-A25"
+      ],
+      "interpretation": "Construct candle suffix from corresponding bucket slice with positional start index, then replace retained list suffix.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        349,
+        26,
+        349,
+        90
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1306,
+        "source_span": [
+          348,
+          26,
+          348,
+          90
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 82,
+      "node": 1326,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Create fresh index if absent or candle length strictly greater than capacity; equality reuses.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        350,
+        28,
+        350,
+        40
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1321,
+        "source_span": [
+          349,
+          28,
+          349,
+          40
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 83,
+      "node": 1332,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Construct LowerTimeframeIndex over retained candle list with retain_crossings true; no previous history transfer here.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        351,
+        19,
+        351,
+        77
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1327,
+        "source_span": [
+          350,
+          19,
+          350,
+          77
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 84,
+      "node": 1339,
+      "contract": "B293-A26",
+      "related_contracts": [
+        "B293-A26"
+      ],
+      "interpretation": "Otherwise refresh existing index suffix from computed first.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        352,
+        8,
+        352,
+        35
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1334,
+        "source_span": [
+          351,
+          8,
+          351,
+          35
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 85,
+      "node": 1357,
+      "contract": "B293-A27",
+      "related_contracts": [
+        "B293-A27"
+      ],
+      "interpretation": "Time lower update and assign returned index only after successful completion.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        356,
+        27,
+        358,
+        10
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1352,
+        "source_span": [
+          355,
+          27,
+          357,
+          10
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 86,
+      "node": 1362,
+      "contract": "B293-A27",
+      "related_contracts": [
+        "B293-A27"
+      ],
+      "interpretation": "Time lower update and assign returned index only after successful completion.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        356,
+        84,
+        358,
+        9
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1357,
+        "source_span": [
+          355,
+          84,
+          357,
+          9
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 87,
+      "node": 1391,
+      "contract": "B293-A28",
+      "related_contracts": [
+        "B293-A28"
+      ],
+      "interpretation": "Otherwise time and assign independent main update.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        362,
+        30,
+        364,
+        14
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1386,
+        "source_span": [
+          361,
+          30,
+          363,
+          14
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    },
+    {
+      "category": "calls",
+      "row": 88,
+      "node": 1396,
+      "contract": "B293-A28",
+      "related_contracts": [
+        "B293-A28"
+      ],
+      "interpretation": "Otherwise time and assign independent main update.",
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_CONTEXT",
+      "source": [
+        362,
+        91,
+        364,
+        13
+      ],
+      "prior": {
+        "path": "Audit/Phase_07/Semantic_Closure_B09_11.json",
+        "original_id": 1391,
+        "source_span": [
+          361,
+          91,
+          363,
+          13
+        ]
+      },
+      "conditional_boundary": "Native target reviewed where applicable; external provider behavior remains conditional."
+    }
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN"
+}
