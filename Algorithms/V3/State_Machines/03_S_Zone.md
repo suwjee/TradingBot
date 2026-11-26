@@ -37,7 +37,7 @@ Deadline = first physical Order confirmation else range end. Type3 and Type4 ind
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| SOR01 | ORDER_RACE | Opposite physical Order confirmed | Canonical Order stop; derive candidate timing from Order boundary vs A-stop main extreme; consider nested trend and pre-order exact event | BEFORE or AFTER | S12,S29,OA80 |
+| SOR01 | ORDER_RACE | Opposite physical Order confirmed | Canonical Order stop; derive candidate timing from Order boundary vs A-stop main extreme; consider nested trend and S31 returned pre-order event time (including native fallback) | BEFORE or AFTER | S12,S29,OA80 |
 | SOR02 | BEFORE | Pre-order source | Clip A-stop main lower interval from exact stop; compare full subsequent mains through Order First; stop-main wins tie; empty lower uses full stop main | PRE_RACE | S30 |
 | SOR03 | PRE_RACE | Both eligible crossings at the same lower position (or same main in fallback), neither hit, or no decision | Null | RETURN | S37,S39 |
 | SOR04 | PRE_RACE | Candidate wins but unqualified fallback | Discard preliminary candidate, use aligned after geometry | AFTER | S37,S39 |

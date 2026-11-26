@@ -211,3 +211,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 40 — Independent Type3 and Type4 decisions
 
 [Local review](Semantic_Closure_B04_03.md) and [site evidence](Semantic_Closure_B04_03.json): 80 original rows, 8 supplemental items, 5 resolved findings; local PASS. S 364/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 41 — Post-Order candidate and A ownership escapes
+
+[Local review](Semantic_Closure_B04_04.md) and [site evidence](Semantic_Closure_B04_04.json): 96 original rows, 7 supplemental items, 2 resolved findings; local PASS. S 460/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 42 — Pre-Order timing, candidate source and Blue qualification
+
+[Local review](Semantic_Closure_B04_05.md) and [site evidence](Semantic_Closure_B04_05.json): 116 original rows, 9 supplemental items, 4 resolved findings; local PASS. S 576/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

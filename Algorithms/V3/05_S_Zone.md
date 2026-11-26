@@ -111,7 +111,7 @@ Inputs A stop tuple, deadline. Aligned trend sorted rows confirmation strictly a
 Return SZone direction stored, color blue, formation_type type4, A ordinal/source index/time/price and stop tuple from parent inputs; all Order fields and both Reset fields null. Source and decision from type4 tuple; aligned reaction number unused. No price recalculation.
 
 ### S24 — _candidate_after_order
-First index integer. Start=max(detector start,min(lower_bound(main times,Order confirmation),First)). If anchor_idx non-null and integer>=start, return anchor index/main timestamp/normalized anchor_value (no upper-bound or null-value guard). Otherwise S13 inclusive start..First. Map containing confirmation main index; if containing<start, scan lower remainder [confirmation,containing main end); replace candidate whenever strict trend improvement OR equal price, assigning containing main index/time and lower price. This gives earlier containing main candle on equal candidate price; no pre-confirmation data.
+First index integer. Start=max(detector start,min(lower_bound(main times,Order confirmation),First)). If anchor_idx non-null and integer>=start, return anchor index/main timestamp/normalized anchor_value (no upper-bound or null-value guard). Otherwise S13 inclusive start..First. Map containing confirmation main index; if containing<start, scan lower remainder [confirmation,containing main end); replace candidate whenever strict trend improvement OR equal price, assigning containing main index/time and lower price. This gives earlier containing main candle on equal candidate price in the remainder branch. The anchor route tests only the clamped index lower bound, not its exact event time, and the min-with-First clamp can include a First main before the confirmation. The local helper does not universally prove absence of pre-confirmation data.
 
 ### S25 — _a_source_event_time
 Read A source main time and normalized price. First lower row in [source,source+timeframe) whose trend extreme equals price yields timestamp; else source main time.
@@ -120,16 +120,16 @@ Read A source main time and normalized price. First lower row in [source,source+
 Calculate source event via S25. Iterate windows in insertion order. Consider first with start<=event and (end null OR event<end). If zone.trigger_event_time exists and >start, return false immediately (independent). Else read both Blue source times, both stop main times and A source time with null defaults. Return false if window closed (end non-null), all five times non-null, start<Blue1 source, Blue1 stop<Blue2 source, A source==Blue2 stop, AND S27 reset-reset. Otherwise return true. No matching window => false. Does not continue to later overlapping window after exception. Trigger exception is evaluated before reset-reset exception.
 
 ### S27 — _a_pair_is_reset_reset
-Convert Blue ordinal attrs default 0 to integers then subtract one. If either outside Blue list return false. Both referenced kind strings (default empty) must equal reset.
+Convert both Blue ordinal attrs default 0 to integers then subtract one before either range guard. Test first range then second. Both referenced kind strings (default empty) must equal reset, checking first before second. Use the original supplied Blue list order, with no local validity/internal filter or identity check; caller ordinal alignment requires W2 verification.
 
 ### S28 — eligible_a_zones
 Property returns fresh list of sorted A inputs for which S26 false, no public display filter.
 
 ### S29 — _candidate_timing
-Read stop main trend extreme and normalized opposite Order box_bottom B/box_top R. Legacy after if boundary<=stop extreme B or >= R, else before. Before returns immediately. If after and S16 nested trend match exists, preserve after. Else default A stop event to stop main timestamp if null; compute S30 then S31; return before iff candidate exact event<main Order First timestamp, else after (equality after).
+Read stop main trend extreme and normalized opposite Order box_bottom B/box_top R. Legacy after if boundary<=stop extreme B or >= R, else before. Before returns immediately. If after and S16 nested trend match exists, preserve after. Else default A stop event to stop main timestamp if null; compute S30 then S31; return before iff S31 returned candidate time<main Order First timestamp, else after (equality after). S31 may return a fallback, not proof of an observed price event.
 
 ### S30 — _candidate_before_order
-Default A stop event to stop main timestamp. First index integer; initial candidate S13 inclusive stop..First (reversed fails). Query lower remainder [exact A stop,stop main end); empty returns initial full-main candidate. Nonempty seed first lower row, strict trend improvement only. If First>stop index compute later S13 on stop+1..First. Return later only if strictly better than lower remainder extreme; ties choose stop main. Otherwise return (A-stop index,A-stop main time,lower extreme). Local lower source reference not output.
+Default A stop event to stop main timestamp. First index integer; initial candidate S13 inclusive stop..First (reversed fails). Query lower remainder [supplied or fallback A-stop time,stop main end), with no extra clamp to stop main open; empty returns the already-computed full-main candidate. Nonempty seed first lower row, strict trend improvement only. If First>stop index compute later S13 on stop+1..First. Return later only if strictly better than lower remainder extreme; ties choose stop main. Otherwise return (A-stop index,A-stop main time,lower extreme). Local lower source reference not output.
 
 ### S31 — _candidate_event_time
 Source main timestamp; scan [max(source,not_before),source+timeframe) first row trend extreme==level. Return exact timestamp or max(source,not_before) fallback, even if gate after candle end.
@@ -138,7 +138,7 @@ Source main timestamp; scan [max(source,not_before),source+timeframe) first row 
 Public delegate S31(source index,price,fallback used as not_before).
 
 ### S33 — _blue_formation_time
-If explicit formation_time non-null return as supplied. Else integer source index and main timestamp. For kind string !=reset: if valid 1-based trend reaction number, return S04; else source time. Reset: if broken_level null return source; otherwise scan [source,source+timeframe), first strict directional normalized price crossing of normalized broken level; return timestamp or source fallback.
+If explicit formation_time non-null return as supplied. Else integer source index and main timestamp. For kind string !=reset: if valid 1-based trend reaction number, return S04; else source time. Reset: if broken_level null return source; otherwise scan [source,source+timeframe), normalize each selected lower price then normalize broken_level inside that row's selected strict comparison. Empty range never normalizes broken_level. Return first strict crossing timestamp or source fallback. Explicit formation and non-Reset S04 returns are not independent proof of observed crossing.
 
 ### S34 — _candidate_cross_has_blue
 Reject reaction number outside 1..trend count. Lookup first Reset Blue formation by number; true iff non-null and <=candidate crossing event. No same-candle requirement, no internal filter here.
