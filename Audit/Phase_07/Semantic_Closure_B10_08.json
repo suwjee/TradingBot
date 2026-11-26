@@ -1,0 +1,287 @@
+{
+  "checkpoint": 268,
+  "batch": "B10",
+  "sub_batch": "B10-08",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "6e27afc8970c649ab433fff75d0d9f25c29369fe",
+  "path": "engine/pipeline/true_false.py",
+  "source_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+  "source_range": [
+    97,
+    115
+  ],
+  "procedures": "TF06",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 8,
+    "by_category": {
+      "branches": 4,
+      "comparisons": 2,
+      "arithmetic": 0,
+      "calls": 2
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 0
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "65a62662b68a8178fcbbe04fc0ef8709674064c5",
+    "crosswalk_blob": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 402,
+      "source_span": [
+        103,
+        4,
+        125,
+        39
+      ],
+      "procedure": "TF06",
+      "original_operation": "For",
+      "original_context": "SC16",
+      "interpretation": "Traverse supplied rows",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L103-L125",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 410,
+      "source_span": [
+        105,
+        8,
+        113,
+        36
+      ],
+      "procedure": "TF06",
+      "original_operation": "If",
+      "original_context": "SC16",
+      "interpretation": "First or nonincreasing number starts series",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L105-L113",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 411,
+      "source_span": [
+        105,
+        11,
+        105,
+        59
+      ],
+      "procedure": "TF06",
+      "original_operation": "BoolOp",
+      "original_context": "SC16",
+      "interpretation": "Missing group_start checked before number comparison",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L105-L105",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 438,
+      "source_span": [
+        111,
+        8,
+        113,
+        36
+      ],
+      "procedure": "TF06",
+      "original_operation": "If",
+      "original_context": "SC16",
+      "interpretation": "Else pending restart moves verdict_start",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L111-L113",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 412,
+      "source_span": [
+        105,
+        11,
+        105,
+        30
+      ],
+      "procedure": "TF06",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "SC16",
+      "interpretation": "Group start is None",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L105-L105",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 415,
+      "source_span": [
+        105,
+        34,
+        105,
+        59
+      ],
+      "procedure": "TF06",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "SC16",
+      "interpretation": "Number <= previous, equality resets",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L105-L105",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 423,
+      "source_span": [
+        107,
+        32,
+        107,
+        75
+      ],
+      "procedure": "TF06",
+      "original_operation": "max",
+      "original_context": "SC16",
+      "interpretation": "Update largest prior end via max",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L107-L107",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 432,
+      "source_span": [
+        109,
+        12,
+        109,
+        35
+      ],
+      "procedure": "TF06",
+      "original_operation": "repeated_prefix.clear",
+      "original_context": "SC16",
+      "interpretation": "Clear repeated prefix",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Repair horizon, ownership, verdict sequence, counters or declaration as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Lower-index crossing, caller ordering and callback effects remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L109-L109",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+        "line": 56,
+        "heading": "TF06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B10-08-S01",
+      "path": "engine/pipeline/true_false.py",
+      "source_span": [
+        97,
+        115
+      ],
+      "interpretation": "Initialize numbers zero, starts None, prefix empty, restart false. First or nonincreasing number updates prior/max end, resets starts/prefix; else pending restart changes verdict_start. Update previous number.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L97-L115",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 pending."
+    }
+  ],
+  "findings": [],
+  "open_dependencies": [
+    "W2 lower-index strict crossing, sequence_priority, bridge horizon, row alias and projection; W3/W4 open."
+  ]
+}

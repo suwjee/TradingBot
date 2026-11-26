@@ -1282,3 +1282,47 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## B09 owner closure — CP260 completion
 
 [Completion evidence](Semantic_Closure_B09_Completion.json): all 99 contiguous partitions, 2,276 original category rows, 3,757 source lines. All evidence JSON reopened and structurally revalidated against immutable ledger/crosswalk with no mismatches. W1 local owner PASS only; W2/W3/W4 open. Next B10 True/False and Live. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 261 — Bounded strict repair crossing
+
+[Local review](Semantic_Closure_B10_01.md) · [Site evidence](Semantic_Closure_B10_01.json): 12 original rows, local PASS; B10 12/320.
+
+## Checkpoint 262 — Repeat record and rank priority
+
+[Local review](Semantic_Closure_B10_02.md) · [Site evidence](Semantic_Closure_B10_02.json): 5 original rows, local PASS; B10 17/320.
+
+## Checkpoint 263 — Repair callback assignment guard
+
+[Local review](Semantic_Closure_B10_03.md) · [Site evidence](Semantic_Closure_B10_03.json): 7 original rows, local PASS; B10 24/320.
+
+## Checkpoint 264 — S activation, lower ranks and engulf
+
+[Local review](Semantic_Closure_B10_04.md) · [Site evidence](Semantic_Closure_B10_04.json): 14 original rows, local PASS; B10 38/320.
+
+## Checkpoint 265 — Verdict priority and parent inversion
+
+[Local review](Semantic_Closure_B10_05.md) · [Site evidence](Semantic_Closure_B10_05.json): 8 original rows, local PASS; B10 46/320.
+
+## Checkpoint 266 — Lower-rank eviction and engulf reset
+
+[Local review](Semantic_Closure_B10_06.md) · [Site evidence](Semantic_Closure_B10_06.json): 11 original rows, local PASS; B10 57/320.
+
+## Checkpoint 267 — Independent repeat counters and F repair
+
+[Local review](Semantic_Closure_B10_07.md) · [Site evidence](Semantic_Closure_B10_07.json): 15 original rows, local PASS; B10 72/320.
+
+## Checkpoint 268 — StopAll series reset and restart
+
+[Local review](Semantic_Closure_B10_08.md) · [Site evidence](Semantic_Closure_B10_08.json): 8 original rows, local PASS; B10 80/320.
+
+## Checkpoint 269 — StopAll parity and confirmation-gated repetition
+
+[Local review](Semantic_Closure_B10_09.md) · [Site evidence](Semantic_Closure_B10_09.json): 18 original rows, local PASS; B10 98/320.
+
+## Checkpoint 270 — Source ownership and annotation reset
+
+[Local review](Semantic_Closure_B10_10.md) · [Site evidence](Semantic_Closure_B10_10.json): 12 original rows, local PASS; B10 110/320.
+
+## Checkpoint 271 — Chronological annotation dispatch and final buffers
+
+[Local review](Semantic_Closure_B10_11.md) · [Site evidence](Semantic_Closure_B10_11.json): 17 original rows, local PASS; B10 127/320.
