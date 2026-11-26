@@ -139,19 +139,19 @@ Clone input. Missing Break or invalid First/Break bounds returns clone unchanged
 ## Segment indexes
 
 ### RE63 — _BehaviorReactionSpan.from_reaction
-Published clone RE30; physical First/Break, First main time, exact RE61 confirmation, normalized published top/bottom.
+Published clone RE30 supplies normalized top/bottom; physical First/Break and First main time come from original reaction, and RE61 confirmation is evaluated on original reaction with default intrabar flag (including its main-open fallback).
 
 ### RE64 — may_contain
 Outer First strictly earlier; outer confirmation>=inner; outer top>=inner and bottom<=inner.
 
 ### RE65 — path_extremes
-Lower inclusive First through exact confirmation via lower/upper bound. Empty null; else min Low,max High from index.
+Lower inclusive First through RE61 confirmation time via lower/upper bound. Empty null; else min Low then max High from index. Nonempty observed path is required, but this helper does not validate gap-free coverage.
 
 ### RE66 — contains_path
 Non-null extremes and bottom<=minimum and top>=maximum.
 
 ### RE67 — _apply_behavior_reaction_views
-For both directions zip full reactions/spans, assign 1-based behavior public number, published box, confirmation/First times, internal flag by blocked physical identity. Return full objects (not filtered), identity number maps, blocked sets and blocked First main times. Mutates Candidate metadata.
+For bullish then bearish, zip full reactions/spans (shorter input truncates without explicit length validation), assign 1-based behavior public number, published box, confirmation/First times, internal flag by blocked physical identity. Return full objects (not filtered), identity number maps for all full reactions, blocked sets and blocked First main-time sets. Mutates Candidate metadata without internal rollback.
 
 ### RE68 — build_behavior_reaction_views
 Build spans both directions. Containment index only if all First/confirmation exact naive datetime; otherwise scan all opposite spans. For each inner, check outer may_contain; compute lower path once on first candidate; null path stops search; add blocked identity on first containing path. RE67.

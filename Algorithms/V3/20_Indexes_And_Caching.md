@@ -164,7 +164,7 @@ For each supplied sequence remove id key from each global cache if present.
 ## MarketChronology and internal behavior
 
 ### RE53 — MarketChronology.__init__
-Require timeframe_seconds>=1. Retain sequences; reuse prepared main/lower times when supplied, else build. Timeframe timedelta; lower index supplied or shared; store main range index. Empty confirmation/reset/E main extremes caches.
+Require timeframe_seconds>=1. Retain sequences; alias prepared main/lower times by nonnull test, else build. Timeframe timedelta; choose lower index by truthiness (false-valued supplied index falls back to shared index even though its times were selected by nonnull test); store main range index. No local supplied-index identity validation. Empty confirmation/reset/E main extremes caches.
 
 ### RE54 — MarketChronology.opposite_direction
 RE02 wrapper.
@@ -185,10 +185,10 @@ Tuple int index/from First defaults -1, second/display/timestamp defaults null, 
 Direction,bool use_intrabar,int First/Break,str top/bottom, intrabar_start only if enabled else null.
 
 ### RE60 — reset_time
-Cache RE58; parse truthy second_time else truthy display_time using %Y-%m-%d %H:%M:%S, else timestamp attr. Cache result.
+Cache RE58; nonnull cached result wins. Parse truthy second_time else truthy display_time using %Y-%m-%d %H:%M:%S, else required timestamp attr. Invalid truthy parse propagates, never falls through to a different time field. Cache result.
 
 ### RE61 — reaction_confirmation
-Cache RE59; Break main time. Start intrabar_start or candle_start if enabled, otherwise main start; invalid start outside Break resets to main start. Scan lower to Break end exclusive first strict High>top B or Low<bottom R, normalized. Cache/return exact event; absent => Break main start. A uses flag false; S/E/public usually true.
+Cache RE59; Break main time. Start truthy intrabar_start or candle_start if enabled, otherwise main start; start before open or at/after Break end resets to main start. Scan lower in source order to Break end exclusive, first strict High>top for exact bullish or Low<bottom otherwise, normalized; no local direction validation. Cache/return hit timestamp; absent => Break main start (fallback, not proof of crossing). A uses flag false; S/E/public usually true.
 
 ### RE62 — canonical_order_stop
-Mode A: scan_start=max(start_index,anchor_idx if non-null else First-1), extend backward while prior candle tag GREEN for bearish Order or RED for bullish. Inclusive through Break, max High bearish/min Low bullish, strict update first tie; return normalized price,source index,time. Other modes: reaction_number<=1 raises ValueError; previous opposite at number-2, use previous top/source bearish or bottom/source bullish. No new contextual extreme.
+String-converted mode A: scan_start=max(start_index,int(anchor_idx) if non-null else First-1), extend backward while prior candle tag GREEN for exact bearish Order or RED otherwise. Initialize at scan_start, then scan through Break inclusive; max High bearish/min Low otherwise, strict update first tie, improved source uses candle.index. Return normalized price,source index,time from main sequence at source index. No local range validation. Other modes: reaction_number<=1 raises ValueError; previous opposite at number-2, use previous top/source bearish or bottom/source otherwise. No local previous-health check or new contextual extreme.

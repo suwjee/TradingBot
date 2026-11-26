@@ -86,3 +86,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 18 — Segment index, suffix refresh, strict crossing and cache lifecycle
 
 [Local review](Semantic_Closure_B02_04.md) and [site evidence](Semantic_Closure_B02_04.json): 229 original rows, 11 supplemental items, 1 resolved local documentation omissions; sub-batch PASS. B02 682/1877, Phase 07 INCOMPLETE, Phase 08 BLOCKED.
+
+
+## Checkpoint 19 — MarketChronology, Reset and confirmation cache, canonical Order stop
+
+[Local review](Semantic_Closure_B02_05.md) and [site evidence](Semantic_Closure_B02_05.json): 153 original rows, 8 supplemental items, 4 resolved local documentation omissions/clarifications; sub-batch PASS. B02 835/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 20 — Reaction span ownership and internal containment
+
+[Local review](Semantic_Closure_B02_06.md) and [site evidence](Semantic_Closure_B02_06.json): 71 original rows, 5 supplemental items, 3 resolved local documentation omissions/clarifications; sub-batch PASS. B02 906/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

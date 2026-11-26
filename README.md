@@ -143,3 +143,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 18
 
 [Segment index, suffix refresh, strict crossing and cache lifecycle](Audit/Phase_07/Semantic_Closure_B02_04.md): 229 original rows, local PASS; B02 remains INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 19
+
+[MarketChronology, Reset and confirmation cache, canonical Order stop](Audit/Phase_07/Semantic_Closure_B02_05.md): 153 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 20
+
+[Reaction span ownership and internal containment](Audit/Phase_07/Semantic_Closure_B02_06.md): 71 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
