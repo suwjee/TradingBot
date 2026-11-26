@@ -1,0 +1,44 @@
+{
+  "checkpoint": 365,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Local committed continuation and bounded bridge handoff; not full B09/B10 lifecycle acceptance",
+  "boundaries": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3581,
+        3592
+      ],
+      "meaning": "Closed-prefix calculation finally selects supplied release_indexes or, conditionally, LiveReactionContinuation._release_indexes when live nonnull. Does not prove active worker uses retained Reaction state."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3615,
+        3623
+      ],
+      "meaning": "Conditional live.active_regime selected before calculate; finally index release similarly dispatched. Other lifetime, failure and cache paths remain open."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2883,
+        2905
+      ],
+      "meaning": "Replay creates new list prefixes but retains prefix elements; cursor candidate copies shallow. Finally release before commit publication; result snapshot after commit. No universal transactional rollback or cross-owner deep isolation."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP364"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "B03–B10, all cross-owner obligations including active bridge conditional dispatch, accepted ledger, dirty frontier, projection and serialization."
+}

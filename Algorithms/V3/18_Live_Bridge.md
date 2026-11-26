@@ -34,13 +34,13 @@ Input label. Increment captured completed_stages before emitting completed progr
 ## Committed Reaction continuation procedures
 
 ### RE99 — LiveReactionContinuation.__init__
-Validate direction via policy, require >=2 committed main else LiveReactionUnavailable. Copy candles/lower, options and timeframe. RE104 initial validation; construct RE102 before try, run RE97 retain cursor inside try and release indexes finally. Construction failure lies outside this cleanup scope. Save result/checkpoint/initial cursor, processed_main_candles=0.
+Validate direction via policy before seed size >=2; shallow list copies retain row objects; store flags and timedelta, validate seed with null predecessors. Construct detector before try; retained _detect inside try, release exact list indexes finally. Construction failure outside cleanup. Only after successful detection and cleanup save result/checkpoint/initial cursor and set processed_main_candles=0.
 
 ### RE100 — result
 RE101 snapshot.
 
 ### RE101 — _snapshot
-Replace result, clone each mutable candidate and copy reset list.
+Replace DetectionResult with new reaction list containing shallow replaced candidates and new reset list containing the original reset objects; not recursive deep isolation.
 
 ### RE102 — _detector
 New Unified on lists, full window 0..len-1, direction/options.
@@ -49,7 +49,7 @@ New Unified on lists, full window 0..len-1, direction/options.
 RE52.
 
 ### RE104 — _validate_extension
-Positive timeframe, both batches nonempty. Main index0 when no previous, else index previous+1, positive timestamp gap divisible by timeframe. Lower index0 or +1 with strictly increasing time. Lower first>=new main first, lower last<new main last+timeframe. Violations LiveReactionUnavailable with distinct messages.
+Positive timeframe and both batches nonempty. Main predecessor null => stored index0; else compute timestamp gap first, then consecutive stored index, positive gap, exact modulo grid alignment (multiples allowed). Lower predecessor null => index0, else consecutive index and strictly increasing time. Lower endpoints confined to new main first inclusive and last nominal main end exclusive. No per-main or gap-free lower coverage guarantee. Violations LiveReactionUnavailable with distinct messages.
 
 ### RE105 — advance
 RE107 commit true.
@@ -58,7 +58,7 @@ RE107 commit true.
 RE107 commit false.
 
 ### RE107 — _extend
-Both empty return snapshot. Validate against last committed main/lower; concatenate into new lists, new detector. No checkpoint: processed=len(new batch main), RE97 with initial cursor. Else copy prior reaction/reset prefixes at checkpoint counts, clone cursor previous/candidate, processed=len(full main)-cursor.next_index, RE98. Release new sequence indexes finally for replay after detector construction; constructor failure is outside try. Only commit true updates owned lists/result/checkpoints/initial cursor and processed count. Return snapshot either way after optional commit (snapshot failure is not a rollback trigger).
+Both empty return committed snapshot without validation or assignment; one empty reaches validation error. Validate against last committed predecessors, concatenate into new shallow lists retaining row references; construct detector before try. No checkpoint: processed=len(new main input), retained RE97 with saved initial cursor. Else slice reaction/reset prefixes at stored counts (element references retained), shallow replace cursor/previous/optional candidate, processed=len(full main)-cursor.next_index, retained RE98 with no First gate. Release new exact-list indexes in finally; constructor failure outside cleanup, release failure can prevent publication. Only commit truthy sequentially assigns owned lists, result, checkpoint, initial cursor then increments processed span count; preview skips assignments, not a deep immutability or universal rollback promise. Snapshot returned afterward, so snapshot failure can occur after commit.
 
 
 ## LV-M04 — Closed-regime cache and index windows (v2.8.7)
