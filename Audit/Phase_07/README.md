@@ -1188,3 +1188,23 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 242 — Primary Order physical identity, cause ordering and exact serialization
 
 [Local review](Semantic_Closure_B09_81.md) and [site evidence](Semantic_Closure_B09_81.json): 28 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 1799/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 243 — Primary direction resolution, cycle and physical point identity
+
+[Local review](Semantic_Closure_B09_82.md) and [site evidence](Semantic_Closure_B09_82.json): 45 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1844/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 244 — Primary visibility, formed MBL chronology and cap projection
+
+[Local review](Semantic_Closure_B09_83.md) and [site evidence](Semantic_Closure_B09_83.json): 56 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1900/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 245 — Primary physical-source association and directional cycle counts
+
+[Local review](Semantic_Closure_B09_84.md) and [site evidence](Semantic_Closure_B09_84.json): 48 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1948/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 246 — Post-primary orders and strict qualification status horizon
+
+[Local review](Semantic_Closure_B09_85.md) and [site evidence](Semantic_Closure_B09_85.json): 21 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1969/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
