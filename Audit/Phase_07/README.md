@@ -346,3 +346,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 66 — Disowned S Creator and Gate-Owned Initial Order Veto
 
 [Local review](Semantic_Closure_B05_20.md) and [site evidence](Semantic_Closure_B05_20.json): 25 original rows, 3 supplemental items, 3 resolved findings; local PASS. Order Audit 1485/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 67 — Accepted Ledger Reconstruction and Historical Provenance Retention
+
+[Local review](Semantic_Closure_B05_21.md) and [site evidence](Semantic_Closure_B05_21.json): 141 original rows, 8 supplemental items, 7 resolved findings; local PASS. Order Audit 1626/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 68 — External Rebuild and Ensure Accepted Ledger Coverage
+
+[Local review](Semantic_Closure_B05_22.md) and [site evidence](Semantic_Closure_B05_22.json): 30 original rows, 4 supplemental items, 3 resolved findings; local PASS. Order Audit 1656/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 69 — Presentation Ledger Collection, Physical Merge and Single Cause Ownership
+
+[Local review](Semantic_Closure_B05_23.md) and [site evidence](Semantic_Closure_B05_23.json): 98 original rows, 7 supplemental items, 6 resolved findings; local PASS. Order Audit 1754/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
