@@ -1,0 +1,23 @@
+{
+  "checkpoint": 394,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1250–1310",
+      "contract": "PH wrapper requires bearish and PH kind, PL requires bullish and PL kind; both call OA36, which obtains stop/direct then invokes OA31 even if direct None. OA34 requests first strict directional lower cross after decision and before range_end; OA31 trusts passed event and identity, performs no price search. OA36 may subsequently create row, index and add parent cause. OA31 does not itself relocate or create a missing direct row."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1135–1199,1312–1337",
+      "contract": "OA30 creates B cause dict and stable sorts by post/Reset/strict break/physical identity, while OA31 edits two role labels in place and does not repeat dedup/sort. OA38/39 label reconciliation is a separate later route; not equivalent to StopAll role eligibility. Native cause shapes and timestamp/index validity owner-dependent."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1100–1132,1798–1826,1920–2008",
+      "contract": "Confirmation index tracks geometry, not creation roles. Revocation modifies index in place and invalidates post-stop result cache/sorted audit/pending; carried invalidation clears creation state as well. Cause-only edits affect carried, not post-stop cache. No claim of arbitrary cache mutation safety or independent stream equivalence."
+    },
+    {
+      "source": "Algorithms/V3/State_Machines/04_Order_Ledger.md OLC05/06",
+      "contract": "Parent-stop source-time comparison and B source pair are different, post role requires exact strict-later stop while anchor uses inclusive reset First main bound. StopAll historical reset boundaries remain. Ownership transfer conditional on native supplied evidence, not a new acceptance rule."
+    }
+  ]
+}
