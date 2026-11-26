@@ -30,25 +30,25 @@ Append validation before transaction; request end moves to latest RAW time. Acti
 
 Repair through endpoint included by upper bound; start inclusive; reference direction strict crossing; missing hit null.
 
-[Source engine/pipeline/true_false.py:17–29](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L17-L29)
+[Source TF repair](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L18-L30)
 
 ## CH42
 
-Basic T/F starts first S and consumes supplied event order. Higher rank repairs prior singleton F starting current source time; repeated same-rank F removes old repair if >= current time then searches new repair. Engulf resets verdict count only.
+Basic starts at first S after each selected Primary/StopAll. Boundary clears price reference frontier and zeros retained base_count/verdict_count, preserves repair_count/latest. Greater rank gets T for any lower base_count>=2 independent of verdict and price; otherwise strict greatest-smaller-rank/latest eligible reference with direction normalization; display_restart independent. Higher rank evicts lower repeats, repairs singleton F at current source time. Same-rank F repair rule unchanged.
 
-[Source engine/pipeline/true_false.py:45–94](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L45-L94)
+[Source Basic and strict reference](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L47-L128)
 
 ## CH43
 
 StopAll verdict groups restart when number <= previous; parity from current verdict start. Repeat prefix requires prior-series or largest-prior-end match and confirmation closure if supplied.
 
-[Source engine/pipeline/true_false.py:97–125](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L97-L125)
+[Source StopAll](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L131-L159)
 
 ## CH44
 
-T/F clears old annotations, excludes calculationValid=false, first row per source time wins in order directional Primary, StopAll, E, S. Sort selected by source time; Primary flushes StopAll verdict group. No native geometry changes.
+T/F clears old annotations, excludes only exact Boolean false, first row per source time wins directional Primary, StopAll,E,S. Sort selected once, primary flushes StopAll group; complete events including Primary/StopAll are passed to Basic as reset boundaries. No native geometry changes.
 
-[Source engine/pipeline/true_false.py:128–157](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/true_false.py#L128-L157)
+[Source collection](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L162-L188)
 
 ## CH45
 

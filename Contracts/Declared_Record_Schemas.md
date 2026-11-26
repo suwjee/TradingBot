@@ -1,6 +1,6 @@
 # Declared record schemas — foundational contract (V3.0)
 
-All 46 declared dataclass records and 438 annotated class fields in the current Engine are listed below. These are language-neutral record interfaces, not executable definitions. Field order follows the declaration. Type terms: Decimal is the source decimal representation; int is integer; str is text; datetime is a native timestamp (market timestamps are normally naive local); bool is Boolean; None means null; list is an ordered mutable sequence; tuple is an ordered fixed sequence; dict is a map; set and frozenset are unordered sets (mutable and immutable respectively). Object and unparameterized tuple deliberately retain the source's broad type. References to other record names are resolved within this catalog or their owning specification. Union types indicate declaration intent, not runtime enforcement.
+All 46 declared dataclass records and 441 annotated class fields in the current Engine are listed below. These are language-neutral record interfaces, not executable definitions. Field order follows the declaration. Type terms: Decimal is the source decimal representation; int is integer; str is text; datetime is a native timestamp (market timestamps are normally naive local); bool is Boolean; None means null; list is an ordered mutable sequence; tuple is an ordered fixed sequence; dict is a map; set and frozenset are unordered sets (mutable and immutable respectively). Object and unparameterized tuple deliberately retain the source's broad type. References to other record names are resolved within this catalog or their owning specification. Union types indicate declaration intent, not runtime enforcement.
 
 Required means no constructor default, even when nullable. Explicit defaults are values; list/dict factory means a fresh independent empty container per construction. Keyword-only fields are marked. Frozen records reject normal field rebinding but do not recursively freeze nested data. Native dataclass equality is fieldwise unless the class overrides it; this is separate from physical identity and cache keys. Record fields with a timestamp suffix do not automatically represent exact lower events: source, trigger, decision and stop roles are separate (see [time](../Specification/03_Chronology_And_Time_Model.md)). Index fields are local positions/identities in the owning sequence; Ordinal/number is a logical label, not an index. Prices are Decimal except when a field explicitly has another type. A class with no dataclass declaration can still own mutable state or custom properties; its initialization and field-use semantics are later function-level work. The source-located evidence is separated in [Phase 03 audit](../Audit/Phase_03/README.md).
 
@@ -59,6 +59,7 @@ Mutable record, slotted in the source. Owner: Trading Bridge.
 | initial_order_geometry | dict[str, object] | Required |
 | internal_reaction_identities | dict[str, set[tuple[int, int]]] | Required |
 | full_e_zones | dict[str, list[object]] | Required |
+| full_stopalls_by_direction | dict[str, list[object]] | Required |
 | full_e_detectors | dict[str, object] | Required |
 | full_s_detectors | dict[str, object] | Required |
 | full_lines_by_direction | dict[str, list[object]] | Required |
@@ -86,6 +87,7 @@ Mutable record, slotted in the source. Owner: Trading Bridge.
 | s_zones | list[object] | Required |
 | s_candidates | list[object] | Required |
 | initial_s_zones | list[object] | Required |
+| stopalls | list[object] | Fresh list factory |
 
 ### DirectionRangeState
 
@@ -785,6 +787,7 @@ Mutable record, slotted in the source. Owner: True/False.
 | latest | dict | Required |
 | repair_count | int | Required |
 | verdict_count | int | Required |
+| base_count | int | Required |
 
 ## Scope
 

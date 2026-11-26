@@ -64,7 +64,7 @@ Registers full native objects, accepted calculation eligibility, public selectio
 
 ## TFC — Published row collection and ownership
 
-Registers selected mapping by sourceTime, basic events buffer, StopAll buffer. Direction primary key primaryLows B else primaryHighs. Remove annotation keys from all visited records, including excluded donors.
+Registers selected mapping by sourceTime, sorted complete events and StopAll buffer. Direction primary key primaryLows B else primaryHighs. Remove annotation keys from all visited records, including excluded donors.
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
@@ -72,26 +72,27 @@ Registers selected mapping by sourceTime, basic events buffer, StopAll buffer. D
 | TFC02 | SORT | Selected rows sorted sourceTime | Traverse selected rows by sourceTime; set current row verdict null immediately before processing that row; non-winning rows not annotated | EVENT | TF07 |
 | TFC03 | EVENT | Primary row | Flush StopAll recurrence and clear buffer; number1 T,2/3 F, else null | EVENT | TF06,TF07 |
 | TFC04 | EVENT | StopAll row | Append to stop buffer | EVENT | TF07 |
-| TFC05 | EVENT | S or E row | Append to basic buffer; primary does not reset basic | EVENT | TF07 |
-| TFC06 | EVENT | Exhausted | Run basic recurrence, then remaining StopAll recurrence | RETURN | TF04,TF06,TF07 |
+| TFC05 | EVENT | S or E row | Retain in complete selected events; no separate buffer | EVENT | TF07 |
+| TFC06 | EVENT | Exhausted | Run Basic on all events including boundaries, then remaining StopAll recurrence | RETURN | TF04,TF06,TF07 |
 
 ## TFB — Basic S/E verdict and repair recurrence
 
-Registers started=false, repeats map rank→(latest reference,repair_count,verdict_count), known source time→verdict. Rank lexicographic S Blue(1,0),E Blue(2,n),S Red(3,0),E Red(4,n).
+Registers started=false, repeats rank→(latest,repair_count,verdict_count,base_count), price-reference frontier rank→(transformed Decimal price,verdict) list. Rank lexicographic S Blue(1,0),E Blue(2,n),S Red(3,0),E Red(4,n).
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | TFB01 | INIT | No S yet; E arrives | Skip | INIT | TF04 |
 | TFB02 | INIT | First S | started=true, evaluate row | ROW | TF04 |
-| TFB03 | ROW | S or any lower rank verdict_count>=2 (engulf) | Verdict T | MUTATE | TF03,TF04 |
-| TFB04 | ROW | Otherwise known parent verdict | Invert T->F, else T | MUTATE | TF04 |
+| TFB03 | ROW | S or any lower rank base_count>=2 | Verdict T; independently evaluate display_restart on lower verdict_count>=2 | MUTATE | TF03,TF04 |
+| TFB04 | ROW | Otherwise greatest smaller rank strictly crossed | Invert latest eligible reference verdict; compare transformed Decimal prices | MUTATE | TF04,TF08 |
 | TFB05 | ROW | Otherwise | F if number odd, T if even | MUTATE | TF04 |
-| TFB06 | MUTATE | Current verdict selected | Write row and known[sourceTime]; remove lower repeat ranks; if removed latest F with repair_count=1 attempt repair at current time | REPEAT | TF04,TF05 |
-| TFB07 | REPEAT | Engulf | Zero verdict_count on surviving repeats, preserve repair_count | REPEAT | TF04 |
-| TFB08 | REPEAT | Prior same rank and same verdict | New counters prior+1; for F remove prior repair if >=current time, attempt current repair at current time | ROW | TF04,TF05 |
-| TFB09 | REPEAT | No same-verdict prior | Counters=1 | ROW | TF04 |
-| TFB10 | ROW | Store current rank state after counters computed | Replace latest reference; next row; no final sweep on exhaustion | ROW or RETURN | TF04 |
+| TFB06 | MUTATE | Current verdict selected | Write row, prune frontier tail >= price and append pair; pop lower repeats; repair singleton F | REPEAT | TF04,TF05 |
+| TFB07 | REPEAT | Same-rank same-verdict AND not display_restart | Accumulate verdict_count; at >=2 set prior and current repeated=true | REPEAT | TF04 |
+| TFB08 | REPEAT | Prior same rank and same verdict | Accumulate repair_count; for F remove prior repair if >=time, attempt repair current; display count independently gated | ROW | TF04,TF05 |
+| TFB09 | REPEAT | No same-verdict prior | repair_count=verdict_count=1 | ROW | TF04 |
+| TFB10 | ROW | Store current rank state | base_count=prior.base_count+1 if prior exists, else 1; replace latest; no final sweep | ROW or RETURN | TF04 |
 | TFB11 | MUTATE or REPEAT | Repair callback exists AND key absent | Search original RAW inclusive start/through with row direction strict predicate; store epoch iff hit; present null counts as existing key | MUTATE or REPEAT | TF01,TF02,TF05 |
+| TFB12 | ROW or INIT | Non-S/E selected event (Primary or StopAll) | Clear price references; started=false; zero all retained verdict_count and base_count; retain latest and repair_count; continue | INIT | TF04 |
 
 Row mutations can affect prior references. A callback failure propagates without undoing earlier annotations. No verdict on E preceding first S.
 
