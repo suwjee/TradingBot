@@ -783,3 +783,78 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## B08 W1 local completion
 
 [Completion evidence](Semantic_Closure_B08_Completion.json): 670/670 original rows, 840 source lines including terminal blank, 50 supplemental items, 38 resolved local clarification groups across 24 contiguous partitions. Local PASS; W2/W3/W4 open. Next B09 Trading Pipeline. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 162 — Import bootstrap, constants and progress context
+
+[Local review](Semantic_Closure_B09_01.md) and [site evidence](Semantic_Closure_B09_01.json): 9 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 9/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 163 — Context progress, failure ordering and timing telemetry
+
+[Local review](Semantic_Closure_B09_02.md) and [site evidence](Semantic_Closure_B09_02.json): 24 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 33/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 164 — Dynamic module loading and registration
+
+[Local review](Semantic_Closure_B09_03.md) and [site evidence](Semantic_Closure_B09_03.json): 9 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 42/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 165 — Tehran-local conversion and three timestamp caches
+
+[Local review](Semantic_Closure_B09_04.md) and [site evidence](Semantic_Closure_B09_04.json): 20 original rows, 1 supplemental item, 3 resolved clarification groups; local PASS. Trading Pipeline 62/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 166 — Ordered RAW aggregation and exact bucket boundaries
+
+[Local review](Semantic_Closure_B09_05.md) and [site evidence](Semantic_Closure_B09_05.json): 31 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 93/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 167 — Decimal cache identity and append delta declaration
+
+[Local review](Semantic_Closure_B09_06.md) and [site evidence](Semantic_Closure_B09_06.json): 6 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 99/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 168 — Live bucket construction and dirty tail selection
+
+[Local review](Semantic_Closure_B09_07.md) and [site evidence](Semantic_Closure_B09_07.json): 35 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 134/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 169 — Live RAW checks and staged Decimal cache
+
+[Local review](Semantic_Closure_B09_08.md) and [site evidence](Semantic_Closure_B09_08.json): 22 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 156/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 170 — Live append commit, rollback and settled boundaries
+
+[Local review](Semantic_Closure_B09_09.md) and [site evidence](Semantic_Closure_B09_09.json): 19 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 175/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 171 — Engine candle creation and stable positional indexes
+
+[Local review](Semantic_Closure_B09_10.md) and [site evidence](Semantic_Closure_B09_10.json): 7 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 182/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 172 — Live view refresh, index capacity and visible index predicate
+
+[Local review](Semantic_Closure_B09_11.md) and [site evidence](Semantic_Closure_B09_11.json): 24 original rows, 1 supplemental item, 3 resolved clarification groups; local PASS. Trading Pipeline 206/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 173 — Legacy Reaction and Reset selection and serialization
+
+[Local review](Semantic_Closure_B09_12.md) and [site evidence](Semantic_Closure_B09_12.json): 28 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 234/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 174 — Blue Line and A Zone legacy output
+
+[Local review](Semantic_Closure_B09_13.md) and [site evidence](Semantic_Closure_B09_13.json): 30 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 264/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 175 — S Zone legacy fields and nullable Order geometry
+
+[Local review](Semantic_Closure_B09_14.md) and [site evidence](Semantic_Closure_B09_14.json): 39 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 303/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 176 — E Zone and StopAll output field and null semantics
+
+[Local review](Semantic_Closure_B09_15.md) and [site evidence](Semantic_Closure_B09_15.json): 63 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 366/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

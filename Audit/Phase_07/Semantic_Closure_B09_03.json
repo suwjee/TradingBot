@@ -1,0 +1,331 @@
+{
+  "checkpoint": 164,
+  "batch": "B09",
+  "sub_batch": "B09-03",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "866184b604be85951ceab86ea65b738a04575a36",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    86,
+    100
+  ],
+  "procedures": "TB04–TB05",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 9,
+    "by_category": {
+      "branches": 2,
+      "comparisons": 2,
+      "arithmetic": 0,
+      "calls": 5
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 250,
+      "source_span": [
+        89,
+        4,
+        90,
+        66
+      ],
+      "procedure": "TB04",
+      "original_operation": "If",
+      "original_context": "TB-SC05",
+      "interpretation": "Reject null spec or null loader; short circuit avoids dereference of absent spec.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L89-L90",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 251,
+      "source_span": [
+        89,
+        7,
+        89,
+        42
+      ],
+      "procedure": "TB04",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC05",
+      "interpretation": "Reject null spec or null loader; short circuit avoids dereference of absent spec.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L89-L89",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 252,
+      "source_span": [
+        89,
+        7,
+        89,
+        19
+      ],
+      "procedure": "TB04",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC05",
+      "interpretation": "Reject null spec or null loader; short circuit avoids dereference of absent spec.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L89-L89",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 255,
+      "source_span": [
+        89,
+        23,
+        89,
+        42
+      ],
+      "procedure": "TB04",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC05",
+      "interpretation": "Reject null spec or null loader; short circuit avoids dereference of absent spec.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L89-L89",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 244,
+      "source_span": [
+        88,
+        11,
+        88,
+        61
+      ],
+      "procedure": "TB04",
+      "original_operation": "importlib.util.spec_from_file_location",
+      "original_context": "TB-SC05",
+      "interpretation": "Construct import spec for supplied name/path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L88-L88",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 260,
+      "source_span": [
+        90,
+        14,
+        90,
+        66
+      ],
+      "procedure": "TB04",
+      "original_operation": "RuntimeError",
+      "original_context": "TB-SC05",
+      "interpretation": "Raise RuntimeError naming engine path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L90-L90",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 268,
+      "source_span": [
+        91,
+        13,
+        91,
+        50
+      ],
+      "procedure": "TB04",
+      "original_operation": "importlib.util.module_from_spec",
+      "original_context": "TB-SC05",
+      "interpretation": "Create module from accepted spec.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L91-L91",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 281,
+      "source_span": [
+        93,
+        4,
+        93,
+        35
+      ],
+      "procedure": "TB04",
+      "original_operation": "spec.loader.exec_module",
+      "original_context": "TB-SC05",
+      "interpretation": "Execute loader after sys.modules registration; failed execution has no local cleanup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L93-L93",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 46,
+        "heading": "TB04"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 292,
+      "source_span": [
+        98,
+        11,
+        98,
+        47
+      ],
+      "procedure": "TB05",
+      "original_operation": "load_module",
+      "original_context": "TB-SC05",
+      "interpretation": "Delegate fixed reaction_engine module name.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L98-L98",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 49,
+        "heading": "TB05"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-03-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        86,
+        100
+      ],
+      "interpretation": "The null-spec test short-circuits before reading the loader. The module is registered under the specification name before execution; execution failure has no local rollback of that registration.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L86-L100",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Local source behavior only; dependent callbacks and data remain conditional."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-03-F01",
+      "span": [
+        86,
+        100
+      ],
+      "description": "The null-spec test short-circuits before reading the loader. The module is registered under the specification name before execution; execution failure has no local rollback of that registration.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 47,
+      "prior_blob": "f927209a545a3561b1c93cc13917456704359acd",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L86-L100",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native loader, chronology, Decimal normalization, transaction consumer, callback and output ownership contracts. W3/W4 remain open."
+  ]
+}

@@ -7,7 +7,7 @@
 
 Require reaction/Blue/A/S engine paths, data, timeframe, from/to and direction; E/lifecycle optional paths, Blue/A/S/primary flags default enabled, bridge-output optional, raw timeframe default1. Positive timeframe/raw timeframe required. Load engine modules once with configured names and optional primary. Lifecycle module loads by default path even when explicit StopAll flag is absent. StopAll enabled only explicit lifecycle path AND E AND S enabled. E enabled iff E engine present and S enabled. Dynamic configured modules/callbacks must satisfy referenced contracts; the source does not establish semantics of arbitrary externally supplied replacements.
 
-Read full RAW bytes, strip BOM, decode Decimal floats, aggregate full history, establish visible range by epoch-aligned bucket bounds. Never truncate calculation at visible end. See [RAW](21_RAW_Aggregation_Contract.md). Context scope clears timestamp and market index caches before/after calculation even on error. Timed wrappers preserve result and emit progress with finally on work failure (start outside try).
+Read full RAW bytes, strip BOM, decode Decimal floats, aggregate full history, establish visible range by epoch-aligned bucket bounds. Never truncate calculation at visible end. See [RAW](21_RAW_Aggregation_Contract.md). Context scope clears timestamp and market index caches before/after calculation even on error. Timed wrappers preserve result and emit progress with finally on work failure (start outside try). At module load, resolve the engine root from the bridge file, append the pipeline child and insert its exact string at the front of the import search list only when absent. Tehran zone construction and context-local progress sink initialization occur at import. Version and MBL-extension constants are declarations, not trading decisions.
 
 ## TB-M02 — Calculation stage composition
 
@@ -38,25 +38,25 @@ Feedback is the only bounded eight-pass loop here, not a general E/Reaction/prim
 Context manager: set context-local progress sink, yield control, restore previous token in finally even on exception. No result payload.
 
 ### TB02 — emit_progress
-Construct status/label/details event; optional durationMs rounded to two decimals. If sink exists call it; otherwise emit QG_PROGRESS prefix and compact JSON to stderr, flushed. Sink/encoding errors propagate. No market change.
+Construct status/label/details event; optional durationMs rounded to two decimals. If sink exists call it; otherwise emit QG_PROGRESS prefix and compact JSON to stderr, flushed. Sink/encoding errors propagate. No market change. Details are merged after status and label, and a supplied non-null duration overwrites durationMs with a two-decimal rounded telemetry value. Exact null selects compact stderr JSON with flush; non-null sink is called directly.
 
 ### TB03 — timed
-Read performance counter, emit start, invoke work and return its result. Finally accumulate elapsed milliseconds by label in supplied timings and emit completion even on work error. Telemetry only.
+Read performance counter, emit start, invoke work and return its result. Finally accumulate elapsed milliseconds by label in supplied timings and emit completion even on work error. Telemetry only. The start emission is outside the try; on its failure work is not called. Completion telemetry runs in finally after work return or error, with unrounded accumulated duration in the timings map. A failure in finally can supersede the work result or exception.
 
 ### TB04 — load_module
-Create import specification from name/path; missing spec/loader raises RuntimeError. Create module, register in sys.modules, execute loader, return module. Dynamic external implementation conditional on supplied path.
+Create import specification from name/path; missing spec/loader raises RuntimeError. Create module, register in sys.modules, execute loader, return module. Dynamic external implementation conditional on supplied path. The null-spec test short-circuits before reading the loader. The module is registered under the specification name before execution; execution failure has no local rollback of that registration.
 
 ### TB05 — load_engine
 Delegate TB04 with fixed reaction_engine module name.
 
 ### TB06 — local_datetime
-Epoch-keyed cache; miss converts epoch in Asia/Tehran then removes timezone marker, stores and returns naive datetime.
+Epoch-keyed cache; miss converts epoch in Asia/Tehran then removes timezone marker, stores and returns naive datetime. A non-null cache hit returns the same stored object. Conversion strips timezone metadata without converting the Tehran wall clock to UTC.
 
 ### TB07 — epoch
-Datetime-keyed cache; miss attaches Tehran timezone and truncates timestamp with int; stores and returns.
+Datetime-keyed cache; miss attaches Tehran timezone and truncates timestamp with int; stores and returns. Timezone attachment replaces any existing tzinfo rather than converting the input instant; timestamp conversion uses native int truncation toward zero. Zero is a valid cached result.
 
 ### TB08 — display_epoch
-Datetime directly delegates TB07. Otherwise cache by input string, parse year-month-day hour:minute:second, convert and cache. Parse failures propagate.
+Datetime directly delegates TB07. Otherwise cache by input string, parse year-month-day hour:minute:second, convert and cache. Parse failures propagate. The datetime branch includes subclasses and bypasses the display cache. The other branch uses its input key as supplied and exact native parse format; no error fallback.
 
 ### TB66 — parse_arguments
 Require reaction,Blue,A,S engine paths (aliases accepted), data path,timeframe,from/to,direction bullish/bearish/both. E and lifecycle paths optional. Blue/A/S/PLPH flags enabled/disabled default enabled; bridge-output switch; raw-timeframe default1. Require timeframe and raw-timeframe >=1. argparse failures propagate. Return namespace.

@@ -1,0 +1,1876 @@
+{
+  "checkpoint": 176,
+  "batch": "B09",
+  "sub_batch": "B09-15",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "866184b604be85951ceab86ea65b738a04575a36",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    551,
+    661
+  ],
+  "procedures": "TB28–TB29",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 63,
+    "by_category": {
+      "branches": 15,
+      "comparisons": 11,
+      "arithmetic": 0,
+      "calls": 37
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 2
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 2087,
+      "source_span": [
+        569,
+        12,
+        570,
+        70
+      ],
+      "procedure": "TB28",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC26",
+      "interpretation": "order_parent_stop_cause_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L569-L570",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2163,
+      "source_span": [
+        592,
+        10,
+        592,
+        14
+      ],
+      "procedure": "TB28",
+      "original_operation": "comprehension",
+      "original_context": "TB-SC26",
+      "interpretation": "Map all E rows in original order; no calculationValid field or additional filter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L592-L592",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2258,
+      "source_span": [
+        617,
+        12,
+        618,
+        70
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_parent_stop_cause_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L617-L618",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2270,
+      "source_span": [
+        622,
+        12,
+        622,
+        87
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_first_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L622-L622",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2282,
+      "source_span": [
+        626,
+        12,
+        626,
+        87
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_break_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L626-L626",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2292,
+      "source_span": [
+        629,
+        12,
+        630,
+        65
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_confirmation_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L629-L630",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2302,
+      "source_span": [
+        633,
+        12,
+        633,
+        79
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L633-L633",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2314,
+      "source_span": [
+        637,
+        12,
+        638,
+        67
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L637-L638",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2324,
+      "source_span": [
+        641,
+        12,
+        641,
+        85
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L641-L641",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2336,
+      "source_span": [
+        645,
+        12,
+        646,
+        70
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L645-L646",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2346,
+      "source_span": [
+        649,
+        12,
+        649,
+        85
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_level: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L649-L649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2358,
+      "source_span": [
+        653,
+        12,
+        654,
+        64
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L653-L654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2370,
+      "source_span": [
+        657,
+        20,
+        657,
+        69
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "stop_time: truthy value selects epoch conversion, falsy becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L657-L657",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2378,
+      "source_span": [
+        658,
+        25,
+        658,
+        86
+      ],
+      "procedure": "TB29",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC27",
+      "interpretation": "stop_event_time: truthy value selects epoch conversion, falsy becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L658-L658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 2386,
+      "source_span": [
+        659,
+        10,
+        659,
+        14
+      ],
+      "procedure": "TB29",
+      "original_operation": "comprehension",
+      "original_context": "TB-SC27",
+      "interpretation": "Map all StopAll rows in original order; no donor field or additional filter.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L659-L659",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2088,
+      "source_span": [
+        570,
+        15,
+        570,
+        60
+      ],
+      "procedure": "TB28",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC26",
+      "interpretation": "order_parent_stop_cause_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L570-L570",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2259,
+      "source_span": [
+        618,
+        15,
+        618,
+        60
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_parent_stop_cause_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L618-L618",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2271,
+      "source_span": [
+        622,
+        44,
+        622,
+        77
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_first_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L622-L622",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2283,
+      "source_span": [
+        626,
+        44,
+        626,
+        77
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_break_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L626-L626",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2293,
+      "source_span": [
+        630,
+        15,
+        630,
+        55
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_confirmation_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L630-L630",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2303,
+      "source_span": [
+        633,
+        39,
+        633,
+        69
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L633-L633",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2315,
+      "source_span": [
+        638,
+        15,
+        638,
+        57
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L638-L638",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2325,
+      "source_span": [
+        641,
+        42,
+        641,
+        75
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L641-L641",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2337,
+      "source_span": [
+        646,
+        15,
+        646,
+        60
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L646-L646",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2347,
+      "source_span": [
+        649,
+        42,
+        649,
+        75
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_level: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L649-L649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2359,
+      "source_span": [
+        654,
+        15,
+        654,
+        54
+      ],
+      "procedure": "TB29",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_source_time: exact non-null selects conversion, null becomes null; evaluated independently per output field.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L654-L654",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2059,
+      "source_span": [
+        559,
+        28,
+        559,
+        58
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "parent_source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L559-L559",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2063,
+      "source_span": [
+        560,
+        23,
+        560,
+        45
+      ],
+      "procedure": "TB28",
+      "original_operation": "str",
+      "original_context": "TB-SC26",
+      "interpretation": "parent_price: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L560-L560",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2069,
+      "source_span": [
+        562,
+        26,
+        562,
+        54
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "parent_stop_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L562-L562",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2073,
+      "source_span": [
+        563,
+        31,
+        563,
+        65
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "parent_stop_event_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L563-L563",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2083,
+      "source_span": [
+        567,
+        23,
+        567,
+        46
+      ],
+      "procedure": "TB28",
+      "original_operation": "list",
+      "original_context": "TB-SC26",
+      "interpretation": "order_causes: materialize causes iterable into a fresh list preserving order unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L567-L567",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2092,
+      "source_span": [
+        569,
+        12,
+        569,
+        52
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_parent_stop_cause_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L569-L569",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2099,
+      "source_span": [
+        573,
+        26,
+        573,
+        54
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_first_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L573-L573",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2105,
+      "source_span": [
+        575,
+        26,
+        575,
+        54
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_break_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L575-L575",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2109,
+      "source_span": [
+        576,
+        33,
+        576,
+        68
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_confirmation_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L576-L576",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2113,
+      "source_span": [
+        577,
+        23,
+        577,
+        46
+      ],
+      "procedure": "TB28",
+      "original_operation": "str",
+      "original_context": "TB-SC26",
+      "interpretation": "order_box_top: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L577-L577",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2119,
+      "source_span": [
+        579,
+        33,
+        579,
+        70
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_box_top_source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L579-L579",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2123,
+      "source_span": [
+        580,
+        26,
+        580,
+        52
+      ],
+      "procedure": "TB28",
+      "original_operation": "str",
+      "original_context": "TB-SC26",
+      "interpretation": "order_box_bottom: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L580-L580",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2129,
+      "source_span": [
+        582,
+        36,
+        582,
+        76
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_box_bottom_source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L582-L582",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2133,
+      "source_span": [
+        583,
+        26,
+        583,
+        52
+      ],
+      "procedure": "TB28",
+      "original_operation": "str",
+      "original_context": "TB-SC26",
+      "interpretation": "order_stop_level: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L583-L583",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2139,
+      "source_span": [
+        585,
+        31,
+        585,
+        65
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "order_stop_source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L585-L585",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2145,
+      "source_span": [
+        587,
+        22,
+        587,
+        45
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L587-L587",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2149,
+      "source_span": [
+        588,
+        17,
+        588,
+        32
+      ],
+      "procedure": "TB28",
+      "original_operation": "str",
+      "original_context": "TB-SC26",
+      "interpretation": "price: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L588-L588",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2155,
+      "source_span": [
+        590,
+        24,
+        590,
+        49
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "decision_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L590-L590",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2159,
+      "source_span": [
+        591,
+        29,
+        591,
+        60
+      ],
+      "procedure": "TB28",
+      "original_operation": "epoch",
+      "original_context": "TB-SC26",
+      "interpretation": "decision_event_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L591-L591",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 67,
+        "heading": "TB28"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2214,
+      "source_span": [
+        600,
+        22,
+        600,
+        45
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "source_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L600-L600",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2218,
+      "source_span": [
+        601,
+        17,
+        601,
+        32
+      ],
+      "procedure": "TB29",
+      "original_operation": "str",
+      "original_context": "TB-SC27",
+      "interpretation": "price: stringify native price without rounding unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L601-L601",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2224,
+      "source_span": [
+        603,
+        24,
+        603,
+        49
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "decision_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L603-L603",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2228,
+      "source_span": [
+        604,
+        29,
+        604,
+        60
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "decision_event_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L604-L604",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2234,
+      "source_span": [
+        606,
+        25,
+        606,
+        52
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "gate_event_time: convert native timestamp to epoch via TB07 unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L606-L606",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2254,
+      "source_span": [
+        615,
+        23,
+        615,
+        46
+      ],
+      "procedure": "TB29",
+      "original_operation": "list",
+      "original_context": "TB-SC27",
+      "interpretation": "order_causes: materialize causes iterable into a fresh list preserving order unconditionally; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L615-L615",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2263,
+      "source_span": [
+        617,
+        12,
+        617,
+        52
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_parent_stop_cause_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L617-L617",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2275,
+      "source_span": [
+        622,
+        12,
+        622,
+        40
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_first_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L622-L622",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2287,
+      "source_span": [
+        626,
+        12,
+        626,
+        40
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_break_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L626-L626",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2297,
+      "source_span": [
+        629,
+        12,
+        629,
+        47
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_confirmation_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L629-L629",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2307,
+      "source_span": [
+        633,
+        12,
+        633,
+        35
+      ],
+      "procedure": "TB29",
+      "original_operation": "str",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top: stringify native price without rounding only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L633-L633",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2319,
+      "source_span": [
+        637,
+        12,
+        637,
+        49
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_top_source_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L637-L637",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2329,
+      "source_span": [
+        641,
+        12,
+        641,
+        38
+      ],
+      "procedure": "TB29",
+      "original_operation": "str",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom: stringify native price without rounding only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L641-L641",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2341,
+      "source_span": [
+        645,
+        12,
+        645,
+        52
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_box_bottom_source_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L645-L645",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2351,
+      "source_span": [
+        649,
+        12,
+        649,
+        38
+      ],
+      "procedure": "TB29",
+      "original_operation": "str",
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_level: stringify native price without rounding only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L649-L649",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2363,
+      "source_span": [
+        653,
+        12,
+        653,
+        46
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "order_stop_source_time: convert native timestamp to epoch via TB07 only if field is non-null; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L653-L653",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2373,
+      "source_span": [
+        657,
+        20,
+        657,
+        41
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "stop_time: convert native timestamp to epoch via TB07 only if field is truthy; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L657-L657",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 2381,
+      "source_span": [
+        658,
+        25,
+        658,
+        52
+      ],
+      "procedure": "TB29",
+      "original_operation": "epoch",
+      "original_context": "TB-SC27",
+      "interpretation": "stop_event_time: convert native timestamp to epoch via TB07 only if field is truthy; preserve field identity and encounter order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L658-L658",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 70,
+        "heading": "TB29"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-15-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        551,
+        661
+      ],
+      "interpretation": "Order causes are materialized as a list without a null fallback; only parent-stop cause time is optional in the E geometry mapping. All rows emitted in input order, without calculationValid. Order causes are unconditionally converted to list; order geometry/time guards are exact non-null. Final stopTime and stopEventTime alone use truthiness, unlike the optional Order fields. No independent filtering, donor fields or calculationValid flag.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L551-L661",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Local source behavior only; dependent callbacks and data remain conditional."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-15-F01",
+      "span": [
+        551,
+        661
+      ],
+      "description": "Order causes are materialized as a list without a null fallback; only parent-stop cause time is optional in the E geometry mapping. All rows emitted in input order, without calculationValid.",
+      "document": "Algorithms/V3/19_Serialization.md",
+      "line": 68,
+      "prior_blob": "de8258a4ef68b55cb0e10bd32e97da91a0fc49f3",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L551-L661",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B09-15-F02",
+      "span": [
+        551,
+        661
+      ],
+      "description": "Order causes are unconditionally converted to list; order geometry/time guards are exact non-null. Final stopTime and stopEventTime alone use truthiness, unlike the optional Order fields. No independent filtering, donor fields or calculationValid flag.",
+      "document": "Algorithms/V3/19_Serialization.md",
+      "line": 71,
+      "prior_blob": "de8258a4ef68b55cb0e10bd32e97da91a0fc49f3",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L551-L661",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native loader, chronology, Decimal normalization, transaction consumer, callback and output ownership contracts. W3/W4 remain open."
+  ]
+}

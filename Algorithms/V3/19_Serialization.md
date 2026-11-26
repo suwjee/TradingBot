@@ -47,28 +47,28 @@ Physical primary IDs use identity source if retained, direction/kind/number/abso
 ## Detailed serialization procedures
 
 ### TB22 — _index_selected
-If either range bound null accept; otherwise inclusive start <= int(index) <= end.
+If either range bound null accept; otherwise inclusive start <= int(index) <= end. The OR guard short-circuits on either null bound without converting index. Only when both bounds exist is index int-converted and checked with inclusive endpoints; no bound normalization.
 
 ### TB23 — select_reaction_serialization_items
-Keep resets by reset index and reactions by First index, original order. Pair each selected native reaction with optional transformed public item, otherwise itself. Return pairs and resets; no mutation.
+Keep resets by reset index and reactions by First index, original order. Pair each selected native reaction with optional transformed public item, otherwise itself. Return pairs and resets; no mutation. Select resets by reset index and native reactions by First before invoking a non-null transform. Preserve native/public pair identities and encounter order; no validation of transform result.
 
 ### TB24 — serialize
-Use supplied selection when present or TB23. Reset fields: index,time,secondTime nullable,brokenLevel string,fromFirstIndex. Reaction fields: firstIndex/Time, boxTop/Bottom and corresponding SourceIndex/Time, breakIndex/Time,mode. Times via TB08, prices strings; preserve order; return reaction and reset arrays.
+Use supplied selection when present or TB23. Reset fields: index,time,secondTime nullable,brokenLevel string,fromFirstIndex. Reaction fields: firstIndex/Time, boxTop/Bottom and corresponding SourceIndex/Time, breakIndex/Time,mode. Times via TB08, prices strings; preserve order; return reaction and reset arrays. An explicitly supplied non-null selection bypasses selection and transformation even when empty. Reset secondTime uses an exact null gate. Only public reaction object fields are serialized from each pair; native item is retained for other views.
 
 ### TB25 — serialize_blue_lines
-Filter via TB22 on source index. Per row direction,kind,reactionNumber,previousStrikeCount,strikeCount,fibonacciLevel nullable string,sourceIndex/Time,sourceExtreme string,brokenLevel nullable string,linePrice string,startTime,endTime. Epoch timestamps; order preserved.
+Filter via TB22 on source index. Per row direction,kind,reactionNumber,previousStrikeCount,strikeCount,fibonacciLevel nullable string,sourceIndex/Time,sourceExtreme string,brokenLevel nullable string,linePrice string,startTime,endTime. Epoch timestamps; order preserved. Source index attribute lookup has no default. The filter runs before row conversions; nullable Fibonacci and broken levels use exact null checks, preserving zero.
 
 ### TB26 — serialize_a_zones
-Each row: direction; blue1/2Ordinal,SourceTime,StopTime,StopLevel; continuationLevel,SourceIndex,SourceTime; triggerIndex,Time,EventTime; reactionNumber,FirstTime,BreakTime; sourceIndex,Time,price; calculationValid true. Times epoch, levels/prices strings. No extra filtering.
+Each row: direction; blue1/2Ordinal,SourceTime,StopTime,StopLevel; continuationLevel,SourceIndex,SourceTime; triggerIndex,Time,EventTime; reactionNumber,FirstTime,BreakTime; sourceIndex,Time,price; calculationValid true. Times epoch, levels/prices strings. No extra filtering. A rows are emitted unfiltered in supplied order with constant calculationValid true; no source-range or independent validity test in this serializer.
 
 ### TB27 — serialize_s_zones
-Each row direction,color,formationType; aOrdinal,aSourceIndex/Time,aPrice,aStopIndex/Time/EventTime; orderDirection,orderReactionNumber,orderMode,orderFirstIndex/Time,orderBreakIndex/Time,orderConfirmationTime,orderBoxTop/Bottom and their SourceIndex/Time,orderStopLevel/SourceIndex/SourceTime; resetReactionNumber,resetTime; sourceIndex/Time,price,decisionIndex/Time/EventTime,calculationValid true. Optional order/reset times and prices preserve null, otherwise epoch/string. Original order.
+Each row direction,color,formationType; aOrdinal,aSourceIndex/Time,aPrice,aStopIndex/Time/EventTime; orderDirection,orderReactionNumber,orderMode,orderFirstIndex/Time,orderBreakIndex/Time,orderConfirmationTime,orderBoxTop/Bottom and their SourceIndex/Time,orderStopLevel/SourceIndex/SourceTime; resetReactionNumber,resetTime; sourceIndex/Time,price,decisionIndex/Time/EventTime,calculationValid true. Optional order/reset times and prices preserve null, otherwise epoch/string. Original order. Every optional timestamp/price conversion uses an exact non-null test, not truthiness. Numeric zero is stringified. Required source, parent A, and decision times are converted unconditionally. calculationValid is always true here; no additional filter or native Order revalidation.
 
 ### TB28 — serialize_e_zones
-Each row direction,family,number,parentType,parentSourceIndex/Time,parentPrice,parentStopIndex/Time/EventTime; orderDirection,ReactionNumber,Mode,Causes list,ParentStopCauseTime optional; orderFirst/BreakIndex/Time,ConfirmationTime,BoxTop/Bottom and SourceIndex/Time,StopLevel/SourceIndex/Time; sourceIndex/Time,price,decisionIndex/Time/EventTime. Convert prices to strings and time to epoch, optional as declared. No calculationValid addition.
+Each row direction,family,number,parentType,parentSourceIndex/Time,parentPrice,parentStopIndex/Time/EventTime; orderDirection,ReactionNumber,Mode,Causes list,ParentStopCauseTime optional; orderFirst/BreakIndex/Time,ConfirmationTime,BoxTop/Bottom and SourceIndex/Time,StopLevel/SourceIndex/Time; sourceIndex/Time,price,decisionIndex/Time/EventTime. Convert prices to strings and time to epoch, optional as declared. No calculationValid addition. Order causes are materialized as a list without a null fallback; only parent-stop cause time is optional in the E geometry mapping. All rows emitted in input order, without calculationValid.
 
 ### TB29 — serialize_stopalls
-Each row direction,number,sourceIndex/Time,price,decisionIndex/Time/EventTime,gateType/EventTime,stoppedBehaviorType/Key/Count,underlyingEFamily/Number; nullable order fields including causes, parent stop cause, full geometry; stopIndex/Time/EventTime. Epoch and price string conversions guarded for nullable data. No donor fields in legacy row.
+Each row direction,number,sourceIndex/Time,price,decisionIndex/Time/EventTime,gateType/EventTime,stoppedBehaviorType/Key/Count,underlyingEFamily/Number; nullable order fields including causes, parent stop cause, full geometry; stopIndex/Time/EventTime. Epoch and price string conversions guarded for nullable data. No donor fields in legacy row. Order causes are unconditionally converted to list; order geometry/time guards are exact non-null. Final stopTime and stopEventTime alone use truthiness, unlike the optional Order fields. No independent filtering, donor fields or calculationValid flag.
 
 ### TB30 — bridge_datetime
 Null -> null; string unchanged; non-datetime -> null; datetime formatted as local year-month-day hour:minute:second.

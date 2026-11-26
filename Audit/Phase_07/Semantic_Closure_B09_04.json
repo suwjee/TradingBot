@@ -1,0 +1,671 @@
+{
+  "checkpoint": 165,
+  "batch": "B09",
+  "sub_batch": "B09-04",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "866184b604be85951ceab86ea65b738a04575a36",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    101,
+    139
+  ],
+  "procedures": "TB06–TB08",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 20,
+    "by_category": {
+      "branches": 4,
+      "comparisons": 3,
+      "arithmetic": 1,
+      "calls": 12
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 3
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 313,
+      "source_span": [
+        106,
+        4,
+        107,
+        21
+      ],
+      "procedure": "TB06",
+      "original_operation": "If",
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse cached non-null datetime.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L106-L107",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 52,
+        "heading": "TB06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 355,
+      "source_span": [
+        118,
+        4,
+        119,
+        21
+      ],
+      "procedure": "TB07",
+      "original_operation": "If",
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse non-null cached epoch, including zero.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L118-L119",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 395,
+      "source_span": [
+        130,
+        4,
+        131,
+        27
+      ],
+      "procedure": "TB08",
+      "original_operation": "If",
+      "original_context": "TB-SC06",
+      "interpretation": "Datetime isinstance includes subclasses; bypass string cache.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L130-L131",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 410,
+      "source_span": [
+        133,
+        4,
+        134,
+        21
+      ],
+      "procedure": "TB08",
+      "original_operation": "If",
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse cache non-null result.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L133-L134",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 314,
+      "source_span": [
+        106,
+        7,
+        106,
+        25
+      ],
+      "procedure": "TB06",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse cached non-null datetime.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L106-L106",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 52,
+        "heading": "TB06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 356,
+      "source_span": [
+        118,
+        7,
+        118,
+        25
+      ],
+      "procedure": "TB07",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse non-null cached epoch, including zero.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L118-L118",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 411,
+      "source_span": [
+        133,
+        7,
+        133,
+        25
+      ],
+      "procedure": "TB08",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC06",
+      "interpretation": "Reuse cache non-null result.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L133-L133",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 390,
+      "source_span": [
+        128,
+        25,
+        128,
+        39
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC06",
+      "interpretation": "Type union annotation, not bitwise arithmetic.",
+      "temporal_relevance": "DECLARATION_OR_BOOTSTRAP",
+      "relevance_reason": "Module initialization or metadata declaration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L128-L128",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 53,
+        "heading": "Declarations"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 309,
+      "source_span": [
+        105,
+        13,
+        105,
+        39
+      ],
+      "procedure": "TB06",
+      "original_operation": "_local_dt_cache.get",
+      "original_context": "TB-SC06",
+      "interpretation": "Lookup epoch cache by supplied key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L105-L105",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 52,
+        "heading": "TB06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 321,
+      "source_span": [
+        108,
+        13,
+        108,
+        71
+      ],
+      "procedure": "TB06",
+      "original_operation": "datetime.fromtimestamp().replace",
+      "original_context": "TB-SC06",
+      "interpretation": "Convert epoch via Tehran zone then remove tzinfo, preserving local wall time.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L108-L108",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 52,
+        "heading": "TB06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 323,
+      "source_span": [
+        108,
+        13,
+        108,
+        50
+      ],
+      "procedure": "TB06",
+      "original_operation": "datetime.fromtimestamp",
+      "original_context": "TB-SC06",
+      "interpretation": "Convert epoch via Tehran zone then remove tzinfo, preserving local wall time.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L108-L108",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 52,
+        "heading": "TB06"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 351,
+      "source_span": [
+        117,
+        13,
+        117,
+        36
+      ],
+      "procedure": "TB07",
+      "original_operation": "_epoch_cache.get",
+      "original_context": "TB-SC06",
+      "interpretation": "Lookup datetime-keyed cache.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L117-L117",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 363,
+      "source_span": [
+        120,
+        13,
+        120,
+        58
+      ],
+      "procedure": "TB07",
+      "original_operation": "int",
+      "original_context": "TB-SC06",
+      "interpretation": "Attach Tehran zone without conversion of wall time; native timestamp then int truncation toward zero.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L120-L120",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 365,
+      "source_span": [
+        120,
+        17,
+        120,
+        57
+      ],
+      "procedure": "TB07",
+      "original_operation": "local.replace().timestamp",
+      "original_context": "TB-SC06",
+      "interpretation": "Attach Tehran zone without conversion of wall time; native timestamp then int truncation toward zero.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L120-L120",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 367,
+      "source_span": [
+        120,
+        17,
+        120,
+        45
+      ],
+      "procedure": "TB07",
+      "original_operation": "local.replace",
+      "original_context": "TB-SC06",
+      "interpretation": "Attach Tehran zone without conversion of wall time; native timestamp then int truncation toward zero.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L120-L120",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 55,
+        "heading": "TB07"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 396,
+      "source_span": [
+        130,
+        7,
+        130,
+        34
+      ],
+      "procedure": "TB08",
+      "original_operation": "isinstance",
+      "original_context": "TB-SC06",
+      "interpretation": "Datetime isinstance includes subclasses; bypass string cache.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L130-L130",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 401,
+      "source_span": [
+        131,
+        15,
+        131,
+        27
+      ],
+      "procedure": "TB08",
+      "original_operation": "epoch",
+      "original_context": "TB-SC06",
+      "interpretation": "Delegate native datetime directly to epoch.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L131-L131",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 406,
+      "source_span": [
+        132,
+        13,
+        132,
+        44
+      ],
+      "procedure": "TB08",
+      "original_operation": "_display_epoch_cache.get",
+      "original_context": "TB-SC06",
+      "interpretation": "Lookup display input key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L132-L132",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 418,
+      "source_span": [
+        135,
+        13,
+        135,
+        65
+      ],
+      "procedure": "TB08",
+      "original_operation": "epoch",
+      "original_context": "TB-SC06",
+      "interpretation": "Parse exact format year-month-day hour:minute:second then epoch; failures propagate.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L135-L135",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 420,
+      "source_span": [
+        135,
+        19,
+        135,
+        64
+      ],
+      "procedure": "TB08",
+      "original_operation": "datetime.strptime",
+      "original_context": "TB-SC06",
+      "interpretation": "Parse exact format year-month-day hour:minute:second then epoch; failures propagate.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L135-L135",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 58,
+        "heading": "TB08"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-04-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        101,
+        139
+      ],
+      "interpretation": "A non-null cache hit returns the same stored object. Conversion strips timezone metadata without converting the Tehran wall clock to UTC. Timezone attachment replaces any existing tzinfo rather than converting the input instant; timestamp conversion uses native int truncation toward zero. Zero is a valid cached result. The datetime branch includes subclasses and bypasses the display cache. The other branch uses its input key as supplied and exact native parse format; no error fallback.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L101-L139",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Local source behavior only; dependent callbacks and data remain conditional."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-04-F01",
+      "span": [
+        101,
+        139
+      ],
+      "description": "A non-null cache hit returns the same stored object. Conversion strips timezone metadata without converting the Tehran wall clock to UTC.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 53,
+      "prior_blob": "f927209a545a3561b1c93cc13917456704359acd",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L101-L139",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B09-04-F02",
+      "span": [
+        101,
+        139
+      ],
+      "description": "Timezone attachment replaces any existing tzinfo rather than converting the input instant; timestamp conversion uses native int truncation toward zero. Zero is a valid cached result.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 56,
+      "prior_blob": "f927209a545a3561b1c93cc13917456704359acd",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L101-L139",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B09-04-F03",
+      "span": [
+        101,
+        139
+      ],
+      "description": "The datetime branch includes subclasses and bypasses the display cache. The other branch uses its input key as supplied and exact native parse format; no error fallback.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 59,
+      "prior_blob": "f927209a545a3561b1c93cc13917456704359acd",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L101-L139",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native loader, chronology, Decimal normalization, transaction consumer, callback and output ownership contracts. W3/W4 remain open."
+  ]
+}

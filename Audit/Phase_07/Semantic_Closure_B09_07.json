@@ -1,0 +1,1082 @@
+{
+  "checkpoint": 168,
+  "batch": "B09",
+  "sub_batch": "B09-07",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "866184b604be85951ceab86ea65b738a04575a36",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    213,
+    249
+  ],
+  "procedures": "TB12–TB14",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 35,
+    "by_category": {
+      "branches": 10,
+      "comparisons": 6,
+      "arithmetic": 10,
+      "calls": 9
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 2
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 747,
+      "source_span": [
+        217,
+        8,
+        218,
+        92
+      ],
+      "procedure": "TB12",
+      "original_operation": "If",
+      "original_context": "TB-SC11",
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L217-L218",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 748,
+      "source_span": [
+        217,
+        11,
+        217,
+        54
+      ],
+      "procedure": "TB12",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC11",
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L217-L217",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 778,
+      "source_span": [
+        221,
+        40,
+        221,
+        85
+      ],
+      "procedure": "TB12",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC11",
+      "interpretation": "TF1 main list aliases lower list; otherwise fresh separate list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L221-L221",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 811,
+      "source_span": [
+        226,
+        8,
+        227,
+        24
+      ],
+      "procedure": "TB13",
+      "original_operation": "With",
+      "original_context": "TB-SC11",
+      "interpretation": "Enter staged append context and return yielded delta after normal exit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L226-L227",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 40,
+        "heading": "TB13"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 840,
+      "source_span": [
+        234,
+        8,
+        236,
+        18
+      ],
+      "procedure": "TB14",
+      "original_operation": "If",
+      "original_context": "TB-SC12",
+      "interpretation": "Falsy/empty rows take unchanged path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L234-L236",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 844,
+      "source_span": [
+        235,
+        12,
+        235,
+        55
+      ],
+      "procedure": "TB14",
+      "original_operation": "Yield",
+      "original_context": "TB-SC12",
+      "interpretation": "Yield delta with current lengths and return; no writes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L235-L235",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 875,
+      "source_span": [
+        242,
+        8,
+        244,
+        56
+      ],
+      "procedure": "TB14",
+      "original_operation": "If",
+      "original_context": "TB-SC12",
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L242-L244",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 876,
+      "source_span": [
+        242,
+        11,
+        242,
+        67
+      ],
+      "procedure": "TB14",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC12",
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L242-L242",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 901,
+      "source_span": [
+        246,
+        8,
+        248,
+        52
+      ],
+      "procedure": "TB14",
+      "original_operation": "If",
+      "original_context": "TB-SC12",
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L246-L248",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 902,
+      "source_span": [
+        246,
+        11,
+        246,
+        98
+      ],
+      "procedure": "TB14",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC12",
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L246-L246",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 749,
+      "source_span": [
+        217,
+        11,
+        217,
+        37
+      ],
+      "procedure": "TB12",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC11",
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L217-L217",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 754,
+      "source_span": [
+        217,
+        41,
+        217,
+        54
+      ],
+      "procedure": "TB12",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "TB-SC11",
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L217-L217",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 779,
+      "source_span": [
+        221,
+        63,
+        221,
+        77
+      ],
+      "procedure": "TB12",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC11",
+      "interpretation": "TF1 main list aliases lower list; otherwise fresh separate list.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L221-L221",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 879,
+      "source_span": [
+        242,
+        35,
+        242,
+        67
+      ],
+      "procedure": "TB14",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC12",
+      "interpretation": "Rewind lower only when existing lower list truthy and first raw time equals last raw timestamp.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L242-L242",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 897,
+      "source_span": [
+        245,
+        22,
+        245,
+        41
+      ],
+      "procedure": "TB14",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC12",
+      "interpretation": "Shared main iff timeframe equals one.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L245-L245",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 907,
+      "source_span": [
+        246,
+        53,
+        246,
+        98
+      ],
+      "procedure": "TB14",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC12",
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L246-L246",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 788,
+      "source_span": [
+        222,
+        28,
+        222,
+        38
+      ],
+      "procedure": "TB12",
+      "original_operation": "BitOr",
+      "original_context": "TB-SC11",
+      "interpretation": "Optional integer timestamp annotation, not arithmetic.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L222-L222",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 841,
+      "source_span": [
+        234,
+        11,
+        234,
+        19
+      ],
+      "procedure": "TB14",
+      "original_operation": "Not",
+      "original_context": "TB-SC12",
+      "interpretation": "Falsy/empty rows take unchanged path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L234-L234",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 862,
+      "source_span": [
+        239,
+        23,
+        239,
+        68
+      ],
+      "procedure": "TB14",
+      "original_operation": "Mult",
+      "original_context": "TB-SC12",
+      "interpretation": "Floor divide first time by stored timeframe then multiply for first main key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L239-L239",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 863,
+      "source_span": [
+        239,
+        23,
+        239,
+        51
+      ],
+      "procedure": "TB14",
+      "original_operation": "FloorDiv",
+      "original_context": "TB-SC12",
+      "interpretation": "Floor divide first time by stored timeframe then multiply for first main key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L239-L239",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 883,
+      "source_span": [
+        243,
+        12,
+        243,
+        29
+      ],
+      "procedure": "TB14",
+      "original_operation": "Sub",
+      "original_context": "TB-SC12",
+      "interpretation": "Decrease dirty lower index by one.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L243-L243",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 893,
+      "source_span": [
+        244,
+        46,
+        244,
+        48
+      ],
+      "procedure": "TB14",
+      "original_operation": "USub",
+      "original_context": "TB-SC12",
+      "interpretation": "Copy last lower dictionary, negative-one indexing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L244-L244",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 903,
+      "source_span": [
+        246,
+        11,
+        246,
+        26
+      ],
+      "procedure": "TB14",
+      "original_operation": "Not",
+      "original_context": "TB-SC12",
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L246-L246",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 912,
+      "source_span": [
+        246,
+        71,
+        246,
+        73
+      ],
+      "procedure": "TB14",
+      "original_operation": "USub",
+      "original_context": "TB-SC12",
+      "interpretation": "For nonshared main only, require nonempty list and equal last main key; short circuit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L246-L246",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 916,
+      "source_span": [
+        247,
+        12,
+        247,
+        27
+      ],
+      "procedure": "TB14",
+      "original_operation": "Sub",
+      "original_context": "TB-SC12",
+      "interpretation": "Decrease dirty main index by one.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L247-L247",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 926,
+      "source_span": [
+        248,
+        42,
+        248,
+        44
+      ],
+      "procedure": "TB14",
+      "original_operation": "USub",
+      "original_context": "TB-SC12",
+      "interpretation": "Copy last main dictionary via negative-one index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L248-L248",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 750,
+      "source_span": [
+        217,
+        11,
+        217,
+        26
+      ],
+      "procedure": "TB12",
+      "original_operation": "type",
+      "original_context": "TB-SC11",
+      "interpretation": "Require exact int type, not subclass/bool; positive check only when type valid.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L217-L217",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 758,
+      "source_span": [
+        218,
+        18,
+        218,
+        92
+      ],
+      "procedure": "TB12",
+      "original_operation": "ValueError",
+      "original_context": "TB-SC11",
+      "interpretation": "Raise ValueError on invalid timeframe.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L218-L218",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 37,
+        "heading": "TB12"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 812,
+      "source_span": [
+        226,
+        13,
+        226,
+        36
+      ],
+      "procedure": "TB13",
+      "original_operation": "self.stage_append",
+      "original_context": "TB-SC11",
+      "interpretation": "Enter staged append context and return yielded delta after normal exit.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L226-L226",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 40,
+        "heading": "TB13"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 830,
+      "source_span": [
+        232,
+        23,
+        232,
+        47
+      ],
+      "procedure": "TB14",
+      "original_operation": "len",
+      "original_context": "TB-SC12",
+      "interpretation": "Initialize lower dirty index to current length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L232-L232",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 836,
+      "source_span": [
+        233,
+        21,
+        233,
+        43
+      ],
+      "procedure": "TB14",
+      "original_operation": "len",
+      "original_context": "TB-SC12",
+      "interpretation": "Initialize main dirty index to current length.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L233-L233",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 845,
+      "source_span": [
+        235,
+        18,
+        235,
+        55
+      ],
+      "procedure": "TB14",
+      "original_operation": "self._delta",
+      "original_context": "TB-SC12",
+      "interpretation": "Yield delta with current lengths and return; no writes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L235-L235",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 853,
+      "source_span": [
+        238,
+        21,
+        238,
+        41
+      ],
+      "procedure": "TB14",
+      "original_operation": "int",
+      "original_context": "TB-SC12",
+      "interpretation": "Convert first raw timestamp before full validation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L238-L238",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 888,
+      "source_span": [
+        244,
+        26,
+        244,
+        56
+      ],
+      "procedure": "TB14",
+      "original_operation": "self.second_buckets[].copy",
+      "original_context": "TB-SC12",
+      "interpretation": "Copy last lower dictionary, negative-one indexing.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L244-L244",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 921,
+      "source_span": [
+        248,
+        24,
+        248,
+        52
+      ],
+      "procedure": "TB14",
+      "original_operation": "self.main_buckets[].copy",
+      "original_context": "TB-SC12",
+      "interpretation": "Copy last main dictionary via negative-one index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input, chronology, state, ownership boundary or output conversion.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Native services, external input and cross-owner reconciliation remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L248-L248",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 43,
+        "heading": "TB14"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-07-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        213,
+        249
+      ],
+      "interpretation": "Exact type excludes bool and int subclasses; invalid type short-circuits the positive test. TF1 main and lower are the same list object. Initial dirty values are lengths; empty input yields without modifying state. First timestamp is int-converted before checked-row traversal. Tail copies are shallow and only selected on existing list plus equality of previous last raw time or aligned main key; nonshared main is checked separately.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L213-L249",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "Local source behavior only; dependent callbacks and data remain conditional."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-07-F01",
+      "span": [
+        213,
+        249
+      ],
+      "description": "Exact type excludes bool and int subclasses; invalid type short-circuits the positive test. TF1 main and lower are the same list object.",
+      "document": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "line": 38,
+      "prior_blob": "0406fa64af82977733530ffa07cfca952d81401f",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L213-L249",
+      "recheck": "W2/W3 pending."
+    },
+    {
+      "id": "B09-07-F02",
+      "span": [
+        213,
+        249
+      ],
+      "description": "Initial dirty values are lengths; empty input yields without modifying state. First timestamp is int-converted before checked-row traversal. Tail copies are shallow and only selected on existing list plus equality of previous last raw time or aligned main key; nonshared main is checked separately.",
+      "document": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "line": 44,
+      "prior_blob": "0406fa64af82977733530ffa07cfca952d81401f",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L213-L249",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native loader, chronology, Decimal normalization, transaction consumer, callback and output ownership contracts. W3/W4 remain open."
+  ]
+}
