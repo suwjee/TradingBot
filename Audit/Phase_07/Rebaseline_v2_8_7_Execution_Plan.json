@@ -590,7 +590,7 @@
       "phase": "07",
       "title": "Separate forensic review",
       "status": "INCOMPLETE",
-      "last_completed_checkpoint": 355,
+      "last_completed_checkpoint": 356,
       "completed_checkpoints": [
         {
           "id": 351,
@@ -616,10 +616,15 @@
           "id": 355,
           "status": "PASS_SCOPED_W3_B02_RACES_LOCAL",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP355_Completion.json"
+        },
+        {
+          "id": 356,
+          "status": "PASS_SCOPED_W3_B02_STANDALONE_SCAN_LOCAL",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP356_Completion.json"
         }
       ],
-      "completed_scope": "Entry evidence reconciliation and independent B01 local source owner category review; bounded consumer sample review only; CP352 RE53–RE62 local source contracts 613 category rows and 8 historical supplemental items; bounded consumer checks, no B02 closure.; CP353 RE31–RE52 local source contracts 1009 category rows and 11 historical supplemental items; bounded consumer checks, no B02 closure.; CP354 declarations and RE01–RE08 local source contracts 586 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP355 RE09–RE12 local source contracts 294 category rows and 4 historical supplemental items; bounded consumer checks, no B02 closure.",
-      "remaining_scope": "B02 remaining lines 328–885, 1370–2908; B03–B10 local and all cross-owner obligations; W3 independent acceptance",
+      "completed_scope": "Entry evidence reconciliation and independent B01 local source owner category review; bounded consumer sample review only; CP352 RE53–RE62 local source contracts 613 category rows and 8 historical supplemental items; bounded consumer checks, no B02 closure.; CP353 RE31–RE52 local source contracts 1009 category rows and 11 historical supplemental items; bounded consumer checks, no B02 closure.; CP354 declarations and RE01–RE08 local source contracts 586 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP355 RE09–RE12 local source contracts 294 category rows and 4 historical supplemental items; bounded consumer checks, no B02 closure.; CP356 RE13–RE18 local source contracts 837 category rows and 15 historical supplemental items; bounded consumer checks, no B02 closure.",
+      "remaining_scope": "B02 remaining lines 690–885, 1370–2908; B03–B10 local and all cross-owner obligations; W3 independent acceptance",
       "current_w3": {
         "local_modules": {
           "reviewed": 5,
@@ -630,15 +635,15 @@
           "denominator": 10
         },
         "local_category_rows": {
-          "reviewed": 2838,
+          "reviewed": 3675,
           "denominator": 50220
         },
         "w1_category_rows": {
-          "reviewed": 627,
+          "reviewed": 806,
           "denominator": 11575
         },
         "additional_category_rows": {
-          "reviewed": 2211,
+          "reviewed": 2869,
           "denominator": 38645
         },
         "b01_category_rows": {
@@ -651,15 +656,15 @@
         },
         "cross_owner_denominator": null,
         "b02_category_rows": {
-          "reviewed": 2502,
+          "reviewed": 3339,
           "denominator": 8697
         },
         "b02_w1": {
-          "reviewed": 553,
+          "reviewed": 732,
           "denominator": 1877
         },
         "b02_additional": {
-          "reviewed": 1949,
+          "reviewed": 2607,
           "denominator": 6820
         },
         "b02_completed_ranges": [
@@ -678,9 +683,13 @@
           [
             1132,
             1369
+          ],
+          [
+            328,
+            689
           ]
         ],
-        "b02_historical_supplemental_reviewed": 30
+        "b02_historical_supplemental_reviewed": 45
       },
       "supplementary_evidence": [
         "Audit/Phase_07/Rebaseline_v2_8_7/CP351_W3_B01_Local_Forensic_Register.json",
@@ -702,7 +711,12 @@
         "Audit/Phase_07/Rebaseline_v2_8_7/CP355_W3_Race_Local_Forensic_Register.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP355_W3_Race_Consumer_Boundaries.json",
         "Algorithms/V3/01_Reaction_Engine.md",
-        "Algorithms/V3/Chronology/40_W3_Reaction_Breakout_And_Races_Forensic.md"
+        "Algorithms/V3/Chronology/40_W3_Reaction_Breakout_And_Races_Forensic.md",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP356_W3_Standalone_Scan_Mirror_Local_Forensic_Register.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP356_W3_Standalone_Scan_Mirror_Consumer_Boundaries.json",
+        "Algorithms/V3/01_Reaction_Engine.md",
+        "Algorithms/V3/State_Machines/01_Reaction_Reset.md",
+        "Algorithms/V3/Chronology/41_W3_Reaction_Standalone_Scan_And_Mirror_Forensic.md"
       ]
     },
     {
@@ -718,7 +732,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP356 / W3 B02 independent Reaction post-breakout reset and Bullish scan source review, starting from actual published CP355 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Verify CP351–355 artifacts; read AGENTS.md, Operating Protocol, active Execution Plan and relevant CP321–350 evidence. Independently review reaction_engine.py lines 328–689 (post_breakout_reset, Bullish detect/_scan state transitions and mirror records) in complete adaptive partitions, then 690–885 and 1370–2908. Source before prior conclusions; map exact canonical W1 and additional category rows to reviewed source contracts, inspect historical B02-02 and related procedures, compare active docs and CP352–355 findings. Preserve every prior record; B02 2502/8697 category rows (553/1877 W1, 1949/6820 additional), reviewed ranges 1–327 and 886–1369, 30 historical supplemental. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open for complete consumer/lifetime, record copying and ownership, dirty frontier, failure/rollback, admission and mirror review. All remaining B02, B03–B10 and cross-owner W3 obligations must be independently reviewed. No overlap-based acceptance. Up to 10 substantive checkpoints; no RAW, runtime, ZIP, production or main change; RB02 WAIVED_NON_BLOCKING. Full candidate recursive tree diff, CAS force=false expected parent and remote readback per checkpoint. W4 only after independent W3 acceptance. Report exact denominators, limitations, commit/tree and tailored continuation in Persian.",
+  "next": "CP357 / W3 B02 independent reflected sequence, Bearish adapter and published Reaction candidate source review, starting from actual published CP356 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and CP321–356 relevant evidence. Source before prior conclusions: review reaction_engine.py lines 690–885 (RE19–RE30, reflected cache admission/lifetime, Bearish wrappers, reset mirror and public clone/projection), then 1370–2908 in complete adaptive partitions. Compare historical B02-03 and active specifications, canonical W1/additional rows and consumer contracts; check physical identity, timestamp and Decimal boundaries, cache invalidation and failure paths. Preserve CP351–356 evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, all earlier findings and RE01–RE18 / RE31–RE62 corrections. B02 3339/8697 local category rows (732/1877 W1, 2607/6820 additional), 45 historical supplemental, ranges 1–689 and 886–1369; W3 local category 3675/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 open; complete B02 and B03–B10 local and cross-owner obligations including chronology, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; preserve historical evidence, synchronize JSON, docs, completion and plan. No RAW payload, project runtime, ZIP, production or main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE, W4 NOT RUN until independent W3 acceptance, Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -730,6 +744,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "CP356 / W3 B02 independent Reaction post-breakout reset and Bullish scan source review, starting from actual published CP355 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Verify CP351–355 artifacts; read AGENTS.md, Operating Protocol, active Execution Plan and relevant CP321–350 evidence. Independently review reaction_engine.py lines 328–689 (post_breakout_reset, Bullish detect/_scan state transitions and mirror records) in complete adaptive partitions, then 690–885 and 1370–2908. Source before prior conclusions; map exact canonical W1 and additional category rows to reviewed source contracts, inspect historical B02-02 and related procedures, compare active docs and CP352–355 findings. Preserve every prior record; B02 2502/8697 category rows (553/1877 W1, 1949/6820 additional), reviewed ranges 1–327 and 886–1369, 30 historical supplemental. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open for complete consumer/lifetime, record copying and ownership, dirty frontier, failure/rollback, admission and mirror review. All remaining B02, B03–B10 and cross-owner W3 obligations must be independently reviewed. No overlap-based acceptance. Up to 10 substantive checkpoints; no RAW, runtime, ZIP, production or main change; RB02 WAIVED_NON_BLOCKING. Full candidate recursive tree diff, CAS force=false expected parent and remote readback per checkpoint. W4 only after independent W3 acceptance. Report exact denominators, limitations, commit/tree and tailored continuation in Persian."
+    "next_prompt": "CP357 / W3 B02 independent reflected sequence, Bearish adapter and published Reaction candidate source review, starting from actual published CP356 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and CP321–356 relevant evidence. Source before prior conclusions: review reaction_engine.py lines 690–885 (RE19–RE30, reflected cache admission/lifetime, Bearish wrappers, reset mirror and public clone/projection), then 1370–2908 in complete adaptive partitions. Compare historical B02-03 and active specifications, canonical W1/additional rows and consumer contracts; check physical identity, timestamp and Decimal boundaries, cache invalidation and failure paths. Preserve CP351–356 evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, all earlier findings and RE01–RE18 / RE31–RE62 corrections. B02 3339/8697 local category rows (732/1877 W1, 2607/6820 additional), 45 historical supplemental, ranges 1–689 and 886–1369; W3 local category 3675/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 open; complete B02 and B03–B10 local and cross-owner obligations including chronology, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; preserve historical evidence, synchronize JSON, docs, completion and plan. No RAW payload, project runtime, ZIP, production or main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE, W4 NOT RUN until independent W3 acceptance, Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
   }
 }

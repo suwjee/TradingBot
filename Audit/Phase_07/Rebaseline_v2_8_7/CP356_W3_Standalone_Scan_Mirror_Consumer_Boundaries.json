@@ -1,0 +1,88 @@
+{
+  "checkpoint": 356,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs directly read from pinned source; not a full consumer trace",
+  "consumers": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1011,
+        1040
+      ],
+      "meaning": "Native first crossing clamps positional bounds and can maintain settled history. RE13 itself makes neither clamp nor cache invalidation; history update and lookup belong to provider."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1095,
+        1116
+      ],
+      "meaning": "Reflected lower first_less delegates first_greater at sign-copied threshold, preserving position. Correctness requires source and reflected row index alignment."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        736,
+        785
+      ],
+      "meaning": "Bearish reference swaps views and lower index after original detector construction; wrappers mirror candidate/candle, analysis, sign-copy threshold and return hit. Detect mirrors accepted reactions and negates Reset broken_level, keeps bounds. Full view lifetime and projection remain pending."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1802,
+        1851
+      ],
+      "meaning": "Unified successor admission requires expected tag and non-null analysis, rejects strict remainder crossing of analysis.extreme, then consumes full main lower window. Unlike standalone, it cannot seed solely from full main OHLC without exact analysis; tie keys remain distinct."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1853,
+        1885
+      ],
+      "meaning": "Unified retained nontrend first search passes first_only=true and retain_initial=true to bullish/reference _scan, captures helper cursor; copies bullish or reflects bearish candidate. Nonretained route uses public detect and copies first reaction. Trend routes differ."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2480,
+        2515
+      ],
+      "meaning": "Unified post-confirmation reset uses exact analysis.extreme when present or box fallback, delegates direction-specific reset; emits or tries shared successor, passes pending reset to normal cursor. No conflation with standalone level or early return."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2521,
+        2564
+      ],
+      "meaning": "Unified normal scan uses pending reset OR strict previous-owner crossing plus separate candidate-break predicate, invokes race only when both true; retained checkpoint uses shallow copies and counts. Standalone WAITING race condition differs; complete ledger and rollback not reviewed."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP323-S03",
+    "CP323-S04",
+    "CP323-S05",
+    "CP323-S06",
+    "CP335",
+    "CP347",
+    "CP350"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Full reflected/cache ownership, projection and Unified lifecycle, ledger, dirty frontier, rollback, failure paths and other owners."
+}

@@ -8,21 +8,21 @@ Extended state: mode, state, candidate, last_confirmed_bottom/first, running_pea
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| RXI01 | INIT | Initial cursor absent/present | Initialize fields or restore initial cursor and candidate copy; resume next_index | SCANNING or WAITING | RE15,RE80 |
+| RXI01 | INIT | Initial cursor absent/present | Initialize fresh fields and clear instance cursor, or additionally restore listed initial-cursor fields and shallow candidate copy; resume next_index | SCANNING or WAITING | RE15,RE80 |
 | RXI02 | SCANNING or WAITING | Last confirmed edge strictly reset; if WAITING, reset race wins | Append Reset with null second_time, clear confirmed owner/candidate/peak, mode A, new-leg true, remember reset candle and RED anchor if eligible; consume candle | SCANNING | RE12,RE15 |
 | RXI03 | WAITING | Mode A invalidation before confirmation | Discard candidate, set anchor to current RED or null, origin candidate_invalidation or null; consume candle; no Reset record | SCANNING | RE11,RE15 |
 | RXI04 | WAITING | No earlier reset/invalidation, strict lower Low | Update opposite edge/source before evaluating breakout | WAITING | RE15 |
-| RXI05 | WAITING | Strict High > frozen top, first_only | Set Break, refine if current main owns bottom and exact analysis exists; append copied confirmed candidate; return | RETURN | RE10,RE15 |
+| RXI05 | WAITING | Strict High > frozen top, first_only | Set Break, refine if current main owns bottom and exact analysis exists; append shallow copied confirmed candidate; return original bounds and current confirmed lists, bypass post-break reset and cursor retention | RETURN | RE10,RE15 |
 | RXI06 | WAITING | Strict High > top, not first_only | Confirm/refine; append copy; set last confirmed edge/First, running High/index, mode B, clear candidate | BREAK_REMAINDER | RE10,RE15 |
 | RXI07 | BREAK_REMAINDER | Strict post-breakout lower reset found | Append exact Reset; clear owner/peak, mode A, new-leg true, remember reset context and anchor | SCANNING | RE13,RE15 |
 | RXI08 | BREAK_REMAINDER | No later reset; current main RED | New mode B candidate from current main High/Low; no exact-analysis requirement here | WAITING | RE15 |
 | RXI09 | BREAK_REMAINDER | Otherwise | No successor candidate | SCANNING | RE15 |
-| RXI10 | SCANNING | Mode A, leg_just_started | Freeze leg_open_low; clear new-leg flag/reset_context; RED after GREEN reset with Low >= reset Low opens candidate (top max GREEN run/current); other RED becomes leg_open anchor; consume main | WAITING or SCANNING | RE09,RE15 |
+| RXI10 | SCANNING | Mode A, leg_just_started | Freeze leg_open_low; clear new-leg flag/reset_context; RED after GREEN reset with Low >= reset Low opens candidate (top max GREEN run/current); other RED becomes leg_open anchor; non-RED preserves existing anchor/origin; consume main | WAITING or SCANNING | RE09,RE15 |
 | RXI11 | SCANNING | Mode A later, previous GREEN and current RED | If invalidation-origin anchor and both Lows below anchor, clear it. Pass if Low >= remaining anchor Low, else Low >= previous Low or leg-open Low. On pass freeze top/source, anchor and leg boundary | WAITING if pass; otherwise SCANNING | RE09,RE15 |
 | RXI12 | SCANNING | Mode A, candidate not formed | RED updates scan anchor; DOJI/NEUTRAL label clears anchor; other tags leave it | SCANNING | RE15 |
 | RXI13 | SCANNING | Mode B, RED | Choose higher of running peak/current High (running wins equality); min Low from after top source through current, or current alone; create candidate | WAITING | RE07,RE15 |
-| RXI14 | SCANNING or WAITING | Mode B scan branch, null running peak or strict higher High | Initialize or update peak/source after possible candidate construction; equal existing peak is retained; advance main cursor. WAITING branch does not execute this scan update | SCANNING or WAITING | RE15 |
-| RXI15 | SCANNING or WAITING | Horizon | If retain_initial, store next_index and initial-mode cursor fields; return confirmed lists only | RETURN | RE15 |
+| RXI14 | SCANNING | Mode B scan branch, null running peak or strict higher High | Initialize or update peak/source after possible candidate construction; equal existing peak is retained; advance main cursor. WAITING branch does not execute this scan update | SCANNING or WAITING | RE15 |
+| RXI15 | SCANNING or WAITING | Horizon | If retain_initial, store next_index and initial-mode cursor fields including pending candidate reference without copy; return confirmed lists only | RETURN | RE15 |
 
 Mode A invalidation and confirmed reset race are not the same event. Invalidation rejects an unresolved candidate; confirmed reset records a previously accepted owner. Both helpers test lower outward before confirmation when both predicates occur; see exact distinctions in RE11/RE12. The standalone Break reuse RXI08 is **not** Unified's full-lower-window reuse.
 
