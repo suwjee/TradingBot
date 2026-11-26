@@ -1278,3 +1278,7 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 260 — CLI timing, compact JSON and exception exit semantics
 
 [Local review](Semantic_Closure_B09_99.md) and [site evidence](Semantic_Closure_B09_99.json): 35 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 2276/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## B09 owner closure — CP260 completion
+
+[Completion evidence](Semantic_Closure_B09_Completion.json): all 99 contiguous partitions, 2,276 original category rows, 3,757 source lines. All evidence JSON reopened and structurally revalidated against immutable ledger/crosswalk with no mismatches. W1 local owner PASS only; W2/W3/W4 open. Next B10 True/False and Live. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
