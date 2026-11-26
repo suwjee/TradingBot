@@ -1,0 +1,813 @@
+{
+  "checkpoint": 206,
+  "batch": "B09",
+  "sub_batch": "B09-45",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "4d07e075f1fb57f03663eba1c6af5af0b8fea85b",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    1792,
+    1814
+  ],
+  "procedures": "TB65",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 26,
+    "by_category": {
+      "branches": 8,
+      "comparisons": 5,
+      "arithmetic": 4,
+      "calls": 9
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 6363,
+      "source_span": [
+        1796,
+        13,
+        1796,
+        89
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "Use target candle only when target index strictly below full main length; no separate lower-bound check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1796-L1796",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6389,
+      "source_span": [
+        1799,
+        13,
+        1799,
+        38
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "Select ph prefix for bullish, pl otherwise.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1799-L1799",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6416,
+      "source_span": [
+        1810,
+        8,
+        1810,
+        56
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "Choose iconCandleHigh key for bullish otherwise iconCandleLow.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1810-L1810",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6430,
+      "source_span": [
+        1802,
+        53,
+        1802,
+        88
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "Previous direction bearish if bullish target, else bullish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1802-L1802",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6463,
+      "source_span": [
+        1808,
+        27,
+        1808,
+        93
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null offset target index, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1808-L1808",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6472,
+      "source_span": [
+        1809,
+        26,
+        1809,
+        81
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null epoch-convert timestamp, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1809-L1809",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6481,
+      "source_span": [
+        1811,
+        12,
+        1811,
+        87
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null stringify actual High for bullish/Low otherwise; else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1811-L1811",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 6487,
+      "source_span": [
+        1811,
+        16,
+        1811,
+        54
+      ],
+      "procedure": "TB65",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null stringify actual High for bullish/Low otherwise; else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1811-L1811",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6364,
+      "source_span": [
+        1796,
+        45,
+        1796,
+        79
+      ],
+      "procedure": "TB65",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "TB-SC60",
+      "interpretation": "Use target candle only when target index strictly below full main length; no separate lower-bound check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1796-L1796",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6384,
+      "source_span": [
+        1798,
+        14,
+        1798,
+        36
+      ],
+      "procedure": "TB65",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC60",
+      "interpretation": "Bullish iff exact string bullish.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1798-L1798",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6464,
+      "source_span": [
+        1808,
+        65,
+        1808,
+        83
+      ],
+      "procedure": "TB65",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null offset target index, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1808-L1808",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6473,
+      "source_span": [
+        1809,
+        53,
+        1809,
+        71
+      ],
+      "procedure": "TB65",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null epoch-convert timestamp, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1809-L1809",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6482,
+      "source_span": [
+        1811,
+        59,
+        1811,
+        77
+      ],
+      "procedure": "TB65",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null stringify actual High for bullish/Low otherwise; else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1811-L1811",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6357,
+      "source_span": [
+        1795,
+        19,
+        1795,
+        40
+      ],
+      "procedure": "TB65",
+      "original_operation": "Add",
+      "original_context": "TB-SC60",
+      "interpretation": "Add 49 to transition index (the source candle is first of 50).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1795-L1795",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6434,
+      "source_span": [
+        1803,
+        23,
+        1803,
+        61
+      ],
+      "procedure": "TB65",
+      "original_operation": "Add",
+      "original_context": "TB-SC60",
+      "interpretation": "Source index offset by market absolute offset.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1803-L1803",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6452,
+      "source_span": [
+        1806,
+        32,
+        1806,
+        82
+      ],
+      "procedure": "TB65",
+      "original_operation": "Add",
+      "original_context": "TB-SC60",
+      "interpretation": "Offset recorded primary3 source index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1806-L1806",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6467,
+      "source_span": [
+        1808,
+        27,
+        1808,
+        61
+      ],
+      "procedure": "TB65",
+      "original_operation": "Add",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null offset target index, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1808-L1808",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6366,
+      "source_span": [
+        1796,
+        60,
+        1796,
+        79
+      ],
+      "procedure": "TB65",
+      "original_operation": "len",
+      "original_context": "TB-SC60",
+      "interpretation": "Use target candle only when target index strictly below full main length; no separate lower-bound check.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1796-L1796",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6377,
+      "source_span": [
+        1797,
+        16,
+        1797,
+        66
+      ],
+      "procedure": "TB65",
+      "original_operation": "getattr",
+      "original_context": "TB-SC60",
+      "interpretation": "Read target_direction with default bullish only if absent.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1797-L1797",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6425,
+      "source_span": [
+        1801,
+        35,
+        1801,
+        58
+      ],
+      "procedure": "TB65",
+      "original_operation": "epoch",
+      "original_context": "TB-SC60",
+      "interpretation": "Build transition id from target direction and epoch of source main timestamp.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1801-L1801",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6439,
+      "source_span": [
+        1804,
+        22,
+        1804,
+        45
+      ],
+      "procedure": "TB65",
+      "original_operation": "epoch",
+      "original_context": "TB-SC60",
+      "interpretation": "Epoch-convert source main timestamp and recorded exact event independently.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1804-L1804",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6443,
+      "source_span": [
+        1804,
+        60,
+        1804,
+        88
+      ],
+      "procedure": "TB65",
+      "original_operation": "epoch",
+      "original_context": "TB-SC60",
+      "interpretation": "Epoch-convert source main timestamp and recorded exact event independently.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1804-L1804",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6447,
+      "source_span": [
+        1805,
+        17,
+        1805,
+        38
+      ],
+      "procedure": "TB65",
+      "original_operation": "str",
+      "original_context": "TB-SC60",
+      "interpretation": "Stringify transition level; number constant 3.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1805-L1805",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6458,
+      "source_span": [
+        1807,
+        31,
+        1807,
+        65
+      ],
+      "procedure": "TB65",
+      "original_operation": "epoch",
+      "original_context": "TB-SC60",
+      "interpretation": "Epoch-convert recorded primary3 source time.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1807-L1807",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6476,
+      "source_span": [
+        1809,
+        26,
+        1809,
+        49
+      ],
+      "procedure": "TB65",
+      "original_operation": "epoch",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null epoch-convert timestamp, else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1809-L1809",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6485,
+      "source_span": [
+        1811,
+        12,
+        1811,
+        55
+      ],
+      "procedure": "TB65",
+      "original_operation": "str",
+      "original_context": "TB-SC60",
+      "interpretation": "If target non-null stringify actual High for bullish/Low otherwise; else null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1811-L1811",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/19_Serialization.md",
+        "line": 177,
+        "heading": "TB65"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-45-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        1792,
+        1814
+      ],
+      "interpretation": "Target icon is actual full-history candle at source index+49, not an extrapolated time or a visible-end-clamped candle. Target lookup uses only upper bound. Direction defaults bullish if attribute absent; exact bullish selects ph fields, previous bearish and icon High, all other values select pl/previous bullish/Low. Absolute source and icon indexes add market offset; prices are stringified, not rounded.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1792-L1814",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No empirical runtime or cross-owner acceptance asserted."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-45-F01",
+      "span": [
+        1792,
+        1814
+      ],
+      "description": "Target icon is actual full-history candle at source index+49, not an extrapolated time or a visible-end-clamped candle. Target lookup uses only upper bound. Direction defaults bullish if attribute absent; exact bullish selects ph fields, previous bearish and icon High, all other values select pl/previous bullish/Low. Absolute source and icon indexes add market offset; prices are stringified, not rounded.",
+      "document": "Algorithms/V3/19_Serialization.md",
+      "line": 178,
+      "prior_blob": "39925dc421a5380bc5939ac6a9cdadc175ffd1be",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1792-L1814",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native chronology, ownership and lifecycle stop services, regime context, live stage replay, dynamic engine and output contracts. W3/W4 pending."
+  ]
+}

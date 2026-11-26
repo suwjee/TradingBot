@@ -1,0 +1,585 @@
+{
+  "checkpoint": 211,
+  "batch": "B09",
+  "sub_batch": "B09-50",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "4d07e075f1fb57f03663eba1c6af5af0b8fea85b",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    1973,
+    1998
+  ],
+  "procedures": "TB70",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 18,
+    "by_category": {
+      "branches": 3,
+      "comparisons": 3,
+      "arithmetic": 2,
+      "calls": 10
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 6977,
+      "source_span": [
+        1979,
+        4,
+        1997,
+        105
+      ],
+      "procedure": "TB70",
+      "original_operation": "If",
+      "original_context": "TB-SC65",
+      "interpretation": "Exact null live_views selects batch path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1979-L1997",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 7000,
+      "source_span": [
+        1986,
+        18,
+        1989,
+        9
+      ],
+      "procedure": "TB70",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC65",
+      "interpretation": "Timeframe exactly one aliases seconds; otherwise timed separate main construction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1986-L1989",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 7025,
+      "source_span": [
+        1992,
+        8,
+        1992,
+        39
+      ],
+      "procedure": "TB70",
+      "original_operation": "Assert",
+      "original_context": "TB-SC65",
+      "interpretation": "Live path asserts bucket_delta non-null (assertion behavior, not explicit ValueError).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1992-L1992",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 6978,
+      "source_span": [
+        1979,
+        7,
+        1979,
+        25
+      ],
+      "procedure": "TB70",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "TB-SC65",
+      "interpretation": "Exact null live_views selects batch path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1979-L1979",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7001,
+      "source_span": [
+        1986,
+        29,
+        1986,
+        48
+      ],
+      "procedure": "TB70",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC65",
+      "interpretation": "Timeframe exactly one aliases seconds; otherwise timed separate main construction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1986-L1986",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 7026,
+      "source_span": [
+        1992,
+        15,
+        1992,
+        39
+      ],
+      "procedure": "TB70",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC65",
+      "interpretation": "Live path asserts bucket_delta non-null (assertion behavior, not explicit ValueError).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1992-L1992",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6964,
+      "source_span": [
+        1976,
+        16,
+        1976,
+        38
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC65",
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "temporal_relevance": "DECLARATION_ONLY",
+      "relevance_reason": "Interface declaration or default metadata.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1976-L1976",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 79,
+        "heading": "Declarations"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 6968,
+      "source_span": [
+        1976,
+        61,
+        1976,
+        80
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "TB-SC65",
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "temporal_relevance": "DECLARATION_ONLY",
+      "relevance_reason": "Interface declaration or default metadata.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1976-L1976",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 79,
+        "heading": "Declarations"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6983,
+      "source_span": [
+        1980,
+        18,
+        1984,
+        9
+      ],
+      "procedure": "TB70",
+      "original_operation": "timed",
+      "original_context": "TB-SC65",
+      "interpretation": "Time lower candle construction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1980-L1984",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6988,
+      "source_span": [
+        1983,
+        20,
+        1983,
+        66
+      ],
+      "procedure": "TB70",
+      "original_operation": "build_candle_objects",
+      "original_context": "TB-SC65",
+      "interpretation": "Build lower candle objects from complete second buckets.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1983-L1983",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 6994,
+      "source_span": [
+        1985,
+        22,
+        1985,
+        68
+      ],
+      "procedure": "TB70",
+      "original_operation": "reaction.shared_lower_timeframe_index",
+      "original_context": "TB-SC65",
+      "interpretation": "Get shared lower index via reaction engine.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1985-L1985",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7006,
+      "source_span": [
+        1986,
+        54,
+        1989,
+        9
+      ],
+      "procedure": "TB70",
+      "original_operation": "timed",
+      "original_context": "TB-SC65",
+      "interpretation": "Timeframe exactly one aliases seconds; otherwise timed separate main construction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1986-L1989",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7011,
+      "source_span": [
+        1988,
+        20,
+        1988,
+        69
+      ],
+      "procedure": "TB70",
+      "original_operation": "build_candle_objects",
+      "original_context": "TB-SC65",
+      "interpretation": "Build main candle objects from timeframe buckets.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1988-L1988",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7017,
+      "source_span": [
+        1990,
+        21,
+        1990,
+        93
+      ],
+      "procedure": "TB70",
+      "original_operation": "reaction.MarketChronology",
+      "original_context": "TB-SC65",
+      "interpretation": "Construct native MarketChronology with main/lower arrays, timeframe, lower index.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1990-L1990",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7030,
+      "source_span": [
+        1993,
+        8,
+        1993,
+        109
+      ],
+      "procedure": "TB70",
+      "original_operation": "live_views.update",
+      "original_context": "TB-SC65",
+      "interpretation": "Update retained views with both buckets and delta.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1993-L1993",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7051,
+      "source_span": [
+        1995,
+        22,
+        1995,
+        101
+      ],
+      "procedure": "TB70",
+      "original_operation": "reaction.shared_lower_timeframe_index",
+      "original_context": "TB-SC65",
+      "interpretation": "Register prepared live lower index with shared index service.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1995-L1995",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7060,
+      "source_span": [
+        1996,
+        21,
+        1996,
+        99
+      ],
+      "procedure": "TB70",
+      "original_operation": "reaction.shared_lower_timeframe_index",
+      "original_context": "TB-SC65",
+      "interpretation": "Register prepared live main index with same service.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1996-L1996",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 7069,
+      "source_span": [
+        1997,
+        21,
+        1997,
+        105
+      ],
+      "procedure": "TB70",
+      "original_operation": "reaction.MarketChronology",
+      "original_context": "TB-SC65",
+      "interpretation": "Construct chronology using both prepared indexes.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Projection, native service dispatch, chronology, source identity, state boundary or configuration.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1997-L1997",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+        "line": 78,
+        "heading": "TB70"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-50-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        1973,
+        1998
+      ],
+      "interpretation": "Exact null live_views selects batch. Timeframe one aliases lower candles rather than rebuilding main. Live branch uses an assertion for non-null delta, updates views then registers lower and main prepared indexes in that order; chronology receives both. Exceptions are not transactionally caught here.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1973-L1998",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "No empirical runtime or cross-owner acceptance asserted."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-50-F01",
+      "span": [
+        1973,
+        1998
+      ],
+      "description": "Exact null live_views selects batch. Timeframe one aliases lower candles rather than rebuilding main. Live branch uses an assertion for non-null delta, updates views then registers lower and main prepared indexes in that order; chronology receives both. Exceptions are not transactionally caught here.",
+      "document": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "line": 79,
+      "prior_blob": "8f6594eeb79d3134f73eaa69da9c6bcb0e4e3e22",
+      "resolution": "Clarify local source-derived contract; no production changes.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1973-L1998",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native chronology, ownership and lifecycle stop services, regime context, live stage replay, dynamic engine and output contracts. W3/W4 pending."
+  ]
+}
