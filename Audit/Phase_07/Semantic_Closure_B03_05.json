@@ -1,0 +1,4430 @@
+{
+  "checkpoint": 33,
+  "batch": "B03",
+  "sub_batch": "B03-05",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "501c025e5d525568fc026e62994f2a7e8c76af57",
+  "path": "engine/pipeline/a_zone_detector.py",
+  "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+  "source_range": [
+    216,
+    336
+  ],
+  "procedures": [
+    "A09",
+    "A10",
+    "A11",
+    "A12"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; downstream acceptance, cross-owner and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 95,
+    "by_category": {
+      "branches": 18,
+      "comparisons": 8,
+      "arithmetic": 6,
+      "calls": 63
+    },
+    "supplemental_items": 6
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 888,
+      "source_span": [
+        218,
+        8,
+        219,
+        71
+      ],
+      "procedure": "A09",
+      "original_operation": "If",
+      "original_context": "A-SC11",
+      "interpretation": "Invalid ordinal outside 1..reaction count raises before kind dispatch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L218-L219",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 889,
+      "source_span": [
+        218,
+        11,
+        218,
+        71
+      ],
+      "procedure": "A09",
+      "original_operation": "BoolOp",
+      "original_context": "A-SC11",
+      "interpretation": "Check ordinal<1 first then ordinal>count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L218-L218",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 903,
+      "source_span": [
+        220,
+        8,
+        229,
+        57
+      ],
+      "procedure": "A09",
+      "original_operation": "If",
+      "original_context": "A-SC11",
+      "interpretation": "Exact string kind scale selects Reaction Break route; every other string uses Reset-like route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L229",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1018,
+      "source_span": [
+        239,
+        8,
+        242,
+        49
+      ],
+      "procedure": "A10",
+      "original_operation": "For",
+      "original_context": "A-SC12",
+      "interpretation": "Traverse source main lower window in native order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L239-L242",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1034,
+      "source_span": [
+        241,
+        12,
+        242,
+        49
+      ],
+      "procedure": "A10",
+      "original_operation": "If",
+      "original_context": "A-SC12",
+      "interpretation": "First strict crossing returns lower timestamp; exhaustion returns main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L241-L242",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1056,
+      "source_span": [
+        247,
+        8,
+        271,
+        13
+      ],
+      "procedure": "A11",
+      "original_operation": "For",
+      "original_context": "A-SC13",
+      "interpretation": "Enumerate full sorted Blue list one-based; invalid records still occupy ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L247-L271",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1066,
+      "source_span": [
+        248,
+        12,
+        249,
+        24
+      ],
+      "procedure": "A11",
+      "original_operation": "If",
+      "original_context": "A-SC13",
+      "interpretation": "False-valued calculation_valid skips before formation and stop lookup.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L248-L249",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1116,
+      "source_span": [
+        263,
+        31,
+        263,
+        56
+      ],
+      "procedure": "A11",
+      "original_operation": "IfExp",
+      "original_context": "A-SC13",
+      "interpretation": "Truthy stop tuple supplies returned stop index; else null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L263-L263",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1123,
+      "source_span": [
+        265,
+        24,
+        265,
+        85
+      ],
+      "procedure": "A11",
+      "original_operation": "IfExp",
+      "original_context": "A-SC13",
+      "interpretation": "Truthy stop tuple supplies main timestamp at mapped/indexed stop; else null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L265-L265",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1136,
+      "source_span": [
+        267,
+        36,
+        267,
+        61
+      ],
+      "procedure": "A11",
+      "original_operation": "IfExp",
+      "original_context": "A-SC13",
+      "interpretation": "Truthy stop supplies event time field; else null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L267-L267",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1145,
+      "source_span": [
+        269,
+        39,
+        269,
+        64
+      ],
+      "procedure": "A11",
+      "original_operation": "IfExp",
+      "original_context": "A-SC13",
+      "interpretation": "Truthy stop supplies event extreme; else null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L269-L269",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1174,
+      "source_span": [
+        277,
+        8,
+        334,
+        27
+      ],
+      "procedure": "A12",
+      "original_operation": "For",
+      "original_context": "A-SC14",
+      "interpretation": "Traverse full sorted Blue list one-based, including invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L277-L334",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1184,
+      "source_span": [
+        278,
+        12,
+        280,
+        24
+      ],
+      "procedure": "A12",
+      "original_operation": "If",
+      "original_context": "A-SC14",
+      "interpretation": "Valid truthiness replaces previous pair and continues.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L278-L280",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1198,
+      "source_span": [
+        281,
+        12,
+        282,
+        24
+      ],
+      "procedure": "A12",
+      "original_operation": "If",
+      "original_context": "A-SC14",
+      "interpretation": "Missing retained valid predecessor skips invalid line.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L281-L282",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1247,
+      "source_span": [
+        292,
+        12,
+        293,
+        24
+      ],
+      "procedure": "A12",
+      "original_operation": "If",
+      "original_context": "A-SC14",
+      "interpretation": "Skip if crossing absent or crossing index differs from invalid line source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L292-L293",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1248,
+      "source_span": [
+        292,
+        15,
+        292,
+        65
+      ],
+      "procedure": "A12",
+      "original_operation": "BoolOp",
+      "original_context": "A-SC14",
+      "interpretation": "Null crossing first; only then compare crossing main index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L292-L292",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1272,
+      "source_span": [
+        299,
+        12,
+        300,
+        24
+      ],
+      "procedure": "A12",
+      "original_operation": "If",
+      "original_context": "A-SC15",
+      "interpretation": "Missing aligned Reaction skips without consuming predecessor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L299-L300",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1305,
+      "source_span": [
+        305,
+        12,
+        306,
+        24
+      ],
+      "procedure": "A12",
+      "original_operation": "If",
+      "original_context": "A-SC15",
+      "interpretation": "Missing A source skips without consuming predecessor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L305-L306",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 890,
+      "source_span": [
+        218,
+        11,
+        218,
+        30
+      ],
+      "procedure": "A09",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "A-SC11",
+      "interpretation": "Integer ordinal strictly below one invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L218-L218",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 893,
+      "source_span": [
+        218,
+        34,
+        218,
+        71
+      ],
+      "procedure": "A09",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "A-SC11",
+      "interpretation": "Ordinal strictly above reaction count invalid; equality valid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L218-L218",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 904,
+      "source_span": [
+        220,
+        11,
+        220,
+        48
+      ],
+      "procedure": "A09",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "A-SC11",
+      "interpretation": "String kind equals exact scale.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L220",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1199,
+      "source_span": [
+        281,
+        15,
+        281,
+        31
+      ],
+      "procedure": "A12",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC14",
+      "interpretation": "Previous identity null means no retained valid Blue.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L281-L281",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1249,
+      "source_span": [
+        292,
+        15,
+        292,
+        31
+      ],
+      "procedure": "A12",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC14",
+      "interpretation": "Crossing identity null means no hit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L292-L292",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1252,
+      "source_span": [
+        292,
+        35,
+        292,
+        65
+      ],
+      "procedure": "A12",
+      "original_operation": [
+        "NotEq"
+      ],
+      "original_context": "A-SC14",
+      "interpretation": "Crossing main index unequal invalid source index rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L292-L292",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1273,
+      "source_span": [
+        299,
+        15,
+        299,
+        28
+      ],
+      "procedure": "A12",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC15",
+      "interpretation": "Match identity null rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L299-L299",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1306,
+      "source_span": [
+        305,
+        15,
+        305,
+        29
+      ],
+      "procedure": "A12",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "A-SC15",
+      "interpretation": "Source identity null rejects.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L305-L305",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 917,
+      "source_span": [
+        221,
+        38,
+        221,
+        57
+      ],
+      "procedure": "A09",
+      "original_operation": "Sub",
+      "original_context": "A-SC11",
+      "interpretation": "One-based reaction ordinal minus one selects native reaction list position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L221-L221",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 963,
+      "source_span": [
+        229,
+        29,
+        229,
+        57
+      ],
+      "procedure": "A09",
+      "original_operation": "Add",
+      "original_context": "A-SC11",
+      "interpretation": "Reset main source open plus timeframe starts stop scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L229-L229",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1006,
+      "source_span": [
+        237,
+        14,
+        237,
+        36
+      ],
+      "procedure": "A10",
+      "original_operation": "Add",
+      "original_context": "A-SC12",
+      "interpretation": "Source main open plus timeframe gives exclusive lower search end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L237-L237",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1067,
+      "source_span": [
+        248,
+        15,
+        248,
+        65
+      ],
+      "procedure": "A11",
+      "original_operation": "Not",
+      "original_context": "A-SC13",
+      "interpretation": "Negate calculation_valid Boolean before skip.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L248-L248",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1166,
+      "source_span": [
+        276,
+        18,
+        276,
+        43
+      ],
+      "procedure": "A12",
+      "original_operation": "BitOr",
+      "original_context": "A-SC14",
+      "interpretation": "Nullable/type-union annotation, not executable trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration or type annotation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L276-L276",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1243,
+      "source_span": [
+        290,
+        16,
+        290,
+        44
+      ],
+      "procedure": "A12",
+      "original_operation": "Add",
+      "original_context": "A-SC14",
+      "interpretation": "Invalid source main open plus timeframe gives exclusive double-stop crossing end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L290-L290",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 882,
+      "source_span": [
+        217,
+        26,
+        217,
+        63
+      ],
+      "procedure": "A09",
+      "original_operation": "int",
+      "original_context": "A-SC11",
+      "interpretation": "Integer-convert line reaction ordinal before validation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L217-L217",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 884,
+      "source_span": [
+        217,
+        30,
+        217,
+        62
+      ],
+      "procedure": "A09",
+      "original_operation": "getattr",
+      "original_context": "A-SC11",
+      "interpretation": "Read required reaction_number.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L217-L217",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 895,
+      "source_span": [
+        218,
+        52,
+        218,
+        71
+      ],
+      "procedure": "A09",
+      "original_operation": "len",
+      "original_context": "A-SC11",
+      "interpretation": "Read reaction count only after ordinal lower bound passes.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L218-L218",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 900,
+      "source_span": [
+        219,
+        18,
+        219,
+        71
+      ],
+      "procedure": "A09",
+      "original_operation": "ValueError",
+      "original_context": "A-SC11",
+      "interpretation": "Construct invalid reaction ordinal ValueError.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L219-L219",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 905,
+      "source_span": [
+        220,
+        11,
+        220,
+        37
+      ],
+      "procedure": "A09",
+      "original_operation": "str",
+      "original_context": "A-SC11",
+      "interpretation": "Convert kind to native string for exact scale dispatch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L220",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 907,
+      "source_span": [
+        220,
+        15,
+        220,
+        36
+      ],
+      "procedure": "A09",
+      "original_operation": "getattr",
+      "original_context": "A-SC11",
+      "interpretation": "Read required kind.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L220",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 922,
+      "source_span": [
+        222,
+        20,
+        222,
+        55
+      ],
+      "procedure": "A09",
+      "original_operation": "int",
+      "original_context": "A-SC11",
+      "interpretation": "Integer-convert selected Reaction Break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L222-L222",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 924,
+      "source_span": [
+        222,
+        24,
+        222,
+        54
+      ],
+      "procedure": "A09",
+      "original_operation": "getattr",
+      "original_context": "A-SC11",
+      "interpretation": "Read Reaction break_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L222-L222",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 930,
+      "source_span": [
+        223,
+        25,
+        223,
+        67
+      ],
+      "procedure": "A09",
+      "original_operation": "self._reaction_confirmation_time",
+      "original_context": "A-SC11",
+      "interpretation": "Virtual confirmation call; returned value also stop-scan start.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L223-L223",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 939,
+      "source_span": [
+        226,
+        20,
+        226,
+        54
+      ],
+      "procedure": "A09",
+      "original_operation": "int",
+      "original_context": "A-SC11",
+      "interpretation": "Integer-convert non-scale line source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L226-L226",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 941,
+      "source_span": [
+        226,
+        24,
+        226,
+        53
+      ],
+      "procedure": "A09",
+      "original_operation": "getattr",
+      "original_context": "A-SC11",
+      "interpretation": "Read required line source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L226-L226",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 947,
+      "source_span": [
+        227,
+        26,
+        227,
+        67
+      ],
+      "procedure": "A09",
+      "original_operation": "getattr",
+      "original_context": "A-SC11",
+      "interpretation": "Read source main timestamp.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L227-L227",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 956,
+      "source_span": [
+        228,
+        25,
+        228,
+        64
+      ],
+      "procedure": "A09",
+      "original_operation": "self._reset_formation_time",
+      "original_context": "A-SC11",
+      "interpretation": "Delegate non-scale Reset formation to A10.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L228-L228",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 66,
+        "heading": "AZoneDetector._formation"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1000,
+      "source_span": [
+        236,
+        16,
+        236,
+        44
+      ],
+      "procedure": "A10",
+      "original_operation": "getattr",
+      "original_context": "A-SC12",
+      "interpretation": "Read source main open.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L236-L236",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1012,
+      "source_span": [
+        238,
+        23,
+        238,
+        64
+      ],
+      "procedure": "A10",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC12",
+      "interpretation": "Normalize line broken_level via as_decimal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L238-L238",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1014,
+      "source_span": [
+        238,
+        34,
+        238,
+        63
+      ],
+      "procedure": "A10",
+      "original_operation": "getattr",
+      "original_context": "A-SC12",
+      "interpretation": "Read required broken_level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L238-L238",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1020,
+      "source_span": [
+        239,
+        20,
+        239,
+        50
+      ],
+      "procedure": "A10",
+      "original_operation": "self._lower_window",
+      "original_context": "A-SC12",
+      "interpretation": "Obtain lower window [source open,source end).",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L239-L239",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1027,
+      "source_span": [
+        240,
+        20,
+        240,
+        64
+      ],
+      "procedure": "A10",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC12",
+      "interpretation": "Normalize lower directional value.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L240-L240",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1029,
+      "source_span": [
+        240,
+        31,
+        240,
+        63
+      ],
+      "procedure": "A10",
+      "original_operation": "getattr",
+      "original_context": "A-SC12",
+      "interpretation": "Read policy-selected lower field.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L240-L240",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1035,
+      "source_span": [
+        241,
+        15,
+        241,
+        54
+      ],
+      "procedure": "A10",
+      "original_operation": "self._strict_cross",
+      "original_context": "A-SC12",
+      "interpretation": "Test strict crossing of broken_level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L241-L241",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1041,
+      "source_span": [
+        242,
+        23,
+        242,
+        49
+      ],
+      "procedure": "A10",
+      "original_operation": "getattr",
+      "original_context": "A-SC12",
+      "interpretation": "Return current lower timestamp at first strict hit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L242-L242",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 70,
+        "heading": "AZoneDetector._reset_formation_time"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1060,
+      "source_span": [
+        247,
+        29,
+        247,
+        64
+      ],
+      "procedure": "A11",
+      "original_operation": "enumerate",
+      "original_context": "A-SC13",
+      "interpretation": "Enumerate full sorted line list from one.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L247-L247",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1068,
+      "source_span": [
+        248,
+        19,
+        248,
+        65
+      ],
+      "procedure": "A11",
+      "original_operation": "bool",
+      "original_context": "A-SC13",
+      "interpretation": "Convert optional calculation_valid to bool.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L248-L248",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1070,
+      "source_span": [
+        248,
+        24,
+        248,
+        64
+      ],
+      "procedure": "A11",
+      "original_operation": "getattr",
+      "original_context": "A-SC13",
+      "interpretation": "Read calculation_valid default true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L248-L248",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1081,
+      "source_span": [
+        250,
+        62,
+        250,
+        83
+      ],
+      "procedure": "A11",
+      "original_operation": "self._formation",
+      "original_context": "A-SC13",
+      "interpretation": "Resolve formation index/time and stop start for valid line.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L250-L250",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1087,
+      "source_span": [
+        251,
+        25,
+        251,
+        68
+      ],
+      "procedure": "A11",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC13",
+      "interpretation": "Normalize semantic source_extreme, not drawing price.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L251-L251",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1089,
+      "source_span": [
+        251,
+        36,
+        251,
+        67
+      ],
+      "procedure": "A11",
+      "original_operation": "getattr",
+      "original_context": "A-SC13",
+      "interpretation": "Read required source_extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L251-L251",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1095,
+      "source_span": [
+        252,
+        19,
+        256,
+        13
+      ],
+      "procedure": "A11",
+      "original_operation": "self._first_crossing",
+      "original_context": "A-SC13",
+      "interpretation": "Find first crossing from formation-dependent stop start with unbounded end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L252-L256",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1102,
+      "source_span": [
+        257,
+        12,
+        271,
+        13
+      ],
+      "procedure": "A11",
+      "original_operation": "states.append",
+      "original_context": "A-SC13",
+      "interpretation": "Append constructed valid BlueState to local list.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L257-L271",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1105,
+      "source_span": [
+        258,
+        16,
+        270,
+        17
+      ],
+      "procedure": "A11",
+      "original_operation": "BlueState",
+      "original_context": "A-SC13",
+      "interpretation": "Construct state with ordinal, original line, formation, stop and provenance fields.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L258-L270",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1125,
+      "source_span": [
+        265,
+        24,
+        265,
+        67
+      ],
+      "procedure": "A11",
+      "original_operation": "getattr",
+      "original_context": "A-SC13",
+      "interpretation": "Read main timestamp via stop[0] only if tuple truthy.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L265-L265",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 74,
+        "heading": "AZoneDetector._build_blue_states"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AP",
+          "transition": "AP01",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1178,
+      "source_span": [
+        277,
+        29,
+        277,
+        64
+      ],
+      "procedure": "A12",
+      "original_operation": "enumerate",
+      "original_context": "A-SC14",
+      "interpretation": "Enumerate full sorted lines from one.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L277-L277",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1185,
+      "source_span": [
+        278,
+        15,
+        278,
+        61
+      ],
+      "procedure": "A12",
+      "original_operation": "bool",
+      "original_context": "A-SC14",
+      "interpretation": "Convert validity flag to bool.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L278-L278",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1187,
+      "source_span": [
+        278,
+        20,
+        278,
+        60
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC14",
+      "interpretation": "Read calculation_valid default true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L278-L278",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1210,
+      "source_span": [
+        284,
+        30,
+        284,
+        64
+      ],
+      "procedure": "A12",
+      "original_operation": "int",
+      "original_context": "A-SC14",
+      "interpretation": "Integer-convert invalid line source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L284-L284",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1212,
+      "source_span": [
+        284,
+        34,
+        284,
+        63
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC14",
+      "interpretation": "Read invalid line source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L284-L284",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1218,
+      "source_span": [
+        285,
+        29,
+        285,
+        57
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC14",
+      "interpretation": "Read invalid line.source_time for crossing start and First gate.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L285-L285",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1224,
+      "source_span": [
+        286,
+        26,
+        286,
+        77
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC14",
+      "interpretation": "Read candles[formation_index].timestamp for source main time and end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L286-L286",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1233,
+      "source_span": [
+        287,
+        23,
+        291,
+        13
+      ],
+      "procedure": "A12",
+      "original_operation": "self._first_crossing",
+      "original_context": "A-SC14",
+      "interpretation": "Find first strict crossing of previous source extreme from invalid line source_time to source main end.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L287-L291",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1236,
+      "source_span": [
+        288,
+        16,
+        288,
+        68
+      ],
+      "procedure": "A12",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC14",
+      "interpretation": "Normalize previous line semantic source_extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L288-L288",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1238,
+      "source_span": [
+        288,
+        27,
+        288,
+        67
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC14",
+      "interpretation": "Read previous line source_extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L288-L288",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1266,
+      "source_span": [
+        295,
+        20,
+        298,
+        13
+      ],
+      "procedure": "A12",
+      "original_operation": "self._first_reaction_after",
+      "original_context": "A-SC15",
+      "interpretation": "Query aligned Reaction after exact trigger with not_before=invalid line.source_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L295-L298",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1284,
+      "source_span": [
+        302,
+        26,
+        302,
+        61
+      ],
+      "procedure": "A12",
+      "original_operation": "int",
+      "original_context": "A-SC15",
+      "interpretation": "Integer-convert matched Reaction First before Break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L302-L302",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1286,
+      "source_span": [
+        302,
+        30,
+        302,
+        60
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC15",
+      "interpretation": "Read required matched First.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L302-L302",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1292,
+      "source_span": [
+        303,
+        26,
+        303,
+        61
+      ],
+      "procedure": "A12",
+      "original_operation": "int",
+      "original_context": "A-SC15",
+      "interpretation": "Integer-convert matched Reaction Break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L303-L303",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1294,
+      "source_span": [
+        303,
+        30,
+        303,
+        60
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC15",
+      "interpretation": "Read required matched Break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L303-L303",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1300,
+      "source_span": [
+        304,
+        21,
+        304,
+        60
+      ],
+      "procedure": "A12",
+      "original_operation": "self._a_source",
+      "original_context": "A-SC15",
+      "interpretation": "Delegate frozen A source selection from trigger main and matched Reaction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L304-L304",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1317,
+      "source_span": [
+        308,
+        12,
+        333,
+        13
+      ],
+      "procedure": "A12",
+      "original_operation": "result.append",
+      "original_context": "A-SC15",
+      "interpretation": "Append newly constructed special A record before clearing predecessor.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L308-L333",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1320,
+      "source_span": [
+        309,
+        16,
+        332,
+        17
+      ],
+      "procedure": "A12",
+      "original_operation": "self._zone",
+      "original_context": "A-SC16",
+      "interpretation": "Construct zone via A21 with route double-stop, no exact Blue stop metadata supplied.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L309-L332",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1331,
+      "source_span": [
+        313,
+        39,
+        313,
+        76
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read previous Blue source_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L313-L313",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1336,
+      "source_span": [
+        314,
+        39,
+        314,
+        67
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read invalid Blue source_time again for record.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L314-L314",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1345,
+      "source_span": [
+        317,
+        38,
+        317,
+        90
+      ],
+      "procedure": "A12",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC16",
+      "interpretation": "Normalize previous Blue stop level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L317-L317",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1347,
+      "source_span": [
+        317,
+        49,
+        317,
+        89
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read previous source_extreme for first stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L317-L317",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1352,
+      "source_span": [
+        318,
+        38,
+        318,
+        81
+      ],
+      "procedure": "A12",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC16",
+      "interpretation": "Normalize invalid Blue stop level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L318-L318",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1354,
+      "source_span": [
+        318,
+        49,
+        318,
+        80
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read invalid source_extreme for second stop.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L318-L318",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1359,
+      "source_span": [
+        319,
+        39,
+        319,
+        91
+      ],
+      "procedure": "A12",
+      "original_operation": "as_decimal",
+      "original_context": "A-SC16",
+      "interpretation": "Normalize previous extreme again for continuation level.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L319-L319",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1361,
+      "source_span": [
+        319,
+        50,
+        319,
+        90
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read previous source_extreme for continuation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L319-L319",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1366,
+      "source_span": [
+        320,
+        46,
+        320,
+        89
+      ],
+      "procedure": "A12",
+      "original_operation": "int",
+      "original_context": "A-SC16",
+      "interpretation": "Integer-convert previous Blue source index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L320-L320",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1368,
+      "source_span": [
+        320,
+        50,
+        320,
+        88
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read previous Blue source_index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L320-L320",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1373,
+      "source_span": [
+        321,
+        45,
+        321,
+        82
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read previous Blue source_time as continuation source.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L321-L321",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1380,
+      "source_span": [
+        323,
+        33,
+        323,
+        82
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read trigger main timestamp by crossing index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L323-L323",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1392,
+      "source_span": [
+        326,
+        40,
+        326,
+        87
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read matched First main timestamp via integer First position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L326-L326",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1400,
+      "source_span": [
+        327,
+        40,
+        327,
+        87
+      ],
+      "procedure": "A12",
+      "original_operation": "getattr",
+      "original_context": "A-SC16",
+      "interpretation": "Read matched Break main timestamp via integer Break position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls price/time boundaries, ordered traversal, source provenance, state or result construction.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L327-L327",
+      "contract_ref": {
+        "path": "Algorithms/V3/04_A_Zone.md",
+        "blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+        "line": 78,
+        "heading": "AZoneDetector._double_stop_a_candidates"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD01",
+          "line": 63
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD02",
+          "line": 64
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD03",
+          "line": 65
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD04",
+          "line": 66
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "AD",
+          "transition": "AD05",
+          "line": 67
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B03-05-S1",
+      "source_span": [
+        217,
+        231
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Check ordinal on every line, even non-Scale. Scale exact kind uses Reaction Break and A14 return time for both event and stop scan. Any other kind uses line.source_index, A10 event and source main open+TF stop start; final candles[index] read even when unused.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L217-L231"
+    },
+    {
+      "supplemental_id": "B03-05-S2",
+      "source_span": [
+        235,
+        243
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Reset event reconstructs first strict lower cross of broken_level in source main half-open window. No hit returns main open even if nonempty lower rows; no main OHLC crossing assertion.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L235-L243"
+    },
+    {
+      "supplemental_id": "B03-05-S3",
+      "source_span": [
+        247,
+        272
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Number all sorted lines before filtering validity. Internal lines included. Normalize sourceExtreme as stop threshold. A07 result tuple truthiness controls all four optional stop fields, zero index in tuple remains valid. Main time read by stop[0]; line reference retained.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L247-L272"
+    },
+    {
+      "supplemental_id": "B03-05-S4",
+      "source_span": [
+        277,
+        293
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Valid line replaces predecessor then continues. Any false-validity line can attempt double-stop (no kind check). Missing predecessor skips. Use invalid line.source_time as start, main open+TF as end. First crossing must map to same invalid source index; no further search.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L277-L293"
+    },
+    {
+      "supplemental_id": "B03-05-S5",
+      "source_span": [
+        294,
+        307
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Trigger comes from crossing. A15 aligns with not_before=invalid line.source_time, not source main timestamp unless equal. Matched First/Break converted before A17 source lookup. No match or source retains predecessor.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L294-L307"
+    },
+    {
+      "supplemental_id": "B03-05-S6",
+      "source_span": [
+        308,
+        335
+      ],
+      "discovery_reason": "Source-first state mutation, provenance, ordered evaluation, fallback or boundary beyond original category labels.",
+      "interpretation": "Record both stop main times as invalid source main timestamp, semantic stop levels from individual Blue sources. Continuation price/index/time from previous line. Trigger event and mapped main separate, A source separately selected. Exact stop provenance omitted/default null, route double-stop. Clear predecessor only after successful append.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L308-L335"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B03-05-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        220,
+        229
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L229",
+      "description": "Preserve Scale formation and stop start when confirmation uses native fallback.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/04_A_Zone.md",
+          "prior_blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+          "procedure": "A-M01"
+        }
+      ],
+      "resolution": "Scale formation is its Reaction confirmation time returned by A14 with intrabar start disabled (RE61 may fall back to Break open); stop scan begins at the returned time.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B03-05-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        277,
+        305
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L277-L305",
+      "description": "Clarify local false-validity eligibility independent of kind.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/04_A_Zone.md",
+          "prior_blob": "07112e3ba164d36d5014fa4136fcf039ca5c6cc1",
+          "procedure": "A12"
+        }
+      ],
+      "resolution": "Invalid without previous => skip. No kind check is made on an invalid line; do not infer only Reset records can enter this route from local source.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B03-05-F03",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        220,
+        229
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/a_zone_detector.py#L220-L229",
+      "description": "State-model formation gate must preserve native fallback.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "prior_blob": "4cb40709fe9f5d5f6199b63a19621611ef0db2fe",
+          "procedure": "AP"
+        }
+      ],
+      "resolution": "Formation gate (Scale A14 confirmation with intrabar disabled and possible Break-open fallback, Reset first strict lower cross else source main)",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "Review A13–A21 pair routes, alignment, source selection and record construction before full A completion.",
+    "W2 verify invalid Blue provenance from BL08 and stop/index alignment; no lifecycle acceptance inferred.",
+    "W3 separate forensic review pending."
+  ]
+}

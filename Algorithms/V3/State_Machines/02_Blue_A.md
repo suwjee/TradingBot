@@ -34,7 +34,7 @@ Registers previous Reaction, previous_count nullable, output (including internal
 
 ## AP — Ordinary A adjacent-Blue pair machine
 
-Registers full sorted Blue ordinals (including invalid), filtered valid states with formation and stop, current pair offset, cycle_after_index=-1, nullable bridge_reuse_ordinal, output. Pair expiry = following valid state's formation or null. Formation gate (Scale exact confirmation with intrabar disabled, Reset exact proof else source main) and stop gate are separate; Reset stop starts at next main boundary.
+Registers full sorted Blue ordinals (including invalid), filtered valid states with formation and stop, current pair offset, cycle_after_index=-1, nullable bridge_reuse_ordinal, output. Pair expiry = following valid state's formation or null. Formation gate (Scale A14 confirmation with intrabar disabled and possible Break-open fallback, Reset first strict lower cross else source main) and stop gate are separate; Reset stop starts at next main boundary.
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|

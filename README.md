@@ -218,3 +218,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — B03 Blue local completion
 
 [Blue completion evidence](Audit/Phase_07/Semantic_Closure_B03_Blue_Completion.json): 437/437 original rows, local PASS. A pending. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 32
+
+[A initialization, strict crossing and range-extreme provenance](Audit/Phase_07/Semantic_Closure_B03_04.md): 131 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 33
+
+[Blue formation, first stops and invalid-line double-stop candidates](Audit/Phase_07/Semantic_Closure_B03_05.md): 95 original rows, local PASS. B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

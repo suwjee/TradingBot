@@ -161,3 +161,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## B03 Blue W1 local completion
 
 [Completion evidence](Semantic_Closure_B03_Blue_Completion.json): 437/437 original category rows, all 18 procedures, 591 lines, 24 supplemental items. A Zone remains pending (708 rows); B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED. W2/W3 open.
+
+
+## Checkpoint 32 — A initialization, strict crossing and range-extreme provenance
+
+[Local review](Semantic_Closure_B03_04.md) and [site evidence](Semantic_Closure_B03_04.json): 131 original rows, 9 supplemental items, 2 resolved findings; local PASS. A 131/708; B03 568/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 33 — Blue formation, first stops and invalid-line double-stop candidates
+
+[Local review](Semantic_Closure_B03_05.md) and [site evidence](Semantic_Closure_B03_05.json): 95 original rows, 6 supplemental items, 3 resolved findings; local PASS. A 226/708; B03 663/1145. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
