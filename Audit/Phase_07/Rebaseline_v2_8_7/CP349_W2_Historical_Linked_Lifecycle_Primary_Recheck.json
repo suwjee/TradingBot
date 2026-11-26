@@ -1,0 +1,809 @@
+{
+  "checkpoint": 349,
+  "status": "PASS_SCOPED_HISTORICAL_LINKED_LIFECYCLE_PRIMARY_RECHECK",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "3bc9b4f6abcee148e705064fe0c51c5db56a9364",
+  "entry_tree": "2e5ca937680b2bca7973dd8021e8914e84207a82",
+  "scope": "39 remaining historical-linked Lifecycle and Primary records directly re-reviewed; 131/131 cumulative, 0 remaining. Independent W2 closure still required.",
+  "references": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP348_W2_Historical_Linked_Order_E_Recheck.json",
+      "blob": "dda9819f9bbeb69f1fc49d41c5d797c961840043"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP331_W2_Closure_Gate_Assessment.json",
+      "blob": "f7327e4a1ea9a190b420aeae72b4997e73f7ec5f"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP333_W2_Dependency_Matrix.json",
+      "blob": "b48bae43c8a3a284cc164dc148fd542855420f95"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP332_W2_Provider_Consumer_Supplement.json",
+      "blob": "eb02f1c1c5bf460a15f4c9ec8e8af750897b143b"
+    }
+  ],
+  "specification_blobs_before": [
+    [
+      "Algorithms/V3/10_Lifecycle.md",
+      "0acca58662ee6d975da3b53cca8237e9578f9bb5"
+    ],
+    [
+      "Algorithms/V3/11_StopAll.md",
+      "acdc107b85ed98ef77512911e49b72b48747f9b9"
+    ],
+    [
+      "Algorithms/V3/12_Primary_Structures.md",
+      "08540a02fe83decb38378953bbc9c45975a7a9ef"
+    ],
+    [
+      "Algorithms/V3/13_Primary_High.md",
+      "5e783235d167da404cfda9f6d396220e5e6a6932"
+    ],
+    [
+      "Algorithms/V3/14_Matching_Behavior_Leg.md",
+      "42e6d44cbb1823f27310e205213b7dd8dbecedde"
+    ],
+    [
+      "Algorithms/V3/15_Trend_Reversal.md",
+      "886fbc60ff5ab63bbce5ecb39cc1fdb3c1271846"
+    ],
+    [
+      "Algorithms/V3/Chronology/04_Lifecycle_Primary.md",
+      "808f1e588de794c2d35d9c1edd27208f47e73f4e"
+    ]
+  ],
+  "rows": [
+    {
+      "id": "CP323-S39",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        695,
+        763
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "LC26–31",
+      "semantic_review": "Suppress A on S decision main via upper_bound−1 excluding -1. Priority by ordered attribute presence StopAll5/E red4 other2/S red3 other1/else0. Module identity runtime type/family default color/number/source time/index raw. Explicit nonnull stop wins else callback tuple last or value. Strict policy, max dominant priority/number/source/index first tie.",
+      "cross_owner_disposition": "S decision not own eventual stop; identity is not physical Order pair. Stop callback can fail or return unvalidated value.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M27"
+      ],
+      "consumer_groups": [
+        "CP332-G45"
+      ]
+    },
+    {
+      "id": "CP323-S40",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        766,
+        971
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "LC32",
+      "semantic_review": "Collect S/E/StopAll exact stops and optional A, map main >=0; duplicate identity last stop for ranking and first stop for interior. Sweep A source/index, ready stopped rows; recheck source earlier and stop index<=A, prior A trigger>its last stop excludes. Rank latest stop main then priority/number/source/index/earliest ordinal. Strict price extension invalidates unless interior exception: first stop..A First main extreme, earlier than A and strictly beyond A, aligned trend First between head and A First, Break<A source, confirmation<A source. Interior retains A and consumes eligible <=rank; invalid S winner stage-invalid only (no consumption), otherwise consume eligible <=rank.",
+      "cross_owner_disposition": "No global ownership by old high priority; distinguish per-row stop from identity's last rank and first interior evidence. Callback exact chronology separate from main.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M28"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP323-S41",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1412,
+        1610
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "procedure": "LC41–46",
+      "semantic_review": "A provenance filter: stopped prior source<=A and stop<=A, dominant rank and requery exact stop, min four provenance times>=boundary; no price test. Internal ordinal guarded then identity pair; healthy interior strict First/price boundaries no health flag; internal behavior filter copies only. Visibility removes E at StopAll int indexes, gets S via LC38, restores historical S by referenced source time and absent original identity set, then A via referenced sources and all_a if nonnull. Initial sets not updated, duplicates possible. Finally remove A/S on E/StopAll indexes and invalid S exact pair. Final S collision helper index only.",
+      "cross_owner_disposition": "Presentation lineage not new creation; restored S may later be excluded while A references already used; no recursive recompute of ownership.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M29"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP325-S44",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        606,
+        693
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "procedure": "LC25 / LC33",
+      "semantic_review": "Filter initial A entry by accepted sources, retain original key. Copy inherited blocks, add invalid A pending-S First times, subtract accepted initial First times (parse strings only). E exception when accepted stop set truthy and callback nonnull: requery invalid A stop in accepted set, group same main First, require blocked not inherited, A source<=First<exact stop and confirmation>stop. Update supplied exception set; blocked set unchanged by exceptions.",
+      "cross_owner_disposition": "Exact (stop,First main) exception only; accepted subtraction applies even inherited blocks, original input not mutated. No generic unblock for S.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M27"
+      ],
+      "consumer_groups": [
+        "CP332-G44"
+      ]
+    },
+    {
+      "id": "CP327-S03",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        95,
+        139
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC01–05",
+      "semantic_review": "Frozen slotted dominant owner kind/family/number/count/latest. Priority injected through shared sequence function; armed count>=2; E key includes number. Advance exact key increments; higher priority or equal priority E with dominance replaces count1, else same old object.",
+      "cross_owner_disposition": "Same-reference signal used by Primary matching; no extra duplicate detection within advance.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S04",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        142,
+        168
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M01",
+      "semantic_review": "Initialize frozen checkpoint owner/pending null,active empty tuple,output_count0. Validate direction, copy S/E, retain chronology candles/lower/times/index refs.",
+      "cross_owner_disposition": "Native lower chronology coherence caller-owned; no runtime validation of all rows.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S08",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        350,
+        366
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M01",
+      "semantic_review": "Combine S then E events, stable sort (source_time,kind,source_index); E before S on equal source. Detect with fresh checkpoint, resolve emitted own stops after traversal.",
+      "cross_owner_disposition": "Source order not exact decision order; output independent own-stop query.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S09",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        368,
+        416
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M02 / CH31",
+      "semantic_review": "Armed owner only, strict stop from latest decision/normalized price. Accept stop<boundary. Otherwise E donor and stop<=decision required. Accept either mapped source index and bucket half-open with directional strict donor price or exact parent kind/index/time/price/stop event.",
+      "cross_owner_disposition": "E donor's source bucket can precede stop; no inferred intrarow order. Exact parent branch independent of donor bucket branch.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S10",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        418,
+        446
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M03",
+      "semantic_review": "Accept delegates exact owner. Direct Red S promotion requires armed Blue owner and owner's latest decision strictly earlier than S decision. Emit StopAll1 from S at S decision, active singleton, clear owner/pending, return.",
+      "cross_owner_disposition": "No prior strict price stop or mode B required for this direct route; separate fallback branches.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S15",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        534,
+        548
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M04",
+      "semantic_review": "Live StopAll init fresh checkpoint/event keys/output/result/covered_until, immediately update dirty0; result returns shallow copy.",
+      "cross_owner_disposition": "Standalone continuation, not proof worker calls it.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M26"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S16",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        550,
+        571
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M04",
+      "semantic_review": "Validate dirty index inclusive len(times), dirty timestamp or null; min with covered_until (including absent dirty). Build fresh native detector, keys kind/repr. Retain zipped prefix while equal keys and dirty absent or max(source,decision)<dirty. Restore prefix checkpoints and output_count; replay suffix.",
+      "cross_owner_disposition": "No independent exact-type dirty validation, key includes representation; replay state separate from output own-stop fields.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M26"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S17",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        572,
+        590
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "SA-M04",
+      "semantic_review": "Retained output old resolved stop reused when nonnull and dirty absent or stop<dirty; else resolve after dirty. New output resolve ordinary. Publish checkpoints,keys,output,result then covered_until last lower+microsecond or null; shallow result.",
+      "cross_owner_disposition": "Previous observed lower coverage not main end; no generalized rollback on final publication failure.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M26"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S20",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        996,
+        1034
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC34",
+      "semantic_review": "Validate direction; accepted S identity A source/S source; sort E, precompute each nonnull stop mapped inside main. Iterate sorted candidates; skip accepted pair/out-of-range index; normalize candidate source Close and priority.",
+      "cross_owner_disposition": "Accepted pair excludes index; stop lookup per E list entry, not by unique physical Order.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M28"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S21",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1036,
+        1066
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC34",
+      "semantic_review": "Eligible older E source<A source, exact stop<A source, higher module rank, strict candidate Close beyond stopped-main Close. Determine latest prior E from reverse sorted full list, including unstopped/ineligible.",
+      "cross_owner_disposition": "No zone price substitution or stop-main-only chronology.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M28"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S22",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1073,
+        1108
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC34",
+      "semantic_review": "Retain latest prior object if eligible or older strictly higher (priority,number), stop>latest decision (default source), and stop main>=latest qualified main if present. Select greatest stop main then priority/number/source/index, first tie.",
+      "cross_owner_disposition": "Latest qualified is not guaranteed winner; higher older still competes.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M28"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S23",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1112,
+        1136
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC34",
+      "semantic_review": "Keep earliest candidate source/index per module_identity(owner), strict smaller replaces; return sorted candidate/owner pairs.",
+      "cross_owner_disposition": "Evidence for E continuation, not new independent S root.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M28"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP327-S30",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1377,
+        1409
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "procedure": "LC40",
+      "semantic_review": "Truthy measure/finder else defaults. Measure S visibility, then StopAll with supplied E donors; set sequence reset map source_time:number last duplicate wins, return shallow E copy and original StopAll result.",
+      "cross_owner_disposition": "No retroactive E detect; only active feedback calls this on each pass. Setter owns invalidation.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M25"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S01",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        25,
+        99
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P01",
+      "semantic_review": "Frozen slotted StructureOrder/PrimaryPoint/MatchingBehaviorLeg/TrendTransition; optional box/mode/cause fields, keyword-only cycle/identity; required nullable MBL stop. TrendTransition.point alias high. Mutable slotted PrimaryResult fresh list factories and default bearish.",
+      "cross_owner_disposition": "Dataclass freeze not recursive; physical Order causes dicts may remain mutable.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30",
+        "CP333-M33"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S02",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        101,
+        125
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P02–03 / CH33",
+      "semantic_review": "Resolve physical final points through len(candles)−1; exactly number3. PH truthy cross callback or native above; PL native below. Nonnull hit expanded to transition, earliest exact event/source index/cycle ID fallback empty.",
+      "cross_owner_disposition": "No local validation of custom hit; reversal uses reconciled physical number, not any logical cycle number.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30",
+        "CP333-M33"
+      ],
+      "consumer_groups": [
+        "CP332-G46"
+      ]
+    },
+    {
+      "id": "CP328-S03",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        128,
+        172
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P04–08",
+      "semantic_review": "Horizon filter decision_index<=through; group raw pair, sort earliest group decision then source/index. Role order exact decision,cycle position (last duplicate),cycle ID or empty,trigger,number. Earliest role identity and highest number winner; strict successive price extends max(number,prior+1). Replace winner; identity_source inherited truthy else role. Relabel audit causes by source-time->kind/number last wins.",
+      "cross_owner_disposition": "Logical points unchanged; role identity versus geometry and public number distinct; relabel delegated to native owner.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30",
+        "CP333-M33"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S04",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        175,
+        195
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P09–10",
+      "semantic_review": "Formed legs lazy truthy cycles else singleton, MBL trigger<=horizon plus earliest primary-side decision<=horizon (aggregate direction). StopAll remove exact promoted source pair (int StopAll index,raw Primary index) only confirmed within horizon.",
+      "cross_owner_disposition": "Activation alone not public MBL, promotion not history deletion.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30",
+        "CP333-M33"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S05",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        198,
+        219
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P11",
+      "semantic_review": "Exact PH confirmation>=gate event independent First. All other kinds First>=gate main and confirmation>event.",
+      "cross_owner_disposition": "Primary vs secondary determined in native adapter and reflected roles, not universal Order creation rule.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30",
+        "CP333-M33"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S06",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        222,
+        245
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P12–14",
+      "semantic_review": "Strict cross upper_bound event (all equal excluded), index side first_greater/less [left,len(seconds)), map nonnull hit including zero to clamp main. Extreme inclusive positional main range max High/min Low Decimal normalized, first tie then re-read selected value.",
+      "cross_owner_disposition": "No main fallback, no lower proof from main extreme, no local invalid range repair.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30"
+      ],
+      "consumer_groups": [
+        "CP332-G47"
+      ]
+    },
+    {
+      "id": "CP328-S07",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        248,
+        284
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P15 / MB-M01",
+      "semantic_review": "StopAll occupied int index; events StopAll0,S1,E2, S/E if not occupied and calculation_valid is not exact False. Stable source/rank/index, dedup kind/int index/time. StopAll reference number>=3 else null resets state. Advance exact owner; unchanged reference skip; replacement count1 clears confirmations; armed yield once with max(reference decision,confirmations).",
+      "cross_owner_disposition": "No activation until strict later reference breakout; priority owner same-reference semantics.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S08",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        287,
+        325
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P16",
+      "semantic_review": "Cross from run when nonnull else native. Track earliest qualification before dedup reference/second int indexes, mark seen before strict cross above reference main High. Sort activations event,qualification,reference/second indexes; run schedule published. Empty return waiting break if qualified else default.",
+      "cross_owner_disposition": "Dedup excludes source time and price; no retry on duplicate missing hit; no retained-step replay on empty schedule.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S09",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        326,
+        349
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P16",
+      "semantic_review": "Initialize checkpoints/pending/promoted; optional confirm_high. Replay retained steps updating activation count and checkpoint, append committed points, replay PH callback if nonnull and promoted pair. Refresh MBL on retained cycles; compute transition if highs.",
+      "cross_owner_disposition": "Native ledger callback side effects possible before later failure, not transactional rollback.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M30"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S10",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        350,
+        385
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P16",
+      "semantic_review": "Generate missing prospective point per checkpoint with reversal cutoff; earliest (decision,index). Transition wins <=next decision and <=activation; else activation <=decision wins. Skip reference already promoted pair, record step if run; otherwise activate cycle and append checkpoint. No decision breaks.",
+      "cross_owner_disposition": "Point proposals not commit; same instant activation before points, reversal first. No fixed loop cap.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S11",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        386,
+        418
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P16",
+      "semantic_review": "Pop winning proposal, replace checkpoint, append to local/global lists, record step. PH promoted and optional callback then pending.clear, recompute reversal; PL does not clear others. Final cycles use pending prospective result if exists, aggregate first MBL/last status or reversed; post secondary3 orders first physical direction/First/Break wins, sorted stop,-First,Break.",
+      "cross_owner_disposition": "Clear pending only if callback present (reflected adapter always exposes method). No dedup by cause.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S12",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        421,
+        455
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P17–19",
+      "semantic_review": "Cycle checkpoint mutable, run previous/dirty/schedule and fresh steps/cross/projection dicts; activation identity hit time/index,reference int index/time,second int index/time,qualification, no price. Step frozen with optional cycle/checkpoint/point.",
+      "cross_owner_disposition": "Live schedule comparison not complete geometry equality; dirty input contract.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S17",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        575,
+        596
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P22 / CH36",
+      "semantic_review": "When cancellation selected inspect row at upper_bound(cancel time)−1 opposing extreme; ambiguity returns no point. Post-PL3 branch stores candidates strictly before cancel (all when null), no PL4, null waits else switches PH. Ordinary equal cancel/winner ambiguous; earlier cancel updates cursor; PL->PH, PH with prior lows switches PL only if raw Low strictly below previous low else seek, no lows ->PL.",
+      "cross_owner_disposition": "Post-secondary3 branch runs before ordinary equal-stop ambiguity; no inferred ordering in same row.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S18",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        597,
+        621
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P22",
+      "semantic_review": "No winner waits. Winner freezes full gate..stop main extreme, constructs point exact trigger/decision and chosen Order; prospective gate/cursor updated, phase seek, reset_high iff PL.",
+      "cross_owner_disposition": "Proposal not committed until global scheduler; no independent ledger mutation.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S19",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        624,
+        642
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P23–24",
+      "semantic_review": "NativePrimaryOrders stores chronology/groups/on_high/direction refs, confirm_high only nonnull callback, ignores return.",
+      "cross_owner_disposition": "No local validation or new geometry.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S20",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        644,
+        662
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P25",
+      "semantic_review": "Owner bearish if PH else bullish; primary iff requested PL for bullish stored direction else PH. Physical direction opposite owner. Traverse prepared audit, recompute default native confirmation, dedup cause-kind tuple encounter order; gate primary PH else secondary PL; secondary native ordinal>0. Collect eligible records before crossing filter.",
+      "cross_owner_disposition": "Mode A/B not creation cause; default native confirmation not serialization proof.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S21",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        663,
+        680
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P25",
+      "semantic_review": "Earliest direct parent-stop record by First,confirmation,Break before stop filter; secondary requires reset-leg or that exact direct object, then crossing nonnull and >max(confirmation,event). Emit normalized geometry/cross with deepcopy of audit causes.",
+      "cross_owner_disposition": "Do not retry later direct merely because earliest has no qualifying stop. Primary number0 not universally vetoed.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M31"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S22",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        683,
+        732
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P26–35",
+      "semantic_review": "Decimal as_decimal.copy_negate no context rounding. Reflected row High=negated original Low and vice versa, tuple snapshot refs; index greater delegates native less negated level and vice versa; unchanged bounds/time positions. Chronology wraps rows, retains native times and bound main_index.",
+      "cross_owner_disposition": "No market time/direction recoloring; Decimal sign/exponent semantics preserved.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M32"
+      ],
+      "consumer_groups": [
+        "CP332-G48"
+      ]
+    },
+    {
+      "id": "CP328-S23",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        735,
+        740
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P36",
+      "semantic_review": "Replace Order direction (bullish->bearish else bullish), sign-copy stop and swap/negate nonnull box edges; all other fields preserved.",
+      "cross_owner_disposition": "Physical identity and audit cause tuple unchanged, no cause price reflection.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M32"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S25",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        770,
+        797
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P40–43",
+      "semantic_review": "Status replacements ordered global string ph/pl placeholders then reversed target. Project result recursively, swap highs/lows, MBL price negated, cycle ID/status, post orders reflected, transition level/point and bearish target. Adapter swaps requested role, reflects output; confirm_high forwards projected point if original callback nonnull. Invoke bearish core on reflected chronology.",
+      "cross_owner_disposition": "Adapter method exists even without original callback, so core clears pending; source run reflected, external callbacks native.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M32"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S26",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        800,
+        814
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P44–45",
+      "semantic_review": "Validate exact direction, choose detector, retain original timeframe/times refs, fresh run and detect. result property returns same mutable result.",
+      "cross_owner_disposition": "Not shallow snapshot; caller mutation possible.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M32"
+      ],
+      "consumer_groups": []
+    },
+    {
+      "id": "CP328-S27",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        816,
+        839
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "procedure": "P46",
+      "semantic_review": "Require equal timeframe and datetime dirty; for old and new times map original dirty via upper_bound−1 and rewind to containing main open only if inside half-open bucket. New run(previous,frontier), detect then clear previous and publish run/result/times.",
+      "cross_owner_disposition": "No wrapper commit if detect fails, external ledger callbacks not rolled back; schedule can rewind further.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "matrix_ids": [
+        "CP333-M32"
+      ],
+      "consumer_groups": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP349-F01",
+      "status": "RESOLVED_SCOPED",
+      "meaning": "LC-M04 latest qualified E is not unconditional winner; SA-M04 null dirty permits existing exact hit reuse; CH36 post-PL3 branch precedes ordinary equal-cancellation ambiguity. Active summaries qualified against source."
+    },
+    {
+      "id": "CP349-F02",
+      "status": "REVIEWED_QUALIFIED",
+      "meaning": "Primary native ledger commit and proposal are distinct; secondary earliest direct selection occurs before stop filtering. Reflection retains exact Decimal representation via copy_negate and native causal identity. Conditional replay no runtime assertion."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "queue_reviewed": 185,
+    "queue_missing": 0,
+    "queue_duplicate": 0,
+    "matrix_linked": 131,
+    "queue_and_matrix_union": 316,
+    "queue_matrix_overlap": 0,
+    "accessor_union": 20,
+    "additional_accessor_reviewed": 9,
+    "cp332_sites_preserved": 125,
+    "cp333_contracts_preserved": 37,
+    "new_linked_recheck": 39,
+    "linked_recheck_remaining": 0,
+    "raw": "NOT_RUN",
+    "runtime": "NOT_RUN",
+    "w2": "NOT_ACCEPTED",
+    "linked_recheck_cumulative": 131
+  },
+  "remaining_linked_transition_review_queue": [],
+  "remaining": "CP350: independent semantic closure gate CP331-F05/CP333-R01/R02, exact union and handoff/specification correspondence, preserve unresolved conditions rather than treating empty queue as acceptance. W3/W4 NOT RUN."
+}

@@ -46,6 +46,6 @@ Primary seek: no hits waits, equal-time up/down ambiguous, else earliest sets ph
 
 ## CH36
 
-Primary Orders stop strictly after confirmation; rank (stop event, negative First, Break). Earlier cancellation takes precedence, equal cancellation/winner ambiguous; opposing extreme in cancellation row may also make ambiguous. Post-PL3 accepts only stop before cancellation, no PL4. Source extreme gate main through stop main inclusive, committed cursor advances to stop event.
+Primary Orders stop strictly after confirmation; rank (stop event, negative First, Break). Earlier cancellation takes precedence; opposing extreme in the selected cancellation row may make the race ambiguous. Post-PL3 branch is evaluated before ordinary equal cancellation/winner ambiguity: it accepts only stops strictly before cancellation (all eligible if cancellation absent), no PL4. Ordinary equal cancellation/winner is ambiguous. Source extreme gate main through stop main inclusive, committed cursor advances to stop event.
 
 [Source engine/pipeline/PL_PH_detector.py:554–621](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L554-L621)

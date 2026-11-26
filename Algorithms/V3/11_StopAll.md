@@ -26,7 +26,7 @@ Donor is current event; source and price copied, decision retained; StopAll1 fro
 
 ## SA-M04 — Continuation
 
-Live caches event keys (kind,representation of immutable record) and checkpoints after each event. Rewind dirty to prior covered-until if earlier; retain matching prefix whose source and decision are before dirty; replay suffix. Earlier emitted own-stop records reused only if existing exact hit before dirty; otherwise rescan from max(decision,dirty). Preserve output order. Shallow result copies, immutable records. No empirical equivalence assertion.
+Live caches event keys (kind,representation of immutable record) and checkpoints after each event. Rewind dirty to prior covered-until if earlier; retain matching prefix whose source and decision are before dirty; replay suffix. Earlier emitted own-stop records reused only if existing exact hit and dirty is null or the hit is strictly before dirty; otherwise rescan from max(decision,dirty) when dirty is non-null, or decision when null. Preserve output order. Shallow result copies, immutable records. No empirical equivalence assertion.
 
 ## Detailed StopAll procedures
 
