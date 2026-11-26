@@ -119,7 +119,7 @@ Return output in detection order. Exact confirmation and stop-time tests are inv
 
 ### A19 — AZoneDetector._filter_special_a
 
-Inputs special double-stop candidates, ordinary candidates. Remove special candidates whose reaction_number occurs in ordinary non-null reaction numbers. For each retained special find latest ordinary with source_time strictly less (stable first on equal maximum), null if none. If prior exists and A22 reports stopped before special reaction_first_time with not_before=special blue_1_source_time, discard special. Build list (set of two integer Blue ordinals,trigger event) for remaining special. If nonempty, remove ordinary whose trigger is strictly later than any special trigger and whose two-ordinal set intersects that special pair. Equality of trigger not consumed. Return (filtered ordinary,filtered special), preserves each input relative order, does not alter original zone records.
+Inputs special double-stop candidates, ordinary candidates. Remove special candidates whose reaction_number occurs in the set of ordinary non-null reaction numbers, using native hash/equality without integer coercion. For each retained special search the original ordinary list (before any consumption) for latest ordinary with source_time strictly less (stable first on equal maximum), null if none. If prior exists and A22 reports stopped before special reaction_first_time with not_before=special blue_1_source_time, discard special. Build list (set of two integer Blue ordinals,trigger event) for remaining special. If nonempty, remove ordinary whose trigger is strictly later than any special trigger and whose two-ordinal set intersects that special pair. Equality of trigger not consumed. Return (filtered ordinary,filtered special), preserving each input relative order; when consumed_special is empty, the ordinary list itself is retained, otherwise a fresh list. No special-vs-special removal. No local mutation of zone records, although virtual crossing providers may update caches.
 
 ### A20 — AZoneDetector.detect
 
@@ -131,11 +131,11 @@ Pass provided named fields to AZone constructor; return newly allocated record. 
 
 ### A22 — AZoneDetector._a_was_stopped_before
 
-Input zone,end_time,keyword-only not_before null default. Start position=integer candles[zone.source_index].index+1. If >= candle count return false. A07 first crossing of zone.price from start candle timestamp to end exclusive. Absent => false. Otherwise return true iff not_before absent OR exact first stop>=not_before. Do not rescan for recross after lower gate.
+Input zone,end_time,keyword-only not_before null default. Start position=integer candles[zone.source_index].index+1. If >= candle count return false; no lower-bound clamp is added. This is native stored index + 1, not necessarily source_index + 1. A07 first crossing of zone.price from start candle timestamp to end exclusive. Absent => false. Otherwise return true iff not_before absent OR exact first stop>=not_before. Do not rescan for recross after lower gate.
 
 ### A23 — detect_a_zones
 
-Construct AZoneDetector with supplied direction/reactions/Blue/chronology and call detect; return result. No persistent state.
+Construct AZoneDetector with supplied direction/reactions/Blue/chronology and call detect; return result. No persistent A history in this helper; chronology and lower index may maintain provider-owned caches.
 
 ## Live A continuation
 

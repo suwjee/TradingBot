@@ -66,7 +66,7 @@ Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty
 | AD04 | SCAN | Invalid line whose first crossing of retained valid level from stored invalid source_time to mapped source main nominal end has the same source index | Align first Reaction with confirmation >= exact trigger and First main time >= invalid source time; valid source required | FORM or SCAN | A12,A15,A17 |
 | AD05 | FORM | Successful geometry | Emit double-stop A, both effective stop mains invalid main, continuation prior source, no exact Blue stop fields; consume previous | SCAN | A12 |
 | AD06 | SCAN | Horizon | Filter special by ordinary Reaction ordinal collision | RESOLVE | A19,A20 |
-| AD07 | RESOLVE | Latest strictly earlier-source ordinary A has A22 first stop from next source main open, before special First and >= special Blue1 source | Reject special; later recross is not first stop | RESOLVE | A19,A22 |
+| AD07 | RESOLVE | Latest strictly earlier-source ordinary A (from original ordinary list) has A22 first stop from main position integer stored source candle index + 1, before special First and >= special Blue1 source | Reject special; later recross is not first stop | RESOLVE | A19,A22 |
 | AD08 | RESOLVE | Remaining special overlaps Blue ordinal with strictly later-trigger ordinary | Remove ordinary; equal trigger does not remove | RESOLVE | A19 |
 | AD09 | RESOLVE | Finished | Combine surviving ordinary and special, stable sort by source_time,trigger_event_time | RETURN | A20 |
 
