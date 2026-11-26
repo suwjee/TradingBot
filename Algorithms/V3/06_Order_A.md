@@ -24,7 +24,7 @@ Merge candidates by physical identity; direct route parent-stop cause, eligible 
 ## Detailed parent-stop procedures
 
 ### OA14 — _order_stop
-Ignore context_start. If number valid 1-based and exact object is canonical opposite at number-1, cache by number. Otherwise no cache. Both routes chronology.canonical_order_stop(order_direction,number,reaction,opposite_reactions,start_index). Return normalized level/source index/time from chronology, no synthetic contextual stop.
+Ignore context_start. If number valid 1-based and exact object is canonical opposite at number-1, cache by number. Otherwise no cache. Both routes chronology.canonical_order_stop(order_direction,number,reaction,opposite_reactions,start_index). Return normalized level/source index/time from chronology, no synthetic contextual stop. Range guard is inclusive and evaluated before object identity at number−1; geometric equality is insufficient. Non-null cached result returned directly; absent/null cache value computes, assigns only after successful delegation, returns result unchanged. Noncanonical path does not consult or mutate this cache. No local Decimal conversion or extra context stop; chronology owns stop normalization/validation and exceptions propagate. Cache key contains only ordinal, relying on run-local immutable canonical objects and chronology.
 
 ### OA15 — order_stop
 Public OA14 wrapper.

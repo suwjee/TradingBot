@@ -63,7 +63,7 @@ Ledger has independent dimensions: confirmation (native physical geometry), stri
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| OLR01 | INIT | Initialize detector ledger | Empty mutable map and indexes, cache structures, initial A evidence separately | AVAILABLE | OA13,OA45 |
+| OLR01 | INIT | Initialize detector ledger | Fresh authoritative empty ledger, separate empty confirmation index, pending and cache structures; stable trend confirmation-only ordering; opposite stream order retained; last First-key and first physical-identity duplicate wins; initial A records remain lazy | AVAILABLE | OA13,OA45 |
 | OLR02 | AVAILABLE | Physical Order's canonical stop requested | Mode A scan anchor or First−1 backwards through context and then inclusive through Break; Mode B preceding canonical ordinal edge, ordinal<=1 errors | AVAILABLE or ERROR | RE62,OA14,OA80 |
 | OLR03 | AVAILABLE | Strict Order crossing requested | Use Order direction, exact lower interval from max(confirmation,range start) to range end; null on absence, do not fabricate main-only crossing | AVAILABLE | OA42,OA82 |
 | OLR04 | AVAILABLE | Unconsumed S Blue evidence | Use eligible same physical Order with crossing>=new parent stop | USE_CANDIDATE | OA44 |
