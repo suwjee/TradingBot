@@ -1,0 +1,2961 @@
+{
+  "checkpoint": 287,
+  "batch": "RB02",
+  "phase": "02",
+  "status": "INCOMPLETE",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "prior_baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "7839e9c9f688e7c3e4df3811e359870829542cdc",
+  "scope": "Independent exact source delta replay and lexical declaration relocation; partial CPython AST refresh for True/False only. Historical Phase 02 evidence is not relabeled.",
+  "production_identity": [
+    {
+      "path": "engine/__init__.py",
+      "old": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/bridge/__init__.py",
+      "old": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "current": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "old": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "current": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "old": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "current": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "status": "CHANGED"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "old": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "current": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "old": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "current": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "old": "431934d2fb597238d5281a769c29fdb51747868b",
+      "current": "431934d2fb597238d5281a769c29fdb51747868b",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "old": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "current": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "old": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "current": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "old": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "current": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "old": "240369edf3352006082efe094eb68ac027d6689f",
+      "current": "240369edf3352006082efe094eb68ac027d6689f",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "old": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "current": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "old": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "current": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "old": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "current": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "old": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "current": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "status": "IDENTICAL_BLOB"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "old": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+      "current": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "status": "CHANGED"
+    }
+  ],
+  "source_delta": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "old_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+      "current_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "old_lines": 3756,
+      "current_lines": 3809,
+      "patch_replay": "PASS",
+      "added_lines": 163,
+      "removed_lines": 110,
+      "hunks": [
+        {
+          "old_start": 43,
+          "old_count": 8,
+          "new_start": 43,
+          "new_count": 8
+        },
+        {
+          "old_start": 341,
+          "old_count": 6,
+          "new_start": 341,
+          "new_count": 7
+        },
+        {
+          "old_start": 1752,
+          "old_count": 8,
+          "new_start": 1753,
+          "new_count": 78
+        },
+        {
+          "old_start": 1762,
+          "old_count": 10,
+          "new_start": 1833,
+          "new_count": 21
+        },
+        {
+          "old_start": 2038,
+          "old_count": 6,
+          "new_start": 2120,
+          "new_count": 7
+        },
+        {
+          "old_start": 2064,
+          "old_count": 6,
+          "new_start": 2147,
+          "new_count": 7
+        },
+        {
+          "old_start": 2509,
+          "old_count": 39,
+          "new_start": 2593,
+          "new_count": 51
+        },
+        {
+          "old_start": 2576,
+          "old_count": 6,
+          "new_start": 2672,
+          "new_count": 7
+        },
+        {
+          "old_start": 2648,
+          "old_count": 6,
+          "new_start": 2745,
+          "new_count": 7
+        },
+        {
+          "old_start": 2691,
+          "old_count": 6,
+          "new_start": 2789,
+          "new_count": 7
+        },
+        {
+          "old_start": 2839,
+          "old_count": 7,
+          "new_start": 2938,
+          "new_count": 6
+        },
+        {
+          "old_start": 2861,
+          "old_count": 82,
+          "new_start": 2959,
+          "new_count": 18
+        },
+        {
+          "old_start": 3377,
+          "old_count": 7,
+          "new_start": 3411,
+          "new_count": 7
+        },
+        {
+          "old_start": 3438,
+          "old_count": 7,
+          "new_start": 3472,
+          "new_count": 6
+        },
+        {
+          "old_start": 3495,
+          "old_count": 13,
+          "new_start": 3528,
+          "new_count": 16
+        },
+        {
+          "old_start": 3514,
+          "old_count": 6,
+          "new_start": 3550,
+          "new_count": 8
+        },
+        {
+          "old_start": 3536,
+          "old_count": 7,
+          "new_start": 3574,
+          "new_count": 7
+        },
+        {
+          "old_start": 3554,
+          "old_count": 8,
+          "new_start": 3592,
+          "new_count": 8
+        },
+        {
+          "old_start": 3572,
+          "old_count": 7,
+          "new_start": 3610,
+          "new_count": 8
+        },
+        {
+          "old_start": 3598,
+          "old_count": 6,
+          "new_start": 3637,
+          "new_count": 8
+        },
+        {
+          "old_start": 3639,
+          "old_count": 7,
+          "new_start": 3680,
+          "new_count": 9
+        },
+        {
+          "old_start": 3697,
+          "old_count": 21,
+          "new_start": 3740,
+          "new_count": 31
+        }
+      ],
+      "unchanged_line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 45,
+          "new_start": 1,
+          "new_end": 45
+        },
+        {
+          "old_start": 48,
+          "old_end": 343,
+          "new_start": 48,
+          "new_end": 343
+        },
+        {
+          "old_start": 344,
+          "old_end": 1754,
+          "new_start": 345,
+          "new_end": 1755
+        },
+        {
+          "old_start": 1755,
+          "old_end": 1755,
+          "new_start": 1826,
+          "new_end": 1826
+        },
+        {
+          "old_start": 1757,
+          "old_end": 1764,
+          "new_start": 1828,
+          "new_end": 1835
+        },
+        {
+          "old_start": 1769,
+          "old_end": 2040,
+          "new_start": 1851,
+          "new_end": 2122
+        },
+        {
+          "old_start": 2041,
+          "old_end": 2066,
+          "new_start": 2124,
+          "new_end": 2149
+        },
+        {
+          "old_start": 2067,
+          "old_end": 2511,
+          "new_start": 2151,
+          "new_end": 2595
+        },
+        {
+          "old_start": 2515,
+          "old_end": 2515,
+          "new_start": 2596,
+          "new_end": 2596
+        },
+        {
+          "old_start": 2516,
+          "old_end": 2516,
+          "new_start": 2606,
+          "new_end": 2606
+        },
+        {
+          "old_start": 2518,
+          "old_end": 2518,
+          "new_start": 2608,
+          "new_end": 2608
+        },
+        {
+          "old_start": 2519,
+          "old_end": 2524,
+          "new_start": 2610,
+          "new_end": 2615
+        },
+        {
+          "old_start": 2540,
+          "old_end": 2543,
+          "new_start": 2635,
+          "new_end": 2638
+        },
+        {
+          "old_start": 2545,
+          "old_end": 2578,
+          "new_start": 2641,
+          "new_end": 2674
+        },
+        {
+          "old_start": 2579,
+          "old_end": 2650,
+          "new_start": 2676,
+          "new_end": 2747
+        },
+        {
+          "old_start": 2651,
+          "old_end": 2693,
+          "new_start": 2749,
+          "new_end": 2791
+        },
+        {
+          "old_start": 2694,
+          "old_end": 2841,
+          "new_start": 2793,
+          "new_end": 2940
+        },
+        {
+          "old_start": 2843,
+          "old_end": 2863,
+          "new_start": 2941,
+          "new_end": 2961
+        },
+        {
+          "old_start": 2864,
+          "old_end": 2864,
+          "new_start": 2964,
+          "new_end": 2964
+        },
+        {
+          "old_start": 2866,
+          "old_end": 2867,
+          "new_start": 2966,
+          "new_end": 2967
+        },
+        {
+          "old_start": 2908,
+          "old_end": 2910,
+          "new_start": 2968,
+          "new_end": 2970
+        },
+        {
+          "old_start": 2937,
+          "old_end": 2938,
+          "new_start": 2971,
+          "new_end": 2972
+        },
+        {
+          "old_start": 2940,
+          "old_end": 3379,
+          "new_start": 2974,
+          "new_end": 3413
+        },
+        {
+          "old_start": 3381,
+          "old_end": 3440,
+          "new_start": 3415,
+          "new_end": 3474
+        },
+        {
+          "old_start": 3442,
+          "old_end": 3497,
+          "new_start": 3475,
+          "new_end": 3530
+        },
+        {
+          "old_start": 3499,
+          "old_end": 3504,
+          "new_start": 3533,
+          "new_end": 3538
+        },
+        {
+          "old_start": 3505,
+          "old_end": 3516,
+          "new_start": 3541,
+          "new_end": 3552
+        },
+        {
+          "old_start": 3517,
+          "old_end": 3538,
+          "new_start": 3555,
+          "new_end": 3576
+        },
+        {
+          "old_start": 3540,
+          "old_end": 3556,
+          "new_start": 3578,
+          "new_end": 3594
+        },
+        {
+          "old_start": 3559,
+          "old_end": 3574,
+          "new_start": 3597,
+          "new_end": 3612
+        },
+        {
+          "old_start": 3576,
+          "old_end": 3600,
+          "new_start": 3615,
+          "new_end": 3639
+        },
+        {
+          "old_start": 3601,
+          "old_end": 3641,
+          "new_start": 3642,
+          "new_end": 3682
+        },
+        {
+          "old_start": 3643,
+          "old_end": 3699,
+          "new_start": 3686,
+          "new_end": 3742
+        },
+        {
+          "old_start": 3704,
+          "old_end": 3705,
+          "new_start": 3754,
+          "new_end": 3755
+        },
+        {
+          "old_start": 3707,
+          "old_end": 3713,
+          "new_start": 3758,
+          "new_end": 3764
+        },
+        {
+          "old_start": 3715,
+          "old_end": 3756,
+          "new_start": 3768,
+          "new_end": 3809
+        }
+      ],
+      "declarations": [
+        {
+          "name": "progress_events_to",
+          "kind": "def",
+          "old_range": [
+            55,
+            62
+          ],
+          "current_range": [
+            55,
+            62
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "emit_progress",
+          "kind": "def",
+          "old_range": [
+            63,
+            74
+          ],
+          "current_range": [
+            63,
+            74
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "timed",
+          "kind": "def",
+          "old_range": [
+            75,
+            86
+          ],
+          "current_range": [
+            75,
+            86
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "load_module",
+          "kind": "def",
+          "old_range": [
+            87,
+            96
+          ],
+          "current_range": [
+            87,
+            96
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "load_engine",
+          "kind": "def",
+          "old_range": [
+            97,
+            100
+          ],
+          "current_range": [
+            97,
+            100
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "local_datetime",
+          "kind": "def",
+          "old_range": [
+            104,
+            112
+          ],
+          "current_range": [
+            104,
+            112
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "epoch",
+          "kind": "def",
+          "old_range": [
+            116,
+            124
+          ],
+          "current_range": [
+            116,
+            124
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "display_epoch",
+          "kind": "def",
+          "old_range": [
+            128,
+            139
+          ],
+          "current_range": [
+            128,
+            139
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_aggregate_candle_buckets",
+          "kind": "def",
+          "old_range": [
+            140,
+            143
+          ],
+          "current_range": [
+            140,
+            143
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_candle_buckets",
+          "kind": "def",
+          "old_range": [
+            187,
+            204
+          ],
+          "current_range": [
+            187,
+            204
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_candle_buckets.cached_decimal",
+          "kind": "def",
+          "old_range": [
+            192,
+            201
+          ],
+          "current_range": [
+            192,
+            201
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BucketAppend",
+          "kind": "class",
+          "old_range": [
+            206,
+            212
+          ],
+          "current_range": [
+            206,
+            212
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets",
+          "kind": "class",
+          "old_range": [
+            213,
+            305
+          ],
+          "current_range": [
+            213,
+            305
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets.__init__",
+          "kind": "def",
+          "old_range": [
+            216,
+            224
+          ],
+          "current_range": [
+            216,
+            224
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets.append",
+          "kind": "def",
+          "old_range": [
+            225,
+            228
+          ],
+          "current_range": [
+            225,
+            228
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets.stage_append",
+          "kind": "def",
+          "old_range": [
+            230,
+            296
+          ],
+          "current_range": [
+            230,
+            296
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets.stage_append.checked_rows",
+          "kind": "def",
+          "old_range": [
+            255,
+            265
+          ],
+          "current_range": [
+            255,
+            265
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets.stage_append.cached_decimal",
+          "kind": "def",
+          "old_range": [
+            266,
+            273
+          ],
+          "current_range": [
+            266,
+            273
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketBuckets._delta",
+          "kind": "def",
+          "old_range": [
+            297,
+            305
+          ],
+          "current_range": [
+            297,
+            305
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_candle_objects",
+          "kind": "def",
+          "old_range": [
+            306,
+            335
+          ],
+          "current_range": [
+            306,
+            335
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketViews",
+          "kind": "class",
+          "old_range": [
+            336,
+            364
+          ],
+          "current_range": [
+            336,
+            365
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            344
+          ]
+        },
+        {
+          "name": "LiveMarketViews.__init__",
+          "kind": "def",
+          "old_range": [
+            339,
+            344
+          ],
+          "current_range": [
+            339,
+            345
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            344
+          ]
+        },
+        {
+          "name": "LiveMarketViews._update_series",
+          "kind": "def",
+          "old_range": [
+            346,
+            353
+          ],
+          "current_range": [
+            347,
+            354
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveMarketViews.update",
+          "kind": "def",
+          "old_range": [
+            354,
+            364
+          ],
+          "current_range": [
+            355,
+            365
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_index_selected",
+          "kind": "def",
+          "old_range": [
+            365,
+            372
+          ],
+          "current_range": [
+            366,
+            373
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "select_reaction_serialization_items",
+          "kind": "def",
+          "old_range": [
+            373,
+            374
+          ],
+          "current_range": [
+            374,
+            375
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize",
+          "kind": "def",
+          "old_range": [
+            396,
+            401
+          ],
+          "current_range": [
+            397,
+            402
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_blue_lines",
+          "kind": "def",
+          "old_range": [
+            440,
+            459
+          ],
+          "current_range": [
+            441,
+            460
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_a_zones",
+          "kind": "def",
+          "old_range": [
+            460,
+            486
+          ],
+          "current_range": [
+            461,
+            487
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_s_zones",
+          "kind": "def",
+          "old_range": [
+            487,
+            551
+          ],
+          "current_range": [
+            488,
+            552
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_e_zones",
+          "kind": "def",
+          "old_range": [
+            552,
+            594
+          ],
+          "current_range": [
+            553,
+            595
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_stopalls",
+          "kind": "def",
+          "old_range": [
+            595,
+            661
+          ],
+          "current_range": [
+            596,
+            662
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "bridge_datetime",
+          "kind": "def",
+          "old_range": [
+            662,
+            675
+          ],
+          "current_range": [
+            663,
+            676
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "bridge_direction",
+          "kind": "def",
+          "old_range": [
+            676,
+            679
+          ],
+          "current_range": [
+            677,
+            680
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "bridge_mode",
+          "kind": "def",
+          "old_range": [
+            680,
+            683
+          ],
+          "current_range": [
+            681,
+            684
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "bridge_color",
+          "kind": "def",
+          "old_range": [
+            684,
+            689
+          ],
+          "current_range": [
+            685,
+            690
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_horizon",
+          "kind": "def",
+          "old_range": [
+            690,
+            696
+          ],
+          "current_range": [
+            691,
+            697
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_in_horizon",
+          "kind": "def",
+          "old_range": [
+            697,
+            700
+          ],
+          "current_range": [
+            698,
+            701
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_proven_strict_event",
+          "kind": "def",
+          "old_range": [
+            701,
+            705
+          ],
+          "current_range": [
+            702,
+            706
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_stop_view",
+          "kind": "def",
+          "old_range": [
+            741,
+            746
+          ],
+          "current_range": [
+            742,
+            747
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_reaction_confirmation",
+          "kind": "def",
+          "old_range": [
+            761,
+            766
+          ],
+          "current_range": [
+            762,
+            767
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_order_identity",
+          "kind": "def",
+          "old_range": [
+            785,
+            792
+          ],
+          "current_range": [
+            786,
+            793
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection",
+          "kind": "class",
+          "old_range": [
+            793,
+            986
+          ],
+          "current_range": [
+            794,
+            987
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection.__init__",
+          "kind": "def",
+          "old_range": [
+            801,
+            807
+          ],
+          "current_range": [
+            802,
+            808
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection.physical_order",
+          "kind": "def",
+          "old_range": [
+            820,
+            864
+          ],
+          "current_range": [
+            821,
+            865
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection.parent_order",
+          "kind": "def",
+          "old_range": [
+            865,
+            871
+          ],
+          "current_range": [
+            866,
+            872
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection.current_order",
+          "kind": "def",
+          "old_range": [
+            872,
+            877
+          ],
+          "current_range": [
+            873,
+            878
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BridgeProjection.order_audit",
+          "kind": "def",
+          "old_range": [
+            927,
+            986
+          ],
+          "current_range": [
+            928,
+            987
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_parent_stop",
+          "kind": "def",
+          "old_range": [
+            987,
+            991
+          ],
+          "current_range": [
+            988,
+            992
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_a_stop",
+          "kind": "def",
+          "old_range": [
+            1008,
+            1011
+          ],
+          "current_range": [
+            1009,
+            1012
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_behavior_stop",
+          "kind": "def",
+          "old_range": [
+            1029,
+            1034
+          ],
+          "current_range": [
+            1030,
+            1035
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_blue_formation",
+          "kind": "def",
+          "old_range": [
+            1044,
+            1048
+          ],
+          "current_range": [
+            1045,
+            1049
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_reaction",
+          "kind": "def",
+          "old_range": [
+            1067,
+            1071
+          ],
+          "current_range": [
+            1068,
+            1072
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_reset",
+          "kind": "def",
+          "old_range": [
+            1110,
+            1113
+          ],
+          "current_range": [
+            1111,
+            1114
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_blue",
+          "kind": "def",
+          "old_range": [
+            1133,
+            1137
+          ],
+          "current_range": [
+            1134,
+            1138
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_full_lines_by_ordinal",
+          "kind": "def",
+          "old_range": [
+            1169,
+            1180
+          ],
+          "current_range": [
+            1170,
+            1181
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_a",
+          "kind": "def",
+          "old_range": [
+            1181,
+            1187
+          ],
+          "current_range": [
+            1182,
+            1188
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_s",
+          "kind": "def",
+          "old_range": [
+            1271,
+            1275
+          ],
+          "current_range": [
+            1272,
+            1276
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_source_index",
+          "kind": "def",
+          "old_range": [
+            1327,
+            1334
+          ],
+          "current_range": [
+            1328,
+            1335
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_parent_behavior_for_e",
+          "kind": "def",
+          "old_range": [
+            1335,
+            1341
+          ],
+          "current_range": [
+            1336,
+            1342
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_e",
+          "kind": "def",
+          "old_range": [
+            1379,
+            1386
+          ],
+          "current_range": [
+            1380,
+            1387
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_project_stopall",
+          "kind": "def",
+          "old_range": [
+            1426,
+            1429
+          ],
+          "current_range": [
+            1427,
+            1430
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_bridge_audit_order_key",
+          "kind": "def",
+          "old_range": [
+            1495,
+            1496
+          ],
+          "current_range": [
+            1496,
+            1497
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_bridge_output",
+          "kind": "def",
+          "old_range": [
+            1505,
+            1517
+          ],
+          "current_range": [
+            1506,
+            1518
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "validate_order_audit_bridge",
+          "kind": "def",
+          "old_range": [
+            1610,
+            1611
+          ],
+          "current_range": [
+            1611,
+            1612
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_order_audit",
+          "kind": "def",
+          "old_range": [
+            1678,
+            1730
+          ],
+          "current_range": [
+            1679,
+            1731
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "EngineBundle",
+          "kind": "class",
+          "old_range": [
+            1732,
+            1741
+          ],
+          "current_range": [
+            1733,
+            1742
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "MarketContext",
+          "kind": "class",
+          "old_range": [
+            1743,
+            1754
+          ],
+          "current_range": [
+            1744,
+            1755
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "market_segment",
+          "kind": "def",
+          "old_range": [
+            1755,
+            1777
+          ],
+          "current_range": [
+            1826,
+            1859
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            1756,
+            1765,
+            1766,
+            1767,
+            1768
+          ],
+          "added_lines": [
+            1827,
+            1836,
+            1837,
+            1838,
+            1839,
+            1840,
+            1841,
+            1842,
+            1843,
+            1844,
+            1845,
+            1846,
+            1847,
+            1848,
+            1849,
+            1850
+          ]
+        },
+        {
+          "name": "absolute_payload_indexes",
+          "kind": "def",
+          "old_range": [
+            1778,
+            1791
+          ],
+          "current_range": [
+            1860,
+            1873
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_trend_transition",
+          "kind": "def",
+          "old_range": [
+            1792,
+            1814
+          ],
+          "current_range": [
+            1874,
+            1896
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "parse_arguments",
+          "kind": "def",
+          "old_range": [
+            1815,
+            1891
+          ],
+          "current_range": [
+            1897,
+            1973
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "load_engines",
+          "kind": "def",
+          "old_range": [
+            1892,
+            1929
+          ],
+          "current_range": [
+            1974,
+            2011
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "prepare_market_context",
+          "kind": "def",
+          "old_range": [
+            1930,
+            1931
+          ],
+          "current_range": [
+            2012,
+            2013
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_prepare_market_context_from_rows",
+          "kind": "def",
+          "old_range": [
+            1948,
+            1949
+          ],
+          "current_range": [
+            2030,
+            2031
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_prepare_market_context_from_buckets",
+          "kind": "def",
+          "old_range": [
+            1973,
+            1976
+          ],
+          "current_range": [
+            2055,
+            2058
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "PipelineState",
+          "kind": "class",
+          "old_range": [
+            2032,
+            2052
+          ],
+          "current_range": [
+            2114,
+            2135
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            2123
+          ]
+        },
+        {
+          "name": "FullDirectionState",
+          "kind": "class",
+          "old_range": [
+            2054,
+            2068
+          ],
+          "current_range": [
+            2137,
+            2152
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            2150
+          ]
+        },
+        {
+          "name": "create_e_detector",
+          "kind": "def",
+          "old_range": [
+            2069,
+            2085
+          ],
+          "current_range": [
+            2153,
+            2169
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "direct_geometry",
+          "kind": "def",
+          "old_range": [
+            2091,
+            2092
+          ],
+          "current_range": [
+            2175,
+            2176
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_full_direction_state",
+          "kind": "def",
+          "old_range": [
+            2127,
+            2138
+          ],
+          "current_range": [
+            2211,
+            2222
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_direction_with_order_b_feedback",
+          "kind": "def",
+          "old_range": [
+            2485,
+            2495
+          ],
+          "current_range": [
+            2569,
+            2579
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "prepare_pipeline_state",
+          "kind": "def",
+          "old_range": [
+            2552,
+            2559
+          ],
+          "current_range": [
+            2648,
+            2655
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "DirectionRangeState",
+          "kind": "class",
+          "old_range": [
+            2707,
+            2718
+          ],
+          "current_range": [
+            2806,
+            2817
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "DirectionVisibilityState",
+          "kind": "class",
+          "old_range": [
+            2720,
+            2737
+          ],
+          "current_range": [
+            2819,
+            2836
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_direction_range_state",
+          "kind": "def",
+          "old_range": [
+            2738,
+            2744
+          ],
+          "current_range": [
+            2837,
+            2843
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "finalize_direction_visibility",
+          "kind": "def",
+          "old_range": [
+            2840,
+            2847
+          ],
+          "current_range": [
+            2939,
+            2945
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            2842
+          ],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_direction_payload",
+          "kind": "def",
+          "old_range": [
+            3079,
+            3086
+          ],
+          "current_range": [
+            3113,
+            3120
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_legacy_payload",
+          "kind": "def",
+          "old_range": [
+            3106,
+            3130
+          ],
+          "current_range": [
+            3140,
+            3164
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_reactions_from_one_selection",
+          "kind": "def",
+          "old_range": [
+            3138,
+            3147
+          ],
+          "current_range": [
+            3172,
+            3181
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_payload",
+          "kind": "def",
+          "old_range": [
+            3179,
+            3214
+          ],
+          "current_range": [
+            3213,
+            3248
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_primary_order",
+          "kind": "def",
+          "old_range": [
+            3220,
+            3248
+          ],
+          "current_range": [
+            3254,
+            3282
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_primary_order.value",
+          "kind": "def",
+          "old_range": [
+            3223,
+            3228
+          ],
+          "current_range": [
+            3257,
+            3262
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_primary_structures",
+          "kind": "def",
+          "old_range": [
+            3249,
+            3370
+          ],
+          "current_range": [
+            3283,
+            3404
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_primary_structures.cycle_identity",
+          "kind": "def",
+          "old_range": [
+            3260,
+            3265
+          ],
+          "current_range": [
+            3294,
+            3299
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "serialize_primary_structures.point",
+          "kind": "def",
+          "old_range": [
+            3266,
+            3289
+          ],
+          "current_range": [
+            3300,
+            3323
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_primary_structures",
+          "kind": "def",
+          "old_range": [
+            3371,
+            3426
+          ],
+          "current_range": [
+            3405,
+            3460
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            3380
+          ],
+          "added_lines": [
+            3414
+          ]
+        },
+        {
+          "name": "calculate_primary_structures.commit_high",
+          "kind": "def",
+          "old_range": [
+            3394,
+            3403
+          ],
+          "current_range": [
+            3428,
+            3437
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_direction_output",
+          "kind": "def",
+          "old_range": [
+            3427,
+            3433
+          ],
+          "current_range": [
+            3461,
+            3467
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "merge_regime_outputs",
+          "kind": "def",
+          "old_range": [
+            3469,
+            3497
+          ],
+          "current_range": [
+            3502,
+            3530
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_reversed_trend_outputs",
+          "kind": "def",
+          "old_range": [
+            3498,
+            3593
+          ],
+          "current_range": [
+            3531,
+            3632
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            3498,
+            3539,
+            3557,
+            3558,
+            3575
+          ],
+          "added_lines": [
+            3531,
+            3532,
+            3539,
+            3540,
+            3553,
+            3554,
+            3577,
+            3595,
+            3596,
+            3613,
+            3614
+          ]
+        },
+        {
+          "name": "build_reversed_trend_outputs.calculate",
+          "kind": "def",
+          "old_range": [
+            3506,
+            3515
+          ],
+          "current_range": [
+            3542,
+            3551
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_reversed_trend_outputs.publish",
+          "kind": "def",
+          "old_range": [
+            3516,
+            3532
+          ],
+          "current_range": [
+            3552,
+            3570
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            3553,
+            3554
+          ]
+        },
+        {
+          "name": "build_reversed_trend_outputs.calculate_closed",
+          "kind": "def",
+          "old_range": [
+            3538,
+            3555
+          ],
+          "current_range": [
+            3576,
+            3593
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            3539
+          ],
+          "added_lines": [
+            3577
+          ]
+        },
+        {
+          "name": "build_reversed_trend_outputs.empty_lists",
+          "kind": "def",
+          "old_range": [
+            3564,
+            3569
+          ],
+          "current_range": [
+            3602,
+            3607
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "build_response_payload",
+          "kind": "def",
+          "old_range": [
+            3594,
+            3600
+          ],
+          "current_range": [
+            3633,
+            3641
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            3640,
+            3641
+          ]
+        },
+        {
+          "name": "stopall_confirmation_closed",
+          "kind": "def",
+          "old_range": [
+            3654,
+            3656
+          ],
+          "current_range": [
+            3697,
+            3699
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_market_calculation_scope",
+          "kind": "def",
+          "old_range": [
+            3671,
+            3687
+          ],
+          "current_range": [
+            3714,
+            3730
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_live_from_raw",
+          "kind": "def",
+          "old_range": [
+            3688,
+            3689
+          ],
+          "current_range": [
+            3731,
+            3732
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "calculate_live_from_buckets",
+          "kind": "def",
+          "old_range": [
+            3695,
+            3697
+          ],
+          "current_range": [
+            3738,
+            3740
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_run_live_calculation",
+          "kind": "def",
+          "old_range": [
+            3706,
+            3716
+          ],
+          "current_range": [
+            3756,
+            3769
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            3706,
+            3714
+          ],
+          "added_lines": [
+            3756,
+            3757,
+            3765,
+            3766,
+            3767
+          ]
+        },
+        {
+          "name": "main",
+          "kind": "def",
+          "old_range": [
+            3717,
+            3750
+          ],
+          "current_range": [
+            3770,
+            3803
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "LiveClosedRegimes",
+          "kind": "class",
+          "old_range": null,
+          "current_range": [
+            1756,
+            1787
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1756,
+            1757,
+            1758,
+            1759,
+            1760,
+            1761,
+            1762,
+            1763,
+            1764,
+            1765,
+            1766,
+            1767,
+            1768,
+            1769,
+            1770,
+            1771,
+            1772,
+            1773,
+            1774,
+            1775,
+            1776,
+            1777,
+            1778,
+            1779,
+            1780,
+            1781,
+            1782,
+            1783,
+            1784,
+            1785,
+            1786,
+            1787
+          ]
+        },
+        {
+          "name": "LiveClosedRegimes.__init__",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1759,
+            1761
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1759,
+            1760,
+            1761
+          ]
+        },
+        {
+          "name": "LiveClosedRegimes.stage",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1763,
+            1787
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1763,
+            1764,
+            1765,
+            1766,
+            1767,
+            1768,
+            1769,
+            1770,
+            1771,
+            1772,
+            1773,
+            1774,
+            1775,
+            1776,
+            1777,
+            1778,
+            1779,
+            1780,
+            1781,
+            1782,
+            1783,
+            1784,
+            1785,
+            1786,
+            1787
+          ]
+        },
+        {
+          "name": "LiveClosedRegimes.stage.resolve",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1767,
+            1782
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1767,
+            1768,
+            1769,
+            1770,
+            1771,
+            1772,
+            1773,
+            1774,
+            1775,
+            1776,
+            1777,
+            1778,
+            1779,
+            1780,
+            1781,
+            1782
+          ]
+        },
+        {
+          "name": "MarketIndexWindow",
+          "kind": "class",
+          "old_range": null,
+          "current_range": [
+            1788,
+            1825
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1788,
+            1789,
+            1790,
+            1791,
+            1792,
+            1793,
+            1794,
+            1795,
+            1796,
+            1797,
+            1798,
+            1799,
+            1800,
+            1801,
+            1802,
+            1803,
+            1804,
+            1805,
+            1806,
+            1807,
+            1808,
+            1809,
+            1810,
+            1811,
+            1812,
+            1813,
+            1814,
+            1815,
+            1816,
+            1817,
+            1818,
+            1819,
+            1820,
+            1821,
+            1822,
+            1823,
+            1824,
+            1825
+          ]
+        },
+        {
+          "name": "MarketIndexWindow.__init__",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1791,
+            1799
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1791,
+            1792,
+            1793,
+            1794,
+            1795,
+            1796,
+            1797,
+            1798,
+            1799
+          ]
+        },
+        {
+          "name": "MarketIndexWindow._first",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1800,
+            1806
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1800,
+            1801,
+            1802,
+            1803,
+            1804,
+            1805,
+            1806
+          ]
+        },
+        {
+          "name": "MarketIndexWindow.first_less",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1807,
+            1809
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1807,
+            1808,
+            1809
+          ]
+        },
+        {
+          "name": "MarketIndexWindow.first_greater",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1810,
+            1812
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1810,
+            1811,
+            1812
+          ]
+        },
+        {
+          "name": "MarketIndexWindow._extreme",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1813,
+            1818
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1813,
+            1814,
+            1815,
+            1816,
+            1817,
+            1818
+          ]
+        },
+        {
+          "name": "MarketIndexWindow.range_minimum",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1819,
+            1821
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1819,
+            1820,
+            1821
+          ]
+        },
+        {
+          "name": "MarketIndexWindow.range_maximum",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            1822,
+            1825
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            1822,
+            1823,
+            1824,
+            1825
+          ]
+        }
+      ],
+      "lexical_counts": {
+        "old_defs": 102,
+        "current_defs": 112,
+        "old_classes": 10,
+        "current_classes": 12
+      },
+      "changed_imports": {
+        "removed": [],
+        "added": []
+      }
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "old_blob": "d569d16bc493b9eb5da75ed5594c168751856b6f",
+      "current_blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "old_lines": 156,
+      "current_lines": 188,
+      "patch_replay": "PASS",
+      "added_lines": 51,
+      "removed_lines": 19,
+      "hunks": [
+        {
+          "old_start": 5,
+          "old_count": 6,
+          "new_start": 5,
+          "new_count": 7
+        },
+        {
+          "old_start": 34,
+          "old_count": 6,
+          "new_start": 35,
+          "new_count": 7
+        },
+        {
+          "old_start": 42,
+          "old_count": 10,
+          "new_start": 44,
+          "new_count": 22
+        },
+        {
+          "old_start": 54,
+          "old_count": 6,
+          "new_start": 68,
+          "new_count": 15
+        },
+        {
+          "old_start": 62,
+          "old_count": 36,
+          "new_start": 85,
+          "new_count": 47
+        },
+        {
+          "old_start": 138,
+          "old_count": 9,
+          "new_start": 172,
+          "new_count": 9
+        },
+        {
+          "old_start": 150,
+          "old_count": 7,
+          "new_start": 184,
+          "new_count": 5
+        }
+      ],
+      "unchanged_line_ranges": [
+        {
+          "old_start": 1,
+          "old_end": 7,
+          "new_start": 1,
+          "new_end": 7
+        },
+        {
+          "old_start": 8,
+          "old_end": 36,
+          "new_start": 9,
+          "new_end": 37
+        },
+        {
+          "old_start": 37,
+          "old_end": 44,
+          "new_start": 39,
+          "new_end": 46
+        },
+        {
+          "old_start": 45,
+          "old_end": 46,
+          "new_start": 58,
+          "new_end": 59
+        },
+        {
+          "old_start": 48,
+          "old_end": 48,
+          "new_start": 61,
+          "new_end": 61
+        },
+        {
+          "old_start": 49,
+          "old_end": 56,
+          "new_start": 63,
+          "new_end": 70
+        },
+        {
+          "old_start": 57,
+          "old_end": 64,
+          "new_start": 80,
+          "new_end": 87
+        },
+        {
+          "old_start": 67,
+          "old_end": 68,
+          "new_start": 93,
+          "new_end": 94
+        },
+        {
+          "old_start": 71,
+          "old_end": 71,
+          "new_start": 95,
+          "new_end": 95
+        },
+        {
+          "old_start": 75,
+          "old_end": 80,
+          "new_start": 108,
+          "new_end": 113
+        },
+        {
+          "old_start": 85,
+          "old_end": 88,
+          "new_start": 114,
+          "new_end": 117
+        },
+        {
+          "old_start": 90,
+          "old_end": 93,
+          "new_start": 123,
+          "new_end": 126
+        },
+        {
+          "old_start": 95,
+          "old_end": 140,
+          "new_start": 129,
+          "new_end": 174
+        },
+        {
+          "old_start": 142,
+          "old_end": 142,
+          "new_start": 176,
+          "new_end": 176
+        },
+        {
+          "old_start": 144,
+          "old_end": 152,
+          "new_start": 178,
+          "new_end": 186
+        },
+        {
+          "old_start": 156,
+          "old_end": 156,
+          "new_start": 188,
+          "new_end": 188
+        }
+      ],
+      "declarations": [
+        {
+          "name": "repair_crossing_lookup",
+          "kind": "def",
+          "old_range": [
+            17,
+            31
+          ],
+          "current_range": [
+            18,
+            32
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "repair_crossing_lookup.find",
+          "kind": "def",
+          "old_range": [
+            21,
+            28
+          ],
+          "current_range": [
+            22,
+            29
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "BasicRepeat",
+          "kind": "class",
+          "old_range": [
+            33,
+            38
+          ],
+          "current_range": [
+            34,
+            40
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": [
+            38
+          ]
+        },
+        {
+          "name": "_basic_rank",
+          "kind": "def",
+          "old_range": [
+            39,
+            44
+          ],
+          "current_range": [
+            41,
+            46
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_basic_verdicts",
+          "kind": "def",
+          "old_range": [
+            45,
+            96
+          ],
+          "current_range": [
+            58,
+            130
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            47,
+            65,
+            66,
+            69,
+            70,
+            72,
+            73,
+            74,
+            81,
+            82,
+            83,
+            84,
+            89,
+            94
+          ],
+          "added_lines": [
+            60,
+            62,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            88,
+            89,
+            90,
+            91,
+            92,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            118,
+            119,
+            120,
+            121,
+            122,
+            127,
+            128
+          ]
+        },
+        {
+          "name": "_basic_verdicts.repair",
+          "kind": "def",
+          "old_range": [
+            50,
+            55
+          ],
+          "current_range": [
+            64,
+            69
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "_stopall_verdicts",
+          "kind": "def",
+          "old_range": [
+            97,
+            127
+          ],
+          "current_range": [
+            131,
+            161
+          ],
+          "status": "IDENTICAL_LEXICAL_BODY",
+          "removed_lines": [],
+          "added_lines": []
+        },
+        {
+          "name": "apply_true_false",
+          "kind": "def",
+          "old_range": [
+            128,
+            156
+          ],
+          "current_range": [
+            162,
+            188
+          ],
+          "status": "CHANGED_LEXICAL_BODY",
+          "removed_lines": [
+            141,
+            143,
+            153,
+            154,
+            155
+          ],
+          "added_lines": [
+            175,
+            177,
+            187
+          ]
+        },
+        {
+          "name": "_crossed_verdict",
+          "kind": "def",
+          "old_range": null,
+          "current_range": [
+            47,
+            57
+          ],
+          "status": "ADDED",
+          "removed_lines": [],
+          "added_lines": [
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57
+          ]
+        }
+      ],
+      "lexical_counts": {
+        "old_defs": 7,
+        "current_defs": 8,
+        "old_classes": 1,
+        "current_classes": 1
+      },
+      "changed_imports": {
+        "removed": [],
+        "added": [
+          8
+        ]
+      }
+    }
+  ],
+  "true_false_local_cpython": {
+    "python": "3.13.5",
+    "git_blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+    "sha256": "473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39",
+    "bytes": 7412,
+    "lines": 188,
+    "parse": "PASS",
+    "compile_without_import": "PASS",
+    "symtable_generation": "PASS",
+    "located_nodes": 814,
+    "named_functions": 8,
+    "classes": 1,
+    "call_nodes": 50,
+    "compare_nodes": 37,
+    "if_nodes": 25,
+    "for_nodes": 9,
+    "while_nodes": 1,
+    "compiled_code_objects": 13,
+    "full_phase02_schema": "NOT RUN"
+  },
+  "impact": [
+    {
+      "owner": "LiveClosedRegimes and MarketIndexWindow",
+      "review": "New closed prefix cache, transactional publish, dirty frontier and relative index coordinates; nested windows and strict/equality boundaries."
+    },
+    {
+      "owner": "calculate_direction_with_order_b_feedback / prepare_pipeline_state / finalize_direction_visibility",
+      "review": "Independent E donor restoration, converged StopAll and accepted reset legs move into feedback; visibility consumes stored state; check upstream/downstream ownership and disabled gates."
+    },
+    {
+      "owner": "market_segment / build_reversed_trend_outputs / build_response_payload / calculate_live_from_buckets / _run_live_calculation",
+      "review": "New indexed regime preparation and optional resolver propagation; independent replay and output projection; cache isolation."
+    },
+    {
+      "owner": "BasicRepeat / _crossed_verdict / _basic_verdicts / apply_true_false",
+      "review": "Strict rank and price reference selection with monotone histories; Basic reset at published primary/StopAll; separate base, repair and same-verdict counters; ownership ordering remains required."
+    }
+  ],
+  "limitations": [
+    "Lexical declaration range estimation is not AST; decorators and multiline expressions may need reassignment. Full old/new line mapping is exact for unchanged lines; changed sites require fresh IDs.",
+    "CPython AST/compile performed only for verified true_false.py. Full compiler CFG, symbol table export, AST graph, def/use and reaching writes for both modules have not been generated.",
+    "Container cannot clone GitHub (DNS unavailable); no full engine.zip mounted. Latest source was read through GitHub connector; no runtime imports, regression, RAW, or benchmark executed.",
+    "No claim of semantic or dynamic closure. No production code changes."
+  ],
+  "next": "Continue RB02 / CP287: materialize hash-verified trading_pipeline.py; regenerate Phase 02 schema for both changed files, refresh aggregate inventories and dependency/call candidate crosswalks for all 16 modules, independently validate counts and reproducibility. Do not open RB03 or W2 until RB02 requirements met."
+}
