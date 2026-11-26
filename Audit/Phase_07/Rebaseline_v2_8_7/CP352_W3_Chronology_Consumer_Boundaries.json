@@ -1,0 +1,72 @@
+{
+  "checkpoint": 352,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded directly inspected handoffs; no cross-owner denominator or closure claim",
+  "consumers": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        2069,
+        2079
+      ],
+      "meaning": "Fresh batch chronology receives freshly obtained lower index; live path first updates live views and registers prepared lower/main indexes by exact sequence identity, then constructs new chronology with both. This is a bounded native constructor route, not proof of every subsequent mutation or exception."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "range": [
+        497,
+        501
+      ],
+      "meaning": "A helper passes use_intrabar_start=False; this changes starting scan, not necessarily returned timestamp."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        659,
+        679
+      ],
+      "meaning": "Canonical cached stop is eligible for ordinal and exact canonical reaction object; cache keyed by number on that route, alternative direct provider path bypasses this cache. Context-only stop not invented. Full lifetime and invalidation still pending B05."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "range": [
+        2673,
+        2681
+      ],
+      "meaning": "Secondary stop adapter forwards ordinal/reaction/opposite list/start index to provider, does not independently create an Order."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "range": [
+        559,
+        563
+      ],
+      "meaning": "Confirmation wrapper delegates default true, with supplied direction; no independent chronology re-selection here."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        759,
+        783
+      ],
+      "meaning": "Bridge calls provider with supplied flag, obtains appropriate level in narrow exception guard, then validates returned exact timestamp in opposite stop direction. No alternative event chosen; native fallback can pass on actual equal-time evidence."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1077,
+        1092
+      ],
+      "meaning": "Shared prepared index path separately validates prepared.candles is candles before global registration. MarketChronology constructor itself lacks this guard. This partial B01 consumer boundary is confirmed without closing CP351-F03."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP322",
+    "CP324-S29",
+    "CP332-P09",
+    "CP350"
+  ],
+  "status": "PARTIAL_CROSS_OWNER_TRACE",
+  "remaining": "Complete all callers including reset/confirmation cache use, prepared index admission, live lifetime, mutation and failure paths in subsequent owner passes."
+}

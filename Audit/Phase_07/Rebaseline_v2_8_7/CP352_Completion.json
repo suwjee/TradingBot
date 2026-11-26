@@ -1,0 +1,103 @@
+{
+  "checkpoint": 352,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_MARKET_CHRONOLOGY_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "6fcc669d8c5474878477a002d4093d19d32d8b63",
+  "entry_tree": "4766eda0f6251aab2999c0e746c6adcf518fa93e",
+  "scope": "B02 source lines 1132–1369, local semantic review plus bounded consumer boundary checks",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP352_W3_MarketChronology_Local_Forensic_Register.json",
+      "sha": "86248595eea44ec5926af493761b83a9bba32986"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP352_W3_Chronology_Consumer_Boundaries.json",
+      "sha": "b1fedc8032bfcc7756890725738d49dc39912e70"
+    },
+    {
+      "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+      "sha": "78b032c0c63de4f3b718e454430a46eacd802a95"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/37_W3_MarketChronology_Forensic.md",
+      "sha": "79b4692fc0d1bff3b50442c787cddcdcb2bc0a35"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 949,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 227,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 722,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 613,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 153,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 460,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        1132,
+        1369
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 8
+  },
+  "findings": [
+    {
+      "id": "CP352-F01",
+      "status": "RESOLVED_SCOPED",
+      "meaning": "Canonical static call candidate at line 1183 points to the class method; actual unqualified name resolves module-global function at 143–145 under native bindings. Record correction additively, do not edit prior inventory."
+    },
+    {
+      "id": "CP352-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Fresh dictionaries do not imply mutation safety; key lookup precedes Break read and does not encode dataset generation; no local invalidation/eviction. Non-null prepared time arrays and truthiness lower index may diverge for custom inputs. Document exact local boundary, defer caller lifetime proof."
+    },
+    {
+      "id": "CP352-F03",
+      "status": "OPEN_CONSUMER_TRACE",
+      "meaning": "Confirm all constructor, reset, confirmation and canonical stop consumers, cache lifetime and index alignment in B02 remaining sections and subsequent owners; no global acceptance."
+    }
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP353 / W3 B02 LowerTimeframeIndex independent source review, starting from actual published CP352 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Verify CP352 artifact identities and CP351 evidence; read AGENTS.md, Operating Protocol, active Execution Plan, relevant CP321–350 source evidence. Review reaction_engine.py lines 886–1131 (LowerTimeframeIndex, shared/reflected index registry and cleanup), including ordered bounds, earliest tie, strict crossing, cache settled frontier, append refresh and failure paths. Reconcile exact W1 and additional category rows and historical B02-04, active RE31–52 contracts, CP352 MarketChronology owner/lifetime findings; independently inspect source before prior interpretations, preserve every prior record. B02 613/8697 local category rows reviewed (153/1877 W1, 460/6820 additional), range 1132–1369; CP352-F03 and CP351-F03 remain open. Continue B02 complement 1–885 and 1370–2908 after 886–1131; all cross-owner obligations and B03–B10 remain. Up to 10 evidence-complete checkpoints; no RAW, runtime, ZIP, production or main changes; RB02 WAIVED_NON_BLOCKING. Full candidate recursive tree diff, CAS force=false expected parent and remote readback per checkpoint. W4 only after independent W3 acceptance. Report exact denominators, limitations, actual commit/tree and tailored continuation in Persian."
+}

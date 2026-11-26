@@ -164,10 +164,10 @@ For each supplied sequence remove id key from each global cache if present.
 ## MarketChronology and internal behavior
 
 ### RE53 — MarketChronology.__init__
-Require timeframe_seconds>=1. Retain sequences; alias prepared main/lower times by nonnull test, else build. Timeframe timedelta; choose lower index by truthiness (false-valued supplied index falls back to shared index even though its times were selected by nonnull test); store main range index. No local supplied-index identity validation. Empty confirmation/reset/E main extremes caches.
+Require timeframe_seconds>=1. Retain sequences; alias prepared main/lower times by nonnull test, else build. Timeframe timedelta; choose lower index by truthiness (false-valued supplied index falls back to shared index even though its times were selected by nonnull test); store main range index. No local supplied-index identity validation. Empty confirmation/reset/E main extremes caches. Fresh dictionaries belong to this chronology instance, but the retained sequences and prepared time arrays are references, not immutable copies. The initial comparison rejects values below one; native timedelta construction may additionally reject invalid input types or values. RE60/RE61 have no local cache eviction, generation key or invalidation on later input mutation; coherence is an owner/caller lifetime condition, not an unconditional guarantee. A non-None cached result wins before the subsequent source lookup; a cached None remains a miss.
 
 ### RE54 — MarketChronology.opposite_direction
-RE02 wrapper.
+Delegate to the module-level RE02 function, not recursively to the class method; RE02 selects the shared direction policy and raises for an unsupported direction under native bindings.
 
 ### RE55 — main_index
 Upper_bound(main times,timestamp)-1; negative returns0 only if clamp else ValueError. No right-end guard.
