@@ -61,3 +61,22 @@ Materialize sorted events once. Traverse to set current row verdict null. Direct
 Iterate reference ranks sorted descending; only strictly smaller rank than current qualifies. At each rank, use lower_bound(current transformed Decimal price) over strictly increasing frontier prices (key first tuple element); when position is nonzero return verdict at position-1. This is the latest strictly crossed eligible reference at the greatest eligible rank; equality is excluded. If no such rank/position return null. Reference price normalization uses copy_negate for low policy, not arithmetic negation under a context. The earlier parentSourceTime-based selection is no longer used.
 
 Source baseline: `c99b4c957e932d9ee70c492ca03ce80711447fc1`. [TF01–TF03](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L18-L44), [TF08](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L47-L55), [TF04/TF05](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L58-L128), [TF06](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L131-L159), [TF07](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/pipeline/true_false.py#L162-L188).
+
+## CP309 — v2.8.7 pinned True/False local review
+
+- **TF01 (1–17):** Import and annotation keys; no runtime import performed.
+- **TF02 (18–30):** Repair closure: inclusive through bisect_right, inclusive from_epoch(start) bisect_left bounded by frozen right, Decimal(level), direction strict low/high query, absent result None else to_epoch; no replacement/catch.
+- **TF03 (31–40):** BasicRepeat holds latest mutable row and independent repair, verdict and base counters.
+- **TF04 (41–46):** S rank=(priority(color),0); E rank=(priority(family),number); lifecycle priority normalizes labels and orders S blue, E blue, S red, E red.
+- **TF05 (47–57):** Descending reference ranks strictly smaller than current; bisect_left normalized price excludes equality, previous entry yields latest crossed verdict; otherwise None.
+- **TF06 (58–69):** Fresh repeat/reference state, direction policy; nested repair calls optional callback only if repair key absent, stores only non-null result.
+- **TF07 (70–79):** Nonbasic event clears references, resets started and each verdict/base counter, retains latest/repair count; continue.
+- **TF08 (80–92):** Start only on S; skip E before S; lower rank set, exact Decimal and bullish copy_negate; engulf if lower base>=2, display restart if lower verdict>=2.
+- **TF09 (93–108):** S or engulf => T; otherwise reference T => F, reference other => T, absent => odd E F/even T. Store verdict; remove history tail >= normalized price and append current reference.
+- **TF10 (109–128):** Pop all lower repeats; repair a lower single F from current time. Same rank/same verdict increments repair count; verdict count increments unless display restart and >=2 marks previous/current repeated. F removes old repair >= current time and repairs current. Base count increments for any previous same rank irrespective of verdict.
+- **TF11 (129–149):** StopAll series initialization; new group on first or nonincreasing number; update prior end and max end; clear prefix and restart. Otherwise restart changes parity origin; update previous number.
+- **TF12 (150–161):** Parity T on even offset; prefix accumulates while number <= largest prior end. At prior-end or max-end, absent/true confirmation callback qualifies; recompute prefix parity from group start and mark repeated, set restart; prefix retained until new series.
+- **TF13 (162–176):** Primary side chosen by bullish else bearish. Clear three annotations on every row; include if calculationValid is not False; first wins by sourceTime in primary/StopAll/E/S order; sort by sourceTime.
+- **TF14 (177–188):** Neutral default; primary flushes and clears StopAll group, assigns T for 1 and F for 2/3 only; collect StopAll; basic verdict then final StopAll. Mutate row references, no trading geometry changes.
+
+The bridge supplies the inclusive closed-confirmation gate above; group TF12 never treats a missing callback as a rejection. This is source-only; no RAW or runtime execution. See `Audit/Phase_07/Rebaseline_v2_8_7/CP309_TrueFalse_Row_Review.json` for projected canonical row identities and limits.
