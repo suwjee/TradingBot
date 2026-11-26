@@ -65,3 +65,7 @@ If legs invalidate carried cache. Per physical reaction insert new ledger row wi
 ## CP384 — W3 OA02–OA05 independent local qualification
 
 Frozen slotted records are shallow, not validated or coercive; object-valued members can remain mutable. Dominance matches the actual behavior reference and invokes priority again for projection, so stability and alias uniqueness remain consumer conditions. Strict boundary improvements retain the original Decimal representation on numeric ties. Delegated/indexed null does not retry; timestamp-array alignment, bounds, supplied level type and attribute/direction domains are caller conditions. See [independent foundations review](Chronology/CP384_W3_B05_Order_Audit_Foundations.md).
+
+## CP385 — W3 OA06 independent reset-leg qualification
+
+Direction validation precedes empty-input shortcuts. Native default crossing excludes all Reset-equal lower timestamps; injected callbacks are trusted except explicit extension, source-before-First and non-null gates. Stop and anchor selection use strict source chronology and last eligible sorted ties; invalid selected anchor does not retry. Accepted-A expiry is by owning main candle before physical selection, not by opposite confirmation. Opposite First may share the break main candle but confirmation must be strictly later. Discovery retains duplicate legs and original physical number/object; only Reset broken level is normalized on emission. See [independent reset-leg review](Chronology/CP385_W3_B05_Order_B_Reset_Legs.md).

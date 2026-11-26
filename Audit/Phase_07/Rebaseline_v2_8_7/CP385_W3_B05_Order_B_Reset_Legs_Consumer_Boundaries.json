@@ -1,0 +1,67 @@
+{
+  "checkpoint": 385,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+  },
+  "status": "LOCAL_CONTRACTS_ONLY_CROSS_OWNER_PENDING",
+  "handoffs": [
+    {
+      "id": "OA03->OA06",
+      "span": [
+        264,
+        272
+      ],
+      "qualification": "Exact Reset resolver output controls event admission; null skipped. Native provider index alignment and delegated precise-time return remain conditional."
+    },
+    {
+      "id": "OA04/OA05->OA06",
+      "span": [
+        232,
+        238,
+        314,
+        329
+      ],
+      "qualification": "Default geometry and strict crossing use native helpers; supplied callback can return unvalidated times, indices or prices. Only explicit extension/source-before-First/non-null gates applied."
+    },
+    {
+      "id": "OA11->OA06",
+      "span": [
+        442,
+        520
+      ],
+      "qualification": "Accepted lifetime filtering, stop ownership and independent anchors constructed by caller; OA06 consumes them without revalidating acceptance. A triggers supplied separately."
+    },
+    {
+      "id": "OA06->OA07–OA10",
+      "span": [
+        378,
+        441
+      ],
+      "qualification": "Live closures delegate boundary/crossing; dirty frontier and cache validity not accepted in this checkpoint."
+    },
+    {
+      "id": "OA06->OA12",
+      "span": [
+        530,
+        553
+      ],
+      "qualification": "Leg identity feedback is separate; OA06 preserves repeated legs and physical object references. Ledger creation, dedup and serialization pending."
+    }
+  ],
+  "prior_w2": {
+    "transition": [
+      "CP325-S05",
+      "CP325-S06",
+      "CP325-S07",
+      "CP325-S08"
+    ],
+    "registry": "e5ea6a6ea1d754fd0ba2001629e810725027cfad"
+  },
+  "limitations": [
+    "OA06 is a local discovery contract, not accepted ledger or creator proof. Caller acceptance of A/S/E/StopAll, mutable aliases, chronology provider, injected callbacks and live cache freshness remain independent.",
+    "No RAW payload, runtime, ZIP or production changes. Native exceptions not tested.",
+    "Overlap and prior W2 semantic rows are not independent W3 acceptance."
+  ]
+}
