@@ -16,7 +16,7 @@ The active worker retains normalized market buckets, view/index suffixes and exa
 | LX06 | PREPARE | Aggregation/validation succeeded | Snapshot previous suffixes and last time; add new prices, replace suffixes, set last time, yield delta | REPLAY | TB14 |
 | LX07 | REPLAY | Views present | Rebuild candle suffix at dirty positions; if index missing or new length>capacity construct fresh index with crossing retention enabled, else refresh suffix; TF1 shares lower objects | CALCULATE | TB18,TB20,TB21 |
 | LX08 | CALCULATE | Full live replay | Clear run caches on entry/exit; prepare market/state without optional live-stage object, build response with optional closed-prefix resolver, report completed stage; final report inside transaction | COMMIT | L02,L03,TB98,TB100,TB101 |
-| LX09 | STAGE or PREPARE or REPLAY or CALCULATE | BaseException in protected body/context | If transaction had mutated suffixes restore snapshots, last time, delete added keys; discard retained views; propagate; validation before mutation has no suffix rollback | ERROR | L02,TB14 |
+| LX09 | STAGE or PREPARE or REPLAY or CALCULATE | BaseException in protected body/context | For an exception within the post-publication yield try, restore suffix snapshots, last time and delete added keys; failures in earlier commit assignments are outside that rollback try. The protected outer append discards retained views and propagates; pre-mutation validation needs no suffix rollback | ERROR | L02,TB14 |
 | LX10 | COMMIT | Successful exit | Return payload; next append reuses retained normalized history, not prior trading result | READY | L02 |
 
 Progress callback may fail and is inside or outside protection according to its actual location. Stage count increments before emission, total directions+4; no guarantee of successful external progress delivery. This is input-state transactional behavior, not a blanket rollback for arbitrary callbacks.
@@ -163,3 +163,7 @@ Registers supplied candle reference, parent timestamp slice, logical length, bas
 | IW06 | READY | Extreme query outside valid nonempty bounds | Raise ValueError; do not clamp | ERROR | TB110,TB111,TB112 |
 
 Source anchors: pinned main engine/bridge/trading_pipeline.py:1756–1823, 1826–1857, 3738–3767. No model-checking or execution.
+
+## CP293 source-first clarification
+
+LX09 is limited to the actual nested protection boundaries: TB14 publishes cache/suffix/time before its rollback try; L02 catches failures in its own protected body and discards retained views, not arbitrary earlier setup or external side effects. See [CP293 input review](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json). IX02–IX04 retain the native no-shrink and crossing-cache invalidation rules.

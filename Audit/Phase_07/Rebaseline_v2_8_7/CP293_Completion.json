@@ -1,0 +1,132 @@
+{
+  "checkpoint": 293,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_MARKET_CONTEXT_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "3cc73a947cb5b00b96d457d54b44b68abfc0216a",
+  "validated_algorithm": "e6e4ad867d83f031ac4766c736d5b270103c10f4",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "scope": "Market context and candle/price/time preparation, normalized bucket transaction, retained candle views, index windows, closed-prefix cache, independent slice construction, calculation-scope entry/exit. Source-only local owner review; does not accept all Trading Pipeline, cross-owner semantics or runtime.",
+  "source_ranges": [
+    [
+      101,
+      139
+    ],
+    [
+      140,
+      364
+    ],
+    [
+      1732,
+      1857
+    ],
+    [
+      2012,
+      2111
+    ],
+    [
+      3713,
+      3767
+    ]
+  ],
+  "counts": {
+    "w1_reviewed": 339,
+    "w1_denominator": 2317,
+    "w1_remaining": 1978,
+    "by_category": {
+      "branches": {
+        "reviewed": 88,
+        "total": 562,
+        "remaining": 474
+      },
+      "comparisons": {
+        "reviewed": 54,
+        "total": 337,
+        "remaining": 283
+      },
+      "arithmetic": {
+        "reviewed": 54,
+        "total": 173,
+        "remaining": 119
+      },
+      "calls": {
+        "reviewed": 143,
+        "total": 1245,
+        "remaining": 1102
+      }
+    },
+    "additional_accesses": 1242,
+    "additional_effects": 96,
+    "additional_exits": 49,
+    "additional_rows": 1387,
+    "all_reviewed_sites": 1726,
+    "contracts": 66,
+    "site_specific_dispositions": 339,
+    "historical_site_continuity": 269,
+    "current_new_sites": 70,
+    "findings_resolved": 6,
+    "duplicate_sites": 0
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json": "8ae47057cb4d0a24b311dc36b6e3cb74f78bb6d1",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Context_Review_02.json": "68d91f9d9e3e66378942aa316f51a2af1db4bdf2",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_01.json": "f73655d7cd7521645ebbaf971dafd62b93943cdb",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_02.json": "68e8552e62208ff6cf09f2dac698f2c5a8a93961"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "scope_and_contract_references": true,
+    "exact_w1_site_disposition_join": true,
+    "branch_diff_before_completion": [
+      "Algorithms/V3/17_Trading_Bridge.md",
+      "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "Audit/Phase_07/Rebaseline_v2_8_7_Execution_Plan.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Context_Review_02.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_01.json",
+      "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_02.json"
+    ],
+    "prior_history_and_raw_paths_unchanged": true
+  },
+  "findings": [
+    {
+      "id": "CP293-F01",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Capacity check in Bridge alone does not guarantee index reuse succeeds. Native refresh separately rejects shrinking and invalid dirty boundary. No local rollback after candle list suffix replacement."
+    },
+    {
+      "id": "CP293-F02",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Input rollback protection starts after persistent cache/suffix/timestamp publication. Existing state model LX09 broadly describes protected body, not blanket protection of commit assignments; retain exact exception boundary."
+    },
+    {
+      "id": "CP293-F03",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Earlier macro 'clears ... before/after calculation even on error' lacks setup and cleanup failure distinction; setup outside try, cleanup clear_indexes precedes timestamp cache clears, so callback failure can bypass remaining cleanup."
+    },
+    {
+      "id": "CP293-F04",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Fresh MarketChronology receives lower index only and main_range_index remains null; retained branch provides both; indexed segment requires usable parent main range index and does not catch missing provider."
+    },
+    {
+      "id": "CP293-F05",
+      "status": "DOCUMENTATION_CLARIFIED",
+      "detail": "Window constructor performs no bounds validation; logical length computed from endpoints rather than actual slice length. Native segment provides valid main bounds; arbitrary external lower window/index arguments conditional."
+    },
+    {
+      "id": "CP293-F06",
+      "status": "RESOLVED_ACTIVE_MACRO",
+      "detail": "Correct RAW-M04 unconditional copy/reindex wording to preserve indexed zero-start references."
+    }
+  ],
+  "limitations": [
+    "Current W1 denominator 2317 is the four decision/call categories, not overall Phase 07. Additional access/effect/exit rows are separate and link to source contracts; not counted again in W1.",
+    "Historical site interpretations are continuity evidence subordinate to current reviewed contracts; no independent W3 review. New sites use CP292 exact projected linkage, not a new full-module canonical AST replay.",
+    "Unreviewed B09 owners and cross-owner context remain open; no RAW read or engine execution."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP294 / RB08 / W1 / B09 — pipeline state composition and shared full-direction stage preparation, beginning with current EngineBundle/PipelineState declarations and create_e_detector/direct_geometry/calculate_full_direction_state. Preserve CP293 ranges; split by complete procedure and validate each site."
+}

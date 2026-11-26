@@ -21,7 +21,7 @@ Live views retain immutable candle objects before dirty; rebuild suffix with sam
 
 ## RAW-M04 — Independent regime slice
 
-Require 0<=start<stop<=main length. Select lower range by first main timestamp inclusive and stop main open exclusive, or last+TF. Copy/reindex selected main/lower from zero, fresh chronology same type and TF. Range start=max(0,old start−start), end=min(stop−start−1,old end−start); offset=old+start. Initial trend flags inherited only at start0 unless overridden. No price/time transform. Release indexes via owning caller. See [Reversal](15_Trend_Reversal.md).
+Require 0<=start<stop<=main length. Select lower range by first main timestamp inclusive and stop main open exclusive, or last+TF. Slice main/lower lists independently. Copy/reindex from zero unless indexed mode is present and the corresponding main start or lower left is zero; in that case retain selected record references. Construct fresh chronology of the same runtime type and integer TF, with both prepared windows only in indexed mode. Range start=max(0,old start−start), end=min(stop−start−1,old end−start); offset=old+start. Initial trend flags inherited only at start0 unless overridden. No price/time transform. Release indexes via owning caller. See [Reversal](15_Trend_Reversal.md).
 
 ## Detailed RAW procedures
 
@@ -128,3 +128,5 @@ The bucket rollback try starts only after persistent price keys, lower/main suff
 ## CP293 source-first verification — MarketContext and window adapters
 
 A fresh market chronology receives only a lower index; the native main_range_index remains null. Retained-view preparation registers both indexes in lower/main order, after mutating view suffixes, and supplies both to the chronology. Indexed independent segmentation assumes a usable parent main range index; no local fallback repairs an absent one. A MarketIndexWindow constructor itself does not check bounds or match candle content: its logical length is stop minus start, which need not match a clipped timestamp slice for invalid external inputs. The validated native segment main bounds and actual lower bisect positions are distinct from arbitrary supplied arguments. Strict crossing clamps the query; extrema reject invalid bounds; values are not transformed. The independent segment may have no visible overlap and still be valid physical input. These are source-derived contracts, not runtime dispatch or feasibility proof. [Evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Context_Review_02.json).
+
+CP293-F06: RAW-M04 now states the indexed zero-start record-reference exception explicitly, consistent with TB63 and B293-B18/B19. No change to trading behavior.
