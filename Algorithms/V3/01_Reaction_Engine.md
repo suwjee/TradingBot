@@ -46,22 +46,22 @@ GREEN iff open<=close (including equality), RED otherwise.
 Return direction policy opposite; invalid direction follows policy exception.
 
 ### RE03 — DetectorBase.__init__
-Retain candles, lower, start/end. Shared time arrays by source identity and lower segment index. Empty reaction-break index cache. Timeframe difference first two main timestamps or 1s for <=1 row; require positive.
+Retain candles, lower, start/end as supplied references and bounds. Obtain shared main times, lower times, then lower segment index; initialize empty instance reaction-break index cache. Timeframe difference first two main timestamps or 1s for <=1 row; require positive. Registry publication may already have occurred before timeframe validation; no local rollback or all-grid validation.
 
 ### RE04 — DetectorBase._shared_time_index
-Global cache by id and exact object identity; on miss build timestamp list and retain source/list.
+Global cache by id and exact object identity; on miss build timestamp list in source order and retain source/list. Cache hit returns the same list, with no mutation freshness check or sorting.
 
 ### RE05 — seconds_between
-Lazy generator over lower [lower_bound(start),lower_bound(end)).
+Compute both lower bounds eagerly; return generator with fixed increasing position range [lower_bound(start),lower_bound(end)). Element lookup is lazy against the retained lower sequence; no synthetic gap fill.
 
 ### RE06 — main_source_for_time
 Main position upper_bound(timestamp)-1; require selected index range; end next actual main timestamp or current+timeframe; return candle if timestamp<end else null.
 
 ### RE07 — minimum_low
-Inclusive main index range; when end-start>=16 use shared range index, reflected view queries original maximum then negates. Otherwise scan strict lower, first equal owner. Return value and corresponding (possibly reflected) candle.
+Inclusive main index range; when end-start>=16 (17 inclusive rows) use shared range index, reflected view queries original maximum then copy-negates. Index leaves normalize via the shared Decimal helper; the linear route reads stored prices directly, initializes source at start even for a reversed interval, then scans strict lower, first equal owner. No local interval validation on linear route. Return value and corresponding (possibly reflected) candle; equivalent results require valid aligned native input, not arbitrary malformed inputs.
 
 ### RE08 — maximum_high
-Mirror of RE07: strict higher, reflected queries original minimum. Same threshold and ties.
+Mirror of RE07: strict higher, reflected queries original minimum then copy-negates. Same threshold, tie and validity qualifications; stored-price linear route versus normalized indexed route.
 
 ### RE09 — BullishDetector.green_run_peak_before
 Previous main index must be >=start and GREEN, else ValueError. Extend contiguous GREEN run backward to start; RE08 inclusive peak.
