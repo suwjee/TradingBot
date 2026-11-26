@@ -1,0 +1,272 @@
+{
+  "checkpoint": 287,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "prior_baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "status": "INCOMPLETE",
+  "subcheck": "PASS_HISTORICAL_NORMALIZED_SCHEMA_REPRODUCTION",
+  "python": "3.13.5",
+  "method": "Independently regenerate prior and current AST/CFG inventories from pinned local source; fix schema conventions by historical row inspection; compare normalized entire prior reports with SHA-256 computed separately over original GitHub blobs; repeat current generation and compare exact local serialized bytes. Normalization uses sorted JSON keys, ASCII escapes, compact separators, no trailing newline, canonical graph-node/edge ordering and def-use group/entry ordering; no semantic row content removed by normalization.",
+  "comparison_progress": [
+    {
+      "version": 1,
+      "matching": 219,
+      "total": 272
+    },
+    {
+      "version": 2,
+      "matching": 239,
+      "total": 272
+    },
+    {
+      "version": 3,
+      "matching": 265,
+      "total": 272
+    },
+    {
+      "version": 4,
+      "matching": 271,
+      "total": 272
+    },
+    {
+      "version": 5,
+      "matching": 272,
+      "total": 272
+    }
+  ],
+  "historical_module_sha256_matches": 16,
+  "historical_sections_matching": 272,
+  "previous_discrepancies": 53,
+  "remaining_schema_discrepancies": 0,
+  "regression": 0,
+  "discrepancies_by_category": {
+    "branches": 6,
+    "calls": 8,
+    "effects": 9,
+    "imports": 4,
+    "symbol_table": 10,
+    "def_use": 3,
+    "cfg": 8,
+    "conservative_reaching_writes": 5
+  },
+  "root_causes": {
+    "branches": "Try normal/exception, With exception_suppression_possible, YieldFrom delegate/resume labels.",
+    "calls": "Import root candidate classification and unresolved self/cls inherited or dynamic distinction.",
+    "effects": "Terminal callee names (including bare calls) for historical mutation/boundary hints; unresolved inherited/dynamic flags; nonlocal declarations; explicit delete spelling.",
+    "imports": "Direct import names and bound aliases.",
+    "symbol_table": "Referenced flag before annotated flag.",
+    "cfg": "Assert true/false, conservative try/finally dispatch and exception targets, with enter/exit and ordered handler no-match chaining.",
+    "def_use": "Exclude expression shapes beginning with synthetic <...> from symbolic groups, retain them in access/call inventory.",
+    "conservative_reaching_writes": "Lexicographic candidate ordering; Del events included in no-kill may-precede candidates. Last five mismatch rows in live_pipeline: 838,871,893,909,916; deletion sites 918 and 919. Del is an abstract event, not a successful assignment."
+  },
+  "current_totals": {
+    "nodes": 66308,
+    "branches": 3153,
+    "outcomes": 6649,
+    "calls": 5145,
+    "accesses": 35384,
+    "effects": 2064,
+    "exits": 1197,
+    "comparisons": 2188,
+    "arithmetic": 1089,
+    "def_use": 15080,
+    "cfg_graphs": 690,
+    "cfg_edges": 18741,
+    "cfg_statements": 8329,
+    "reaching_rows": 12861,
+    "scopes": 1182
+  },
+  "local_repeated_generation": "PASS_16_OF_16_EXACT_BYTES",
+  "canonical_current_bytes": 9335922,
+  "local_crosswalk": {
+    "sha256": "0015920ce50ff17b892f12b1dec871ab0152ed1f7466664cd7735f4c37c24f62",
+    "bytes": 1332585,
+    "status": "LOCAL_ONLY"
+  },
+  "local_validation_sha256": "608801a65ab97cb789ffe7678a00150ce0338820f183e6cbf6a7f5417d929b67",
+  "module_publication": [
+    {
+      "name": "__init__.json",
+      "prior_blob": "7e927388e6f8efb248945189c449c87600107a40",
+      "prior_canonical_sha256": "d067935e47d22c391512b4b04b0cf25c5f3e6878d6bf51441fdb9f48a05df720",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "d693bcb1064d7e0c90d63ac3cc4c53beb6b8da3caac6fefa47c7299b12e59e43",
+      "git_blob": "046dab7223326216ebed1e45e6d3a74847291073",
+      "bytes": 2116,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/__init__.json"
+    },
+    {
+      "name": "bridge____init__.json",
+      "prior_blob": "9320545ab1aed1316cbd537c68c9b8665bfe24c2",
+      "prior_canonical_sha256": "55813fbfc76b45f2afaf8f3b6c7f3dee81e783a6a98f47d5483f8466e44fdba5",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "c5cbbec949a7801f0b04c449c64a5e1fdea7f9f80daaadbb6c322bdf75cc69b8",
+      "git_blob": "7a6e59aedcec49efa6c9ea8df5901f8dedb8917b",
+      "bytes": 2281,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/bridge____init__.json"
+    },
+    {
+      "name": "bridge__live_pipeline.json",
+      "prior_blob": "fefa9c381790a89ff2fd5da34ec2115946b0533e",
+      "prior_canonical_sha256": "3f8d4d17fb2655e1a590258e993bf2dbca7aa1a2bbabe57122bfb25e1a7f9d9e",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "3773d23c4471dfe5688f2198b0c3f6ddf5f172913b92a01149f1fc5cf0fb23ea",
+      "git_blob": "f90777f7218aeb7f6a63d1b6abc4a16306b397a8",
+      "bytes": 144618,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/bridge__live_pipeline.json"
+    },
+    {
+      "name": "bridge__trading_pipeline.json",
+      "prior_blob": "0f0ac9496634808eb76847494cdedcf71dc2dae0",
+      "prior_canonical_sha256": "db8dc720480c9e020cca187b0813da2e15959a43ca5e6604b1e7bf60381783c5",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "c4ab6f09b6df75e1354e7929b30aebf291c0f584226152574d9a210112ae7f09",
+      "git_blob": "d1c6eba3253651e485cd4c7a26cb3c851bd63abd",
+      "bytes": 1948569,
+      "publication": "LOCAL_ONLY",
+      "path": null
+    },
+    {
+      "name": "pipeline__PL_PH_detector.json",
+      "prior_blob": "275b1912116c6ecded134547403f474915401eaa",
+      "prior_canonical_sha256": "76602995ff933ee9551c4c068c19ed6895cc8e63438fe4106912de85888dfbd6",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "4f1d6b341b66e668d650386def8a507d46566a3fb7d5d82d2d52f2895b15ee40",
+      "git_blob": "091b5c2a23f9583cd4f6369ac5d3ea36d0537cc1",
+      "bytes": 581936,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__PL_PH_detector.json"
+    },
+    {
+      "name": "pipeline____init__.json",
+      "prior_blob": "431c78029e0d5c69c02e2d5bd071d45158b053d8",
+      "prior_canonical_sha256": "9182af80a7703ab4df36d5661f7d9a14d8ebb675d352a63c49f83072e98c57b4",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "f023dabfabdb8b5ca23f8da7946e2ba87854d471412cc866bc7b95a2a71abd1a",
+      "git_blob": "08d186d1929f7372c007cbffc6ec0722ddc5277b",
+      "bytes": 6786,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline____init__.json"
+    },
+    {
+      "name": "pipeline__a_zone_detector.json",
+      "prior_blob": "6942fdad1e039e56b257f7efcc015ec37335a7c5",
+      "prior_canonical_sha256": "9dd13bffaff8e2263742bfd6dde228e1e35be043daf0dbe5bd7e7bc0d6a3ebbb",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "348247b43175669846c2a9209a5df5d235fccf8a5d6b27e4d1843ac50f4ba251",
+      "git_blob": "bbe3d95f2616989e772edba07c5408670cad369e",
+      "bytes": 557985,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__a_zone_detector.json"
+    },
+    {
+      "name": "pipeline__blue_line_detector.json",
+      "prior_blob": "b4b7eb59cfa41c1ebcb5c1e1a27f8bb55f99851b",
+      "prior_canonical_sha256": "67d87414a6a12a7326948625ea89381e8a652ea0281864e2f27a44eb2079e973",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "92bd08df6a76a05d415813a8ca6d1d4c3bf2325dd9e05d8f89f6d5bf9969ab88",
+      "git_blob": "f011a0c02eeb9223fe1321e404abeb66fe69bbcf",
+      "bytes": 275513,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__blue_line_detector.json"
+    },
+    {
+      "name": "pipeline__core_utils.json",
+      "prior_blob": "2fd3d102b79420e470a0935e6ffb9a00e2aa91a6",
+      "prior_canonical_sha256": "e134b552215734448a06940381789bdac645a5c116f7c5afb89c5ee89ec56bcf",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "25c51833c8eee345897ff5fa5753e291f010b613c250d8fc31ba5c977c4ad30d",
+      "git_blob": "abf63fc9afe037f5ba4c50ad5a154a1575db97d3",
+      "bytes": 43364,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__core_utils.json"
+    },
+    {
+      "name": "pipeline__direction_policy.json",
+      "prior_blob": "0b15c2612d6be0228dd2456e6849cfbe55d81aae",
+      "prior_canonical_sha256": "93b952408b6d3c84da391cef0088357835d1f1b1d66e7e45c1612a957bc87da6",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "c87b9321ec027aeae8ad92473230d38e9450cb1f1e7607c3fd11efdee1c0f0f8",
+      "git_blob": "ffeef0f1ff91ca1909050d39bf7cac8ad162c67b",
+      "bytes": 29459,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__direction_policy.json"
+    },
+    {
+      "name": "pipeline__e_zone_detector.json",
+      "prior_blob": "1308a85ef49957aeb5e603c5347916fb79d616bf",
+      "prior_canonical_sha256": "174db4d2bde77ccd13f0f30adbd5be6f0b3a82922ceb2dd308fda9265c6b6470",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "d83868e52b3e06bc9f4ac18b37047d7477c3996dbd97e93cf08a4a00ae62d58d",
+      "git_blob": "f535795a7a247f3fa37307be6f426270ef9e0fbf",
+      "bytes": 946433,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__e_zone_detector.json"
+    },
+    {
+      "name": "pipeline__lifecycle_engine.json",
+      "prior_blob": "da160a1d7c4d66769f4802bf350a741a7a3c0d6d",
+      "prior_canonical_sha256": "2c7ee0cbbbc28433baa43aa4cd0f7e363c519144ee85e0a0ecd8938cff4d9a70",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "e3290aa12c5bc2745051a121db26b17fb40047c2e89c067b3bab05fd73c83c51",
+      "git_blob": "5c868870029bcf1db2c5ea6050eeac84823a9f55",
+      "bytes": 782217,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__lifecycle_engine.json"
+    },
+    {
+      "name": "pipeline__order_audit_engine.json",
+      "prior_blob": "fdd253ac268881876574914b6d79478716f52104",
+      "prior_canonical_sha256": "ed78aff9c0bf83763e8e4cf30d565ec8a9fd86fcf354ef91a8a4760dec849fcd",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "ef16ebc8703b0a074e436148cf61a87a4e4a623428f6a1f1a0ba75abb536dc1a",
+      "git_blob": "8e8de138a2e4d165994792923d427ee6d1ac9c09",
+      "bytes": 1550246,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__order_audit_engine.json"
+    },
+    {
+      "name": "pipeline__reaction_engine.json",
+      "prior_blob": "dd607cd741d66ee0561f4d26e9d1bef815bdcbce",
+      "prior_canonical_sha256": "f6d302a8d659419abf34eb811204e3eedb59ce1c0f5deb2c5ea372e148641315",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "19a64bebe675297c28a9b7879e6b615a341f973e3e9f3e5a1184c1ab36f47e4c",
+      "git_blob": "3bfa193e718fdf31b62d51f9a690b66a024d8403",
+      "bytes": 1596092,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__reaction_engine.json"
+    },
+    {
+      "name": "pipeline__s_zone_detector.json",
+      "prior_blob": "50856bbb8e5e1473787d3f48a478d508ef49228b",
+      "prior_canonical_sha256": "2bb29362328d9e04aa7855ad7aef595889182af0a189ef01b8878bd7e357418e",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "36469c525f02b2edd4176ab84be926d5dfc6280ce58fde3a629ddd2e3eb4b1b1",
+      "git_blob": "073719406d52ab9ea8eeb9b53fb55b3f2938af83",
+      "bytes": 755399,
+      "publication": "GIT_BLOB_VERIFIED",
+      "path": "Audit/Phase_02/Rebaseline_v2_8_7/Static_v5/pipeline__s_zone_detector.json"
+    },
+    {
+      "name": "pipeline__true_false.json",
+      "prior_blob": "9a6cb5cf2306c9acb96d7bb9e811acf4af90be8f",
+      "prior_canonical_sha256": "fba40aa80209f447b2c1d924a3a21f130c486bd56199df37dd799aa05f4b4299",
+      "prior_normalized_comparison": "PASS_SHA256",
+      "current_canonical_sha256": "94b9411e84c3e5630242d55d9af3ce5b128f034e1096786b2e747c858fe5689f",
+      "git_blob": "35c3604eab453b64313522f9e7f642f0fe754e5f",
+      "bytes": 112908,
+      "publication": "LOCAL_ONLY",
+      "path": null
+    }
+  ],
+  "published_count": 14,
+  "pending_count": 2,
+  "publication_method": "For 14 unchanged source blobs, normalize original verified historical inventory and rebase baseline metadata. For live_pipeline additionally update exactly three imported target scope IDs at call rows 14,57,65. Each resulting created Git blob matches the independently generated current canonical local Git SHA-1 exactly; historical files retained untouched. Changed modules are independently generated locally, not uploaded yet.",
+  "limitations": [
+    "Historical normalized equality confirms reproduced inventory contract, not runtime semantic proof or exact dynamic dispatch.",
+    "Current two changed full row inventories, complete Crosswalk and aggregate validation publication remain pending due to direct Git DNS and connector text-only transfer. Local results not asserted as published.",
+    "No production execution, RAW tests, source changes, or Google Drive use. RB03 remains NOT RUN."
+  ]
+}

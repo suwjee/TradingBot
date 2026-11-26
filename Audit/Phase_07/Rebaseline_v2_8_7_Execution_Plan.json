@@ -18,14 +18,15 @@
       "status": "INCOMPLETE",
       "checkpoint": 287,
       "partial_evidence": "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Partial_Source_Delta.json",
-      "completed_scope": "Pinned 16/16 source byte identities match RB01 SHA-256 manifest and Git tree; two local deterministic CPython supplemental static generations per module; independent AST counts; historical branch-kind counts reproduced; changed-scope and partial exact-location crosswalk summaries published. Reconstructed historical schema field/row structure locally; exact normalized structural comparison of 17 historical True/False sections; diagnostic checksum comparison of 219/272 matching historical sections across all 16 Git blobs, with 53 differences explicitly identified. Published lossless old/new node mapping for changed files (13,767 pairs), and identity mapping for 51,495 nodes in 14 unchanged files; three changed target scope IDs in unchanged live_pipeline.",
-      "remaining_scope": "Investigate 53 historical section discrepancies (especially bridge calls/effects/symbols/CFG/reaching writes); publish and independently validate current row-level inventories and complete source-to-site crosswalk plus aggregate indexes. Diagnostic checksums and regenerated-row mappings alone do not establish historical equivalence. Git DNS unavailable locally; use GitHub only, no Drive or other external storage. No runtime or RAW tests. RB03 remains NOT RUN.",
+      "completed_scope": "Pinned 16/16 source byte identities match RB01 SHA-256 manifest and Git tree; two local deterministic CPython supplemental static generations per module; independent AST counts; historical branch-kind counts reproduced; changed-scope and partial exact-location crosswalk summaries published. Reconstructed historical schema field/row structure locally; exact normalized structural comparison of 17 historical True/False sections; diagnostic checksum comparison of 219/272 matching historical sections across all 16 Git blobs, with 53 differences explicitly identified. Published lossless old/new node mapping for changed files (13,767 pairs), and identity mapping for 51,495 nodes in 14 unchanged files; three changed target scope IDs in unchanged live_pipeline. Corrected all 53 historical schema differences across five analyzer revisions. Full normalized historical report SHA-256 matches 16/16, 272/272 sections. Current local v5 reports generated twice with exact byte equality. Fourteen canonical current inventories published with exact locally calculated Git blob identities.",
+      "remaining_scope": "Publish two changed full v5 row inventories and full Crosswalk, aggregate indexes and independent final validation; no runtime or RAW tests; RB03 remains NOT RUN.",
       "supplementary_evidence": [
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_TrueFalse_Static_Supplement.json",
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Static_Execution_Summary.json",
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Scope_Delta_and_Imports.json",
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Historical_Schema_Comparison.json",
-        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Node_Crosswalk.json"
+        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Node_Crosswalk.json",
+        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Schema_Reconciliation_v5.json"
       ]
     },
     {
@@ -107,6 +108,6 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "Continue CP287/RB02 from CP287_Historical_Schema_Comparison.json and CP287_Node_Crosswalk.json. Do not start RB03 before RB02 actual acceptance.",
+  "next": "Continue CP287/RB02 remaining publication and acceptance gates from CP287_Schema_Reconciliation_v5.json. No Google Drive or external storage; do not advance RB03 before actual RB02 acceptance.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence."
 }
