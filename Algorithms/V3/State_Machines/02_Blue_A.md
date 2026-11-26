@@ -4,7 +4,7 @@ Scope: source-only semantic model, complementing [Blue](../03_Blue_Line.md) and 
 
 ## BLS — Strike machine per Reaction
 
-Registers: frozen Fibonacci level, list of confirmed strikes, pending strike/null. Threshold = last confirmed strike extreme else level. Eligible Break extreme only from rows <= exact confirmation, not full main. Initial empty strikes, null pending.
+Registers: frozen Fibonacci level, list of confirmed strikes, pending strike/null. Threshold = last confirmed strike extreme else level. Eligible Break extreme only from rows <= RE61 returned confirmation time (including Break-open fallback), not full main. Initial empty strikes, null pending.
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|

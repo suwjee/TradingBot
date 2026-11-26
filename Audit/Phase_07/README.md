@@ -141,3 +141,23 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## B02 W1 local completion
 
 [Completion evidence](Semantic_Closure_B02_Completion.json): all 1877 original category IDs accounted for exactly once across 14 contiguous source partitions; 2908 lines (including terminal blanks), 114 supplemental items. **B02 local PASS; W2/W3 remain open.** Next B03 Blue and A. No runtime equivalence claimed.
+
+
+## Checkpoint 29 — Blue primitives, Fibonacci and Scale strike chronology
+
+[Local review](Semantic_Closure_B03_01.md) and [site evidence](Semantic_Closure_B03_01.json): 170 original rows, 8 supplemental items, 4 resolved findings; local PASS. Blue 170/437.
+
+
+## Checkpoint 30 — Scale/Reset Blue geometry, double-stop and sequence spacing
+
+[Local review](Semantic_Closure_B03_02.md) and [site evidence](Semantic_Closure_B03_02.json): 138 original rows, 8 supplemental items, 0 resolved findings; local PASS. Blue 308/437.
+
+
+## Checkpoint 31 — Live Blue rewind, containment and public filtering
+
+[Local review](Semantic_Closure_B03_03.md) and [site evidence](Semantic_Closure_B03_03.json): 129 original rows, 8 supplemental items, 2 resolved findings; local PASS. Blue 437/437.
+
+
+## B03 Blue W1 local completion
+
+[Completion evidence](Semantic_Closure_B03_Blue_Completion.json): 437/437 original category rows, all 18 procedures, 591 lines, 24 supplemental items. A Zone remains pending (708 rows); B03 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED. W2/W3 open.

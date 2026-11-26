@@ -1,0 +1,4684 @@
+{
+  "checkpoint": 31,
+  "batch": "B03",
+  "sub_batch": "B03-03",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "4d6e3f74425b75cd52b50ff58aa806a3a3df0a24",
+  "path": "engine/pipeline/blue_line_detector.py",
+  "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+  "source_range": [
+    462,
+    591
+  ],
+  "procedures": [
+    "BL11",
+    "BL12",
+    "BL13",
+    "BL14",
+    "BL15",
+    "BL16",
+    "BL17",
+    "BL18"
+  ],
+  "review_pass": "W1 source-first local owner review; W3 pending",
+  "status": "PASS",
+  "scope": "Local source contracts only; cross-owner and separate forensic gate not certified.",
+  "counts": {
+    "original_rows": 129,
+    "by_category": {
+      "branches": 39,
+      "comparisons": 28,
+      "arithmetic": 8,
+      "calls": 54
+    },
+    "supplemental_items": 8
+  },
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 1533,
+      "source_span": [
+        474,
+        8,
+        475,
+        73
+      ],
+      "procedure": "BL11",
+      "original_operation": "If",
+      "original_context": "BL-SC30",
+      "interpretation": "Unsupported direction raises before storing state.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L474-L475",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 80,
+        "heading": "LiveBlueLineContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1605,
+      "source_span": [
+        491,
+        8,
+        492,
+        91
+      ],
+      "procedure": "BL13",
+      "original_operation": "If",
+      "original_context": "BL-SC32",
+      "interpretation": "Invalid first_changed lower/upper bounds or beyond reaction count raises.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L492",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1606,
+      "source_span": [
+        491,
+        11,
+        491,
+        92
+      ],
+      "procedure": "BL13",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC32",
+      "interpretation": "Negated chained checkpoint range first, then reaction count bound if valid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1608,
+      "source_span": [
+        491,
+        15,
+        491,
+        58
+      ],
+      "procedure": "BL13",
+      "original_operation": "Compare",
+      "original_context": "BL-SC32",
+      "interpretation": "Chained 0<=first_changed<checkpoint count; short circuit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1624,
+      "source_span": [
+        493,
+        8,
+        503,
+        25
+      ],
+      "procedure": "BL13",
+      "original_operation": "If",
+      "original_context": "BL-SC33",
+      "interpretation": "Dirty main provided enables additional rewind scan.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L493-L503",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1637,
+      "source_span": [
+        495,
+        58,
+        495,
+        63
+      ],
+      "procedure": "BL13",
+      "original_operation": "comprehension",
+      "original_context": "BL-SC33",
+      "interpretation": "Traverse resets and collect affected owner identities.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L495-L495",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/blue_line_detector.py:496:19:Compare:filter",
+      "source_span": [
+        496,
+        19,
+        496,
+        67
+      ],
+      "procedure": "BL13",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "BL-SC33",
+      "interpretation": "Include reset only if its integer index>=dirty main.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L496-L496",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1648,
+      "source_span": [
+        498,
+        12,
+        503,
+        25
+      ],
+      "procedure": "BL13",
+      "original_operation": "For",
+      "original_context": "BL-SC33",
+      "interpretation": "Scan earlier native reaction positions from zero to first_changed exclusive.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L498-L503",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1658,
+      "source_span": [
+        500,
+        16,
+        503,
+        25
+      ],
+      "procedure": "BL13",
+      "original_operation": "If",
+      "original_context": "BL-SC33",
+      "interpretation": "Rewind to first position with dirty Break or matching reset owner, then break.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L500-L503",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1659,
+      "source_span": [
+        500,
+        20,
+        501,
+        78
+      ],
+      "procedure": "BL13",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC33",
+      "interpretation": "Break>=dirty evaluated first, then owner membership.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L500-L501",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1703,
+      "source_span": [
+        507,
+        8,
+        511,
+        13
+      ],
+      "procedure": "BL13",
+      "original_operation": "If",
+      "original_context": "BL-SC34",
+      "interpretation": "Replay only if revised suffix nonempty; otherwise truncate retained state.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L507-L511",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1749,
+      "source_span": [
+        521,
+        12,
+        521,
+        16
+      ],
+      "procedure": "BL14",
+      "original_operation": "comprehension",
+      "original_context": "BL-SC35",
+      "interpretation": "Traverse lines in source order for public projection.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L521-L521",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/blue_line_detector.py:522:11:BoolOp:filter",
+      "source_span": [
+        522,
+        11,
+        523,
+        63
+      ],
+      "procedure": "BL14",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "BL-SC35",
+      "interpretation": "Include valid truthy and internal false-valued records only.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L522-L523",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1752,
+      "source_span": [
+        522,
+        11,
+        523,
+        63
+      ],
+      "procedure": "BL14",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC35",
+      "interpretation": "Valid flag first; false skips internal lookup.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L522-L523",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1801,
+      "source_span": [
+        543,
+        8,
+        551,
+        56
+      ],
+      "procedure": "BL16",
+      "original_operation": "For",
+      "original_context": "BL-SC37",
+      "interpretation": "Traverse all behavior reactions to build windows.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L543-L551",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1818,
+      "source_span": [
+        546,
+        12,
+        547,
+        24
+      ],
+      "procedure": "BL16",
+      "original_operation": "If",
+      "original_context": "BL-SC37",
+      "interpretation": "Skip reaction if either time missing.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L546-L547",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1819,
+      "source_span": [
+        546,
+        15,
+        546,
+        49
+      ],
+      "procedure": "BL16",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC37",
+      "interpretation": "First null first, then confirmation null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L546-L546",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1827,
+      "source_span": [
+        548,
+        12,
+        550,
+        27
+      ],
+      "procedure": "BL16",
+      "original_operation": "If",
+      "original_context": "BL-SC37",
+      "interpretation": "Disable index on first non-exact datetime or nonnull timezone.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L548-L550",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1828,
+      "source_span": [
+        548,
+        16,
+        549,
+        86
+      ],
+      "procedure": "BL16",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC37",
+      "interpretation": "Exact First type then timezone, exact confirmation type then timezone, short circuit.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L548-L549",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1873,
+      "source_span": [
+        555,
+        21,
+        555,
+        61
+      ],
+      "procedure": "BL17",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC38",
+      "interpretation": "Missing or false-valued ordinal becomes zero before integer conversion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L555-L555",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1880,
+      "source_span": [
+        556,
+        8,
+        557,
+        24
+      ],
+      "procedure": "BL17",
+      "original_operation": "If",
+      "original_context": "BL-SC38",
+      "interpretation": "Ordinal outside inclusive 1..owner count returns false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L556-L557",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1881,
+      "source_span": [
+        556,
+        11,
+        556,
+        54
+      ],
+      "procedure": "BL17",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC38",
+      "interpretation": "Less than one first, then above count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L556-L556",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1930,
+      "source_span": [
+        565,
+        8,
+        566,
+        24
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC39",
+      "interpretation": "Missing source time or either price returns false before conversion.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L565-L566",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1931,
+      "source_span": [
+        565,
+        11,
+        565,
+        78
+      ],
+      "procedure": "BL18",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC39",
+      "interpretation": "Source time null, rendered null, semantic null in order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L565-L565",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1957,
+      "source_span": [
+        569,
+        8,
+        571,
+        26
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC39",
+      "interpretation": "Index lazily built once after valid fields; even null result marks indexed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L569-L571",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1973,
+      "source_span": [
+        573,
+        8,
+        574,
+        69
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC40",
+      "interpretation": "Query indexed candidates only if index exists and source time exact naive datetime.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L574",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1974,
+      "source_span": [
+        573,
+        11,
+        573,
+        97
+      ],
+      "procedure": "BL18",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC40",
+      "interpretation": "Index presence first, exact type second, timezone null third.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L573",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 1994,
+      "source_span": [
+        575,
+        8,
+        585,
+        27
+      ],
+      "procedure": "BL18",
+      "original_operation": "For",
+      "original_context": "BL-SC40",
+      "interpretation": "Traverse chosen candidate sequence in returned order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L575-L585",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2011,
+      "source_span": [
+        578,
+        12,
+        579,
+        24
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC40",
+      "interpretation": "Skip missing First/confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L578-L579",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2012,
+      "source_span": [
+        578,
+        15,
+        578,
+        49
+      ],
+      "procedure": "BL18",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC40",
+      "interpretation": "First null before confirmation null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L578-L578",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2020,
+      "source_span": [
+        580,
+        12,
+        581,
+        24
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC40",
+      "interpretation": "Skip source at/before First or strictly after confirmation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L580-L581",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2021,
+      "source_span": [
+        580,
+        15,
+        580,
+        62
+      ],
+      "procedure": "BL18",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC40",
+      "interpretation": "Strict start gate first, inclusive end gate second.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L580-L580",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2049,
+      "source_span": [
+        584,
+        12,
+        585,
+        27
+      ],
+      "procedure": "BL18",
+      "original_operation": "If",
+      "original_context": "BL-SC41",
+      "interpretation": "Both price interiors required, return true on first eligible reaction.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L585",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2050,
+      "source_span": [
+        584,
+        15,
+        584,
+        66
+      ],
+      "procedure": "BL18",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC41",
+      "interpretation": "Semantic chained strict range first, rendered chain only if semantic passes.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2051,
+      "source_span": [
+        584,
+        15,
+        584,
+        38
+      ],
+      "procedure": "BL18",
+      "original_operation": "Compare",
+      "original_context": "BL-SC41",
+      "interpretation": "Bottom<semantic<top chain evaluates middle once.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2055,
+      "source_span": [
+        584,
+        43,
+        584,
+        66
+      ],
+      "procedure": "BL18",
+      "original_operation": "Compare",
+      "original_context": "BL-SC41",
+      "interpretation": "Bottom<rendered<top chain only after semantic chain passes.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2064,
+      "source_span": [
+        588,
+        4,
+        590,
+        63
+      ],
+      "procedure": "BL15",
+      "original_operation": "For",
+      "original_context": "BL-SC42",
+      "interpretation": "Traverse lines in input order.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L588-L590",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2067,
+      "source_span": [
+        589,
+        8,
+        590,
+        63
+      ],
+      "procedure": "BL15",
+      "original_operation": "If",
+      "original_context": "BL-SC42",
+      "interpretation": "Set internal true on owner or geometry hit; no clear branch.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L589-L590",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 2068,
+      "source_span": [
+        589,
+        11,
+        589,
+        64
+      ],
+      "procedure": "BL15",
+      "original_operation": "BoolOp",
+      "original_context": "BL-SC42",
+      "interpretation": "Owner hit short-circuits geometry entirely.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L589-L589",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1534,
+      "source_span": [
+        474,
+        11,
+        474,
+        50
+      ],
+      "procedure": "BL11",
+      "original_operation": [
+        "NotIn"
+      ],
+      "original_context": "BL-SC30",
+      "interpretation": "Direction not in supported exact set.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L474-L474",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 80,
+        "heading": "LiveBlueLineContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1608,
+      "source_span": [
+        491,
+        15,
+        491,
+        58
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "LtE",
+        "Lt"
+      ],
+      "original_context": "BL-SC32",
+      "interpretation": "Inclusive zero<=first_changed, strict first_changed<checkpoint count.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1615,
+      "source_span": [
+        491,
+        62,
+        491,
+        92
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "BL-SC32",
+      "interpretation": "First_changed>new reaction count invalid; equality accepted.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1625,
+      "source_span": [
+        493,
+        11,
+        493,
+        39
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC33",
+      "interpretation": "Dirty main identity nonnull.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L493-L493",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1640,
+      "source_span": [
+        496,
+        19,
+        496,
+        67
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "BL-SC33",
+      "interpretation": "Integer reset index>=dirty frontier includes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L496-L496",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1660,
+      "source_span": [
+        500,
+        20,
+        500,
+        75
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "GtE"
+      ],
+      "original_context": "BL-SC33",
+      "interpretation": "Integer Break>=dirty includes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1668,
+      "source_span": [
+        501,
+        27,
+        501,
+        78
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "BL-SC33",
+      "interpretation": "Integer First belongs to affected reset owners.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L501-L501",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1704,
+      "source_span": [
+        507,
+        11,
+        507,
+        41
+      ],
+      "procedure": "BL13",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "BL-SC34",
+      "interpretation": "First_changed<new reaction count triggers suffix replay.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L507-L507",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1820,
+      "source_span": [
+        546,
+        15,
+        546,
+        28
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "First identity null skips.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L546-L546",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1823,
+      "source_span": [
+        546,
+        32,
+        546,
+        49
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "Confirmation identity null skips.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L546-L546",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1829,
+      "source_span": [
+        548,
+        16,
+        548,
+        43
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "Exact First type is not datetime disables index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L548-L548",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1834,
+      "source_span": [
+        548,
+        47,
+        548,
+        71
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "First timezone identity nonnull disables index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L548-L548",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1838,
+      "source_span": [
+        549,
+        23,
+        549,
+        54
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "Exact confirmation type is not datetime disables index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L549-L549",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1843,
+      "source_span": [
+        549,
+        58,
+        549,
+        86
+      ],
+      "procedure": "BL16",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC37",
+      "interpretation": "Confirmation timezone identity nonnull disables index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L549-L549",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1882,
+      "source_span": [
+        556,
+        11,
+        556,
+        21
+      ],
+      "procedure": "BL17",
+      "original_operation": [
+        "Lt"
+      ],
+      "original_context": "BL-SC38",
+      "interpretation": "Ordinal strictly below one invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L556-L556",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1885,
+      "source_span": [
+        556,
+        25,
+        556,
+        54
+      ],
+      "procedure": "BL17",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "BL-SC38",
+      "interpretation": "Ordinal strictly above owner length invalid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L556-L556",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1932,
+      "source_span": [
+        565,
+        11,
+        565,
+        30
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC39",
+      "interpretation": "Source time identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L565-L565",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1935,
+      "source_span": [
+        565,
+        34,
+        565,
+        52
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC39",
+      "interpretation": "Line price identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L565-L565",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1938,
+      "source_span": [
+        565,
+        56,
+        565,
+        78
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC39",
+      "interpretation": "Source extreme identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L565-L565",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1975,
+      "source_span": [
+        573,
+        11,
+        573,
+        32
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Interior index identity nonnull enables indexed route.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L573",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1978,
+      "source_span": [
+        573,
+        37,
+        573,
+        66
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Exact source time type is datetime.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L573",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 1983,
+      "source_span": [
+        573,
+        71,
+        573,
+        97
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Source timezone identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L573",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2013,
+      "source_span": [
+        578,
+        15,
+        578,
+        28
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Candidate First identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L578-L578",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2016,
+      "source_span": [
+        578,
+        32,
+        578,
+        49
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Is"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Candidate confirmation identity null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L578-L578",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2022,
+      "source_span": [
+        580,
+        15,
+        580,
+        35
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "LtE"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Source time<=First excludes equality.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L580-L580",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2025,
+      "source_span": [
+        580,
+        39,
+        580,
+        62
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Gt"
+      ],
+      "original_context": "BL-SC40",
+      "interpretation": "Source time>confirmation excludes later only.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L580-L580",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2051,
+      "source_span": [
+        584,
+        15,
+        584,
+        38
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Lt",
+        "Lt"
+      ],
+      "original_context": "BL-SC41",
+      "interpretation": "Both strict comparisons bottom<semantic<top; equality excluded.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 2055,
+      "source_span": [
+        584,
+        43,
+        584,
+        66
+      ],
+      "procedure": "BL18",
+      "original_operation": [
+        "Lt",
+        "Lt"
+      ],
+      "original_context": "BL-SC41",
+      "interpretation": "Both strict comparisons bottom<rendered<top; equality excluded.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L584-L584",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1601,
+      "source_span": [
+        489,
+        49,
+        489,
+        59
+      ],
+      "procedure": null,
+      "original_operation": "BitOr",
+      "original_context": "BL-SC32",
+      "interpretation": "Type-union annotation only; not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration or annotation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L489-L489",
+      "contract_ref": null,
+      "transition_refs": []
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1607,
+      "source_span": [
+        491,
+        11,
+        491,
+        58
+      ],
+      "procedure": "BL13",
+      "original_operation": "Not",
+      "original_context": "BL-SC32",
+      "interpretation": "Negate chained checkpoint validity.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1692,
+      "source_span": [
+        505,
+        41,
+        505,
+        58
+      ],
+      "procedure": "BL13",
+      "original_operation": "Add",
+      "original_context": "BL-SC34",
+      "interpretation": "First_changed+1 retains checkpoint at rewind boundary.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L505-L505",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1760,
+      "source_span": [
+        523,
+        12,
+        523,
+        63
+      ],
+      "procedure": "BL14",
+      "original_operation": "Not",
+      "original_context": "BL-SC35",
+      "interpretation": "Negate internal flag truthiness in public filter.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L523-L523",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1788,
+      "source_span": [
+        538,
+        15,
+        538,
+        59
+      ],
+      "procedure": "BL15",
+      "original_operation": "BitOr",
+      "original_context": "BL-SC36",
+      "interpretation": "Type-union annotation only; not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration or annotation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L538-L538",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1861,
+      "source_span": [
+        541,
+        29,
+        541,
+        73
+      ],
+      "procedure": "BL15",
+      "original_operation": "BitOr",
+      "original_context": "BL-SC37",
+      "interpretation": "Type-union annotation only; not executed trading arithmetic.",
+      "temporal_relevance": "NONE",
+      "relevance_reason": "Declaration or annotation.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "NOT_APPLICABLE",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L541-L541",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1899,
+      "source_span": [
+        558,
+        44,
+        558,
+        54
+      ],
+      "procedure": "BL17",
+      "original_operation": "Sub",
+      "original_context": "BL-SC38",
+      "interpretation": "Ordinal minus one selects zero-based owner position.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L558-L558",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "arithmetic",
+      "original_id": 1958,
+      "source_span": [
+        569,
+        11,
+        569,
+        22
+      ],
+      "procedure": "BL18",
+      "original_operation": "Not",
+      "original_context": "BL-SC39",
+      "interpretation": "Negate indexed flag to run lazy index creation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L569-L569",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1540,
+      "source_span": [
+        475,
+        18,
+        475,
+        73
+      ],
+      "procedure": "BL11",
+      "original_operation": "ValueError",
+      "original_context": "BL-SC30",
+      "interpretation": "Construct invalid direction ValueError.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L475-L475",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 80,
+        "heading": "LiveBlueLineContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1551,
+      "source_span": [
+        477,
+        29,
+        477,
+        46
+      ],
+      "procedure": "BL11",
+      "original_operation": "_BlueCheckpoint",
+      "original_context": "BL-SC30",
+      "interpretation": "Construct initial checkpoint before tail calculation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L477-L477",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 80,
+        "heading": "LiveBlueLineContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1556,
+      "source_span": [
+        478,
+        22,
+        481,
+        9
+      ],
+      "procedure": "BL11",
+      "original_operation": "_calculate_blue_tail",
+      "original_context": "BL-SC30",
+      "interpretation": "Calculate all Blue and append checkpoints.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L478-L481",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 80,
+        "heading": "LiveBlueLineContinuation.__init__"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1578,
+      "source_span": [
+        485,
+        15,
+        485,
+        33
+      ],
+      "procedure": "BL12",
+      "original_operation": "self._lines.copy",
+      "original_context": "BL-SC31",
+      "interpretation": "Shallow-copy retained line list; original records shared.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L485-L485",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 84,
+        "heading": "LiveBlueLineContinuation.result"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1611,
+      "source_span": [
+        491,
+        36,
+        491,
+        58
+      ],
+      "procedure": "BL13",
+      "original_operation": "len",
+      "original_context": "BL-SC32",
+      "interpretation": "Read checkpoint count only after first lower bound succeeds.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1617,
+      "source_span": [
+        491,
+        78,
+        491,
+        92
+      ],
+      "procedure": "BL13",
+      "original_operation": "len",
+      "original_context": "BL-SC32",
+      "interpretation": "Read reaction count only after valid checkpoint chain.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L491",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1621,
+      "source_span": [
+        492,
+        18,
+        492,
+        91
+      ],
+      "procedure": "BL13",
+      "original_operation": "ValueError",
+      "original_context": "BL-SC32",
+      "interpretation": "Construct invalid checkpoint ValueError.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L492-L492",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1631,
+      "source_span": [
+        495,
+        16,
+        495,
+        53
+      ],
+      "procedure": "BL13",
+      "original_operation": "int",
+      "original_context": "BL-SC33",
+      "interpretation": "Integer-convert owner First only for affected reset.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L495-L495",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1633,
+      "source_span": [
+        495,
+        20,
+        495,
+        52
+      ],
+      "procedure": "BL13",
+      "original_operation": "getattr",
+      "original_context": "BL-SC33",
+      "interpretation": "Read reset.from_first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L495-L495",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1641,
+      "source_span": [
+        496,
+        19,
+        496,
+        47
+      ],
+      "procedure": "BL13",
+      "original_operation": "int",
+      "original_context": "BL-SC33",
+      "interpretation": "Integer-convert reset index for dirty filter.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L496-L496",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1643,
+      "source_span": [
+        496,
+        23,
+        496,
+        46
+      ],
+      "procedure": "BL13",
+      "original_operation": "getattr",
+      "original_context": "BL-SC33",
+      "interpretation": "Read reset.index.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L496-L496",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1650,
+      "source_span": [
+        498,
+        25,
+        498,
+        45
+      ],
+      "procedure": "BL13",
+      "original_operation": "range",
+      "original_context": "BL-SC33",
+      "interpretation": "Construct earlier-position range excluding first_changed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L498-L498",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1661,
+      "source_span": [
+        500,
+        20,
+        500,
+        55
+      ],
+      "procedure": "BL13",
+      "original_operation": "int",
+      "original_context": "BL-SC33",
+      "interpretation": "Integer-convert reaction Break for dirty comparison.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1663,
+      "source_span": [
+        500,
+        24,
+        500,
+        54
+      ],
+      "procedure": "BL13",
+      "original_operation": "getattr",
+      "original_context": "BL-SC33",
+      "interpretation": "Read reaction.break_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L500-L500",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1669,
+      "source_span": [
+        501,
+        27,
+        501,
+        62
+      ],
+      "procedure": "BL13",
+      "original_operation": "int",
+      "original_context": "BL-SC33",
+      "interpretation": "Integer-convert reaction First for owner membership only if Break guard false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L501-L501",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1671,
+      "source_span": [
+        501,
+        31,
+        501,
+        61
+      ],
+      "procedure": "BL13",
+      "original_operation": "getattr",
+      "original_context": "BL-SC33",
+      "interpretation": "Read reaction.first_idx.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L501-L501",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1706,
+      "source_span": [
+        507,
+        27,
+        507,
+        41
+      ],
+      "procedure": "BL13",
+      "original_operation": "len",
+      "original_context": "BL-SC34",
+      "interpretation": "Read reaction count for nonempty suffix check.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L507-L507",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1710,
+      "source_span": [
+        508,
+        12,
+        511,
+        13
+      ],
+      "procedure": "BL13",
+      "original_operation": "_calculate_blue_tail",
+      "original_context": "BL-SC34",
+      "interpretation": "Replay tail with retained checkpoint and local sliced lists.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L508-L511",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 88,
+        "heading": "LiveBlueLineContinuation.update"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV03",
+          "line": 92
+        },
+        {
+          "path": "Algorithms/V3/State_Machines/07_Continuation.md",
+          "machine": "CV",
+          "transition": "CV04",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1753,
+      "source_span": [
+        522,
+        11,
+        522,
+        57
+      ],
+      "procedure": "BL14",
+      "original_operation": "bool",
+      "original_context": "BL-SC35",
+      "interpretation": "Convert calculation_valid to bool before internal lookup.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L522-L522",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1755,
+      "source_span": [
+        522,
+        16,
+        522,
+        56
+      ],
+      "procedure": "BL14",
+      "original_operation": "getattr",
+      "original_context": "BL-SC35",
+      "interpretation": "Read optional calculation_valid default true.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L522-L522",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1761,
+      "source_span": [
+        523,
+        16,
+        523,
+        63
+      ],
+      "procedure": "BL14",
+      "original_operation": "bool",
+      "original_context": "BL-SC35",
+      "interpretation": "Convert behavior_internal to bool only when valid.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L523-L523",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1763,
+      "source_span": [
+        523,
+        21,
+        523,
+        62
+      ],
+      "procedure": "BL14",
+      "original_operation": "getattr",
+      "original_context": "BL-SC35",
+      "interpretation": "Read optional behavior_internal default false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L523-L523",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 92,
+        "heading": "public_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ10",
+          "line": 33
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1806,
+      "source_span": [
+        544,
+        20,
+        544,
+        66
+      ],
+      "procedure": "BL16",
+      "original_operation": "getattr",
+      "original_context": "BL-SC37",
+      "interpretation": "Read optional behavior_first_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L544-L544",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1813,
+      "source_span": [
+        545,
+        24,
+        545,
+        77
+      ],
+      "procedure": "BL16",
+      "original_operation": "getattr",
+      "original_context": "BL-SC37",
+      "interpretation": "Read optional behavior_confirmation_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L545-L545",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1830,
+      "source_span": [
+        548,
+        16,
+        548,
+        27
+      ],
+      "procedure": "BL16",
+      "original_operation": "type",
+      "original_context": "BL-SC37",
+      "interpretation": "Obtain exact runtime First type.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L548-L548",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1839,
+      "source_span": [
+        549,
+        23,
+        549,
+        38
+      ],
+      "procedure": "BL16",
+      "original_operation": "type",
+      "original_context": "BL-SC37",
+      "interpretation": "Obtain exact runtime confirmation type after earlier checks.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L549-L549",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1850,
+      "source_span": [
+        551,
+        12,
+        551,
+        56
+      ],
+      "procedure": "BL16",
+      "original_operation": "windows.append",
+      "original_context": "BL-SC37",
+      "interpretation": "Append ordered window triple.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L551-L551",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1858,
+      "source_span": [
+        552,
+        15,
+        552,
+        53
+      ],
+      "procedure": "BL16",
+      "original_operation": "ChronologicalContainmentIndex",
+      "original_context": "BL-SC37",
+      "interpretation": "Construct containment index even for empty windows.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L552-L552",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 100,
+        "heading": "mark_internal_blue_lines.index_interiors"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1871,
+      "source_span": [
+        555,
+        17,
+        555,
+        62
+      ],
+      "procedure": "BL17",
+      "original_operation": "int",
+      "original_context": "BL-SC38",
+      "interpretation": "Integer-convert falsy-normalized ordinal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L555-L555",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1874,
+      "source_span": [
+        555,
+        21,
+        555,
+        56
+      ],
+      "procedure": "BL17",
+      "original_operation": "getattr",
+      "original_context": "BL-SC38",
+      "interpretation": "Read optional reaction_number default zero.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L555-L555",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1887,
+      "source_span": [
+        556,
+        34,
+        556,
+        54
+      ],
+      "procedure": "BL17",
+      "original_operation": "len",
+      "original_context": "BL-SC38",
+      "interpretation": "Read owner count only if ordinal>=1.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L556-L556",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1893,
+      "source_span": [
+        558,
+        15,
+        558,
+        85
+      ],
+      "procedure": "BL17",
+      "original_operation": "bool",
+      "original_context": "BL-SC38",
+      "interpretation": "Convert selected owner's internal flag to bool.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L558-L558",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1895,
+      "source_span": [
+        558,
+        20,
+        558,
+        84
+      ],
+      "procedure": "BL17",
+      "original_operation": "getattr",
+      "original_context": "BL-SC38",
+      "interpretation": "Read optional owner internal default false.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L558-L558",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 104,
+        "heading": "mark_internal_blue_lines.owner_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1911,
+      "source_span": [
+        562,
+        22,
+        562,
+        56
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC39",
+      "interpretation": "Read optional line source_time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L562-L562",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1918,
+      "source_span": [
+        563,
+        21,
+        563,
+        54
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC39",
+      "interpretation": "Read optional line_price.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L563-L563",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1925,
+      "source_span": [
+        564,
+        25,
+        564,
+        62
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC39",
+      "interpretation": "Read optional source_extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L564-L564",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1945,
+      "source_span": [
+        567,
+        19,
+        567,
+        43
+      ],
+      "procedure": "BL18",
+      "original_operation": "Decimal",
+      "original_context": "BL-SC39",
+      "interpretation": "Construct Decimal from rendered price string.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L567-L567",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1947,
+      "source_span": [
+        567,
+        27,
+        567,
+        42
+      ],
+      "procedure": "BL18",
+      "original_operation": "str",
+      "original_context": "BL-SC39",
+      "interpretation": "String-convert drawing price.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L567-L567",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1952,
+      "source_span": [
+        568,
+        19,
+        568,
+        47
+      ],
+      "procedure": "BL18",
+      "original_operation": "Decimal",
+      "original_context": "BL-SC39",
+      "interpretation": "Construct Decimal from semantic price string.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L568-L568",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1954,
+      "source_span": [
+        568,
+        27,
+        568,
+        46
+      ],
+      "procedure": "BL18",
+      "original_operation": "str",
+      "original_context": "BL-SC39",
+      "interpretation": "String-convert source extreme.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L568-L568",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1962,
+      "source_span": [
+        570,
+        24,
+        570,
+        41
+      ],
+      "procedure": "BL18",
+      "original_operation": "index_interiors",
+      "original_context": "BL-SC39",
+      "interpretation": "Build interior index once per invocation when first needed.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L570-L570",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1979,
+      "source_span": [
+        573,
+        37,
+        573,
+        54
+      ],
+      "procedure": "BL18",
+      "original_operation": "type",
+      "original_context": "BL-SC40",
+      "interpretation": "Obtain exact source_time type after index present.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L573-L573",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1989,
+      "source_span": [
+        574,
+        24,
+        574,
+        69
+      ],
+      "procedure": "BL18",
+      "original_operation": "interiors.enclosing",
+      "original_context": "BL-SC40",
+      "interpretation": "Query containment index with equal start/end at source time.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L574-L574",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 1999,
+      "source_span": [
+        576,
+        20,
+        576,
+        66
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC40",
+      "interpretation": "Read candidate First time default null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L576-L576",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2006,
+      "source_span": [
+        577,
+        24,
+        577,
+        77
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC40",
+      "interpretation": "Read candidate confirmation default null.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L577-L577",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2031,
+      "source_span": [
+        582,
+        21,
+        582,
+        82
+      ],
+      "procedure": "BL18",
+      "original_operation": "Decimal",
+      "original_context": "BL-SC41",
+      "interpretation": "Construct Decimal public bottom from string.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L582-L582",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2033,
+      "source_span": [
+        582,
+        29,
+        582,
+        81
+      ],
+      "procedure": "BL18",
+      "original_operation": "str",
+      "original_context": "BL-SC41",
+      "interpretation": "String-convert required public bottom.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L582-L582",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2035,
+      "source_span": [
+        582,
+        33,
+        582,
+        80
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC41",
+      "interpretation": "Read required public bottom attribute.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L582-L582",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2041,
+      "source_span": [
+        583,
+        18,
+        583,
+        76
+      ],
+      "procedure": "BL18",
+      "original_operation": "Decimal",
+      "original_context": "BL-SC41",
+      "interpretation": "Construct Decimal public top from string after bottom.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L583-L583",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2043,
+      "source_span": [
+        583,
+        26,
+        583,
+        75
+      ],
+      "procedure": "BL18",
+      "original_operation": "str",
+      "original_context": "BL-SC41",
+      "interpretation": "String-convert required public top.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L583-L583",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2045,
+      "source_span": [
+        583,
+        30,
+        583,
+        74
+      ],
+      "procedure": "BL18",
+      "original_operation": "getattr",
+      "original_context": "BL-SC41",
+      "interpretation": "Read required public top attribute.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L583-L583",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 108,
+        "heading": "mark_internal_blue_lines.geometry_is_internal"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2069,
+      "source_span": [
+        589,
+        11,
+        589,
+        34
+      ],
+      "procedure": "BL15",
+      "original_operation": "owner_is_internal",
+      "original_context": "BL-SC42",
+      "interpretation": "Test ordinal owner internal before geometry.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L589-L589",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2072,
+      "source_span": [
+        589,
+        38,
+        589,
+        64
+      ],
+      "procedure": "BL15",
+      "original_operation": "geometry_is_internal",
+      "original_context": "BL-SC42",
+      "interpretation": "Test geometry only if owner not internal.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L589-L589",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 2076,
+      "source_span": [
+        590,
+        12,
+        590,
+        63
+      ],
+      "procedure": "BL15",
+      "original_operation": "object.__setattr__",
+      "original_context": "BL-SC42",
+      "interpretation": "Force original frozen line internal flag true using object mutation.",
+      "temporal_relevance": "DIRECT",
+      "relevance_reason": "Controls source selection, chronology, numeric threshold, ownership, state or publication.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L590-L590",
+      "contract_ref": {
+        "path": "Algorithms/V3/03_Blue_Line.md",
+        "blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+        "line": 96,
+        "heading": "mark_internal_blue_lines"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/02_Blue_A.md",
+          "machine": "BLQ",
+          "transition": "BLQ09",
+          "line": 32
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "supplemental_id": "B03-03-S1",
+      "source_span": [
+        474,
+        485
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Validate direction before storing initial checkpoint/lines. Result returns shallow list; frozen records shared.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L474-L485"
+    },
+    {
+      "supplemental_id": "B03-03-S2",
+      "source_span": [
+        491,
+        503
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Checkpoint chain inclusive zero and strict upper bound; new reaction count inclusive. Optional dirty index not separately validated. Collect affected reset owners from current supplied resets, then first earlier Break>=dirty or owner hit. Removed reset discovery caller-owned.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L491-L503"
+    },
+    {
+      "supplemental_id": "B03-03-S3",
+      "source_span": [
+        504,
+        514
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Slice checkpoint prefix inclusive and line prefix by line_count; if suffix exists calculate with local lists, publish lists after success; result shallow copy after publication. Prefix record references shared.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L504-L514"
+    },
+    {
+      "supplemental_id": "B03-03-S4",
+      "source_span": [
+        517,
+        524
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Fresh list preserving original order and object identity, validity default true, internal default false; invalid short circuits internal lookup.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L517-L524"
+    },
+    {
+      "supplemental_id": "B03-03-S5",
+      "source_span": [
+        538,
+        552
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Index lazy closures per invocation. Skip missing times; any non-exact or timezone-aware timestamp disables entire index, even after earlier windows accumulated. Empty valid set constructs index.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L538-L552"
+    },
+    {
+      "supplemental_id": "B03-03-S6",
+      "source_span": [
+        554,
+        558
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Falsy ordinal normalized to zero before integer conversion; bounds 1..count inclusive, only ordinal, no physical identity check.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L554-L558"
+    },
+    {
+      "supplemental_id": "B03-03-S7",
+      "source_span": [
+        562,
+        574
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Read all three optional Blue fields, null returns false. Decimal(str) drawing then semantic; index initialized only after conversion, indexed true even null return. Source exact naive datetime plus index present selects interval query.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L562-L574"
+    },
+    {
+      "supplemental_id": "B03-03-S8",
+      "source_span": [
+        575,
+        590
+      ],
+      "discovery_reason": "Source-first data flow, mutation, boundary, numeric evaluation or dependency beyond original site labels.",
+      "interpretation": "Candidate time absence skips; strict First/inclusive confirmation. Required public bounds read/converted only after time eligibility, missing/malformed raises. Both strict chains must pass on same reaction. Owner short circuits geometry; mutation true only, even invalid line, no rollback.",
+      "temporal_relevance": "DIRECT",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L575-L590"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B03-03-F01",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        562,
+        585
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L562-L585",
+      "description": "Avoid implying missing required geometry silently skips.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/03_Blue_Line.md",
+          "prior_blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+          "procedure": "BL-M04"
+        }
+      ],
+      "resolution": "Missing Blue source time/prices or Reaction times do not qualify; missing or malformed required public box bounds on a time-eligible candidate raise natively. Never clear an existing true flag.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    },
+    {
+      "id": "B03-03-F02",
+      "status": "RESOLVED",
+      "severity": "LOCAL_SPEC_OMISSION_OR_CLARIFICATION",
+      "source_span": [
+        493,
+        503
+      ],
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/blue_line_detector.py#L493-L503",
+      "description": "Document dependency on caller for removed reset owners.",
+      "affected_documents": [
+        {
+          "path": "Algorithms/V3/03_Blue_Line.md",
+          "prior_blob": "a4447348dcf09d37b687c25a97b6951460f9bf3a",
+          "procedure": "BL13"
+        }
+      ],
+      "resolution": "No timeframe or dirty-main range validation or own dirty-event discovery beyond these guards; removed Reset owners not present in supplied resets must be accounted for by caller's first_changed frontier.",
+      "recheck": "W2 caller and W3 forensic review pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 verify caller supplies correct owner order, behavior candidate collection, dirty frontier and removed reset dependencies.",
+    "W3 separate review pending."
+  ]
+}
