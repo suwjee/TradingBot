@@ -1,0 +1,23 @@
+{
+  "checkpoint": 390,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/order_audit_engine.py:613–688; engine/pipeline/e_zone_detector.py:382–417,559–566",
+      "contract": "Opposite First and confirmation arrays retain owner order (not locally sorted), positional alignment and callback stability required. Canonical stop uses number cache only for exact indexed object; context start discarded. E owner sequence reset setter clears direct cache; this is not proof of freshness under arbitrary mutation."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:689–761",
+      "contract": "OA16 may reject provisional noncanonical geometry, or return canonical replacement without revalidating its confirmation; OA20 threshold applies to returned canonical timestamp. OA16 bounded flag is unused internally but remains in OA19 key."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1459–1477; engine/pipeline/e_zone_detector.py:505–556",
+      "contract": "Native crossing delegated unchanged Decimal stop level. Base search uses half-open lower window from max(confirmation,range_start) to range_end, strict less unless order direction bearish, then strict greater; cache stores None and event tuple. E live override uses dirty-time and continuation search; no claim of general live equivalence or arbitrary callback behavior."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1002–1070,1269–1284,1354–1369",
+      "contract": "Candidate collector calls OA19 without threshold, then merges identity and separately enforces deadline and ownership; primary path supplies exact stop as threshold, no deadline, bounded false; registration can append direct if identity absent. Neither caller policy is a universal local OA20 constraint. No ledger mutation performed by OA20 itself; delegated caches can mutate."
+    }
+  ]
+}
