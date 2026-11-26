@@ -47,7 +47,7 @@ State: previous confirmed candidate, optional current candidate, next main, runn
 | RXU13 | NORMAL | Main traversal continues | Initialize null running opposite extreme or update on strict improvement; advance index | NORMAL | RE98 |
 | RXU14 | NORMAL | Horizon | Return lists; retain earliest unresolved reset-search checkpoint else current normal cursor and counts | RETURN | RE95,RE98 |
 
-RXU02/09/11 canonicalization: adjacent confirmed opposite anchor may replace confirmation edge only with source conditions in RE76 (B anchor Low >= First Low; R anchor High <= First High); then outward edge recomputation. No public clipping of the native accepted lists.
+RXU02/09/11 canonicalization: adjacent confirmed opposite anchor may replace confirmation edge only with source conditions in RE76 (native B anchor Low >= First Low; R anchor High <= First High). No comparison to previous edge guarantees monotonic expansion. Then outward edge recomputation and conditional exact analysis; absent analysis retains full main geometry. RE76 mutates supplied Candidate before shallow ledger append, returns true on successful append; caller owns confirmation admission. No public clipping of the native accepted lists.
 
 ## RXS — Post-Reset structural versus geometry-only search
 
