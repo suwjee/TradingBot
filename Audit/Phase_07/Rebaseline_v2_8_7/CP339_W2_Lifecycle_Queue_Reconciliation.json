@@ -1,0 +1,3331 @@
+{
+  "checkpoint": 339,
+  "status": "PASS_SCOPED_W2_LIFECYCLE_QUEUE_RECONCILIATION",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "0a6c82e630396497b6b8da194f1fd88fd27815fd",
+  "entry_tree": "e9fda708111b5d3ef61e66df56c05434c5cc01f6",
+  "scope": "Direct source-only rereview of 17 queued Lifecycle/StopAll records, W1 B07 and active Lifecycle/StopAll/E/Order contracts. No W2 acceptance.",
+  "source": {
+    "path": "engine/pipeline/lifecycle_engine.py",
+    "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+  },
+  "references": [
+    "CP321",
+    "CP327",
+    "CP331",
+    "CP332",
+    "CP333",
+    "CP334",
+    "CP335",
+    "CP336",
+    "CP337",
+    "CP338"
+  ],
+  "specification_blobs": {
+    "Algorithms/V3/10_Lifecycle.md": "0acca58662ee6d975da3b53cca8237e9578f9bb5",
+    "Algorithms/V3/11_StopAll.md": "e74cfff9d841197e7483851dcf0d50ed3278a0b1",
+    "Algorithms/V3/09_E_Zone.md": "5419a21a2e1d3a18924e3e33d371f6373a3a1c34",
+    "Algorithms/V3/08_Order_Audit.md": "b349c4a8832b2c0e852b3b0f42abae3e0f24390e"
+  },
+  "rows": [
+    {
+      "id": "CP327-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        29,
+        39
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Normalize str(kind).lower() and str(family).lower() in shared exact sequence table; ranks S blue 1,E blue 2,S red 3,E red 4, missing pair raises. Module priority separate and attribute-shape based includes StopAll 5.",
+      "handoff": "E and StopAll consume shared direction-independent family rank; unknown sequence pair is not module_priority fallback.",
+      "specification": {
+        "procedure": "LC01",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "calls",
+            0,
+            "B07-01",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            1,
+            "B07-01",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            2,
+            "B07-01",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            3,
+            "B07-01",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        42,
+        92
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Frozen slotted record has donor geometry/decision, gate exact event/type, stopped group key/count, underlying E, nullable physical Order and actual own stop. Eight keyword-only donor fields default null. Donor provenance does not define gate.",
+      "handoff": "Do not conflate E/S constructor donor with stopped behavior, or gate with donor/own actual strict stop.",
+      "specification": {
+        "procedure": "StopAll record / LC06",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "arithmetic",
+            0,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            1,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            2,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            3,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            4,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            5,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            6,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            7,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            8,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            9,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            10,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            11,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            12,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            13,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            14,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            15,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            16,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            17,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            18,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            19,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            20,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            21,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            22,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            23,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            24,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            25,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            26,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            27,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            28,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            29,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            30,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            4,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            5,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            6,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            7,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            8,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            9,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            10,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            11,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            12,
+            "B07-01",
+            "NOT_APPLICABLE"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S05",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        170,
+        194
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Lower-bound decision start inclusive, required index first_less bullish or first_greater bearish, right len(lower). Miss returns None, no linear/coarse retry. Map exact event clamped main index/time. E dominance same family strictly higher number; different only red over blue.",
+      "handoff": "Index owner guarantees coherent lower arrays; priority not direction-mirrored; equality price not a strict stop.",
+      "specification": {
+        "procedure": "LC07–08",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            8,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            9,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            10,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            11,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            8,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            9,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            10,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            11,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            12,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            13,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            37,
+            "B07-02",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            24,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            25,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            26,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            27,
+            "B07-02",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            28,
+            "B07-02",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": [
+        "CP332-G43"
+      ]
+    },
+    {
+      "id": "CP327-S06",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        196,
+        252
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "E donor passes source/decision geometry and normalized price/index, supplied gate/type/stopped key/count/number, native Order identity/box/stop/cause tuple and optional cause time. Own stop triple null; separate donor metadata converted again, donor-stop defaults null.",
+      "handoff": "Constructor does not establish promotion eligibility; physical Order provenance remains source-owned.",
+      "specification": {
+        "procedure": "LC09",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "calls",
+            29,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            30,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            31,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            32,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            33,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            34,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            35,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            36,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            37,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            38,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            39,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            40,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            41,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            42,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            43,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            44,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            45,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            46,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            47,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            48,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            49,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            50,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            51,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            52,
+            "B07-03",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S07",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        254,
+        348
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Optional conversions bypass only None. S donor fixed number1/opposite-s-group-stop, gate/stopped group from caller, underlying E tuple optional, optional Order fields. order_causes always empty even with underlying E metadata; order_parent_stop_cause_time S a_stop_event_time. Own stop and donor-stop null; no local promotion check.",
+      "handoff": "Correct SA-M03 ambiguous summary; S donor never copies E cause tuple merely because stopped owner was E.",
+      "specification": {
+        "procedure": "LC10–12",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            12,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            13,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            14,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            15,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            38,
+            "B07-03",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            39,
+            "B07-03",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            40,
+            "B07-03",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            41,
+            "B07-03",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            53,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            54,
+            "B07-03",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            14,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            15,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            16,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            17,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            42,
+            "B07-04",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            55,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            56,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            57,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            58,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            59,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            60,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            61,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            62,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            63,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            64,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            65,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            66,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            67,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            68,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            69,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            70,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            71,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            72,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            73,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            74,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            75,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            76,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            77,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            78,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            79,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            80,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            81,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            82,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            83,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            84,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            85,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            86,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            87,
+            "B07-04",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            88,
+            "B07-04",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S11",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        448,
+        473
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "After direct armed-blue decision gate fails, call armed_stop_before S source even if pending already exists. Truthy pending wins, else owner/gate pair. Red S + completed Blue owner + uppercased Mode B promotes with completed exact stop; singleton active and clear owner/pending. Otherwise freeze first pending only when absent then accept.",
+      "handoff": "Direct earlier-decision Red S promotion has no mode-B or price-stop requirement; fallback is distinct, pending historical evidence not active owner.",
+      "specification": {
+        "procedure": "LC18 fallback",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            33,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            34,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            35,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            36,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            37,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            38,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            39,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            40,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            41,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            42,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            43,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            44,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            45,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            46,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            47,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            48,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            49,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            119,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            120,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            121,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            122,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            123,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            124,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            125,
+            "B07-07",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            126,
+            "B07-07",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S12",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        475,
+        496
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "E event queries every active StopAll own strict stop from decision, includes hits <= E decision. Number max stopped+1, gate min exact event independently, count list entries. Remove active by Python id, append new to output and active, clear owner/pending.",
+      "handoff": "StopAll repetition gate and new E donor geometry independent; no merging by physical source.",
+      "specification": {
+        "procedure": "LC19 active StopAll",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            41,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            42,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            43,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            44,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            45,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            46,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            47,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            48,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            49,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            50,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            51,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            52,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            49,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            50,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            127,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            128,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            129,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            130,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            131,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            132,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            133,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            134,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            135,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            136,
+            "B07-08",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S13",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        498,
+        515
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "If no active stop eligible, run armed query with E donor even if pending exists. Pending wins; any completed owner emits StopAll1 sequence-group-stop, extends active (not singleton), clears owner/pending. Else accept normalized lowercase E family/integer number.",
+      "handoff": "E donation need not itself have prior active StopAll stop; same-main/parent exact gate LC16 is owner-defined.",
+      "specification": {
+        "procedure": "LC19 armed group",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            50,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            51,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            52,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            53,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            53,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            54,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            55,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            51,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            137,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            138,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            139,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            140,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            141,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            142,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            143,
+            "B07-08",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S14",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        517,
+        531
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Dispatch exact S tag else E without local sorting; append optional post-event checkpoint after successful processing. Resolve own strict stop from decision or max(decision,after) inclusive; replace only stop triple, null on miss.",
+      "handoff": "No rewriting gate, donor or Order cause during own-stop resolution; live replay conditional.",
+      "specification": {
+        "procedure": "LC15/20",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            54,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            55,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            56,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            56,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            57,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            144,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            145,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            146,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            147,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            148,
+            "B07-08",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            57,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            58,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            59,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            60,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            58,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            52,
+            "B07-09",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            149,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            150,
+            "B07-09",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            151,
+            "B07-09",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S18",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        593,
+        599
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Wrapper constructs detector with supplied direction,S/E,chronology and calls detect, no local retry or recovery.",
+      "handoff": "Bridge may choose live finder instead; wrapper static review not runtime proof.",
+      "specification": {
+        "procedure": "LC24",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "calls",
+            171,
+            "B07-10",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            172,
+            "B07-10",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S19",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        973,
+        993
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "For each invalid A with non-null stop, use stop[2] and add opposite First main timestamp if A source<=First<exact stop. Direct int index lookup, no bounds or direction predicate; stop miss skips.",
+      "handoff": "LC resolve_order_context removes accepted A First from blocked set and adds exact E-only exceptions separately; no global invalidation of physical Order.",
+      "specification": {
+        "procedure": "LC33",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            154,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            155,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            156,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            157,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            158,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            121,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            122,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            326,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            327,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            328,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            329,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            330,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            331,
+            "B07-20",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            332,
+            "B07-20",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S24",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1138,
+        1178
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Stable source-only E and S ordering. Latest strictly prior uses lower bound then first duplicate of chosen timestamp. Prior accepted S overrides only strictly later than prior E; E wins tie. Lower/equal S rejects if A source earlier or A/S price strict beyond prior normalized price. Higher rank bypasses.",
+      "handoff": "Engine input eligibility is not final public visibility; exact source tie not a prior owner.",
+      "specification": {
+        "procedure": "LC35–36",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            188,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            189,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            190,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            191,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            192,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            193,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            194,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            195,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            196,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            197,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            198,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            141,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            142,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            143,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            144,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            145,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            146,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            147,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            91,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            397,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            398,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            399,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            400,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            401,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            402,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            403,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            404,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            405,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            406,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            407,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            408,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            409,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            410,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            411,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            412,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            413,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            414,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            415,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            416,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            417,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            418,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            419,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            420,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            421,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            422,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            423,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            424,
+            "B07-25",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            425,
+            "B07-25",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S25",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1180,
+        1197
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Call S engine eligibility, then remove exact (int source index,time) occupied by supplied E for StopAll grouping, retain order/references.",
+      "handoff": "Distinct from final public index-only collision and donor-list Bridge filter.",
+      "specification": {
+        "procedure": "LC37",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            199,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            200,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            201,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            148,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            426,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            427,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            428,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            429,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            430,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            431,
+            "B07-26",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            432,
+            "B07-26",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S26",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1199,
+        1232
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Direction guard, sort external by source/int index; candle times materialized only when supplied. Per-invocation cache uses id(module), stores None too; module_stop_event explicit non-null wins else callback (tuple last) or None.",
+      "handoff": "Stop callback optional, not executed-call evidence; cache scoped to invocation.",
+      "specification": {
+        "procedure": "LC38–39 init",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            202,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            203,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            204,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            205,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            149,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            150,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            151,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            92,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            93,
+            "B07-27",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "arithmetic",
+            94,
+            "B07-27",
+            "NOT_APPLICABLE"
+          ],
+          [
+            "calls",
+            433,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            434,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            435,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            436,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            437,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            438,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            439,
+            "B07-27",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            440,
+            "B07-27",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S27",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1234,
+        1285
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Sorted S source/index; reads initial A stop then valid direction overwrites ownership by supplied source-event callback or main source; callback None not replaced. Earlier external/visible S excluding consumed; latest earlier external even consumed sets source cutoff; stop<=ownership qualifies.",
+      "handoff": "Actual ownership event not A-stop nor always exact decision; cutoff not stop chronological ranking.",
+      "specification": {
+        "procedure": "LC38 frontier",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            206,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            207,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            208,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            209,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            210,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            211,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            212,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            213,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            214,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            215,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            216,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            152,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            153,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            154,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            155,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            156,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            157,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            95,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            96,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            441,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            442,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            443,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            444,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            445,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            446,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            447,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            448,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            449,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            450,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            451,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            452,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            453,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            454,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            455,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            456,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            457,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            458,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            459,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            217,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            218,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            219,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            220,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            221,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            222,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            158,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            159,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            160,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            460,
+            "B07-29",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S28",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1286,
+        1322
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "From stopped prior classify external by missing a_source_time, choose latest source/index. With candles and strictly lower S rank and valid mapped indexes, compare Decimal(str(source Close)) strictly beyond stop-main Close. Continue without consuming on strict crossing.",
+      "handoff": "No main OHLC inference of stop chronology; exact stop selected first, Close used for suppression only.",
+      "specification": {
+        "procedure": "LC38 Close suppression",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            206,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            217,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            223,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            224,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            225,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            226,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            227,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            228,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            229,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            230,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            231,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            232,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            233,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            234,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            161,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            162,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            163,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            164,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            165,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            97,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            98,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            99,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            461,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            462,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            463,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            464,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            465,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            466,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            467,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            468,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            469,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            470,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            471,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            472,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            473,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            474,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            475,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            476,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            477,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            478,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            479,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            480,
+            "B07-29",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP327-S29",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "range": [
+        1328,
+        1375
+      ],
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Choose max exact stop then module priority,number,source,index, first full tie. Both S markers and strictly higher new S retained; if price not strictly beyond dominant, retain incl equality; else consume stopped prior identities <= dominant rank and omit candidate. No applicable owner => retain.",
+      "handoff": "Identity consumption local visibility pass; not deleting source records or ledger. Exact event ranking differs from stopped-main A ownership.",
+      "specification": {
+        "procedure": "LC38 arbitration",
+        "paths": [
+          "Algorithms/V3/10_Lifecycle.md",
+          "Algorithms/V3/11_StopAll.md",
+          "Algorithms/V3/09_E_Zone.md",
+          "Algorithms/V3/08_Order_Audit.md"
+        ]
+      },
+      "w1": {
+        "batch": "B07",
+        "reconciliation_blobs": [
+          "353f58227f795170b70a4d512f7d1043b9cb0778",
+          "28acfb2e608cfd6c1cc339b076ea4b357205ef09",
+          "9b43cf47b419b1e18d9709efda826258489213ae"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            206,
+            "B07-28",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            217,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            223,
+            "B07-29",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            235,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            236,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            237,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            238,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            239,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            166,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            167,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            100,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            101,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            481,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            482,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            483,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            484,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            485,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            486,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            487,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            488,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            489,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            490,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            491,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            492,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            493,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            494,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            495,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            496,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            497,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            498,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            499,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            500,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            501,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            502,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            503,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            504,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            505,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            506,
+            "B07-30",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            507,
+            "B07-30",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    }
+  ],
+  "accessors": [],
+  "additional_source_anchors": [
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        350,
+        447
+      ],
+      "contract": "Source-time/tag/index sorted events; armed stop strictly before source or E same-main/parent proof; direct S-red armed-blue later decision promotion uses S decision, no strict stop or B-mode gate."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        534,
+        590
+      ],
+      "contract": "Live StopAll prefix replay with repr and dirty/covered-until gates; settled own stop before dirty may be reused, retained unresolved rescans from max(decision,dirty). No runtime proof."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        606,
+        678
+      ],
+      "contract": "Filter initial A ledger causes, inherited plus invalid leg-head blocked First; remove accepted initial First; E-only exact stop/First exceptions, not global unblock."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        995,
+        1137
+      ],
+      "contract": "Consumed S evidence requires unaccepted candidate A/source, owner stop before A source, rank higher and strict Close extension. Retain earliest candidate per owner; E handles continuation replacement."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1377,
+        1409
+      ],
+      "contract": "LC40 timed/callback selection uses truthiness, computes S grouping then StopAll, publishes source-time number reset mapping; returns E list copy and StopAll without retroactive E detect."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1491,
+        1600
+      ],
+      "contract": "Final visibility removes E at StopAll source indexes, runs S visibility, restores historical S/A lineage then applies final occupied-index and invalid S identity filters; no second lineage pass."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP339-F01",
+      "status": "DOCUMENTATION_CORRECTED",
+      "detail": "SA-M03 S donor order_causes is always empty, even when underlying E family/number populated; S A-stop cause time is separate. Detailed LC12 already correct."
+    },
+    {
+      "id": "CP339-F02",
+      "status": "QUALIFIED",
+      "detail": "Sequence rank, module priority, source-time donor sorting, exact-stop visibility arbitration and main-stop A stage arbitration are distinct; no direction mirroring of family rank."
+    },
+    {
+      "id": "CP339-F03",
+      "status": "OPEN_CROSS_OWNER",
+      "detail": "Primary/Bridge/Live handoffs remain queued; F05 and CP333-R01/R02 remain open."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "prior_accessors": 20,
+    "prior_cp332_sites": 125,
+    "prior_cp333_contracts": 37,
+    "queue_entry": 185,
+    "previous_reviewed": 116,
+    "new_reviewed": 17,
+    "unique_new_review_ids": 17,
+    "cumulative_reviewed": 133,
+    "queue_remaining": 52,
+    "accessor_entry": 9,
+    "previous_accessor_reviewed": 6,
+    "new_accessor_reviewed": 0,
+    "cumulative_accessor_reviewed": 6,
+    "remaining_accessor_sites": 3,
+    "remaining_accessor_ids": [
+      "CP322-E02",
+      "CP322-E03",
+      "CP322-E04"
+    ],
+    "remaining_queue_by_path": {
+      "engine/pipeline/PL_PH_detector.py": 5,
+      "engine/bridge/trading_pipeline.py": 45,
+      "engine/bridge/live_pipeline.py": 2
+    },
+    "w1_b07_rows": 1179,
+    "w1_overlapping_link_occurrences": 438,
+    "source_modules": 1,
+    "runtime": "NOT_RUN",
+    "raw": "NOT_RUN"
+  },
+  "remaining": "CP340 / W2 Primary queue semantic reconciliation: directly rereview 5 queued Primary records against W1/B08, active Primary/MBL/lifecycle specs and pinned source; follow with 45 Trading Pipeline, 2 Live records and CP322-E02/E03/E04. CP331-F05 and CP333-R01/R02 remain OPEN; W2 not accepted."
+}
