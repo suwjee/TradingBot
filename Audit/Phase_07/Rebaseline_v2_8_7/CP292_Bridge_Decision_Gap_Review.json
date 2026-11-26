@@ -1,0 +1,686 @@
+{
+  "checkpoint": 292,
+  "subcheck": "CP292_DECISION_GAP_RECONSTRUCTION",
+  "status": "PASS_SCOPED_SOURCE_DECISION_RECONSTRUCTION",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "5273f6dc30518118b24c380dbdc6b506d24fdb8e",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "method": "Review contiguous current-row complements against historical Phase 07 decision site crosswalk and current source. Check literal source anchor, nearest named owner, ordered branch kind and operation types; preserve chained comparisons, source/decision separation and half-open ranges. No independent AST rerun.",
+  "counts": {
+    "comparisons": 17,
+    "arithmetic": 11,
+    "branches": 34
+  },
+  "rows": {
+    "comparisons": [
+      {
+        "row": 137,
+        "source_line": 1777,
+        "source_anchor_column": 41,
+        "kind": [
+          "LtE"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Inclusive dirty boundary permits an exclusive prefix ending exactly at the first dirty index.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 138,
+        "source_line": 1778,
+        "source_anchor_column": 15,
+        "kind": [
+          "Is"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Missing cache value selects fresh calculation.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 139,
+        "source_line": 1802,
+        "source_anchor_column": 11,
+        "kind": [
+          "GtE"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Equal or reversed bounds have no searchable position.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 140,
+        "source_line": 1805,
+        "source_anchor_column": 41,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Translate position only for a present result.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 141,
+        "source_line": 1814,
+        "source_anchor_column": 15,
+        "kind": [
+          "LtE",
+          "Lt",
+          "LtE"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Valid nonempty extrema range; shared middle operands and short circuit retained.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 144,
+        "source_line": 1838,
+        "source_anchor_column": 7,
+        "kind": [
+          "Is"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "No retained index means always reindex main; otherwise nonzero start gates reindex.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 145,
+        "source_line": 1840,
+        "source_anchor_column": 7,
+        "kind": [
+          "Is"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Same for lower with its own start coordinate.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 146,
+        "source_line": 1843,
+        "source_anchor_column": 7,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Only indexed mode registers local windows.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 199,
+        "source_line": 2604,
+        "source_anchor_column": 21,
+        "kind": [
+          "NotIn"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Exact pair excludes independent donor at an accepted physical source.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 201,
+        "source_line": 2633,
+        "source_anchor_column": 77,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Optional feedback finder selected only with continuation.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 297,
+        "source_line": 3539,
+        "source_anchor_column": 43,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Enable indexed regime construction only for supplied closed cache resolver.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 298,
+        "source_line": 3540,
+        "source_anchor_column": 43,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Live resolver takes precedence over separately supplied closed resolver.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 307,
+        "source_line": 3596,
+        "source_anchor_column": 15,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Invoke selected resolver rather than fresh fallback.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 311,
+        "source_line": 3613,
+        "source_anchor_column": 34,
+        "kind": [
+          "Eq"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Set bullish bootstrap only for bullish target.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 312,
+        "source_line": 3613,
+        "source_anchor_column": 77,
+        "kind": [
+          "Eq"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Set bearish bootstrap only for bearish target.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 333,
+        "source_line": 3744,
+        "source_anchor_column": 7,
+        "kind": [
+          "Is"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "No retained views selects fresh path.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 334,
+        "source_line": 3748,
+        "source_anchor_column": 11,
+        "kind": [
+          "IsNot"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Required staged dirty delta when retaining views.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      }
+    ],
+    "arithmetic": [
+      {
+        "row": 79,
+        "source_line": 1770,
+        "source_anchor_column": 18,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Absolute exclusive end of closed prefix.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 80,
+        "source_line": 1774,
+        "source_anchor_column": 38,
+        "kind": "Sub",
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Last eligible local main index before reversal.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 81,
+        "source_line": 1794,
+        "source_anchor_column": 23,
+        "kind": "Sub",
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Local window length.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 82,
+        "source_line": 1796,
+        "source_anchor_column": 51,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Flatten nested offset to base.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 83,
+        "source_line": 1804,
+        "source_anchor_column": 25,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Translate first-cross left bound.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 84,
+        "source_line": 1804,
+        "source_anchor_column": 45,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Translate exclusive right bound.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 85,
+        "source_line": 1805,
+        "source_anchor_column": 15,
+        "kind": "Sub",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Translate found base index to local.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 86,
+        "source_line": 1814,
+        "source_anchor_column": 11,
+        "kind": "Not",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Invert complete chained valid-range guard; not a numeric rounding operation.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 87,
+        "source_line": 1816,
+        "source_anchor_column": 32,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Translate extrema left bound.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 88,
+        "source_line": 1816,
+        "source_anchor_column": 52,
+        "kind": "Add",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Translate extrema exclusive right bound.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      },
+      {
+        "row": 89,
+        "source_line": 1817,
+        "source_anchor_column": 22,
+        "kind": "Sub",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Translate extrema index to local; selected value unchanged.",
+        "coordinate_basis": "source expression start; AST numbering from published crosswalk gap"
+      }
+    ],
+    "branches": [
+      {
+        "row": 220,
+        "source_line": 1777,
+        "source_anchor_column": 20,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Cache selection: use exact key only when inclusive dirty guard holds.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 221,
+        "source_line": 1778,
+        "source_anchor_column": 12,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Calculate only when lookup has no usable value.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 222,
+        "source_line": 1783,
+        "source_anchor_column": 8,
+        "kind": "Yield",
+        "owner": "engine/bridge/trading_pipeline.py:1763:4:stage",
+        "contract": "BD05",
+        "meaning": "Suspend with resolver; publish only on normal resumption.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 223,
+        "source_line": 1795,
+        "source_anchor_column": 8,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Nested window flattens to base; otherwise start from input index.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 224,
+        "source_line": 1802,
+        "source_anchor_column": 8,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Empty search returns no position.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 225,
+        "source_line": 1805,
+        "source_anchor_column": 15,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Present result translated, absent result remains null.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 226,
+        "source_line": 1814,
+        "source_anchor_column": 8,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Invalid extrema range raises.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 227,
+        "source_line": 1814,
+        "source_anchor_column": 15,
+        "kind": "Compare",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Chain short-circuits on invalid lower, strict interior, or upper bound.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 231,
+        "source_line": 1838,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Main reindex guard.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 232,
+        "source_line": 1838,
+        "source_anchor_column": 7,
+        "kind": "BoolOp",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Short-circuit absent index; nonzero main start triggers reindex.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 233,
+        "source_line": 1839,
+        "source_anchor_column": 63,
+        "kind": "comprehension",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Enumerate local main records; body copies each row.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 234,
+        "source_line": 1840,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Lower reindex guard.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 235,
+        "source_line": 1840,
+        "source_anchor_column": 7,
+        "kind": "BoolOp",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Short-circuit absent index; nonzero lower start triggers reindex.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 236,
+        "source_line": 1841,
+        "source_anchor_column": 63,
+        "kind": "comprehension",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Enumerate local lower records.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 237,
+        "source_line": 1843,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Register windows only in indexed mode.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 323,
+        "source_line": 2586,
+        "source_anchor_column": 4,
+        "kind": "For",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "At most eight feedback calculations, earlier return or error possible.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 325,
+        "source_line": 2596,
+        "source_anchor_column": 8,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Optional lifecycle donor reconciliation; disabled branch copies accepted E and empty StopAll.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 326,
+        "source_line": 2599,
+        "source_anchor_column": 82,
+        "kind": "comprehension",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Collect occupied accepted physical pairs.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 327,
+        "source_line": 2603,
+        "source_anchor_column": 32,
+        "kind": "comprehension",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Iterate independently restored roots.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 328,
+        "source_line": 2604,
+        "source_anchor_column": 21,
+        "kind": "ComprehensionFilter",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Include only unoccupied donor pairs.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 330,
+        "source_line": 2633,
+        "source_anchor_column": 33,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Use pass-local finder only with live continuation.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 331,
+        "source_line": 2638,
+        "source_anchor_column": 8,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Convergence gates registration and replacement return.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 337,
+        "source_line": 2685,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:2648:0:prepare_pipeline_state",
+        "contract": "BD19",
+        "meaning": "Full E/S context versus fallback geometry path.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 348,
+        "source_line": 2733,
+        "source_anchor_column": 8,
+        "kind": "For",
+        "owner": "engine/bridge/trading_pipeline.py:2648:0:prepare_pipeline_state",
+        "contract": "BD19",
+        "meaning": "Calculate each required direction, storing converged state.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 371,
+        "source_line": 2967,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:2939:0:finalize_direction_visibility",
+        "contract": "BD20",
+        "meaning": "E parent-stop callback versus S fallback crossing callback.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 503,
+        "source_line": 3539,
+        "source_anchor_column": 23,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Use indexed reaction only with supplied closed-regime resolver.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 504,
+        "source_line": 3540,
+        "source_anchor_column": 21,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Live resolver takes precedence when present.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 511,
+        "source_line": 3572,
+        "source_anchor_column": 4,
+        "kind": "While",
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Repeat independent regimes until no eligible next reversal or error.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 519,
+        "source_line": 3595,
+        "source_anchor_column": 12,
+        "kind": "IfExp",
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Selected resolver or fresh calculation.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 540,
+        "source_line": 3681,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:3633:0:build_response_payload",
+        "contract": "BD25",
+        "meaning": "Only visible-range reversal replaces output.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 553,
+        "source_line": 3744,
+        "source_anchor_column": 4,
+        "kind": "If",
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Fresh path returns before staged branch.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 554,
+        "source_line": 3748,
+        "source_anchor_column": 4,
+        "kind": "Assert",
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Require delta; assertion behavior depends on interpreter assertion configuration.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 555,
+        "source_line": 3749,
+        "source_anchor_column": 4,
+        "kind": "With",
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Enter stage; normal exit publishes; error prevents normal publish.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      },
+      {
+        "row": 556,
+        "source_line": 3760,
+        "source_anchor_column": 4,
+        "kind": "With",
+        "owner": "engine/bridge/trading_pipeline.py:3756:0:_run_live_calculation",
+        "contract": "BD27",
+        "meaning": "Calculation scoped cache entry and finally cleanup.",
+        "coordinate_basis": "source anchor, not canonical AST span (comprehension loop anchor may be iterable)"
+      }
+    ]
+  },
+  "erratum": "CP292_Bridge_Call_Gap_Review.json method says 17 contiguous call gaps; actual complement contains 18 contiguous gaps. The 54 row IDs and 18 dynamic anchors are unaffected; original historical report retained.",
+  "limits": [
+    "Column for branch comprehension/compound expression is a verified source anchor rather than asserted AST start/end.",
+    "Canonical numbering and anonymous scope linkage inferred rather than regenerated; all 62 semantic source anchors reviewed, no full site equivalence or runtime execution."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN"
+}
