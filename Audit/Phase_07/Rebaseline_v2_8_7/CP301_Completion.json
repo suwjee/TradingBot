@@ -1,0 +1,192 @@
+{
+  "checkpoint": 301,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_ZONE_SERIALIZATION_AND_PROJECTION_HELPERS_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "716c8b0d713596f470dcd4b4292a9c15f24f7c45",
+  "validated_evidence_head": "84416742ccbb2a0222572b8e2c14c0eef6c67f93",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      488,
+      552
+    ],
+    [
+      553,
+      595
+    ],
+    [
+      596,
+      662
+    ],
+    [
+      663,
+      676
+    ],
+    [
+      677,
+      680
+    ],
+    [
+      681,
+      684
+    ],
+    [
+      685,
+      690
+    ],
+    [
+      691,
+      697
+    ],
+    [
+      698,
+      701
+    ]
+  ],
+  "scope": "Three zone serializers and six projection normalization/horizon helpers; source-only local semantic review.",
+  "counts": {
+    "w1_previous": 1436,
+    "w1_this_checkpoint": 130,
+    "w1_reviewed": 1566,
+    "w1_denominator": 2317,
+    "w1_remaining": 751,
+    "by_category": {
+      "branches": {
+        "reviewed": 418,
+        "total": 562,
+        "remaining": 144
+      },
+      "comparisons": {
+        "reviewed": 249,
+        "total": 337,
+        "remaining": 88
+      },
+      "arithmetic": {
+        "reviewed": 125,
+        "total": 173,
+        "remaining": 48
+      },
+      "calls": {
+        "reviewed": 774,
+        "total": 1245,
+        "remaining": 471
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 379,
+      "effects": 4,
+      "exits": 13,
+      "total": 396
+    },
+    "additional_cumulative": 6002,
+    "additional_cumulative_by_category": {
+      "accesses": 5540,
+      "effects": 344,
+      "exits": 118
+    },
+    "all_sites_this_checkpoint": 526,
+    "all_sites_cumulative": 7568,
+    "contracts_this_checkpoint": 20,
+    "contracts_cumulative": 223,
+    "exact_mapped_spans": 526,
+    "newly_accepted_CP292_rows": 0,
+    "retired_historical_rows": 0,
+    "duplicate_or_prior_overlap": 0,
+    "remaining_owner_intervals": 27
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP301_B09_Zone_Serialization_Projection_Helpers_Review.json": "5f8a332792777ce3a262589486a33425313934d8",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP301_Prior_Overlap_Validation.json": "3e5124891bb8dad8cc2edbf25537f27fa086ff6d",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP301_Remaining_Bridge_Owners.json": "51f4f6efaa654e3f5140ed72af888383d4e01361"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_full_excerpt_relocation": true,
+    "exact_mapped_source_span_comparison": true,
+    "historical_mapped_retired_partition_complete": true,
+    "cp292_current_complement_checked_no_rows_in_scope": true,
+    "exact_CP300_remaining_ID_match": true,
+    "prior_CP293_through_CP300_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remaining_category_complement_complete": true,
+    "individual_evidence_remote_readback": true,
+    "main_unchanged_at_evidence_head": true,
+    "only_new_evidence_files_at_evidence_head": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "anchors": [
+        28,
+        66
+      ],
+      "finding": "Native S schema allows absent order and reset fields; A stop main/event times required."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "anchors": [
+        36
+      ],
+      "finding": "Native E order geometry is required; parent-stop cause time optional; order causes tuple copied to public list."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "anchors": [
+        43,
+        200,
+        350
+      ],
+      "finding": "Native StopAll separates gate/stopped behavior from immutable donor provenance; S-origin optional order geometry and absent initial termination."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        116,
+        128,
+        702,
+        742,
+        762,
+        3195
+      ],
+      "finding": "epoch attaches Tehran timezone and converts to integer epoch; projection helpers apply distinct text formatting and strict upper-only horizon; selected native zone lists supplied by caller."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP301-F01",
+      "detail": "S, E and StopAll serializers preserve encounter order, native identity and exact str price representation; do not filter, renumber or derive events."
+    },
+    {
+      "id": "CP301-F02",
+      "detail": "S optional order/reset fields and StopAll optional geometry are explicitly None-guarded; E required order geometry is unguarded. StopAll termination timestamp tests use truthiness."
+    },
+    {
+      "id": "CP301-F03",
+      "detail": "Only S serializer emits literal calculationValid true; E/StopAll legacy schemas omit it, and StopAll omits donor provenance while retaining gate identity."
+    },
+    {
+      "id": "CP301-F04",
+      "detail": "Projection datetime strings pass through unchanged; datetime component formatting does not convert timezone or preserve microseconds. Direction/color title casing does not validate domain; mode lookup is exact case-sensitive."
+    },
+    {
+      "id": "CP301-F05",
+      "detail": "Projection horizon is exclusive end of visible main candle, no lower bound or RAW coverage clamp. None short-circuits; equality rejected."
+    }
+  ],
+  "documentation_changes": "One source-pinned clarification section appended to Bridge documentation; no production changes.",
+  "limitations": [
+    "No independent full current canonical AST replay; exact historical relocation and CP287 crosswalk support scoped acceptance.",
+    "Remaining-owner intervals are source grouping, not full runtime ownership proof.",
+    "No runtime, RAW, differential or benchmark testing authorized. Dependency review is interface-local, not W2/W3/W4 acceptance.",
+    "Pinned GitHub source-only workflow supersedes archive startup. No ZIP."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP302 / RB08 / W1 / B09 — _bridge_proven_strict_event (702–741), _bridge_stop_view (742–761), _bridge_reaction_confirmation (762–785), _bridge_order_identity (786–793), BridgeProjection (794–987) only if complete-procedure verification is feasible; use CP301 exact remaining row IDs."
+}
