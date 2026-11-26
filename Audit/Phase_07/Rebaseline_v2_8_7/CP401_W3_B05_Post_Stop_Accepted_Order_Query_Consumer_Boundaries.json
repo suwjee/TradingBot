@@ -1,0 +1,95 @@
+{
+  "checkpoint": 401,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          590,
+          607
+        ],
+        [
+          1089,
+          1132
+        ],
+        [
+          1140,
+          1166
+        ],
+        [
+          1240,
+          1248
+        ],
+        [
+          1371,
+          1433
+        ],
+        [
+          2190,
+          2224
+        ]
+      ],
+      "meaning": "Run-local post-stop result cache. Reset predicate uses sorted times, first reset strictly after start and <=end. New physical identity inserts confirmation tuple by right bisect, length changes, stream pending append if active. Clear/revocation invalidates post-stop caches, cause-only update normally invalidates carried but not post-stop. New registration and restoration insert index rows. Length key not a version; relies on owner invalidation and coherent immutable geometry."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1459,
+          1477
+        ],
+        [
+          1524,
+          1596
+        ],
+        [
+          1879,
+          1934
+        ],
+        [
+          1990,
+          2017
+        ]
+      ],
+      "meaning": "Cross helper caches (start,level), lower range [max(start,range_start),range_end), direction-sensitive first strict crossing, returns mapped main index/time and exact lower event or None. Initial materialization reuses immutable geometry, primary sort First/confirmation/FirstIndex/BreakIndex, secondary confirmation/First/FirstIndex/BreakIndex. OA46 preserves record fields. OA55 eager fallback for non-native parent, invalid initial or audit view; later native stream uses same output key but stronger gates, own reset and identity dedup, full parity not claimed."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ],
+        [
+          60,
+          66
+        ]
+      ],
+      "meaning": "Decimal instance unchanged, otherwise Decimal(str(value)); actual conversion caller context. Physical identity is integer First/Break pair, same geometry convention as OA54, no use of ledger number or object identity."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          395,
+          411
+        ],
+        [
+          608,
+          668
+        ]
+      ],
+      "meaning": "Reset setter copies mapping, sorts times and clears post-stop result cache among others. _zone registers current parent after carried query and before invoking OA55; accepted stream is grouped by exact crossing then re-sorted by negative First for global E adjudication across direct,inherited,carried,accepted. Disowned-S-only filter uses physical identity and prospective source. OA53 output key includes confirmation unlike E choice. Final E ownership is not OA53 responsibility."
+    }
+  ],
+  "limitations": [
+    "Separate source-first GPT pass, not independently staffed. Local source contracts only. Conditional on immutable initial records, coherent confirmation index and bounded identities, cache invalidation, native comparability and caller Decimal context; no runtime equivalence asserted. Eager versus lazy parity is not asserted and OA55–OA59 closure is deferred to CP402.",
+    "No RAW payload, runtime, ZIP or production changes. Counts from pinned canonical source-backed inventory, not newly executed AST generator. CP396 read through pinned path. Git blob identities used; no independent SHA-256 claimed."
+  ]
+}
