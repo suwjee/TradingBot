@@ -306,3 +306,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 58 — Primary PH/PL Registration, Dependency Signature and Final Labels
 
 [Local review](Semantic_Closure_B05_12.md) and [site evidence](Semantic_Closure_B05_12.json): 70 original rows, 6 supplemental items, 5 resolved findings; local PASS. Order Audit 830/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 59 — Accepted Order Audit Registration and Incremental Creation Index
+
+[Local review](Semantic_Closure_B05_13.md) and [site evidence](Semantic_Closure_B05_13.json): 84 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 914/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 60 — Visual Lifecycle, Strict Order Crossing and Unconsumed S Evidence
+
+[Local review](Semantic_Closure_B05_14.md) and [site evidence](Semantic_Closure_B05_14.json): 56 original rows, 6 supplemental items, 4 resolved findings; local PASS. Order Audit 970/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 61 — Initial A Order Records, Gate Ownership and Creation Event Projection
+
+[Local review](Semantic_Closure_B05_15.md) and [site evidence](Semantic_Closure_B05_15.json): 66 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1036/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

@@ -79,24 +79,24 @@ OA39 with PL. Fixed PL prefix; no direction/kind gate, implicit None.
 Map source to prefix+number (last duplicate wins). For each ledger cause tuple relabel only prefix-matching label at known source; B causes OA01; update only changed collections, invalidate carried if changed. Parent tuples rebuilt as set (may dedup after relabel), prefix test via str, original label fallback. OA01 B relabel independently matches either PH/PL prefix with supplied source map, not only wrapper prefix; deep-copy/equality dedup. Compare set/list by equality, preserve original collections when equal. Carried invalidation only on change, no post-stop invalidation or index/geometry mutation.
 
 ### OA44 — _unconsumed_s_orders
-Require S color exact blue, non-null order confirmation/stop level. Crossing exists and >=parent_stop. Construct SimpleNamespace from parent's Order mode/First/Break/box top/bottom and their source indexes; return singleton match with parent Order number/source/confirmation/level/cross, carried-live label and null parent creation time. Otherwise empty.
+Require S color exact blue, non-null order confirmation/stop level. Crossing exists and >=parent_stop. Construct SimpleNamespace from parent's Order mode/First/Break/box top/bottom and their source indexes; return singleton match with parent Order number/source/confirmation/level/cross, carried-live label and null parent creation time. Otherwise empty. Required color via str, optional confirmation then stop-level None guards in order; read confirmation and normalize level again after guards. Reject crossing null or exact event<parent_stop, no separate confirmation gate. Namespace geometry attributes copied without conversion or canonical lookup; int only reaction number and stop source index. No direct ledger mutation.
 
 ## Reuse and indexing
 
 ### OA45 — _initial_order_records
-Lazy materialize initial audit values as (First time,confirmation,int number,reaction,Decimal stop,int source,source time,cross). Sort by First,confirmation,First index,Break index. Cache tuple and First times, group records by First as tuples, separate confirmation-sorted view by confirmation,First time,First index,Break; return same tuple.
+Lazy materialize initial audit values as (First time,confirmation,int number,reaction,Decimal stop,int source,source time,cross). Sort by First,confirmation,First index,Break index. Cache tuple and First times, group records by First as tuples, separate confirmation-sorted view by confirmation,First time,First index,Break; return same tuple. Non-null cache incl empty returned immediately without secondary rebuild. Traverse initial audit values in input order, normalize level and compute cross before int ordinal/source. Stable sort; publish primary tuple before First time projection, bucket tuples, then separate stable confirmation-sorted tuple and times. Same record/reaction objects reused; owner retains nonempty initial mapping by reference, immutability assumed not enforced, no rollback if secondary publication fails.
 
 ### OA46 — _initial_record_match
-Convert record to OrderMatch dropping First time; supplied causes, null parent cause time.
+Convert record to OrderMatch dropping First time; supplied causes, null parent cause time. Static unpack exact eight-field record, preserve all seven remaining fields, supplied cause tuple and null creation time; no recompute/copy.
 
 ### OA47 — _initial_order_match
-Convert entry to OrderMatch, normalize number/level/source index, calculate crossing, supplied causes and null parent cause time.
+Convert entry to OrderMatch, normalize number/level/source index, calculate crossing, supplied causes and null parent cause time. Read reaction/confirmation then normalize stop and compute crossing before integer conversions; preserve reaction and source time, no new geometry.
 
 ### OA48 — _gate_owned_initial_order
-Initial records at gate main First; confirmation>=parent stop, crossing exists and >=parent stop. Convert carried-live; min crossing,First time or null.
+Initial records at gate main First; confirmation>=parent stop, crossing exists and >=parent stop. Convert carried-live; min crossing,First time or null. Use clamped main self.times, force materialization, assert by-First dictionary non-null. Exact bucket lookup default empty; strict earlier rejection means confirmation and crossing equality allowed. Stable min on exact crossing then recomputed reaction First, first equal wins, empty None. No ledger mutation.
 
 ### OA49 — _carried_creation_events
-Earliest parent-stop cause event only if >1 (single preserved), plus every B physical confirmation. No dedup here.
+Earliest parent-stop cause event only if >1 (single preserved), plus every B physical confirmation. No dedup here. Collect exact parent-stop causes in native iteration order, only reduce when count>1; append every B physical confirmation in input order including duplicate/equal times. No cross-category dedup, time normalization or local validation/catch.
 
 ### OA50 — _validated_carried_creation_index
 Under local Decimal context validate native rows (exact dict; allowed cause containers, nonempty exact tuples, B exact dicts). No creation => skip. Exact datetime values and same tzinfo object for creation,confirmation,source time,cross dates; non-null crossing exact tuple length>=3 and int index. Exact int reaction number/source/First/Break; stop level exact Decimal,str,int,float and normalized finite. Build sorted unique creation events per row with original ordinal. Return events,tzinfo; any validation failure or exception => null, preserving caller Decimal flags/traps and legacy evaluation fallback.

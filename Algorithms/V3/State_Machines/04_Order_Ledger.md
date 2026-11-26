@@ -32,8 +32,8 @@ Input parent source, exact stop, native direction, optional deadline and flags. 
 | OAP08 | CANDIDATES | E trend-leg continuation enabled | Consider noninternal trend First>parent stop and opposite First after trend confirmation using owner eligibility | CANDIDATES | OA17,OA18,OA23 |
 | OAP09 | CANDIDATES | Direct and independent reset-leg candidates | Merge by physical identity; enforce at most one parent-stop owner by (confirmation,First,Break), retain independent reset-leg causes | BOUNDED | OA21,OA22,OA23 |
 | OAP10 | BOUNDED | Candidate crossings known or absent | Earliest retained crossing or range_end only if none sets deadline, clipped by supplied continuous deadline; keep confirmation<=deadline; stable sort by exact crossing (range_end if null), First | RETURN | OA23 |
-| OAP11 | RETURN | Register parent-stop | Include direct selected identity even if absent from bounded list; create missing row, add unique cause with label E number/StopAll replacement as appropriate; preserve existing geometry | RECORDED | OA40 |
-| OAP12 | RECORDED | New row or earlier existing parent creation | Update confirmation index for new row and invalidate relevant carried/post-stop caches as specified; later/equal cause alone does not change earliest carried gate | RECORDED | OA26,OA28,OA29,OA40 |
+| OAP11 | RETURN | Register parent-stop | Append direct only if no existing physical identity (including B-only); no repeated bound/single-owner gate; register parent-stop-labelled matches, new row then index, preserve existing geometry and add unique exact cause | RECORDED | OA40 |
+| OAP12 | RECORDED | New row or earlier existing creation | Index new rows, invalidate carried only; defer native append only under exact prior index/ledger/size conditions, validate next query; no post-stop flush here; later/equal cause alone leaves carried | RECORDED | OA26,OA28,OA40 |
 
 ## OB — Reset-leg state machine
 
@@ -65,9 +65,9 @@ Ledger has independent dimensions: confirmation (native physical geometry), stri
 |---|---|---|---|---|---|
 | OLR01 | INIT | Initialize detector ledger | Fresh authoritative empty ledger, separate empty confirmation index, pending and cache structures; stable trend confirmation-only ordering; opposite stream order retained; last First-key and first physical-identity duplicate wins; initial A records remain lazy | AVAILABLE | OA13,OA45 |
 | OLR02 | AVAILABLE | Physical Order's canonical stop requested | Mode A scan anchor or First−1 backwards through context and then inclusive through Break; Mode B preceding canonical ordinal edge, ordinal<=1 errors | AVAILABLE or ERROR | RE62,OA14,OA80 |
-| OLR03 | AVAILABLE | Strict Order crossing requested | Use Order direction, exact lower interval from max(confirmation,range start) to range end; null on absence, do not fabricate main-only crossing | AVAILABLE | OA42,OA82 |
-| OLR04 | AVAILABLE | Unconsumed S Blue evidence | Use eligible same physical Order with crossing>=new parent stop | USE_CANDIDATE | OA44 |
-| OLR05 | AVAILABLE | Gate-owned initial A match | First main=gate, confirmation>=parent stop and strict stop>=parent stop; select by earliest stop/First | USE_CANDIDATE | OA48 |
+| OLR03 | AVAILABLE | Strict Order crossing requested | Native (start,level) cache incl null; strict lower [max(confirmation,range start),range end), indexed miss no retry; clamp main, candle.timestamp and exact event; no fabricated main crossing | AVAILABLE | OA42,OA82 |
+| OLR04 | AVAILABLE | Unconsumed S Blue recorded evidence | str(color)==blue, confirmation/level non-null, crossing>=new parent stop; copy recorded geometry into carried-live match, no creation cause | USE_CANDIDATE | OA44 |
+| OLR05 | AVAILABLE | Gate-owned initial A match | Lazy initial records and by-First index; exact First main=gate bucket, confirmation>=parent stop and crossing non-null>=parent stop; select min crossing then First, first tie | USE_CANDIDATE | OA48 |
 | OLR06 | AVAILABLE | Carried accepted ledger entry | Earliest parent-stop creation or any reset-leg confirmation strictly within (lifecycle start,parent stop), confirmation<=parent stop, crossing>=parent stop | USE_CANDIDATE | OA49,OA52 |
 | OLR07 | AVAILABLE | Carried initial A entry | Initial First in allowed inclusive lifecycle/stop window plus original confirmation/crossing gates | USE_CANDIDATE | OA45,OA52 |
 | OLR08 | AVAILABLE | Accepted post-stop request | Confirmation>parent stop and crossing>both; no sequence reset in (parent stop,crossing]; dedup identities | USE_CANDIDATE | OA25,OA53,OA55 |
