@@ -37,7 +37,7 @@ State: previous confirmed candidate, optional current candidate, next main, runn
 | RXU03 | REMAINDER | Exact post-confirmation reset in same main | Record Reset once using analyzed outward level; pending Reset=Break; candidate=null | NORMAL | RE77,RE97,RE98 |
 | RXU04 | REMAINDER | No post-reset, correct tag, exact analysis, no strict later outward break, nonempty entire Break lower interval | Seed B from full lower main interval with RE79 native (High,-epoch) max and (Low,datetime) min keys, first equal full key retained, both source indexes Break, intrabar start main open | NORMAL | RE79,RE97,RE98 |
 | RXU05 | REMAINDER | No post-reset, successor gate fails | Candidate null | NORMAL | RE79,RE97,RE98 |
-| RXU06 | NORMAL | Pending reset or previous edge strictly crossed, and competing candidate confirms | Apply confirmed-reset race; if confirmation wins, continue candidate path; pending index is not a fabricated independent event order | NORMAL or RESTART | RE12,RE27,RE98 |
+| RXU06 | NORMAL | Pending reset or previous edge strictly crossed, and competing candidate confirms | Apply confirmed-reset race against current main even if pending already exists; if confirmation wins continue candidate path | NORMAL or RESTART | RE12,RE27,RE98 |
 | RXU07 | NORMAL | Reset wins, including pending index | Capture pre-reset checkpoint when requested and earliest absent; resolve reset index, clear pending; append only if last Reset not same owner First | RESTART | RE77,RE98 |
 | RXU08 | RESTART | Structural search no complete healthy result | Break loop; retain earliest-open checkpoint if applicable | RETURN | RE83,RE84,RE98 |
 | RXU09 | RESTART | Healthy structural candidate | Set mode A, clear cross-direction origin/chain flags; append canonical; update previous, cursor=Break+1, running opposite extreme/source | REMAINDER or RETURN | RE76,RE83,RE98 |
@@ -45,7 +45,7 @@ State: previous confirmed candidate, optional current candidate, next main, runn
 | RXU11 | NORMAL | Candidate strict confirmation | Set Break, refine exact prefix, evaluate later reset, append canonical; optional early return before recording post-reset; otherwise previous copy, running edge=current | REMAINDER or RETURN | RE78,RE98 |
 | RXU12 | NORMAL | No candidate; correct First tag | Freeze confirmation edge from current/running (running wins equality), opposite extreme from edge source+1 through First or First alone | NORMAL | RE07,RE08,RE98 |
 | RXU13 | NORMAL | Main traversal continues | Initialize null running opposite extreme or update on strict improvement; advance index | NORMAL | RE98 |
-| RXU14 | NORMAL | Horizon | Return lists; retain earliest unresolved reset-search checkpoint else current normal cursor and counts | RETURN | RE95,RE98 |
+| RXU14 | NORMAL | Loop exit (including unresolved structural break) | Return list aliases; retain earliest unresolved checkpoint else current cursor references/counts; early threshold returns bypass publication | RETURN | RE95,RE98 |
 
 RXU02/09/11 canonicalization: adjacent confirmed opposite anchor may replace confirmation edge only with source conditions in RE76 (native B anchor Low >= First Low; R anchor High <= First High). No comparison to previous edge guarantees monotonic expansion. Then outward edge recomputation and conditional exact analysis; absent analysis retains full main geometry. RE76 mutates supplied Candidate before shallow ledger append, returns true on successful append; caller owns confirmation admission. No public clipping of the native accepted lists.
 

@@ -1,0 +1,46 @@
+{
+  "checkpoint": 364,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Native normal scan handoff and live continuation call sites; bounded source trace",
+  "boundaries": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2810,
+        2819
+      ],
+      "meaning": "Live seed calls retained _detect and finally releases indexes; captures _live_checkpoint and _initial_cursor only after successful detection/release."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2883,
+        2897
+      ],
+      "meaning": "Live extension without checkpoint uses retained _detect with initial cursor; checkpoint route slices ledger prefixes and shallow-copies cursor candidates then _scan_normal. Full rollback and cleanup audit in next partition."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2438,
+        2456
+      ],
+      "meaning": "Initial gate return may bypass new checkpoint; live callers use None gate, other callers remain to be verified."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP360",
+    "CP361",
+    "CP363"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Live continuation full audit; all cross-owner creator/consumer, cache and serialization acceptance."
+}
