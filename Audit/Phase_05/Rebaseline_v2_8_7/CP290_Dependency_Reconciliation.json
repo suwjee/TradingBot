@@ -1,0 +1,188 @@
+{
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "checkpoint": 290,
+  "status": "PASS_STATIC_IMPORT_GRAPH_RECONCILIATION",
+  "scope": "Compare published current internal static candidate edge set to historical classifications; changed Bridge local primary import and T/F standard-library import checked in pinned source. Not a runtime import-resolution guarantee.",
+  "counts": {
+    "modules": 16,
+    "internal_edges": 29,
+    "added": 0,
+    "removed": 0
+  },
+  "edges": [
+    {
+      "from": "engine/bridge/live_pipeline.py",
+      "to": "engine/bridge/trading_pipeline.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/true_false.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/bridge/trading_pipeline.py",
+      "to": "engine/pipeline/PL_PH_detector.py",
+      "classification": "LOCAL_PRIMARY_SERIALIZATION"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/lifecycle_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/PL_PH_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/__init__.py",
+      "to": "engine/pipeline/blue_line_detector.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/a_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/a_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/blue_line_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/blue_line_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/e_zone_detector.py",
+      "to": "engine/pipeline/reaction_engine.py",
+      "classification": "LOCAL_LIVE_EXTREME"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/lifecycle_engine.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/order_audit_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/order_audit_engine.py",
+      "to": "engine/pipeline/e_zone_detector.py",
+      "classification": "TYPE_CHECKING_ONLY"
+    },
+    {
+      "from": "engine/pipeline/reaction_engine.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/reaction_engine.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/core_utils.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/order_audit_engine.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/s_zone_detector.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/true_false.py",
+      "to": "engine/pipeline/direction_policy.py",
+      "classification": "EAGER_IMPORT"
+    },
+    {
+      "from": "engine/pipeline/true_false.py",
+      "to": "engine/pipeline/lifecycle_engine.py",
+      "classification": "EAGER_IMPORT"
+    }
+  ],
+  "all_static_candidate_cycles": [
+    [
+      "engine/pipeline/e_zone_detector.py",
+      "engine/pipeline/order_audit_engine.py"
+    ]
+  ],
+  "eager_candidate_cycles": [],
+  "changed_source_checks": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "local_primary_import_lines": [
+        3285
+      ]
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "standard_library_itemgetter_line": 8
+    }
+  ],
+  "semantic_feedback": [
+    "Order_B feedback carries accepted E/StopAll together; no visibility rediscovery.",
+    "E race reopening remains owner-specific, no generic cap.",
+    "Primary commit updates native Order ledger and audits.",
+    "Closed regime can reuse prior settled independent prefix; same Primary3 proof still required.",
+    "Live worker replays active trading stages; transactional append and retained prefix cache are separate."
+  ],
+  "limits": [
+    "Unchanged classifications retain historical source evidence on identical blobs. Configured engine loads and dynamic callbacks are not static internal import edges."
+  ]
+}

@@ -30,7 +30,7 @@ This is the active module-level reading surface for the source-only specificatio
 | 22 | [True/False exact recurrence](22_True_False_Exact_Contract.md) | TF01–TF08 | 10, 16, 20 |
 | 23 | [Live transport](23_Live_Transport_Contract.md) | L04–L13 | 18, 21 |
 
-Procedure IDs are stable semantic labels, not required implementation symbols. The current source inventory contains 587 named functions/methods; the registry is being reconciled to one procedure definition per declaration; cross-cutting documents (Reset, PH/PL, MBL, Reversal and T/F overview) compose or refer to the owning procedures rather than duplicate them. For common data types use the record catalog; for input-dependent results follow explicit guards and fallback rules. The module compositions and detailed procedure clauses together define the active Phase 05 deliverables.
+Procedure IDs are stable semantic labels, not required implementation symbols. The current source inventory contains 587 named functions/methods; the registry has one verified procedure heading per declaration (see CP290 procedure registry validation); cross-cutting documents (Reset, PH/PL, MBL, Reversal and T/F overview) compose or refer to the owning procedures rather than duplicate them. For common data types use the record catalog; for input-dependent results follow explicit guards and fallback rules. The module compositions and detailed procedure clauses together define the active Phase 05 deliverables.
 
 ## Calculation ownership and dependency flow
 
