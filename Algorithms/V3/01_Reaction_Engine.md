@@ -139,22 +139,22 @@ Read chronology main/lower sequences before shallow cloning input. Missing Break
 ## Segment indexes
 
 ### RE63 — _BehaviorReactionSpan.from_reaction
-Published clone RE30 supplies normalized top/bottom; physical First/Break and First main time come from original reaction, and RE61 confirmation is evaluated on original reaction with default intrabar flag (including its main-open fallback).
+Compute published clone RE30 first, then integer-convert original First and Break; construct frozen slotted span with original physical pair, First main positional timestamp and RE61 confirmation evaluated on original reaction with default intrabar flag (including main-open fallback), followed by normalization of published top then bottom. These are separate provenance sources; no local failure fallback.
 
 ### RE64 — may_contain
-Outer First strictly earlier; outer confirmation>=inner; outer top>=inner and bottom<=inner.
+Evaluate in order with short circuit: outer First strictly earlier; outer confirmation>=inner; outer top>=inner and bottom<=inner. Equal First excludes; other equalities admit.
 
 ### RE65 — path_extremes
-Lower inclusive First through RE61 confirmation time via lower/upper bound. Empty null; else min Low then max High from index. Nonempty observed path is required, but this helper does not validate gap-free coverage.
+Lower inclusive First through RE61 confirmation via bisect_left/bisect_right, including all boundary-equal rows under aligned ordered times. Empty/reversed positional interval returns null without price queries; otherwise min Low then max High from index, discard positions. Nonempty observed path required, but no gap-free coverage proof.
 
 ### RE66 — contains_path
-Non-null extremes and bottom<=minimum and top>=maximum.
+Require non-null extremes, then bottom<=minimum and top>=maximum in order with short circuit; inclusive edges.
 
 ### RE67 — _apply_behavior_reaction_views
-For bullish then bearish, zip full reactions/spans (shorter input truncates without explicit length validation), assign 1-based behavior public number, published box, confirmation/First times, internal flag by blocked physical identity. Return full objects (not filtered), identity number maps for all full reactions, blocked sets and blocked First main-time sets. Mutates Candidate metadata without internal rollback.
+For bullish then bearish, enumerate zip of full reactions/spans from one (shorter input truncates without explicit length validation), assign metadata in order: behavior public number, published top/bottom, confirmation/First times, internal flag by span physical identity membership. Return full native objects (not cloned/filtered), identity number maps for all full reactions regardless of zip length, original blocked mapping and sets of First main timestamps (dedup by timestamp, not physical pair). Unprocessed tail may retain prior metadata. Mutates Candidate metadata without internal rollback; partial writes on failure possible.
 
 ### RE68 — build_behavior_reaction_views
-Build spans both directions. Containment index only if all First/confirmation exact naive datetime; otherwise scan all opposite spans. For each inner, check outer may_contain; compute lower path once on first candidate; null path stops search; add blocked identity on first containing path. RE67.
+Build all spans before owner search, bullish then bearish, preserve input order. Index only if all First/confirmation exact naive datetime (empty all true); no global ordering requirement, provider partitions on decreasing start or end to preserve caller order. Otherwise full opposite scan. Per inner reset lazy extrema; index enclosing is strict outer First/inclusive end candidate filter, not verdict. Check outer may_contain before path; compute lower path once on first eligible outer; null path stops owner search, first containing path adds inner physical identity then breaks. Blocked sets do not record owner pairs. Apply RE67 after both direction sets built.
 
 ### RE69 — LiveBehaviorReactionViews.__init__
 Empty entries/matches per direction, update dirty0.

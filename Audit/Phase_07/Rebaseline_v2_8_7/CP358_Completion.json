@@ -1,0 +1,142 @@
+{
+  "checkpoint": 358,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_BATCH_BEHAVIOR_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "8a56debe9fb2bafb4f7d6fc68b07ab7152aee61b",
+  "entry_tree": "88f6dfc6cb7dfed323a6086d3f6c9e161762b6e0",
+  "scope": "B02 source lines 1370–1480 RE63–RE68 span and batch containment; complete historical B02-06, bounded consumer checks",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP358_W3_Batch_Behavior_Local_Forensic_Register.json",
+      "sha": "957d8c82fd1333adb284b98c1392230277e9281e"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP358_W3_Batch_Behavior_Consumer_Boundaries.json",
+      "sha": "d398eb46a2826ee2df7f137f1576a7abbbcafddb"
+    },
+    {
+      "path": "Algorithms/V3/01_Reaction_Engine.md",
+      "sha": "fb09317e24c7c450c0601e1544ff27f0388a3fa7"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/43_W3_Batch_Behavior_Containment_Forensic.md",
+      "sha": "41ccfb3744af2805e0ec79c16612fd877ed03d2f"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 4585,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 980,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 3605,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 4249,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 906,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 3343,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        1,
+        234
+      ],
+      [
+        235,
+        327
+      ],
+      [
+        886,
+        1131
+      ],
+      [
+        1132,
+        1369
+      ],
+      [
+        328,
+        689
+      ],
+      [
+        690,
+        885
+      ],
+      [
+        1370,
+        1480
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 57
+  },
+  "validation": {
+    "new_local_rows": 394,
+    "new_w1_rows": 71,
+    "new_additional_rows": 323,
+    "new_historical_supplemental": 5,
+    "source_contract_groups": 21,
+    "coordinate_join_errors": 0,
+    "prior_b02_rows": 3855,
+    "duplicate_or_prior_overlap": 0
+  },
+  "findings": [
+    {
+      "id": "CP358-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Clarified ordered geometry/identity/time provenance, inclusive path and strict First, exact index admission and caller-order runs, zip tail and timestamp deduplication, first-success physical identity and partial writes. Historical B02-06-F01–F03 retained.",
+      "prior_document_blobs": {
+        "Algorithms/V3/01_Reaction_Engine.md": "106cb964f3b4bddc6d66d47b6ad50eb7a4e8afba"
+      }
+    },
+    {
+      "id": "CP354-F03",
+      "status": "OPEN_RECORD_AND_CONSUMER_LIFETIME",
+      "meaning": "Batch metadata on original records reviewed; Live, downstream ownership and serialization pending."
+    }
+  ],
+  "open_findings": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP359 / W3 B02 independent LiveBehaviorReactionViews and directional A-stop order finder source review, starting from actual published CP358 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–358 evidence. Source before prior conclusions: review reaction_engine.py lines 1481–1616, complete historical B02-07 (RE69–RE72), live ordinal geometry equality and dirty frontier, all-owner pairs and removal, metadata-before-map commit, failures, directional A-stop gate/cache/alias and exact event ownership; then 1617–2908 in complete adaptive partitions. Compare historical B02-07 and subsequent partitions by actual range, active contracts, exact canonical W1/additional rows and consumer obligations. Preserve all prior evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, resolved findings and RE01–RE68 corrections. B02 4249/8697 local category rows (906/1877 W1, 3343/6820 additional), 57 historical supplemental, completed range 1–1480; W3 local category 4585/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open; complete B02–B10 local and cross-owner review including chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, project runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
+}

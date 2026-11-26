@@ -1,0 +1,67 @@
+{
+  "checkpoint": 358,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs only",
+  "consumers": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        17,
+        41
+      ],
+      "meaning": "Containment index builds ordered runs, splitting on decreasing start OR end. enclosing bisect_left start excludes equal start, bisect_left end in prefix includes equal end; yield payloads in caller-compatible order. RE68 still checks full may_contain and path."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2703,
+        2709
+      ],
+      "meaning": "When continuing geometry, internal ownership uses live.ownership(results) if live else batch result [2]. Native geometry retained; cross-owner lifetime pending."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2776,
+        2785
+      ],
+      "meaning": "Alternate branch invokes batch behavior only if behavior modules enabled, otherwise sets empty direction identity sets. Conditional dispatch matters; no unconditional metadata admission proof."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        538,
+        546
+      ],
+      "meaning": "A-zone chaining checks behavior_internal on Blue lines, not direct reaction span; full creator/consumer propagation through Blue remains pending."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1501,
+        1551
+      ],
+      "meaning": "Live branch consumes same span and metadata helper but tracks all successful ordinal pairs and dirty reuse, unlike batch first-success identity set. Full local review next."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP335",
+    "CP347",
+    "CP350",
+    "CP357"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Full live cache, ownership propagation, accepted ledger, projection and serialization."
+}
