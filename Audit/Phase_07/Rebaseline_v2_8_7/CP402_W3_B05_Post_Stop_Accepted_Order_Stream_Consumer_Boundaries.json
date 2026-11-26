@@ -1,0 +1,94 @@
+{
+  "checkpoint": 402,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          590,
+          612
+        ],
+        [
+          1089,
+          1132
+        ],
+        [
+          1140,
+          1164
+        ],
+        [
+          1240,
+          1248
+        ],
+        [
+          1371,
+          1433
+        ],
+        [
+          2190,
+          2224
+        ]
+      ],
+      "meaning": "Run-local eager cache and native audit/pending state; physical insertion uses confirmation tuple right-bisect, appends pending only for dict else resets audit None. Clear/revocation invalidates post-stop state; cause-only changes normally preserve post-stop geometry. Registration and restoration insert physical identities. Immutable/coherent geometry and owner invalidation are conditional preconditions; same-size replacement not detected by OA53 length key."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1459,
+          1477
+        ],
+        [
+          1524,
+          1594
+        ],
+        [
+          1798,
+          1878
+        ]
+      ],
+      "meaning": "OA43 strict directional first crossing over [max(start,range_start),range_end), memoized by exact start/level including None. OA45 materializes all initial records with caller Decimal context, caches primary First/confirmation/FirstIndex/BreakIndex and secondary confirmation/First/FirstIndex/BreakIndex; OA46 projects original fields. OA53 full list cache hit can skip materialization; miss scans initial confirmation suffix before accepted index suffix using 2^63-1 sentinel. Legacy skips None and permissively accepts datetime/tuple subclasses; normalizes before OA54 eligibility; recomputes malformed/null cross and does not write ledger. OA54 rejects null or cross <= stop/confirmation or reset in (stop,cross]; current ledger confirmation not independently rechecked against stop; first-insertion dictionary rank survives strict better replacement. Final stable sort by cross,confirmation,-First. Native path gates and timing differ; equivalence conditional only."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ],
+        [
+          59,
+          66
+        ]
+      ],
+      "meaning": "as_decimal retains Decimal instances else Decimal(str(value)); exact native type gates apply before/after conversion in OA55. reaction_identity is int(First),int(Break), not number/object equality/index tuple; dynamic attributes can fail or change."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          395,
+          411
+        ],
+        [
+          608,
+          668
+        ]
+      ],
+      "meaning": "Reset setter copies mapping, sorts times and clears eager post-stop cache; geometry independent of resets, captured native reset applies to already-issued iterator. _zone obtains inherited/gate/carried, registers parent before creating accepted iterator; computes direct route before consuming. Accepted public stream grouped by exact crossing, each group sorted by (cross,-First), merged with direct/inherited/carried in that order; global choice uses different key from accepted stream. Disowned-S-only filter and prospective source computed per choice; stops at first allowed. Group materialization may consume more than one item, lazy errors may surface during caller iteration; no cross-owner acceptance here."
+    }
+  ],
+  "limitations": [
+    "Native exact types, timezone identity and finite Decimal do not establish universal comparability, stable attributes, bounded identities, chronology coherence, or same value/side effects under unusual inputs.",
+    "Eager OA53 can include equal indexed confirmation with identity beyond signed 63-bit sentinel or row confirmation inconsistent with index; native strict actual confirmation and coherence gate differ. Native rejects/validates unselected rows on build, while eager may skip them; fallback is synchronous and may read cache. Native null crossing requires cached None rather than recomputing. Caller-context vs localcontext flags/traps, eager exception timing and lazy consumption are not proven equivalent.",
+    "Initial conflicting event pairs and initial/audit event conflicts trigger conservative fallback; audit-audit conflicts or index-versus-reaction identity inconsistency are not expressly checked. Equal event pairs can differ in non-key fields. OA53 preserves first insertion rank even after replacement; OA59 selects first merged physical identity. Equal complete audit keys across tiers use run order; stable tie equivalence depends on owner invariants, not claimed for arbitrary malformed data.",
+    "Published audit containers are copied/replaced, not deeply immutable; already issued generator captures view and reset, but nested aliases remain mutable. Owner append/rebuild/reset and caller early termination are bounded source observations, not cross-owner certification.",
+    "Source-first local review by GPT, not independently staffed. No trading execution, RAW payload, ZIP, production changes, performance measurements, fresh AST generator, or independent SHA-256 claim. Static inventory validated against pinned historical canonical arrays, actual source line review, CP316 and historical W1 crosswalk."
+  ]
+}
