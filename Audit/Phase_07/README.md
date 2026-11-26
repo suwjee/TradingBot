@@ -336,3 +336,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 64 — Eager Post-Stop Accepted Orders and Physical Identity Arbitration
 
 [Local review](Semantic_Closure_B05_18.md) and [site evidence](Semantic_Closure_B05_18.json): 78 original rows, 7 supplemental items, 5 resolved findings; local PASS. Order Audit 1285/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 65 — Lazy Post-Stop Native Stream, Run Publication and Merge
+
+[Local review](Semantic_Closure_B05_19.md) and [site evidence](Semantic_Closure_B05_19.json): 175 original rows, 8 supplemental items, 6 resolved findings; local PASS. Order Audit 1460/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 66 — Disowned S Creator and Gate-Owned Initial Order Veto
+
+[Local review](Semantic_Closure_B05_20.md) and [site evidence](Semantic_Closure_B05_20.json): 25 original rows, 3 supplemental items, 3 resolved findings; local PASS. Order Audit 1485/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
