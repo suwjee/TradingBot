@@ -1,0 +1,5687 @@
+{
+  "checkpoint": 331,
+  "status": "PASS_SCOPED_CLOSURE_GATE_ASSESSMENT",
+  "w2_acceptance": "NOT_ACCEPTED_OPEN_FINDINGS",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "9053a7f948bb62ccbc96521062a210e24ca9f119",
+  "entry_tree": "4c035b2839797be073d5aeaf75e4a8e7e56d8c9a",
+  "source_tree": "9e1ede6672cd5daf2bf099361c17b4a723fd21cc",
+  "scope": "Independent structural/source-anchor closure assessment, targeted source checks and gap discovery; not full W2 acceptance.",
+  "method": "Reopen all 16 source modules at pinned main; compare with W1 source identity and main tree. Reopen all nine W2 completion manifests and all nine transition registers, normalize partial record paths through module registry, compare 316 row IDs/spans/blobs and prior/reference links. Recount named accessor calls in source line text (not AST or runtime). Join all ten W1 batches; targeted direct source review at identified uncovered regions. No runtime.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966",
+      "rows": 45
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24",
+      "rows": 36
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa",
+      "rows": 30
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "blob": "100720890299236ba3340e7bd5586ca06470624a",
+      "rows": 30
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "blob": "2227d763e691615f31d25019c3bde9f0bf7ba4be",
+      "rows": 40
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "blob": "686007282c395fac93413c19ce191fbefe62907b",
+      "rows": 33
+    }
+  ],
+  "manifest": [
+    {
+      "checkpoint": 322,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_Completion.json",
+      "blob": "18001be90d70d4b5c2fb33c77de271b486bb3aeb"
+    },
+    {
+      "checkpoint": 323,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_Completion.json",
+      "blob": "bd1d3d535f86acbe86c713abfcfe406cc6ce06f0"
+    },
+    {
+      "checkpoint": 324,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_Completion.json",
+      "blob": "b9b7a0603a94c013fe0acad2f0d1408800ebf7d0"
+    },
+    {
+      "checkpoint": 325,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_Completion.json",
+      "blob": "663301206d4bc9920b9618a06b6b91d957b975f6"
+    },
+    {
+      "checkpoint": 326,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_Completion.json",
+      "blob": "c55b43446b40966eb43293ad5d74007cba6839e6"
+    },
+    {
+      "checkpoint": 327,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_Completion.json",
+      "blob": "6df98868a830e2cc85963260604c9d92137aaeaa"
+    },
+    {
+      "checkpoint": 328,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_Completion.json",
+      "blob": "a1ac4fae5301833d01130fe428fead6f8939bd40"
+    },
+    {
+      "checkpoint": 329,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_Completion.json",
+      "blob": "31a52f22eb5e19f66ac7f913866c368c0d04334a"
+    },
+    {
+      "checkpoint": 330,
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_Completion.json",
+      "blob": "e3eed4691025b56f2668fb49ec47414de1b2a372"
+    }
+  ],
+  "rows": [
+    {
+      "id": "CP323-P01",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1681,
+        1721
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P02",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1723,
+        1761
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P03",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1763,
+        1778
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P04",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2420,
+        2456
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P05",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2457,
+        2515
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P06",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2517,
+        2573
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P07",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2574,
+        2650
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P08",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2651,
+        2761
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P09",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2762,
+        2783
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P10",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2792,
+        2864
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P11",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2866,
+        2905
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P12",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        233,
+        268
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P13",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        271,
+        323
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P14",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        325,
+        444
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P15",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        447,
+        514
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P16",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        216,
+        272
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P17",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        274,
+        307
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P18",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        502,
+        531
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P19",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        533,
+        611
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P20",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        613,
+        730
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P21",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        839,
+        897
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P22",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        898,
+        960
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P23",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        962,
+        1036
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P24",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        1042,
+        1069
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P25",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1756,
+        1785
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P26",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2211,
+        2282
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P27",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2837,
+        2895
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P28",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3531,
+        3630
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-P29",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3740,
+        3786
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json"
+    },
+    {
+      "id": "CP323-S01",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        35,
+        174
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S02",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        184,
+        244
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S03",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        246,
+        341
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S04",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        346,
+        503
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S05",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        504,
+        639
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S06",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        642,
+        785
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S07",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        788,
+        883
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S08",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1371,
+        1408
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S09",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1409,
+        1478
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S10",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1481,
+        1551
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S11",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1554,
+        1680
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S12",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1781,
+        1851
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S13",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1853,
+        1944
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S14",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1947,
+        2051
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S15",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2053,
+        2215
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S16",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2217,
+        2417
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S17",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        33,
+        85
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S18",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        87,
+        230
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S19",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        517,
+        590
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S20",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        26,
+        128
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S21",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        129,
+        214
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S22",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        308,
+        335
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S23",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        337,
+        496
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S24",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        731,
+        836
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S25",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        374,
+        438
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S26",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2153,
+        2208
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S27",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2284,
+        2469
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S28",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2470,
+        2645
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S29",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2648,
+        2802
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S30",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2915,
+        2936
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S31",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2939,
+        3108
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S32",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3113,
+        3175
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S33",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3405,
+        3448
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S34",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        80,
+        176
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S35",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        201,
+        251
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S36",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        628,
+        694
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S37",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        807,
+        852
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S38",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1248,
+        1304
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S39",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        695,
+        763
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S40",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        766,
+        971
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S41",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1412,
+        1610
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S42",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        22,
+        70
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S43",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        776,
+        806
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP323-S44",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2105,
+        2122
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S01",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        27,
+        64
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S02",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        253,
+        276
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S03",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        279,
+        312
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S04",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        314,
+        376
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S05",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        378,
+        401
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S06",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        403,
+        450
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S07",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        453,
+        532
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S08",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        534,
+        584
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S09",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        587,
+        626
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S10",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        696,
+        739
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S11",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        741,
+        783
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S12",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        785,
+        804
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S13",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        854,
+        868
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S14",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        870,
+        960
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S15",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        962,
+        993
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S16",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        996,
+        1052
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S17",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1054,
+        1223
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S18",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1225,
+        1246
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S19",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1307,
+        1421
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S20",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1424,
+        1466
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S21",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1468,
+        1490
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S22",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1492,
+        1525
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S23",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1528,
+        1551
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S24",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2520,
+        2544
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S25",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2546,
+        2598
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S26",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2601,
+        2620
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S27",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2622,
+        2667
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S28",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2670,
+        2712
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP324-S29",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1305,
+        1367
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S01",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        25,
+        37
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S02",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        39,
+        75
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S03",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        77,
+        136
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S04",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        170,
+        195
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S05",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        198,
+        239
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S06",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        240,
+        289
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S07",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        291,
+        324
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S08",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        326,
+        375
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S09",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        378,
+        415
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S10",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        416,
+        439
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S11",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        442,
+        520
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S12",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        523,
+        550
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S13",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        557,
+        651
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S14",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        653,
+        686
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S15",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        689,
+        761
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S16",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        809,
+        918
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S17",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        921,
+        979
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S18",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        982,
+        1086
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S19",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1089,
+        1132
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S20",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1135,
+        1199
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S21",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1202,
+        1248
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S22",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1250,
+        1310
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S23",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1312,
+        1337
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S24",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1339,
+        1433
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S25",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1436,
+        1456
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S26",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1459,
+        1484
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S27",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1487,
+        1521
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S28",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1524,
+        1609
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S29",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1612,
+        1642
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S30",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1644,
+        1697
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S31",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1699,
+        1720
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S32",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1722,
+        1795
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S33",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1798,
+        1877
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S34",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1879,
+        1934
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S35",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1935,
+        1993
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S36",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1994,
+        2017
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S37",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2020,
+        2043
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S38",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2046,
+        2104
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S39",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2124,
+        2204
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S40",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2206,
+        2288
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S41",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2291,
+        2401
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S42",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2404,
+        2459
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S43",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2508,
+        2514
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S44",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        606,
+        693
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP325-S45",
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        51,
+        66
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S01",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        35,
+        100
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S02",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        112,
+        146
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S03",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        148,
+        174
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S04",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        176,
+        194
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S05",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        196,
+        218
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S06",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        220,
+        265
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S07",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        267,
+        309
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S08",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        313,
+        392
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S09",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        394,
+        411
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S10",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        413,
+        438
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S11",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        440,
+        504
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S12",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        507,
+        557
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S13",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        559,
+        578
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S14",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        581,
+        606
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S15",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        608,
+        675
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S16",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        677,
+        733
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S17",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        735,
+        763
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S18",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        765,
+        822
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S19",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        824,
+        869
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S20",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        871,
+        913
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S21",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        915,
+        1005
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S22",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1007,
+        1029
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S23",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1031,
+        1084
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S24",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1086,
+        1122
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S25",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1124,
+        1130
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S26",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1132,
+        1173
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S27",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1175,
+        1218
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S28",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1220,
+        1285
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S29",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1287,
+        1324
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S30",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1325,
+        1364
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S31",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1365,
+        1404
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S32",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1406,
+        1453
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S33",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1454,
+        1464
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S34",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1465,
+        1492
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S35",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1495,
+        1506
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP326-S36",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1509,
+        1538
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        29,
+        39
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S02",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        42,
+        92
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S03",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        95,
+        139
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S04",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        142,
+        168
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S05",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        170,
+        194
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S06",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        196,
+        252
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S07",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        254,
+        348
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S08",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        350,
+        366
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S09",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        368,
+        416
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S10",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        418,
+        446
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S11",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        448,
+        473
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S12",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        475,
+        496
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S13",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        498,
+        515
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S14",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        517,
+        531
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S15",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        534,
+        548
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S16",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        550,
+        571
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S17",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        572,
+        590
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S18",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        593,
+        599
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S19",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        973,
+        993
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S20",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        996,
+        1034
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S21",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1036,
+        1066
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S22",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1073,
+        1108
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S23",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1112,
+        1136
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S24",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1138,
+        1178
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S25",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1180,
+        1197
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S26",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1199,
+        1232
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S27",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1234,
+        1285
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S28",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1286,
+        1322
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S29",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1328,
+        1375
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP327-S30",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        1377,
+        1409
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S01",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        25,
+        99
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S02",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        101,
+        125
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S03",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        128,
+        172
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S04",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        175,
+        195
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S05",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        198,
+        219
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S06",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        222,
+        245
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S07",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        248,
+        284
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S08",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        287,
+        325
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S09",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        326,
+        349
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S10",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        350,
+        385
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S11",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        386,
+        418
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S12",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        421,
+        455
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S13",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        457,
+        487
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S14",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        490,
+        515
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S15",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        518,
+        553
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S16",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        554,
+        574
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S17",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        575,
+        596
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S18",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        597,
+        621
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S19",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        624,
+        642
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S20",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        644,
+        662
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S21",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        663,
+        680
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S22",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        683,
+        732
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S23",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        735,
+        740
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S24",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        743,
+        768
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S25",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        770,
+        797
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S26",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        800,
+        814
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S27",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        816,
+        839
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S28",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3449,
+        3458
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S29",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3461,
+        3500
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP328-S30",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3502,
+        3528
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        441,
+        458
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S02",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        461,
+        485
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S03",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        488,
+        550
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S04",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        553,
+        594
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S05",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        596,
+        660
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S06",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        663,
+        688
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S07",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        691,
+        739
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S08",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        742,
+        759
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S09",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        786,
+        819
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S10",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        821,
+        871
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S11",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        873,
+        926
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S12",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        928,
+        985
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S13",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        988,
+        1042
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S14",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1045,
+        1108
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S15",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1111,
+        1167
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S16",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1170,
+        1179
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S17",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1182,
+        1269
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S18",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1272,
+        1325
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S19",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1328,
+        1377
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S20",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1380,
+        1424
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S21",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1427,
+        1493
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S22",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1496,
+        1503
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S23",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1506,
+        1608
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S24",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1611,
+        1676
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S25",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1679,
+        1729
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S26",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1860,
+        1871
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S27",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1874,
+        1894
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S28",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3176,
+        3251
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S29",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3254,
+        3280
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S30",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3283,
+        3326
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S31",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3327,
+        3358
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S32",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3359,
+        3402
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S33",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3633,
+        3679
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S34",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3680,
+        3710
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S35",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        18,
+        30
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S36",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        33,
+        55
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S37",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        58,
+        100
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S38",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        101,
+        128
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S39",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        131,
+        159
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP329-S40",
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "range": [
+        162,
+        188
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        54,
+        84
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S02",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        87,
+        98
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S03",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        101,
+        137
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S04",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        140,
+        184
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S05",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        187,
+        202
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S06",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        205,
+        227
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S07",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        229,
+        254
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S08",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        255,
+        277
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S09",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        278,
+        303
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S10",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        306,
+        333
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S11",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        336,
+        364
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S12",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1732,
+        1753
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S13",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1788,
+        1823
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S14",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1826,
+        1857
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S15",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1897,
+        1971
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S16",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1974,
+        2009
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S17",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2012,
+        2027
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S18",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2030,
+        2052
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S19",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2055,
+        2079
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S20",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2081,
+        2111
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S21",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2113,
+        2150
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S22",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3713,
+        3735
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S23",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3788,
+        3809
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S24",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        73,
+        85
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S25",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        88,
+        112
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S26",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        114,
+        127
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S27",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        129,
+        145
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S28",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        147,
+        156
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S29",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        159,
+        165
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S30",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        168,
+        183
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S31",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        184,
+        196
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S32",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        197,
+        212
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    },
+    {
+      "id": "CP330-S33",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        213,
+        225
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json"
+    }
+  ],
+  "reference_checks": [
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/05_S_Zone.md",
+      "blob": "8e461aae1a14ac08a39fe7c8d73747d8a4a16ef0"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/06_Order_A.md",
+      "blob": "71b0f5b085c2de298105343f190705cb3578879a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+      "blob": "376f7c12582b497666dcbb82cdcac5c794c55b2f"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/02_Blue_A_S.md",
+      "blob": "247a11375b5c591b147ec204e10274d8c4e7e139"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md",
+      "blob": "a13e9ac9b7916094e6a7268b362134b39dd2dae9"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/09_W2_Reaction_Blue_A_Reconciliation.md",
+      "blob": "d4ec6368a079f3f790f94ea77547cb1635ffe985"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/06_Order_A.md",
+      "blob": "71b0f5b085c2de298105343f190705cb3578879a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/07_Order_B.md",
+      "blob": "34ae423d242530f5bcfc0a8a0bb4dd68df0c0766"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/08_Order_Audit.md",
+      "blob": "ef19e2119131c7123bf554a0a7af34262507a93a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+      "blob": "098c1f0e76cc1b193f5979ec2fe338ecf33a5171"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/09_W2_Reaction_Blue_A_Reconciliation.md",
+      "blob": "d4ec6368a079f3f790f94ea77547cb1635ffe985"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/10_W2_S_Decision_Reconciliation.md",
+      "blob": "5734a6cb2b7ce288c55b08639ced8b48e2d4315d"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Algorithms/V3/09_E_Zone.md",
+      "blob": "1211629fec19d914888af9165c77642fe6fc9dee"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+      "blob": "02a57040358f45f22aa0091bbd73837bcdb2ce4f"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Algorithms/V3/10_Lifecycle.md",
+      "blob": "0acca58662ee6d975da3b53cca8237e9578f9bb5"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Algorithms/V3/11_StopAll.md",
+      "blob": "e74cfff9d841197e7483851dcf0d50ed3278a0b1"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+      "blob": "02a57040358f45f22aa0091bbd73837bcdb2ce4f"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Algorithms/V3/12_Primary_Structures.md",
+      "blob": "08540a02fe83decb38378953bbc9c45975a7a9ef"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Algorithms/V3/13_Primary_High.md",
+      "blob": "5e783235d167da404cfda9f6d396220e5e6a6932"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Algorithms/V3/14_Matching_Behavior_Leg.md",
+      "blob": "42e6d44cbb1823f27310e205213b7dd8dbecedde"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Algorithms/V3/15_Trend_Reversal.md",
+      "blob": "c9c9bc34355605d07d66ee7c271678f5f1e95661"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Algorithms/V3/State_Machines/06_Primary_Reversal.md",
+      "blob": "4bd1da51ffdb20bc0069eaf565772d98ca2db641"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Algorithms/V3/19_Serialization.md",
+      "blob": "1cefbbdc5da6b823a12f741d2fb604117b23ab8a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Algorithms/V3/17_Trading_Bridge.md",
+      "blob": "fd709462a61df11ebeb5bf4f4e5dc66be794bef5"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Algorithms/V3/16_True_False.md",
+      "blob": "9a307be021c5f1e8dd1c285ee7ff1247ddd36b90"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Algorithms/V3/22_True_False_Exact_Contract.md",
+      "blob": "6a05b77cb7d74b6a2b90aeffb57118223e6fca7a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "blob": "100720890299236ba3340e7bd5586ca06470624a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Algorithms/V3/18_Live_Bridge.md",
+      "blob": "08d94f96b520199bda362c5c88470b10d1804dcc"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "blob": "1344786aac8bde8b309c13a5e40cef8e3e519c7e"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+      "blob": "f8f7c201b0c97cb7fa0c95f8e0dfc1f9e14d15d2"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+      "blob": "1d915fe47adc154f6c8cfc63e4ba18ca0c7c3211"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP325_W2_Order_Ledger_Reconciliation.json",
+      "blob": "77967520d746b0ce52e86784822bbe923a6c8966"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP326_W2_E_Reconciliation.json",
+      "blob": "33054fd8ab3eb582072c663997b88037f53c4c24"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP327_W2_Lifecycle_StopAll_Reconciliation.json",
+      "blob": "c4bbd89d36ed64d604733c91c1aeec7fb249bafa"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "blob": "100720890299236ba3340e7bd5586ca06470624a"
+    },
+    {
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP329_W2_Projection_Serialization_TF_Reconciliation.json",
+      "blob": "2227d763e691615f31d25019c3bde9f0bf7ba4be"
+    }
+  ],
+  "accessor_evidence": {
+    "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_W2_Chronology_Accessor_Edges.json",
+    "blob": "bde767dbcf80522c0561ec7dd2efe2b26b6ba57e",
+    "edges": [
+      {
+        "id": "CP322-E01",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 771,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E02",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 837,
+        "target": "_bridge_reaction_confirmation"
+      },
+      {
+        "id": "CP322-E03",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 1062,
+        "target": "_bridge_reaction_confirmation"
+      },
+      {
+        "id": "CP322-E04",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 1102,
+        "target": "_bridge_reaction_confirmation"
+      },
+      {
+        "id": "CP322-E05",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 1252,
+        "target": "_bridge_reaction_confirmation"
+      },
+      {
+        "id": "CP322-E06",
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "line": 2434,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E07",
+        "path": "engine/pipeline/PL_PH_detector.py",
+        "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+        "line": 653,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E08",
+        "path": "engine/pipeline/a_zone_detector.py",
+        "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+        "line": 498,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E09",
+        "path": "engine/pipeline/blue_line_detector.py",
+        "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+        "line": 97,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E10",
+        "path": "engine/pipeline/blue_line_detector.py",
+        "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+        "line": 168,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E11",
+        "path": "engine/pipeline/e_zone_detector.py",
+        "blob": "240369edf3352006082efe094eb68ac027d6689f",
+        "line": 414,
+        "target": "reset_time"
+      },
+      {
+        "id": "CP322-E12",
+        "path": "engine/pipeline/e_zone_detector.py",
+        "blob": "240369edf3352006082efe094eb68ac027d6689f",
+        "line": 560,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E13",
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "line": 145,
+        "target": "reset_time"
+      },
+      {
+        "id": "CP322-E14",
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "line": 242,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E15",
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "line": 256,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E16",
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "line": 270,
+        "target": "order_b_reset_event_time"
+      },
+      {
+        "id": "CP322-E17",
+        "path": "engine/pipeline/order_audit_engine.py",
+        "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "line": 468,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E18",
+        "path": "engine/pipeline/reaction_engine.py",
+        "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+        "line": 1384,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E19",
+        "path": "engine/pipeline/s_zone_detector.py",
+        "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+        "line": 189,
+        "target": "reaction_confirmation"
+      },
+      {
+        "id": "CP322-E20",
+        "path": "engine/pipeline/s_zone_detector.py",
+        "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+        "line": 199,
+        "target": "reset_time"
+      }
+    ],
+    "lexical_counts": {
+      "reaction_confirmation": 12,
+      "reset_time": 3,
+      "order_b_reset_event_time": 1,
+      "_bridge_reaction_confirmation": 4
+    }
+  },
+  "w1": {
+    "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP321_W1_Acceptance_Reconciliation.json",
+    "blob": "e386789d01d7d4aa0cc037b4b37d421b44504278",
+    "owners": [
+      {
+        "batch": "B01",
+        "modules": [
+          {
+            "path": "engine/__init__.py",
+            "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+            "w1": 0,
+            "additional": 0,
+            "lines": 1,
+            "transition_ids": [],
+            "direct_accessor_ids": []
+          },
+          {
+            "path": "engine/bridge/__init__.py",
+            "blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+            "w1": 0,
+            "additional": 0,
+            "lines": 2,
+            "transition_ids": [],
+            "direct_accessor_ids": []
+          },
+          {
+            "path": "engine/pipeline/__init__.py",
+            "blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+            "w1": 6,
+            "additional": 16,
+            "lines": 29,
+            "transition_ids": [],
+            "direct_accessor_ids": []
+          },
+          {
+            "path": "engine/pipeline/core_utils.py",
+            "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+            "w1": 42,
+            "additional": 166,
+            "lines": 67,
+            "transition_ids": [
+              "CP325-S45"
+            ],
+            "direct_accessor_ids": []
+          },
+          {
+            "path": "engine/pipeline/direction_policy.py",
+            "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+            "w1": 26,
+            "additional": 80,
+            "lines": 71,
+            "transition_ids": [],
+            "direct_accessor_ids": []
+          }
+        ],
+        "w1": 74,
+        "additional": 262
+      },
+      {
+        "batch": "B02",
+        "modules": [
+          {
+            "path": "engine/pipeline/reaction_engine.py",
+            "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+            "w1": 1877,
+            "additional": 6820,
+            "lines": 2908,
+            "transition_ids": [
+              "CP323-P01",
+              "CP323-P02",
+              "CP323-P03",
+              "CP323-P04",
+              "CP323-P05",
+              "CP323-P06",
+              "CP323-P07",
+              "CP323-P08",
+              "CP323-P09",
+              "CP323-P10",
+              "CP323-P11",
+              "CP323-S01",
+              "CP323-S02",
+              "CP323-S03",
+              "CP323-S04",
+              "CP323-S05",
+              "CP323-S06",
+              "CP323-S07",
+              "CP323-S08",
+              "CP323-S09",
+              "CP323-S10",
+              "CP323-S11",
+              "CP323-S12",
+              "CP323-S13",
+              "CP323-S14",
+              "CP323-S15",
+              "CP323-S16",
+              "CP324-S29"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E18"
+            ]
+          }
+        ],
+        "w1": 1877,
+        "additional": 6820
+      },
+      {
+        "batch": "B03",
+        "modules": [
+          {
+            "path": "engine/pipeline/blue_line_detector.py",
+            "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+            "w1": 437,
+            "additional": 1087,
+            "lines": 591,
+            "transition_ids": [
+              "CP323-P12",
+              "CP323-P13",
+              "CP323-P14",
+              "CP323-P15",
+              "CP323-S17",
+              "CP323-S18",
+              "CP323-S19"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E09",
+              "CP322-E10"
+            ]
+          },
+          {
+            "path": "engine/pipeline/a_zone_detector.py",
+            "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+            "w1": 708,
+            "additional": 2462,
+            "lines": 1070,
+            "transition_ids": [
+              "CP323-P16",
+              "CP323-P17",
+              "CP323-P18",
+              "CP323-P19",
+              "CP323-P20",
+              "CP323-P21",
+              "CP323-P22",
+              "CP323-P23",
+              "CP323-P24",
+              "CP323-S20",
+              "CP323-S21",
+              "CP323-S22",
+              "CP323-S23",
+              "CP323-S24"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E08"
+            ]
+          }
+        ],
+        "w1": 1145,
+        "additional": 3549
+      },
+      {
+        "batch": "B04",
+        "modules": [
+          {
+            "path": "engine/pipeline/s_zone_detector.py",
+            "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+            "w1": 962,
+            "additional": 3286,
+            "lines": 1552,
+            "transition_ids": [
+              "CP323-S34",
+              "CP323-S35",
+              "CP323-S36",
+              "CP323-S37",
+              "CP323-S38",
+              "CP324-S01",
+              "CP324-S02",
+              "CP324-S03",
+              "CP324-S04",
+              "CP324-S05",
+              "CP324-S06",
+              "CP324-S07",
+              "CP324-S08",
+              "CP324-S09",
+              "CP324-S10",
+              "CP324-S11",
+              "CP324-S12",
+              "CP324-S13",
+              "CP324-S14",
+              "CP324-S15",
+              "CP324-S16",
+              "CP324-S17",
+              "CP324-S18",
+              "CP324-S19",
+              "CP324-S20",
+              "CP324-S21",
+              "CP324-S22",
+              "CP324-S23"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E19",
+              "CP322-E20"
+            ]
+          }
+        ],
+        "w1": 962,
+        "additional": 3286
+      },
+      {
+        "batch": "B05",
+        "modules": [
+          {
+            "path": "engine/pipeline/order_audit_engine.py",
+            "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+            "w1": 1892,
+            "additional": 6426,
+            "lines": 2714,
+            "transition_ids": [
+              "CP323-S43",
+              "CP323-S44",
+              "CP324-S24",
+              "CP324-S25",
+              "CP324-S26",
+              "CP324-S27",
+              "CP324-S28",
+              "CP325-S01",
+              "CP325-S02",
+              "CP325-S03",
+              "CP325-S04",
+              "CP325-S05",
+              "CP325-S06",
+              "CP325-S07",
+              "CP325-S08",
+              "CP325-S09",
+              "CP325-S10",
+              "CP325-S11",
+              "CP325-S12",
+              "CP325-S13",
+              "CP325-S14",
+              "CP325-S15",
+              "CP325-S16",
+              "CP325-S17",
+              "CP325-S18",
+              "CP325-S19",
+              "CP325-S20",
+              "CP325-S21",
+              "CP325-S22",
+              "CP325-S23",
+              "CP325-S24",
+              "CP325-S25",
+              "CP325-S26",
+              "CP325-S27",
+              "CP325-S28",
+              "CP325-S29",
+              "CP325-S30",
+              "CP325-S31",
+              "CP325-S32",
+              "CP325-S33",
+              "CP325-S34",
+              "CP325-S35",
+              "CP325-S36",
+              "CP325-S37",
+              "CP325-S38",
+              "CP325-S39",
+              "CP325-S40",
+              "CP325-S41",
+              "CP325-S42",
+              "CP325-S43"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E13",
+              "CP322-E14",
+              "CP322-E15",
+              "CP322-E16",
+              "CP322-E17"
+            ]
+          }
+        ],
+        "w1": 1892,
+        "additional": 6426
+      },
+      {
+        "batch": "B06",
+        "modules": [
+          {
+            "path": "engine/pipeline/e_zone_detector.py",
+            "blob": "240369edf3352006082efe094eb68ac027d6689f",
+            "w1": 1109,
+            "additional": 4148,
+            "lines": 1539,
+            "transition_ids": [
+              "CP326-S01",
+              "CP326-S02",
+              "CP326-S03",
+              "CP326-S04",
+              "CP326-S05",
+              "CP326-S06",
+              "CP326-S07",
+              "CP326-S08",
+              "CP326-S09",
+              "CP326-S10",
+              "CP326-S11",
+              "CP326-S12",
+              "CP326-S13",
+              "CP326-S14",
+              "CP326-S15",
+              "CP326-S16",
+              "CP326-S17",
+              "CP326-S18",
+              "CP326-S19",
+              "CP326-S20",
+              "CP326-S21",
+              "CP326-S22",
+              "CP326-S23",
+              "CP326-S24",
+              "CP326-S25",
+              "CP326-S26",
+              "CP326-S27",
+              "CP326-S28",
+              "CP326-S29",
+              "CP326-S30",
+              "CP326-S31",
+              "CP326-S32",
+              "CP326-S33",
+              "CP326-S34",
+              "CP326-S35",
+              "CP326-S36"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E11",
+              "CP322-E12"
+            ]
+          }
+        ],
+        "w1": 1109,
+        "additional": 4148
+      },
+      {
+        "batch": "B07",
+        "modules": [
+          {
+            "path": "engine/pipeline/lifecycle_engine.py",
+            "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+            "w1": 1179,
+            "additional": 2886,
+            "lines": 1611,
+            "transition_ids": [
+              "CP323-S39",
+              "CP323-S40",
+              "CP323-S41",
+              "CP325-S44",
+              "CP327-S01",
+              "CP327-S02",
+              "CP327-S03",
+              "CP327-S04",
+              "CP327-S05",
+              "CP327-S06",
+              "CP327-S07",
+              "CP327-S08",
+              "CP327-S09",
+              "CP327-S10",
+              "CP327-S11",
+              "CP327-S12",
+              "CP327-S13",
+              "CP327-S14",
+              "CP327-S15",
+              "CP327-S16",
+              "CP327-S17",
+              "CP327-S18",
+              "CP327-S19",
+              "CP327-S20",
+              "CP327-S21",
+              "CP327-S22",
+              "CP327-S23",
+              "CP327-S24",
+              "CP327-S25",
+              "CP327-S26",
+              "CP327-S27",
+              "CP327-S28",
+              "CP327-S29",
+              "CP327-S30"
+            ],
+            "direct_accessor_ids": []
+          }
+        ],
+        "w1": 1179,
+        "additional": 2886
+      },
+      {
+        "batch": "B08",
+        "modules": [
+          {
+            "path": "engine/pipeline/PL_PH_detector.py",
+            "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+            "w1": 670,
+            "additional": 2275,
+            "lines": 840,
+            "transition_ids": [
+              "CP328-S01",
+              "CP328-S02",
+              "CP328-S03",
+              "CP328-S04",
+              "CP328-S05",
+              "CP328-S06",
+              "CP328-S07",
+              "CP328-S08",
+              "CP328-S09",
+              "CP328-S10",
+              "CP328-S11",
+              "CP328-S12",
+              "CP328-S13",
+              "CP328-S14",
+              "CP328-S15",
+              "CP328-S16",
+              "CP328-S17",
+              "CP328-S18",
+              "CP328-S19",
+              "CP328-S20",
+              "CP328-S21",
+              "CP328-S22",
+              "CP328-S23",
+              "CP328-S24",
+              "CP328-S25",
+              "CP328-S26",
+              "CP328-S27"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E07"
+            ]
+          }
+        ],
+        "w1": 670,
+        "additional": 2275
+      },
+      {
+        "batch": "B09",
+        "modules": [
+          {
+            "path": "engine/bridge/trading_pipeline.py",
+            "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+            "w1": 2317,
+            "additional": 8030,
+            "lines": 3810,
+            "transition_ids": [
+              "CP323-P25",
+              "CP323-P26",
+              "CP323-P27",
+              "CP323-P28",
+              "CP323-P29",
+              "CP323-S25",
+              "CP323-S26",
+              "CP323-S27",
+              "CP323-S28",
+              "CP323-S29",
+              "CP323-S30",
+              "CP323-S31",
+              "CP323-S32",
+              "CP323-S33",
+              "CP328-S28",
+              "CP328-S29",
+              "CP328-S30",
+              "CP329-S01",
+              "CP329-S02",
+              "CP329-S03",
+              "CP329-S04",
+              "CP329-S05",
+              "CP329-S06",
+              "CP329-S07",
+              "CP329-S08",
+              "CP329-S09",
+              "CP329-S10",
+              "CP329-S11",
+              "CP329-S12",
+              "CP329-S13",
+              "CP329-S14",
+              "CP329-S15",
+              "CP329-S16",
+              "CP329-S17",
+              "CP329-S18",
+              "CP329-S19",
+              "CP329-S20",
+              "CP329-S21",
+              "CP329-S22",
+              "CP329-S23",
+              "CP329-S24",
+              "CP329-S25",
+              "CP329-S26",
+              "CP329-S27",
+              "CP329-S28",
+              "CP329-S29",
+              "CP329-S30",
+              "CP329-S31",
+              "CP329-S32",
+              "CP329-S33",
+              "CP329-S34",
+              "CP330-S01",
+              "CP330-S02",
+              "CP330-S03",
+              "CP330-S04",
+              "CP330-S05",
+              "CP330-S06",
+              "CP330-S07",
+              "CP330-S08",
+              "CP330-S09",
+              "CP330-S10",
+              "CP330-S11",
+              "CP330-S12",
+              "CP330-S13",
+              "CP330-S14",
+              "CP330-S15",
+              "CP330-S16",
+              "CP330-S17",
+              "CP330-S18",
+              "CP330-S19",
+              "CP330-S20",
+              "CP330-S21",
+              "CP330-S22",
+              "CP330-S23"
+            ],
+            "direct_accessor_ids": [
+              "CP322-E01",
+              "CP322-E02",
+              "CP322-E03",
+              "CP322-E04",
+              "CP322-E05",
+              "CP322-E06"
+            ]
+          }
+        ],
+        "w1": 2317,
+        "additional": 8030
+      },
+      {
+        "batch": "B10",
+        "modules": [
+          {
+            "path": "engine/bridge/live_pipeline.py",
+            "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+            "w1": 193,
+            "additional": 532,
+            "lines": 226,
+            "transition_ids": [
+              "CP323-S42",
+              "CP330-S24",
+              "CP330-S25",
+              "CP330-S26",
+              "CP330-S27",
+              "CP330-S28",
+              "CP330-S29",
+              "CP330-S30",
+              "CP330-S31",
+              "CP330-S32",
+              "CP330-S33"
+            ],
+            "direct_accessor_ids": []
+          },
+          {
+            "path": "engine/pipeline/true_false.py",
+            "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+            "w1": 157,
+            "additional": 431,
+            "lines": 189,
+            "transition_ids": [
+              "CP329-S35",
+              "CP329-S36",
+              "CP329-S37",
+              "CP329-S38",
+              "CP329-S39",
+              "CP329-S40"
+            ],
+            "direct_accessor_ids": []
+          }
+        ],
+        "w1": 350,
+        "additional": 963
+      }
+    ]
+  },
+  "uncovered_by_counted_transition_spans": {
+    "engine/__init__.py": [
+      [
+        1,
+        1
+      ]
+    ],
+    "engine/bridge/__init__.py": [
+      [
+        1,
+        2
+      ]
+    ],
+    "engine/bridge/live_pipeline.py": [
+      [
+        1,
+        21
+      ],
+      [
+        71,
+        72
+      ],
+      [
+        86,
+        87
+      ],
+      [
+        113,
+        113
+      ],
+      [
+        128,
+        128
+      ],
+      [
+        146,
+        146
+      ],
+      [
+        157,
+        158
+      ],
+      [
+        166,
+        167
+      ],
+      [
+        226,
+        226
+      ]
+    ],
+    "engine/bridge/trading_pipeline.py": [
+      [
+        1,
+        53
+      ],
+      [
+        85,
+        86
+      ],
+      [
+        99,
+        100
+      ],
+      [
+        138,
+        139
+      ],
+      [
+        185,
+        186
+      ],
+      [
+        203,
+        204
+      ],
+      [
+        228,
+        228
+      ],
+      [
+        304,
+        305
+      ],
+      [
+        334,
+        335
+      ],
+      [
+        365,
+        373
+      ],
+      [
+        439,
+        440
+      ],
+      [
+        459,
+        460
+      ],
+      [
+        486,
+        487
+      ],
+      [
+        551,
+        552
+      ],
+      [
+        595,
+        595
+      ],
+      [
+        661,
+        662
+      ],
+      [
+        689,
+        690
+      ],
+      [
+        740,
+        741
+      ],
+      [
+        760,
+        785
+      ],
+      [
+        820,
+        820
+      ],
+      [
+        872,
+        872
+      ],
+      [
+        927,
+        927
+      ],
+      [
+        986,
+        987
+      ],
+      [
+        1043,
+        1044
+      ],
+      [
+        1109,
+        1110
+      ],
+      [
+        1168,
+        1169
+      ],
+      [
+        1180,
+        1181
+      ],
+      [
+        1270,
+        1271
+      ],
+      [
+        1326,
+        1327
+      ],
+      [
+        1378,
+        1379
+      ],
+      [
+        1425,
+        1426
+      ],
+      [
+        1494,
+        1495
+      ],
+      [
+        1504,
+        1505
+      ],
+      [
+        1609,
+        1610
+      ],
+      [
+        1677,
+        1678
+      ],
+      [
+        1730,
+        1731
+      ],
+      [
+        1754,
+        1755
+      ],
+      [
+        1786,
+        1787
+      ],
+      [
+        1824,
+        1825
+      ],
+      [
+        1858,
+        1859
+      ],
+      [
+        1872,
+        1873
+      ],
+      [
+        1895,
+        1896
+      ],
+      [
+        1972,
+        1973
+      ],
+      [
+        2010,
+        2011
+      ],
+      [
+        2028,
+        2029
+      ],
+      [
+        2053,
+        2054
+      ],
+      [
+        2080,
+        2080
+      ],
+      [
+        2112,
+        2112
+      ],
+      [
+        2151,
+        2152
+      ],
+      [
+        2209,
+        2210
+      ],
+      [
+        2283,
+        2283
+      ],
+      [
+        2646,
+        2647
+      ],
+      [
+        2803,
+        2836
+      ],
+      [
+        2896,
+        2914
+      ],
+      [
+        2937,
+        2938
+      ],
+      [
+        3109,
+        3112
+      ],
+      [
+        3252,
+        3253
+      ],
+      [
+        3281,
+        3282
+      ],
+      [
+        3403,
+        3404
+      ],
+      [
+        3459,
+        3460
+      ],
+      [
+        3501,
+        3501
+      ],
+      [
+        3529,
+        3530
+      ],
+      [
+        3631,
+        3632
+      ],
+      [
+        3711,
+        3712
+      ],
+      [
+        3736,
+        3739
+      ],
+      [
+        3787,
+        3787
+      ],
+      [
+        3810,
+        3810
+      ]
+    ],
+    "engine/pipeline/PL_PH_detector.py": [
+      [
+        1,
+        24
+      ],
+      [
+        100,
+        100
+      ],
+      [
+        126,
+        127
+      ],
+      [
+        173,
+        174
+      ],
+      [
+        196,
+        197
+      ],
+      [
+        220,
+        221
+      ],
+      [
+        246,
+        247
+      ],
+      [
+        285,
+        286
+      ],
+      [
+        419,
+        420
+      ],
+      [
+        456,
+        456
+      ],
+      [
+        488,
+        489
+      ],
+      [
+        516,
+        517
+      ],
+      [
+        622,
+        623
+      ],
+      [
+        643,
+        643
+      ],
+      [
+        681,
+        682
+      ],
+      [
+        733,
+        734
+      ],
+      [
+        741,
+        742
+      ],
+      [
+        769,
+        769
+      ],
+      [
+        798,
+        799
+      ],
+      [
+        815,
+        815
+      ],
+      [
+        840,
+        840
+      ]
+    ],
+    "engine/pipeline/__init__.py": [
+      [
+        1,
+        29
+      ]
+    ],
+    "engine/pipeline/a_zone_detector.py": [
+      [
+        1,
+        25
+      ],
+      [
+        215,
+        215
+      ],
+      [
+        273,
+        273
+      ],
+      [
+        336,
+        336
+      ],
+      [
+        497,
+        501
+      ],
+      [
+        532,
+        532
+      ],
+      [
+        612,
+        612
+      ],
+      [
+        837,
+        838
+      ],
+      [
+        961,
+        961
+      ],
+      [
+        1037,
+        1041
+      ],
+      [
+        1070,
+        1070
+      ]
+    ],
+    "engine/pipeline/blue_line_detector.py": [
+      [
+        1,
+        32
+      ],
+      [
+        86,
+        86
+      ],
+      [
+        231,
+        232
+      ],
+      [
+        269,
+        270
+      ],
+      [
+        324,
+        324
+      ],
+      [
+        445,
+        446
+      ],
+      [
+        515,
+        516
+      ],
+      [
+        591,
+        591
+      ]
+    ],
+    "engine/pipeline/core_utils.py": [
+      [
+        1,
+        50
+      ],
+      [
+        67,
+        67
+      ]
+    ],
+    "engine/pipeline/direction_policy.py": [
+      [
+        1,
+        71
+      ]
+    ],
+    "engine/pipeline/e_zone_detector.py": [
+      [
+        1,
+        34
+      ],
+      [
+        101,
+        111
+      ],
+      [
+        147,
+        147
+      ],
+      [
+        175,
+        175
+      ],
+      [
+        195,
+        195
+      ],
+      [
+        219,
+        219
+      ],
+      [
+        266,
+        266
+      ],
+      [
+        310,
+        312
+      ],
+      [
+        393,
+        393
+      ],
+      [
+        412,
+        412
+      ],
+      [
+        439,
+        439
+      ],
+      [
+        505,
+        506
+      ],
+      [
+        558,
+        558
+      ],
+      [
+        579,
+        580
+      ],
+      [
+        607,
+        607
+      ],
+      [
+        676,
+        676
+      ],
+      [
+        734,
+        734
+      ],
+      [
+        764,
+        764
+      ],
+      [
+        823,
+        823
+      ],
+      [
+        870,
+        870
+      ],
+      [
+        914,
+        914
+      ],
+      [
+        1006,
+        1006
+      ],
+      [
+        1030,
+        1030
+      ],
+      [
+        1085,
+        1085
+      ],
+      [
+        1123,
+        1123
+      ],
+      [
+        1131,
+        1131
+      ],
+      [
+        1174,
+        1174
+      ],
+      [
+        1219,
+        1219
+      ],
+      [
+        1286,
+        1286
+      ],
+      [
+        1405,
+        1405
+      ],
+      [
+        1493,
+        1494
+      ],
+      [
+        1507,
+        1508
+      ],
+      [
+        1539,
+        1539
+      ]
+    ],
+    "engine/pipeline/lifecycle_engine.py": [
+      [
+        1,
+        28
+      ],
+      [
+        40,
+        41
+      ],
+      [
+        93,
+        94
+      ],
+      [
+        140,
+        141
+      ],
+      [
+        169,
+        169
+      ],
+      [
+        195,
+        195
+      ],
+      [
+        253,
+        253
+      ],
+      [
+        349,
+        349
+      ],
+      [
+        367,
+        367
+      ],
+      [
+        417,
+        417
+      ],
+      [
+        447,
+        447
+      ],
+      [
+        474,
+        474
+      ],
+      [
+        497,
+        497
+      ],
+      [
+        516,
+        516
+      ],
+      [
+        532,
+        533
+      ],
+      [
+        549,
+        549
+      ],
+      [
+        591,
+        592
+      ],
+      [
+        600,
+        605
+      ],
+      [
+        694,
+        694
+      ],
+      [
+        764,
+        765
+      ],
+      [
+        972,
+        972
+      ],
+      [
+        994,
+        995
+      ],
+      [
+        1035,
+        1035
+      ],
+      [
+        1067,
+        1072
+      ],
+      [
+        1109,
+        1111
+      ],
+      [
+        1137,
+        1137
+      ],
+      [
+        1179,
+        1179
+      ],
+      [
+        1198,
+        1198
+      ],
+      [
+        1233,
+        1233
+      ],
+      [
+        1323,
+        1327
+      ],
+      [
+        1376,
+        1376
+      ],
+      [
+        1410,
+        1411
+      ],
+      [
+        1611,
+        1611
+      ]
+    ],
+    "engine/pipeline/order_audit_engine.py": [
+      [
+        1,
+        24
+      ],
+      [
+        38,
+        38
+      ],
+      [
+        76,
+        76
+      ],
+      [
+        137,
+        169
+      ],
+      [
+        196,
+        197
+      ],
+      [
+        290,
+        290
+      ],
+      [
+        325,
+        325
+      ],
+      [
+        376,
+        377
+      ],
+      [
+        440,
+        441
+      ],
+      [
+        521,
+        522
+      ],
+      [
+        551,
+        556
+      ],
+      [
+        652,
+        652
+      ],
+      [
+        687,
+        688
+      ],
+      [
+        762,
+        775
+      ],
+      [
+        807,
+        808
+      ],
+      [
+        919,
+        920
+      ],
+      [
+        980,
+        981
+      ],
+      [
+        1087,
+        1088
+      ],
+      [
+        1133,
+        1134
+      ],
+      [
+        1200,
+        1201
+      ],
+      [
+        1249,
+        1249
+      ],
+      [
+        1311,
+        1311
+      ],
+      [
+        1338,
+        1338
+      ],
+      [
+        1434,
+        1435
+      ],
+      [
+        1457,
+        1458
+      ],
+      [
+        1485,
+        1486
+      ],
+      [
+        1522,
+        1523
+      ],
+      [
+        1610,
+        1611
+      ],
+      [
+        1643,
+        1643
+      ],
+      [
+        1698,
+        1698
+      ],
+      [
+        1721,
+        1721
+      ],
+      [
+        1796,
+        1797
+      ],
+      [
+        1878,
+        1878
+      ],
+      [
+        2018,
+        2019
+      ],
+      [
+        2044,
+        2045
+      ],
+      [
+        2123,
+        2123
+      ],
+      [
+        2205,
+        2205
+      ],
+      [
+        2289,
+        2290
+      ],
+      [
+        2402,
+        2403
+      ],
+      [
+        2460,
+        2507
+      ],
+      [
+        2515,
+        2519
+      ],
+      [
+        2545,
+        2545
+      ],
+      [
+        2599,
+        2600
+      ],
+      [
+        2621,
+        2621
+      ],
+      [
+        2668,
+        2669
+      ],
+      [
+        2713,
+        2714
+      ]
+    ],
+    "engine/pipeline/reaction_engine.py": [
+      [
+        1,
+        34
+      ],
+      [
+        175,
+        183
+      ],
+      [
+        245,
+        245
+      ],
+      [
+        342,
+        345
+      ],
+      [
+        640,
+        641
+      ],
+      [
+        786,
+        787
+      ],
+      [
+        884,
+        1304
+      ],
+      [
+        1368,
+        1370
+      ],
+      [
+        1479,
+        1480
+      ],
+      [
+        1552,
+        1553
+      ],
+      [
+        1722,
+        1722
+      ],
+      [
+        1762,
+        1762
+      ],
+      [
+        1779,
+        1780
+      ],
+      [
+        1852,
+        1852
+      ],
+      [
+        1945,
+        1946
+      ],
+      [
+        2052,
+        2052
+      ],
+      [
+        2216,
+        2216
+      ],
+      [
+        2418,
+        2419
+      ],
+      [
+        2516,
+        2516
+      ],
+      [
+        2784,
+        2791
+      ],
+      [
+        2865,
+        2865
+      ],
+      [
+        2906,
+        2908
+      ]
+    ],
+    "engine/pipeline/s_zone_detector.py": [
+      [
+        1,
+        26
+      ],
+      [
+        65,
+        79
+      ],
+      [
+        177,
+        200
+      ],
+      [
+        252,
+        252
+      ],
+      [
+        277,
+        278
+      ],
+      [
+        313,
+        313
+      ],
+      [
+        377,
+        377
+      ],
+      [
+        402,
+        402
+      ],
+      [
+        451,
+        452
+      ],
+      [
+        533,
+        533
+      ],
+      [
+        585,
+        586
+      ],
+      [
+        627,
+        627
+      ],
+      [
+        695,
+        695
+      ],
+      [
+        740,
+        740
+      ],
+      [
+        784,
+        784
+      ],
+      [
+        805,
+        806
+      ],
+      [
+        853,
+        853
+      ],
+      [
+        869,
+        869
+      ],
+      [
+        961,
+        961
+      ],
+      [
+        994,
+        995
+      ],
+      [
+        1053,
+        1053
+      ],
+      [
+        1224,
+        1224
+      ],
+      [
+        1247,
+        1247
+      ],
+      [
+        1305,
+        1306
+      ],
+      [
+        1422,
+        1423
+      ],
+      [
+        1467,
+        1467
+      ],
+      [
+        1491,
+        1491
+      ],
+      [
+        1526,
+        1527
+      ],
+      [
+        1552,
+        1552
+      ]
+    ],
+    "engine/pipeline/true_false.py": [
+      [
+        1,
+        17
+      ],
+      [
+        31,
+        32
+      ],
+      [
+        56,
+        57
+      ],
+      [
+        129,
+        130
+      ],
+      [
+        160,
+        161
+      ],
+      [
+        189,
+        189
+      ]
+    ]
+  },
+  "findings": [
+    {
+      "id": "CP331-F01",
+      "kind": "TRACEABILITY",
+      "status": "OPEN_SUPPLEMENT",
+      "source": [
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "range": [
+            691,
+            783
+          ]
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "range": [
+            1111,
+            1131
+          ]
+        }
+      ],
+      "detail": "Two CP322 provider objects lack explicit path and blob; exact source and call-site provenance establish they are Bridge providers. Preserve original CP322; attach explicit normalized provider anchors in follow-up."
+    },
+    {
+      "id": "CP331-F02",
+      "kind": "CROSS_OWNER_INDEX_CONTRACT",
+      "status": "OPEN_SUPPLEMENT",
+      "source": [
+        {
+          "path": "engine/pipeline/reaction_engine.py",
+          "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+          "range": [
+            886,
+            1184
+          ]
+        },
+        {
+          "path": "engine/pipeline/core_utils.py",
+          "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+          "range": [
+            17,
+            48
+          ]
+        },
+        {
+          "path": "engine/pipeline/direction_policy.py",
+          "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+          "range": [
+            19,
+            70
+          ]
+        }
+      ],
+      "detail": "These provider families are covered locally in W1 and partly referenced by CP330, but not a single explicit W2 provider-to-consumer index/containment/policy register. Need link strict crossing, extrema tie, cache retention/identity, native fallback and reflection to actual call sites; separate lexical discovery from semantic disposition."
+    },
+    {
+      "id": "CP331-F03",
+      "kind": "CROSS_OWNER_HANDOFF",
+      "status": "OPEN_SUPPLEMENT",
+      "source": [
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "range": [
+            2462,
+            2505
+          ]
+        },
+        {
+          "path": "engine/pipeline/s_zone_detector.py",
+          "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+          "range": [
+            178,
+            200
+          ]
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+          "range": [
+            2897,
+            2922
+          ]
+        }
+      ],
+      "detail": "Accepted A causes return original entry iff selected source/stop and complete accepted list unchanged, else shallow copy; cause filter CP324 is reference-only. S adapters retain default confirmation and reset delegation. Range branch reuses accepted full S/eligible A or constructs standalone S and assigns candidates as accepted. Need explicit producer-consumer edges and reconcile with prior referenced spans; no double counting."
+    },
+    {
+      "id": "CP331-F04",
+      "kind": "DOCUMENTATION_OVERGENERALIZATION",
+      "status": "OPEN_CORRECTION",
+      "source": [
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "range": [
+            829,
+            918
+          ]
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "range": [
+            982,
+            1068
+          ]
+        },
+        {
+          "path": "engine/pipeline/order_audit_engine.py",
+          "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+          "range": [
+            2546,
+            2600
+          ]
+        }
+      ],
+      "affected": "Algorithms/V3/Chronology/README.md",
+      "detail": "Summary says Order A/B universally strictly later exact confirmation. Stopped-A native/independent route has strict initial threshold, with canonical remap not rechecked; Order_B strict after exact boundary break; S/E direct parent-stop path calls without confirmation_after and bounds First by gate MAIN, not a universal exact confirmation > parent stop. Optional threshold before blocked skip is not reapplied. CP325 already qualifies; active summary must distinguish route scopes, preserving historical entries."
+    },
+    {
+      "id": "CP331-F05",
+      "kind": "CLOSURE_EVIDENCE",
+      "status": "OPEN_REVIEW",
+      "detail": "A nonoverlapping span/ID join and named accessor census do not establish semantic completeness or every actual handoff. Need explicit cross-owner semantic disposition register tied to owner ledger, source and current specs, including optional callbacks, use/creation ownership, invalidation and visibility. Independent W3 remains separate. Current gap scan is bounded, not exhaustive."
+    }
+  ],
+  "validation": {
+    "transition_rows": 316,
+    "unique_transition_ids": 316,
+    "row_blob_line_errors": 0,
+    "transition_range_overlaps": 0,
+    "prior_and_reference_anchor_errors": 0,
+    "source_modules_reopened_and_matched_w1": 16,
+    "source_tree_w1_mismatch": 0,
+    "accessor_sites_recounted": 20,
+    "accessor_missing_extra": 0,
+    "accessor_blob_mismatch": 0,
+    "completion_manifests_reopened": 9,
+    "completion_evidence_anchor_matches": 19,
+    "w1_batches": 10,
+    "w1_rows": 11575,
+    "w1_additional": 38645,
+    "findings_open": 5,
+    "semantic_recheck_of_every_transition": "NOT_ESTABLISHED_BY_STRUCTURAL_JOIN",
+    "runtime": "NOT_RUN_BY_SCOPE",
+    "raw": "NOT_RUN_BY_SCOPE"
+  },
+  "qualification": "Uncovered line ranges include comments, declarations, prior provider or referenced contracts and non-temporal code; not all are gaps. W1 scope retained; no independent restatement of 11,575 individual historical dispositions. No acceptance outside this gate assessment.",
+  "remaining": "CP332 / W2 supplemental dependency and handoff reconciliation: resolve CP331-F01–F04, explicitly link shared index/containment/direction provider and actual consumer call sites, accepted A filter and S/Bridge adapters; correct active chronology summary, preserve historical records. Then finish F05 with a cross-owner semantic disposition matrix and re-run W2 closure; W3/W4 remain NOT RUN until actual W2 acceptance."
+}
