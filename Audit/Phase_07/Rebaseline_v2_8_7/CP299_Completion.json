@@ -1,0 +1,179 @@
+{
+  "checkpoint": 299,
+  "batch": "RB08/W1/B09",
+  "status": "PASS_SCOPED_RESPONSE_AND_ENTRY_LOCAL_SEMANTIC_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "e4779e232a54f600cf2cddb84c683a541d13eca6",
+  "validated_evidence_head": "0ada87ab0c0f12be5173a0f9e7598b9270a61295",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      3633,
+      3712
+    ],
+    [
+      3713,
+      3730
+    ],
+    [
+      3731,
+      3737
+    ],
+    [
+      3738,
+      3755
+    ],
+    [
+      3756,
+      3769
+    ],
+    [
+      3770,
+      3810
+    ]
+  ],
+  "scope": "Complete local source contracts for response, calculation scope, live wrappers, common runner, CLI and module entry. CP293 live scope rows reviewed for continuity and excluded from incremental acceptance.",
+  "counts": {
+    "w1_previous": 1232,
+    "w1_this_checkpoint": 96,
+    "w1_reviewed": 1328,
+    "w1_denominator": 2317,
+    "w1_remaining": 989,
+    "by_category": {
+      "branches": {
+        "reviewed": 363,
+        "total": 562,
+        "remaining": 199
+      },
+      "comparisons": {
+        "reviewed": 211,
+        "total": 337,
+        "remaining": 126
+      },
+      "arithmetic": {
+        "reviewed": 109,
+        "total": 173,
+        "remaining": 64
+      },
+      "calls": {
+        "reviewed": 645,
+        "total": 1245,
+        "remaining": 600
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 274,
+      "effects": 22,
+      "exits": 5,
+      "total": 301
+    },
+    "additional_cumulative": 5255,
+    "additional_cumulative_by_category": {
+      "accesses": 4842,
+      "effects": 319,
+      "exits": 94
+    },
+    "all_sites_this_checkpoint": 397,
+    "all_sites_cumulative": 6583,
+    "contracts_this_checkpoint": 14,
+    "contracts_rechecked_CP293": 4,
+    "contracts_cumulative": 181,
+    "exact_mapped_spans_in_scope": 486,
+    "newly_accepted_mapped_w1": 94,
+    "newly_accepted_CP292_w1": 2,
+    "newly_accepted_mapped_additional": 293,
+    "newly_accepted_CP292_additional": 8,
+    "excluded_CP293": {
+      "w1": 33,
+      "additional": 116,
+      "total": 149
+    },
+    "duplicate_or_prior_overlap": 0,
+    "remaining_owner_intervals": 47
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP299_B09_Response_Entry_Review.json": "cc5b82142ea3d52655cc3af80644c66ca89be1e8",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP299_Prior_Overlap_Validation.json": "1d7e098e7fbedbec30739956283a012f45d43aee",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP299_Remaining_Bridge_Owners.json": "a61141b1b15dd48ca680a62657e446fb39b723a1"
+  },
+  "validation": {
+    "source_blob_match": true,
+    "exact_mapped_source_span_comparison": true,
+    "historical_mapped_retired_partition_complete": true,
+    "cp292_current_complement_linked": true,
+    "cp293_previously_accepted_rows_excluded": true,
+    "prior_CP293_through_CP298_overlap_zero": true,
+    "all_rows_linked_to_contracts": true,
+    "remaining_category_complement_complete": true,
+    "individual_evidence_remote_readback": true,
+    "main_unchanged_at_evidence_head": true,
+    "only_new_evidence_files_at_evidence_head": true
+  },
+  "dependency_interface_review": [
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "anchors": [
+        18,
+        131,
+        162
+      ],
+      "finding": "Repair finder includes RAW times through horizon, converts level to Decimal and uses direction-specific strict search. Final row annotations use source ownership and optional closed confirmation callback; not trading rediscovery."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "anchors": [
+        35,
+        52,
+        61,
+        65
+      ],
+      "finding": "Caller stages append and reports result readiness; BaseException resets view owner and rethrows. Wrapper only stages independent closed prefixes, not full persistent trading state."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "anchors": [
+        55,
+        63,
+        75,
+        1756,
+        1767,
+        1784,
+        3502,
+        3531
+      ],
+      "finding": "Progress uses context sink or stderr; closed prefix cache publishes on normal stage exit; merge shares finalized row references; reversal and response owner boundary retained."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP299-F01",
+      "detail": "Feature enabled flags and module version availability use distinct conditions; activeDirection only added on reversal, lexicographic tie and absent-key defaults preserved."
+    },
+    {
+      "id": "CP299-F02",
+      "detail": "T/F repair search uses original bounded RAW and strict Decimal crossing; StopAll confirmation uses inclusive closed horizon. Present empty calculationSegments means no candidate/annotation iteration, not singleton fallback."
+    },
+    {
+      "id": "CP299-F03",
+      "detail": "Reversal replaces original direction map; only segment rows are annotated, aggregate may observe shared references. No separate aggregate annotation or price rounding."
+    },
+    {
+      "id": "CP299-F04",
+      "detail": "Scope setup/cleanup ordering and live cache publication remain conditional; CLI total progress precedes encoding and output; SystemExit is not caught by Exception."
+    }
+  ],
+  "documentation_changes": "One source-pinned clarification section appended to existing Bridge documentation; no production changes.",
+  "limitations": [
+    "Independent full current canonical AST replay NOT RUN; exact historical canonical span comparison and CP287/CP292 anchored current complement support scoped acceptance.",
+    "The remaining owner index is a top-level source-interval grouping, not runtime ownership proof; inspect exact declaration spans in each next checkpoint.",
+    "No runtime, RAW, differential or benchmark testing authorized. Dependency review is interface-local, not W2/W3/W4 acceptance.",
+    "GitHub pinned source and current source-only rules supersede archive startup; no ZIP or presentation preference changes."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP300 / RB08 / W1 / B09 — module preamble and progress/loading procedures (1–100); _index_selected (366–373), select_reaction_serialization_items (374–396), serialize (397–440), serialize_blue_lines (441–460), serialize_a_zones (461–487) only if full-procedure verification is feasible. Use CP299 remaining-owner category IDs, exclude accepted rows; remaining declaration metadata can require precise scope/span checks."
+}
