@@ -1,0 +1,255 @@
+{
+  "checkpoint": 275,
+  "batch": "B10",
+  "sub_batch": "B10-15",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "1ba6affbff3bfa2dd2c7f36849007a04d9735da9",
+  "path": "engine/bridge/live_pipeline.py",
+  "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+  "source_range": [
+    59,
+    80
+  ],
+  "procedures": "L02",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 7,
+    "by_category": {
+      "branches": 3,
+      "comparisons": 0,
+      "arithmetic": 0,
+      "calls": 4
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 0
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "65a62662b68a8178fcbbe04fc0ef8709674064c5",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 202,
+      "source_span": [
+        59,
+        8,
+        69,
+        17
+      ],
+      "procedure": "L02",
+      "original_operation": "Try",
+      "original_context": "SC11",
+      "interpretation": "Try covers transactional calculation",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L59-L69",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 203,
+      "source_span": [
+        60,
+        12,
+        65,
+        70
+      ],
+      "procedure": "L02",
+      "original_operation": "With",
+      "original_context": "SC11",
+      "interpretation": "Enter staged append context",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L60-L65",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 230,
+      "source_span": [
+        66,
+        8,
+        69,
+        17
+      ],
+      "procedure": "L02",
+      "original_operation": "ExceptHandler",
+      "original_context": "SC12",
+      "interpretation": "Catch BaseException from protected block",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L66-L69",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 204,
+      "source_span": [
+        60,
+        17,
+        60,
+        49
+      ],
+      "procedure": "L02",
+      "original_operation": "self._buckets.stage_append",
+      "original_context": "SC11",
+      "interpretation": "Enter bucket stage_append with rows",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L60-L60",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 212,
+      "source_span": [
+        61,
+        26,
+        64,
+        17
+      ],
+      "procedure": "L02",
+      "original_operation": "calculate_live_from_buckets",
+      "original_context": "SC11",
+      "interpretation": "Calculate from buckets with retained views, delta and report callback",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L61-L64",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 227,
+      "source_span": [
+        65,
+        16,
+        65,
+        70
+      ],
+      "procedure": "L02",
+      "original_operation": "report_stage",
+      "original_context": "SC11",
+      "interpretation": "Report result ready inside transaction",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L65-L65",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 235,
+      "source_span": [
+        68,
+        33,
+        68,
+        50
+      ],
+      "procedure": "L02",
+      "original_operation": "LiveMarketViews",
+      "original_context": "SC12",
+      "interpretation": "Replace market views on protected failure",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Input chronology, transactional ownership, exact bytes, transport dispatch or progress as stated.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Bucket owner, replay calculation, callbacks and transport caller remain W2/W3; no runtime claim.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L68-L68",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/18_Live_Bridge.md",
+        "line": 28,
+        "heading": "L02"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B10-15-S01",
+      "path": "engine/bridge/live_pipeline.py",
+      "source_span": [
+        59,
+        80
+      ],
+      "interpretation": "Protected try includes stage_append context, replay and ready report, including context exit. Any BaseException replaces retained market views and reraises; bucket rollback delegated. Initial validation and progress outside catch. Distinct error classes for changed source and mismatched delta.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L59-L80",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 pending."
+    }
+  ],
+  "findings": [],
+  "open_dependencies": [
+    "W2 bucket transaction, market views, fresh replay, callbacks and worker byte lineage; W3/W4 open."
+  ]
+}

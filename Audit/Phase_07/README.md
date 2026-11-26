@@ -1326,3 +1326,59 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 271 — Chronological annotation dispatch and final buffers
 
 [Local review](Semantic_Closure_B10_11.md) · [Site evidence](Semantic_Closure_B10_11.json): 17 original rows, local PASS; B10 127/320.
+
+## Checkpoint 272 — Live constructor validation and state ownership
+
+[Local review](Semantic_Closure_B10_12.md) · [Site evidence](Semantic_Closure_B10_12.json): 14 original rows, local PASS; B10 141/320.
+
+## Checkpoint 273 — Append time admission and requested horizon
+
+[Local review](Semantic_Closure_B10_13.md) · [Site evidence](Semantic_Closure_B10_13.json): 16 original rows, local PASS; B10 157/320.
+
+## Checkpoint 274 — Progress accounting and pretransaction notification
+
+[Local review](Semantic_Closure_B10_14.md) · [Site evidence](Semantic_Closure_B10_14.json): 8 original rows, local PASS; B10 165/320.
+
+## Checkpoint 275 — Bucket transaction, view invalidation and error classes
+
+[Local review](Semantic_Closure_B10_15.md) · [Site evidence](Semantic_Closure_B10_15.json): 7 original rows, local PASS; B10 172/320.
+
+## Checkpoint 276 — Decimal decoding and nonempty RAW validation
+
+[Local review](Semantic_Closure_B10_16.md) · [Site evidence](Semantic_Closure_B10_16.json): 7 original rows, local PASS; B10 179/320.
+
+## Checkpoint 277 — Selected range identity and catchup suffix
+
+[Local review](Semantic_Closure_B10_17.md) · [Site evidence](Semantic_Closure_B10_17.json): 10 original rows, local PASS; B10 189/320.
+
+## Checkpoint 278 — Exact byte prefix and hash checkpoint
+
+[Local review](Semantic_Closure_B10_18.md) · [Site evidence](Semantic_Closure_B10_18.json): 7 original rows, local PASS; B10 196/320.
+
+## Checkpoint 279 — Delta continuity proof and post-success checkpoint
+
+[Local review](Semantic_Closure_B10_19.md) · [Site evidence](Semantic_Closure_B10_19.json): 16 original rows, local PASS; B10 212/320.
+
+## Checkpoint 280 — Full append prefix proof and suffix-only updates
+
+[Local review](Semantic_Closure_B10_20.md) · [Site evidence](Semantic_Closure_B10_20.json): 25 original rows, local PASS; B10 237/320.
+
+## Checkpoint 281 — Strict lineage time and catchup commit
+
+[Local review](Semantic_Closure_B10_21.md) · [Site evidence](Semantic_Closure_B10_21.json): 6 original rows, local PASS; B10 243/320.
+
+## Checkpoint 282 — Compact worker message and progress filter
+
+[Local review](Semantic_Closure_B10_22.md) · [Site evidence](Semantic_Closure_B10_22.json): 7 original rows, local PASS; B10 250/320.
+
+## Checkpoint 283 — Worker seed and original-source binding
+
+[Local review](Semantic_Closure_B10_23.md) · [Site evidence](Semantic_Closure_B10_23.json): 16 original rows, local PASS; B10 266/320.
+
+## Checkpoint 284 — Binary header validation and progress scope
+
+[Local review](Semantic_Closure_B10_24.md) · [Site evidence](Semantic_Closure_B10_24.json): 31 original rows, local PASS; B10 297/320.
+
+## Checkpoint 285 — Worker recoverable mismatch, fatal errors and exit
+
+[Local review](Semantic_Closure_B10_25.md) · [Site evidence](Semantic_Closure_B10_25.json): 23 original rows, local PASS; B10 320/320.

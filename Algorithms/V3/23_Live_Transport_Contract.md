@@ -37,7 +37,7 @@ Inputs selected list, original bytes data, original decoded list. Binary lower b
 
 ### L06 — LiveRawSource._remember_prefix
 
-Input raw bytes. Set _end to last occurrence index of closing square bracket (native not-found value -1, no independent rejection here). Construct SHA-256 state over memory view slice before _end; retain byte suffix from _end inclusive as _ending; set _raw_sha256 to L07 digest of prefix plus suffix. Mutates four state fields in that order. No separate return.
+Input raw bytes. Set _end to last occurrence index of closing square bracket (native not-found value -1, no independent rejection here). Construct SHA-256 state over memory view slice before _end; retain byte suffix from _end inclusive as _ending; set _raw_sha256 to L07 digest of prefix plus suffix. Mutates four state fields in that order. No separate return. The last-bracket search returns -1 if absent; no explicit rejection is performed by this helper before slicing.
 
 ### L07 — LiveRawSource._file_digest
 
@@ -49,7 +49,7 @@ Inputs delta bytes, base_sha256, expected raw_sha256, pipeline. If base differs 
 
 ### L09 — LiveRawSource.append
 
-Inputs full bytes and pipeline. Reject if byte length <= _end OR SHA-256 over prefix before _end differs from stored prefix, using LiveRawChanged. Left-strip suffix from _end. If comma prefix, decode JSON by replacing first comma with opening bracket and retaining remainder (L04). Else if right-stripped suffix is exactly closing bracket, new_rows empty. Else reject as non-append. Call L10 even when new_rows empty. After success, nonempty rows trigger L06 on new full bytes; otherwise if exact ending bytes changed replace ending and recompute raw digest via L07. Return result. No deduplication or fallback to parsing revised history.
+Inputs full bytes and pipeline. Reject if byte length <= _end OR SHA-256 over prefix before _end differs from stored prefix, using LiveRawChanged. Left-strip suffix from _end. If comma prefix, decode JSON by replacing first comma with opening bracket and retaining remainder (L04). Else if right-stripped suffix is exactly closing bracket, new_rows empty. Else reject as non-append. Call L10 even when new_rows empty. After success, nonempty rows trigger L06 on new full bytes; otherwise if exact ending bytes changed replace ending and recompute raw digest via L07. Return result. No deduplication or fallback to parsing revised history. The length guard precedes hashing; suffix-only changes are committed only after the downstream append returns.
 
 ### L10 — LiveRawSource._append_rows
 
@@ -66,7 +66,7 @@ Input event mapping. Forward via L11 with kind progress and event payload if eve
 ### L13 — main
 
 Entry parses arguments, reads required environment variable TRADINGBOT_LIVE_RAW_SOURCE as path, reads selected bytes and decodes. If selected path equals original path reuse selected bytes and decoded object; otherwise read and decode original independently. Create lineage L05, release local large input references, create continuation L01 using load_engines(args, empty mapping); send seed ready=true and payload from appending selected. Release selected reference.
-Repeatedly read header from binary stdin with size limit 256. Empty header (EOF) ends successfully. Nonempty must end with newline; parse JSON, read bytes, sha256, baseSha256. Validate size exact int and >0, digest string length 64 (no hex-character check). Read exactly size bytes or raise ValueError. Set progress sink to L12 only if progress is exact Boolean true; otherwise no-op lambda. Within progress context:
+Repeatedly read header from binary stdin with size limit 256. Empty header (EOF) ends successfully. Nonempty must end with newline; parse JSON, read bytes, sha256, baseSha256. Validate size exact int and >0, digest string length 64 (no hex-character check). Read exactly size bytes or raise ValueError. Set progress sink to L12 only if progress is exact Boolean true; otherwise no-op lambda. Within progress context: The four header predicates short-circuit in source order: exact integer type, positive size, string instance, then digest length.
 - If base digest not null, invoke L08. Catch LiveRawDeltaMismatch locally: send error code RAW_DELTA_MISMATCH with checkpoint-continuity message, continue next request.
 - Else if hash of raw bytes does not equal digest, send error code RAW_RETRY with retry message, continue.
 - Otherwise invoke L09.
