@@ -1,0 +1,46 @@
+{
+  "checkpoint": 380,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded S37–S38 handoffs",
+  "consumers": [
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        837,
+        867
+      ],
+      "meaning": "S34 Reset map and S35 ordinary confirmation gates, S36 strict crossing."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2682,
+        2685
+      ],
+      "meaning": "Order stop strict high>level bearish else low<level, Decimal normalization."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1054,
+        1164
+      ],
+      "meaning": "S39 first pre-Order race with fallback flag, None aborts; fallback causes alternative path, nonfallback retains pre-Order; later normal race. Full S39 next partition."
+    }
+  ],
+  "remaining": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP372-F02"
+  ],
+  "cross_owner": [
+    "Prove native Order creator/consumer, lower-index availability, chronology/cache freshness, position/time alignment, strict Decimal and accepted ledger independently.",
+    "Do not conflate returned fallback time with observed event or a candidate record with lifecycle acceptance."
+  ]
+}
