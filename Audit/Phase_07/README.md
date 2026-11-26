@@ -708,3 +708,23 @@ W1 cumulative 8077/11504. Next B07 LC40, line 1377; W2/W3/W4 open.
 [Local review](Semantic_Closure_B08_10.md) and [site evidence](Semantic_Closure_B08_10.json): 45 original rows, 3 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 184/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
+
+
+## Checkpoint 148 — Matching-leg activation schedule and qualification deduplication
+
+[Local review](Semantic_Closure_B08_11.md) and [site evidence](Semantic_Closure_B08_11.json): 31 original rows, 2 supplemental items, one resolved finding; local PASS. Primary 215/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 149 — Retained Primary steps, ownership replay and MBL refresh
+
+[Local review](Semantic_Closure_B08_12.md) and [site evidence](Semantic_Closure_B08_12.json): 27 original rows, 2 supplemental items, one resolved finding; local PASS. Primary 242/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 150 — Global reversal and activation race, pending proposal ownership
+
+[Local review](Semantic_Closure_B08_13.md) and [site evidence](Semantic_Closure_B08_13.json): 46 original rows, 3 supplemental items, one resolved finding; local PASS. Primary 288/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 151 — Global point commitment, native Order invalidation and aggregate publication
+
+[Local review](Semantic_Closure_B08_14.md) and [site evidence](Semantic_Closure_B08_14.json): 34 original rows, 3 supplemental items, one resolved finding; local PASS. Primary 322/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
