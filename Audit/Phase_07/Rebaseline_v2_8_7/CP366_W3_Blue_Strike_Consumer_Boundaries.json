@@ -1,0 +1,171 @@
+{
+  "checkpoint": 366,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native provider and immediate consumer source review; no cross-owner closure.",
+  "consumers": [
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "range": [
+        1,
+        63
+      ],
+      "blue_sites": [
+        69,
+        73,
+        79,
+        96
+      ],
+      "meaning": "Native exact selector rejects other directions; strict comparator B < R >; policy extreme low/high, no chronology. BL04 uses policy.direction; BL05 also tests original direction string after validation. External imports conditional."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1185,
+        1203
+      ],
+      "blue_sites": [
+        99,
+        131,
+        169
+      ],
+      "meaning": "Right bisect minus one maps timestamp to position, default underflow raises, no upper bound check. Lower bounds left bisect both endpoints; no guarantee of map key alignment or coverage."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1223,
+        1236
+      ],
+      "blue_sites": [
+        97,
+        168
+      ],
+      "meaning": "Confirmation cache key direction/flag/First/Break/string box edges/conditional intrabar start; omits market generation. Non-None hit can bypass market reads. Caller cache lifetime remains open."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1257,
+        1302
+      ],
+      "blue_sites": [
+        97,
+        168
+      ],
+      "meaning": "Default true validates start against nominal Break interval; strict first lower crossing or Break open fallback cached; no proof marker. BL05 may scan earlier pending range and BL06 uses main-open prefix, neither is exact-event proof."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        233,
+        323
+      ],
+      "blue_sites": [
+        55,
+        62,
+        145
+      ],
+      "meaning": "Scale builder consumes last confirmed strike main identity/time and semantic extreme, uses full main High/Low for drawing; Reset uses positional first-stop check and stricter beyond-prior source extreme, emits invalid records. These are bounded consumer observations; full BL07–08 W3 next."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        333,
+        516
+      ],
+      "blue_sites": [
+        145
+      ],
+      "meaning": "Tail supplies map from chronology.candles, Mode A anchor/boundary else prior reaction edge, compares strike count and spacing; update uses caller frontier and local prefix lists, not independent cache or ownership proof."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        69,
+        109
+      ],
+      "meaning": "A owns independently sorted Blue ordinal/source/kind sequence and separate Reaction ordering; native confirmation is precomputed using A route."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        497,
+        531
+      ],
+      "meaning": "A explicitly passes use_intrabar_start=false, unlike Blue default true; no interchangeability of returned chronology timestamps. Native first-reaction gate inclusive with ordered fast path or original linear fallback."
+    }
+  ],
+  "prior": [
+    {
+      "checkpoint": 314,
+      "blob": "94a686734660a7f30ae2a7a49e7eaf3c4e4f572a",
+      "disposition": "B03 exact source and historical row links reconciled; dependency contracts retained, not a new whole-batch acceptance."
+    },
+    {
+      "checkpoint": 350,
+      "transition_ids": [
+        "CP323-S17",
+        "CP323-S18"
+      ],
+      "accessor_ids": [
+        "CP322-E09",
+        "CP322-E10"
+      ],
+      "group": "CP332-G28",
+      "selected_sites": [
+        "CP332-E037",
+        "CP332-E038",
+        "CP332-E039",
+        "CP332-E040"
+      ],
+      "nonmatrix_lines": [
+        99,
+        131,
+        169
+      ],
+      "disposition": "Direct source semantics and qualifications agree; BL05 cutoff is upper bound not mandatory exact crossing time."
+    },
+    {
+      "checkpoint": 352,
+      "groups": [
+        "G14",
+        "G15",
+        "G17",
+        "G18",
+        "G27",
+        "G28",
+        "G29",
+        "G30",
+        "G36",
+        "G37",
+        "G38",
+        "G39",
+        "G40",
+        "G41",
+        "G42",
+        "G43",
+        "G44",
+        "G45",
+        "G46",
+        "G47"
+      ],
+      "disposition": "Bounded provider review preserved. Cache generation and caller map alignment not closed."
+    }
+  ],
+  "status": "REVIEWED_BOUNDED_CONSUMERS",
+  "remaining": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ]
+}

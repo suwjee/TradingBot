@@ -8,11 +8,11 @@ Registers: frozen Fibonacci level, list of confirmed strikes, pending strike/nul
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| BLS01 | INIT | Reaction and reference supplied | Calculate exact 0.618 level; enumerate main First..Break | EMPTY | BL04,BL06 |
+| BLS01 | INIT | Reaction and reference supplied | Calculate exact 0.618 level; enumerate integer main-map keys First..Break | EMPTY | BL04,BL06 |
 | BLS02 | EMPTY or PENDING | Break has no eligible lower rows | Skip entire main including confirming-color check | EMPTY or PENDING | BL06 |
 | BLS03 | EMPTY or PENDING | Directional extreme strictly improves threshold and pending if any | Replace pending with current source/index/price; equality retains old | PENDING | BL06 |
-| BLS04 | PENDING | Current main confirming color (GREEN B, RED R), after improvement check | Append pending strike, clear pending | EMPTY | BL06 |
-| BLS05 | PENDING | End of main traversal | Scan lower from pending source through exact Break, accumulate strict threshold penetrations; first strict confirmation with eligible set selects most directional earliest tie | RETURN | BL05,BL06 |
+| BLS04 | PENDING | Current supplied main tag (GREEN B, RED R), after improvement check; Break tag not clipped with its extreme | Append pending strike, clear pending | EMPTY | BL06 |
+| BLS05 | PENDING | End of main traversal | Scan lower from pending main source to nominal Break end exclusive, stop at first row later than RE61 returned cutoff (fallback possible); first strict confirmation-side crossing with eligible set selects most directional first-traversed tie | RETURN | BL05,BL06 |
 | BLS06 | EMPTY | End of traversal | Return level and strikes | RETURN | BL06 |
 
 ## BLQ — Sequence and visibility state
