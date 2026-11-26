@@ -1396,3 +1396,7 @@ Latest main `c99b4c957e932d9ee70c492ca03ce80711447fc1` supersedes the pinned his
 Rewrote accepted donor supplementation and Order_B feedback convergence, state retention, visibility selection, closed-regime cache, MarketIndexWindow and live dispatch contracts against latest pinned main `c99b4c957e932d9ee70c492ca03ce80711447fc1`. Revised related state-machine and chronology clauses. Historical site ledgers remain immutable; new inventory, dependency rechecks and local review still pending. No runtime claim.
 
 RB01 dependent registries and active continuation/chronology explanations updated. Reported ZIP test results remain externally supplied historical evidence, not tests run in this source-only session. W1 new-baseline inventory remains open.
+
+## CP286 — RB01 source rebaseline complete
+
+[Phase 01 v2.8.7 completion](../Phase_01/Rebaseline_v2_8_7/README.md) PASS for source discovery and freeze only. New baseline `c99b4c957e932d9ee70c492ca03ce80711447fc1`; 27 changed repository paths, 9 changed Engine files, 2 changed operational modules. All 48 reference source blocks match. Active W1 remains incomplete; historical W1 preserved. [Rebaseline execution plan](Rebaseline_v2_8_7_Execution_Plan.json). Next RB02 / CP287.

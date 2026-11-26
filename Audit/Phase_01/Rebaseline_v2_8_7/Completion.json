@@ -1,0 +1,88 @@
+{
+  "checkpoint": 286,
+  "batch": "RB01",
+  "phase": "01",
+  "status": "PASS",
+  "scope": "Delta-based source discovery and baseline freeze only",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "prior_baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "c1b0b8aff30901722ab15370ded3e0d3f8e7907b",
+  "root_tree": "9e1ede6672cd5daf2bf099361c17b4a723fd21cc",
+  "counts": {
+    "repository_blobs": 1414,
+    "changed_repo_blobs": 27,
+    "engine_files": 64,
+    "engine_changed": 9,
+    "engine_unchanged": 55,
+    "production_and_packages": 16,
+    "changed_production": 2,
+    "unchanged_production": 14,
+    "source_lines_lexical": 17204,
+    "named_defs_lexical": 587,
+    "classes_lexical": 87,
+    "reference_matches": 48,
+    "reference_total": 48,
+    "engine_tests_and_tools": 44,
+    "lexical_test_defs": 301,
+    "canonical_raw_files": 4
+  },
+  "checks": [
+    {
+      "check": "Authoritative main resolved and pinned",
+      "status": "PASS"
+    },
+    {
+      "check": "Complete prior/current root tree and Engine inventory",
+      "status": "PASS"
+    },
+    {
+      "check": "64 Engine identities/lengths and digest provenance (9 fresh,55 identical prior)",
+      "status": "PASS"
+    },
+    {
+      "check": "16 production/package identities and lexical metadata",
+      "status": "PASS"
+    },
+    {
+      "check": "48 embedded source block comparisons",
+      "status": "PASS"
+    },
+    {
+      "check": "Governing root and portable docs reviewed; identity unchanged",
+      "status": "PASS"
+    },
+    {
+      "check": "27 changed files inventoried; content retrieved",
+      "status": "PASS"
+    },
+    {
+      "check": "44 Engine tests/tools and 301 lexical test definitions; external runners discovered",
+      "status": "PASS"
+    },
+    {
+      "check": "ZIP CRC and 18 SHA256 entries, all 12 source copies compared",
+      "status": "PASS"
+    },
+    {
+      "check": "Canonical four RAW tree paths and policy recorded",
+      "status": "PASS (metadata only)"
+    },
+    {
+      "check": "Historical Golden authority difference recorded (14/16 unchanged)",
+      "status": "PASS (classification only)"
+    },
+    {
+      "check": "Runtime, RAW integrity and full semantic certification",
+      "status": "NOT APPLICABLE TO SOURCE-ONLY DISCOVERY"
+    }
+  ],
+  "limitations": [
+    "No fresh SHA-256 read for 55 unchanged engine files; verified identical Git blob/size against prior SHA-256 manifest.",
+    "Reference embedded bytes match, not semantic prose proof.",
+    "External changed files verified by returned Git identity and UTF-8 length; SHA-256 for non-Engine changes not computed.",
+    "Golden archive not reopened, historical output not rerun; two production blobs differ from Golden.",
+    "No direct canonical Intelligence/Vault authority compared; user-selected current main is actual implementation authority.",
+    "No RAW payload or executable tests run; phase 01 does not certify W1 or overall Phase 07."
+  ],
+  "next": "RB02 / CP287 — regenerate Phase 02 AST/static inventories for pinned engine/pipeline/true_false.py and engine/bridge/trading_pipeline.py; refresh dependencies, source-to-site mappings and metadata; do not start W2 before W1 rebaseline closure."
+}

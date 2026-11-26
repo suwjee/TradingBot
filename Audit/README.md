@@ -40,3 +40,7 @@ Use [Phase 01](Phase_01/README.md) for current baseline evidence. [Source manife
 ## Current V3.0 Phase 06 checkpoint
 
 [State Machine & Lifecycle](Phase_06/README.md) is complete for guarded state-model documentation, with [validation](Phase_06/Validation.json) and [transition traceability](Phase_06/Transition_Traceability.json). See the [active registry](../Algorithms/V3/State_Machines/README.md). Final semantic and path certification remain open.
+
+## Current v2.8.7 source discovery (CP286)
+
+[RB01 / Phase 01](Phase_01/Rebaseline_v2_8_7/README.md) is PASS for delta source discovery and baseline freeze only, current main `c99b4c957e932d9ee70c492ca03ce80711447fc1`. Historical Phase 01–07 evidence stays at its original baseline. [Execution plan](Phase_07/Rebaseline_v2_8_7_Execution_Plan.json): RB02 next; active W1 incomplete, W2–W4 not run, Phase 08 blocked. No runtime or RAW claims.
