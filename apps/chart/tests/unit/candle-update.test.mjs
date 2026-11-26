@@ -15,6 +15,7 @@ import {
   chunkCandleUpdatesByBytes,
   mergeChartCandles,
   mergeChronologicalCandles,
+  mergeFarazCoverageRanges,
 } from "../../src/features/candle-update.js";
 
 const candle = (time, close = 1) => ({ time, open: close, high: close, low: close, close });
@@ -112,6 +113,34 @@ test("FARAZ coverage records both complete and confirmed-missing source slots", 
     { from: 105, to: 105, status: "source_missing" },
     { from: 110, to: 110, status: "complete" },
   ]);
+});
+
+test("merging verification coverage preserves the newest exact ranges, including older sidecars", () => {
+  const range = (from, to, status) => ({ from, to, status });
+  const existing = [
+    range(150, 190, "complete"), range(100, 180, "source_missing"), range(110, 125, "complete"),
+  ];
+  const batches = [
+    [range(170, 175, "source_missing"), range(110, 150, "complete"), range(160, 165, "complete")],
+    [range(110, 160, "complete"), range(145, 175, "source_missing")],
+    [range(111, 126, "complete"), range(152, 167, "source_missing")],
+  ];
+  for (const incoming of batches) {
+    const expected = [...existing];
+    for (const packet of incoming) {
+      const remainder = [];
+      for (const prior of expected) {
+        if (packet.to < prior.from || packet.from > prior.to) remainder.push(prior);
+        else {
+          if (prior.from < packet.from) remainder.push({ ...prior, to: packet.from - 5 });
+          if (prior.to > packet.to) remainder.push({ ...prior, from: packet.to + 5 });
+        }
+      }
+      expected.splice(0, expected.length, ...remainder, packet);
+    }
+    expected.sort((left, right) => left.from - right.from || left.to - right.to);
+    assert.deepEqual(mergeFarazCoverageRanges(existing, incoming, 5), expected);
+  }
 });
 
 test("chart update packets run concurrently while preserving their result order", async () => {

@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-24T01:11:41+03:30
+last_modified_at: 2026-11-26T09:43:24+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -256,7 +256,8 @@ Users can control presentation properties such as visibility, line/fill appearan
 
 Configure and Appearance use the same collapsible groups. Foundation contains Reaction, Blue Line, A, S, E, E stop lines, Order reactions and Order stops. Secondary contains StopAll. PH-PL contains PH, PL, MBL and Change market line. Configure links PH and PL markers with their labels, and the MBL line with its label. The Change market line switch controls the vertical line, icon and timestamp together. Its label shows the line's source candle time to the second in Asia/Tehran.
 
-Each group has its own T/F visibility, color and font size controls. Foundation shows finalized S and E verdicts, Secondary shows StopAll verdicts, and PH-PL shows primary verdicts. Existing default verdict sizes, weights and repeated StopAll placement apply unless the corresponding appearance control changes them. Changes repaint the finalized result and participate in saved preferences and templates.
+Each group has its own T/F visibility, color and font size controls. Foundation shows finalized S and E verdicts, Secondary shows StopAll verdicts, and PH-PL shows primary verdicts. Repeated Foundation behaviors show a star above their S/E label. Each star run uses exact behavior identity and the same final T/F. The star uses the Foundation
+verdict font size, Secondary N/A color, and Foundation verdict visibility. Existing default verdict sizes, weights and repeated StopAll placement apply unless the corresponding appearance control changes them. Changes repaint the finalized result and participate in saved preferences and templates.
 
 Presentation objects may support UI-only customization such as:
 

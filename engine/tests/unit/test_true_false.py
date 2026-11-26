@@ -25,13 +25,14 @@ def behavior(time, *, number=None, family="red", parent=None, price="100"):
 def test_three_groups_and_unequal_repeat_labels(direction, primary_key, other_key):
     from true_false import apply_true_false
 
+    step = -1 if direction == "bullish" else 1
     group = {
         "sZones": [behavior(1), behavior(2), behavior(7)],
         "eZones": [
             behavior(3, number=1, parent=2),
-            behavior(4, number=2, parent=3),
-            behavior(8, number=1, parent=7),
-            behavior(9, number=2, parent=8),
+            behavior(4, number=2, parent=3, price=str(100 + step)),
+            behavior(8, number=1, parent=7, price=str(100 + step * 2)),
+            behavior(9, number=2, parent=8, price=str(100 + step * 3)),
         ],
         "stopAlls": [behavior(time, number=number) for time, number in
                      enumerate((1, 1, 2, 3, 1, 2, 1, 2, 3, 4), 20)],
@@ -40,7 +41,9 @@ def test_three_groups_and_unequal_repeat_labels(direction, primary_key, other_ke
     }
     apply_true_false(direction, group)
     assert [row["trueFalse"] for row in group["sZones"]] == ["T", "T", "T"]
+    assert [row.get("trueFalseRepeated", False) for row in group["sZones"]] == [True, True, False]
     assert [row["trueFalse"] for row in group["eZones"]] == ["T", "F", "F", "T"]
+    assert all("trueFalseRepeated" not in row for row in group["eZones"])
     assert [row["trueFalse"] for row in group["stopAlls"]] == [
         "T", "T", "T", "F", "T", "F", "T", "F", "T", "T",
     ]
@@ -53,7 +56,8 @@ def test_three_groups_and_unequal_repeat_labels(direction, primary_key, other_ke
 @pytest.mark.parametrize("colors, expected", [
     ("bB bB bbbB", "TFTFTTTT"),
     ("bB bB bb rR", "TFTFTTTF"),
-    ("rbbrR", "TTTTF"),
+    # A same-base S Red survives intervening Blue repeats, including their engulf.
+    ("rbbrR", "TTTTT"),
 ])
 def test_basic_schematic_repetition_restarts(direction, colors, expected):
     from true_false import apply_true_false
@@ -72,6 +76,113 @@ def test_basic_schematic_repetition_restarts(direction, colors, expected):
         rows.append(row)
     apply_true_false(direction, group)
     assert [row["trueFalse"] for row in rows] == list(expected)
+
+
+@pytest.mark.parametrize("direction, step, primary_key", [
+    ("bullish", -1, "primaryLows"),
+    ("bearish", 1, "primaryHighs"),
+])
+@pytest.mark.parametrize("boundary", ["stopAlls", "primary"])
+def test_basic_verdicts_restart_at_each_published_boundary(direction, step, primary_key, boundary):
+    from true_false import apply_true_false
+
+    first_e = behavior(4, number=1, family="blue", parent=2, price=str(100 + step * 4))
+    new_e = behavior(6, number=1, family="blue", parent=5, price=str(100 + step * 3))
+    boundary_key = primary_key if boundary == "primary" else boundary
+    group = {
+        "sZones": [behavior(1, family="blue"), behavior(2, family="blue"),
+                   behavior(5, family="blue", price=str(100 + step * 2))],
+        "eZones": [first_e, new_e],
+        boundary_key: [behavior(3, number=1)],
+    }
+
+    apply_true_false(direction, group)
+
+    assert [row["trueFalse"] for row in group["sZones"]] == ["T", "T", "T"]
+    assert [row["trueFalse"] for row in group["eZones"]] == [None, "F"]
+    assert [row.get("trueFalseRepeated", False) for row in group["sZones"]] == [True, True, False]
+    assert group[boundary_key][0]["trueFalse"] == "T"
+
+
+@pytest.mark.parametrize("direction, step", [("bullish", -1), ("bearish", 1)])
+@pytest.mark.parametrize("separator, current_level, expected", [
+    (None, 6, "T"),
+    (None, 0, "T"),
+    (("blue", 5), 6, "T"),
+    (("red", 3), 6, "F"),
+])
+def test_basic_reference_and_base_repeat_priority(
+    direction, step, separator, current_level, expected,
+):
+    from true_false import apply_true_false
+
+    def price(level):
+        return str(100 + step * level)
+
+    group = {
+        "sZones": [behavior(t, price=price(level)) for t, level in [(1, 0), (2, 1), (5, 1), (9, 3)]],
+        "eZones": [
+            behavior(3, number=1, parent=2, price=price(2)),
+            behavior(6, number=1, parent=5, price=price(4)),
+            # The latest E1 is equal, so the older strictly crossed E1 supplies T.
+            behavior(7, number=2, parent=6, price=price(4)),
+            # The strictly crossed E1 F wins over the more recent, smaller S Red.
+            behavior(10, number=2, parent=9, price=price(5)),
+            behavior(11, number=3, parent=10, price=price(current_level)),
+            # This larger behavior separates E1 occurrences but leaves both price references.
+            behavior(4, number=3, price=price(1)),
+        ],
+    }
+    if separator is not None:
+        family, number = separator
+        group["eZones"].append(behavior(8, family=family, number=number, price=price(4)))
+
+    apply_true_false(direction, group)
+
+    assert [row["trueFalse"] for row in group["eZones"][:5]] == ["T", "F", "F", "T", expected]
+    assert all("trueFalseRepeated" not in row for row in group["eZones"][2:4])
+
+
+@pytest.mark.parametrize("direction, step", [("bullish", -1), ("bearish", 1)])
+@pytest.mark.parametrize("continuation_number, larger_intervening, expected", [
+    (3, False, "T"),
+    (3, True, "F"),
+    (5, False, "T"),
+])
+def test_basic_repeat_precedes_price_reference_and_smaller_engulf_preserves_it(
+    direction, step, continuation_number, larger_intervening, expected,
+):
+    from true_false import apply_true_false
+
+    def price(level):
+        return str(100 + step * level)
+
+    first_e2 = behavior(5, number=2, parent=4, price=price(4))
+    second_e2 = behavior(11, number=2, parent=10, price=price(8))
+    continuation = behavior(
+        12, number=continuation_number, parent=4,
+        price=price(4 if continuation_number == 3 else 11),
+    )
+    group = {
+        "sZones": [behavior(t, price=price(level)) for t, level in [(0, 0), (2, 1), (3, 2), (8, 5), (9, 6)]],
+        "eZones": [
+            behavior(1, number=4, price=price(0)),
+            behavior(4, number=1, parent=3, price=price(3)), first_e2,
+            behavior(6, number=5, family="blue", price=price(5)),
+            behavior(10, number=1, parent=9, price=price(7)), second_e2, continuation,
+        ],
+    }
+    if larger_intervening:
+        group["eZones"].append(behavior(7, number=3, parent=5, price=price(5)))
+
+    apply_true_false(direction, group)
+
+    assert [row["trueFalse"] for row in (first_e2, second_e2)] == ["F", "F"]
+    assert [row.get("trueFalseRepeated", False) for row in (first_e2, second_e2)] == [
+        not larger_intervening, not larger_intervening,
+    ]
+    assert continuation["trueFalse"] == expected
+    assert "trueFalseRepeated" not in continuation
 
 
 @pytest.mark.parametrize("direction", ["bullish", "bearish"])
@@ -221,7 +332,7 @@ def test_final_behavior_takes_precedence_over_hidden_donor():
     }
     apply_true_false("bullish", group)
     assert "trueFalse" not in group["sZones"][1]
-    assert group["eZones"][0]["trueFalse"] == "F"
+    assert group["eZones"][0]["trueFalse"] is None
     assert group["stopAlls"][0]["trueFalse"] == "T"
 
 

@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-11-23T23:18:36+03:30
+last_modified_at: 2026-11-24T23:35:01+03:30
 ---
 
 # TradingBot
@@ -16,18 +16,24 @@ TradingBot is a Windows candlestick workstation for inspecting market history, d
 | --- | --- |
 | `apps/chart/` | Browser application, local HTTP/SSE server, application state and chart tests |
 | `engine/` | Calculation bridge, stage owners, current exact-source references and local Engine verification |
-| `scripts/` | Windows startup, GitHub release tooling, and repository verification |
+| `scripts/` | Workstation startup, GitHub release tooling, and repository verification |
 | `engineering/` | Maintained documentation, historical archives and local verification evidence |
 
 ## Install and start
 
-Run the Windows launcher from the repository root. It locates or installs the supported runtimes, checks Python dependencies, and installs Chart dependencies with the lockfile when needed. It starts the installed Vite CLI directly with the native configuration loader for compatibility with the VMware shared checkout.
+Double-click [`scripts/launch.bat`](scripts/launch.bat) on Windows, or run the PowerShell launcher directly.
 
 ```powershell
-.\scripts\launch.bat
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start.ps1
 ```
 
-Open the URL printed by the launcher. For manual development on the local computer, use Node.js 20.19 or newer in the 20.x line, or Node.js 22.12 or newer. Use Python 3.12 or newer.
+Use `pwsh -NoProfile -File ./scripts/start.ps1` with PowerShell 7 on Linux. The runner shows the installed version, GitHub update status, checked runtime versions, and the server PID and uptime. An interactive ANSI terminal pins the local and IPv4 network addresses and keyboard shortcuts in a separate footer. Press **C** to copy the actual local address, **H** to check the current Chart HTTP response, **D** for runtime and state paths, or **E** to filter warnings and errors. Use **Page Up / Page Down** to review activity and **End** to follow the latest entries. Press **R** to restart Chart or **Q / Ctrl+C** to quit. The local URL becomes available once the server passes its HTTP readiness check. The server prefers port 5173, and browser storage is specific to the URL origin.
+
+The launcher shows the installed release and the published `production` revision from the configured GitHub `origin`. Press **U** to check again. On a `production` checkout with a highlighted update, **U** downloads the selected revision, validates and applies its tracked runtime changes, and restarts TradingBot. The download bar reports the Git object percentage when Git supplies it. The update bar tracks the completed download, installation, and HTTP readiness milestones. Development checkouts report the production version and preserve their working files. The updater checks for local conflicts and advances only to a descendant revision while preserving workstation state.
+
+Use `-Console` for plain, scrollable output, `-Loopback` to restrict Chart to this computer, or `-SkipUpdateCheck` to start without querying GitHub. The launcher installs missing Python packages and restores Chart dependencies from the lockfile. It can install the required Node.js and Python runtimes through winget on Windows. On Linux, install the host runtimes before starting the launcher. If Linux Python needs packages, the launcher creates a project-local virtual environment and uses that interpreter for the Engine.
+
+For manual development on the local computer, use Node.js 20.19 or newer in the 20.x line, or Node.js 22.12 or newer. Use Python 3.12 or newer.
 
 ```powershell
 python -m pip install orjson tzdata

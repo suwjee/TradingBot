@@ -411,3 +411,65 @@ def test_e_owned_s_loses_only_its_order_creation_cause(direction, ensure, indepe
     # Repeating the final rebuild must not resurrect a rejected creator.
     rebuild([owner])
     assert not any(cause[1] == "S" for cause in parent_causes(detector))
+
+
+@pytest.mark.parametrize("direction", ["bullish", "bearish"])
+def test_order_b_converges_with_the_independent_e_donor_used_for_publication(direction, monkeypatch):
+    from types import SimpleNamespace
+
+    from test_live_pipeline_continuation import pipeline
+
+    opposite = "bearish" if direction == "bullish" else "bullish"
+    dominant = SimpleNamespace(source_index=3, source_time=moment(90), name="dominant E")
+    replacement = SimpleNamespace(source_index=3, source_time=moment(90), name="same-source E")
+    independent = SimpleNamespace(source_index=4, source_time=moment(120), name="independent E")
+    stopall = SimpleNamespace(source_index=4, source_time=moment(120))
+    converged_leg = "StopAll anchor"
+    feedback = []
+    registered = []
+
+    def make_state(*args, order_b_legs, **kwargs):
+        feedback.append(list(order_b_legs))
+        detector = SimpleNamespace(
+            order_b_legs=order_b_legs,
+            restore_independent_s_roots=lambda rows: (
+                [replacement, independent] if rows == [dominant] else rows
+            ),
+            ensure_accepted_order_audit=lambda rows: rows,
+            register_order_b_reset_legs=registered.append,
+        )
+        return pipeline.FullDirectionState(
+            e_zones=[dominant], e_detector=detector,
+            s_detector=SimpleNamespace(eligible_a_zones=[]),
+            blue_lines=[], a_zones=[], invalid_a_identities=set(), invalid_s_identities=set(),
+            s_zones=[], s_candidates=[], initial_s_zones=[],
+        )
+
+    def settle_stopall(detector, s_zones, donors, chronology, trend, *args, **kwargs):
+        assert trend == direction
+        assert donors == [dominant, independent]
+        return [dominant], [stopall]
+
+    def discover(*args, **kwargs):
+        assert args[0] == direction
+        assert args[8] == [replacement, independent]
+        assert args[9] == [stopall]
+        return [converged_leg]
+
+    monkeypatch.setattr(pipeline, "calculate_full_direction_state", make_state)
+    monkeypatch.setattr(pipeline, "order_b_leg_identity", tuple)
+    engines = SimpleNamespace(
+        reaction=SimpleNamespace(opposite_direction=lambda trend: opposite),
+        lifecycle=SimpleNamespace(reconcile_stopall_lifecycle=settle_stopall, module_priority=None),
+        e_zone=SimpleNamespace(discover_accepted_order_b_reset_legs=discover),
+    )
+    full_results = {trend: SimpleNamespace(reactions=[], resets=[]) for trend in (direction, opposite)}
+    state = pipeline.calculate_direction_with_order_b_feedback(
+        direction, engines, SimpleNamespace(chronology=None),
+        full_results, {}, {}, {}, stopall_enabled=True,
+    )
+
+    assert feedback == [[], [converged_leg]]
+    assert registered == [[converged_leg]]
+    assert state.e_zones == [replacement, independent]
+    assert state.stopalls == [stopall]

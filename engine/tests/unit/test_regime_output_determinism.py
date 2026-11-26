@@ -67,3 +67,40 @@ def test_empty_projection_segments_remain_empty():
     ])
     assert result["bullish"]["bridgeOutput"] == {}
     assert result["bullish"]["reactions"] == []
+
+
+def test_closed_regime_reuses_only_the_independent_settled_prefix():
+    from datetime import datetime, timedelta
+    from types import SimpleNamespace
+
+    from trading_pipeline import LiveClosedRegimes
+
+    first = datetime(2026, 1, 1)
+    market = SimpleNamespace(
+        index_offset=10, start_index=2, end_index=10,
+        initial_bullish_trend=False, initial_bearish_trend=True,
+        candles=[SimpleNamespace(timestamp=first + timedelta(seconds=30 * i)) for i in range(11)],
+    )
+    cache = LiveClosedRegimes()
+    checkpoint = object()
+    with cache.stage(first_dirty_main=0) as resolve:
+        assert resolve("bearish", market, 5, lambda: checkpoint) is checkpoint
+
+    def unexpected_replay():
+        pytest.fail("The independently calculated closed prefix was replayed")
+
+    with cache.stage(first_dirty_main=15) as resolve:
+        assert resolve("bearish", market, 5, unexpected_replay) is checkpoint
+
+    replacement = object()
+    with pytest.raises(ValueError, match="Publication failed"):
+        with cache.stage(first_dirty_main=14) as resolve:
+            assert resolve("bearish", market, 5, lambda: replacement) is replacement
+            raise ValueError("Publication failed")
+    with cache.stage(first_dirty_main=15) as resolve:
+        assert resolve("bearish", market, 5, unexpected_replay) is checkpoint
+
+    with cache.stage(first_dirty_main=15) as resolve:
+        assert resolve("bearish", market, 4, lambda: replacement) is replacement
+    with cache.stage(first_dirty_main=15) as resolve:
+        assert resolve("bearish", market, 5, lambda: replacement) is replacement

@@ -38,7 +38,9 @@ export function drawTrueFalseLabel(ctx, verdict, visible, parentSize, x, edgeY, 
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = below ? "top" : "bottom";
-  if (repeated && label !== "N/A") {
+  const showRepeat = repeated && label !== "N/A";
+  const starColor = appearance.repeatStarColor;
+  if (showRepeat && !starColor) {
     ctx.fillStyle = colors["N/A"];
     ctx.font = `300 ${size}px ${FONT}`;
     ctx.fillText("N/A", x, y);
@@ -47,5 +49,11 @@ export function drawTrueFalseLabel(ctx, verdict, visible, parentSize, x, edgeY, 
   ctx.fillStyle = colors[label];
   ctx.font = `${labelWeight} ${labelSize}px ${FONT}`;
   ctx.fillText(label, x, y);
+  if (showRepeat && starColor) {
+    ctx.fillStyle = starColor;
+    ctx.textBaseline = "bottom";
+    const starY = below ? edgeY - parentSize - 3 : y - labelSize - 2;
+    ctx.fillText("*", x, starY);
+  }
   ctx.restore();
 }

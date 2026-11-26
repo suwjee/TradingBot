@@ -298,7 +298,8 @@ function Invoke-ProductionClosureTests {
     Assert-True ((Test-ProductionFileSet -FileSet $fileSet -Policy $policy).Errors.Count -eq 0) 'fixture file set passes integrity checks'
     $currentPolicy = Import-PowerShellDataFile (Join-Path $PSScriptRoot 'production-policy.psd1')
     $currentSet = Get-ProductionFileSet -Root $fixture.Root -MainSha $fixture.Sha -Policy $currentPolicy
-    foreach ($path in @('.gitattributes', 'engine/bridge/__init__.py', 'engine/bridge/live_pipeline.py', 'apps/chart/server/raw-integrity.js')) {
+    foreach ($path in @('.gitattributes', 'engine/bridge/__init__.py', 'engine/bridge/live_pipeline.py', 'apps/chart/server/raw-integrity.js',
+        'scripts/launch.bat', 'scripts/start.ps1')) {
       Assert-True ($currentSet.Paths -contains $path) "maintained policy includes runtime-owned package markers and helpers: $path"
     }
     Assert-True ($currentSet.Errors.Count -eq 0) 'maintained policy fixture has no missing runtime dependencies'
@@ -332,15 +333,14 @@ function Invoke-ProductionClosureTests {
 function Invoke-RepositoryCoverageTests {
   Import-Module $script:ModulePath -Force
   $root = Resolve-TradingBotProjectRoot -ScriptPath (Join-Path $PSScriptRoot 'Invoke-TradingBotRelease.ps1')
-  $commit = Invoke-ReleaseGit -Root $root -Arguments @('rev-parse', 'HEAD')
-  Assert-True ($commit.ExitCode -eq 0) 'the project has a committed candidate'
   $policy = Import-ReleasePolicy -Root $root
-  $main = Get-MainPolicyReport -Root $root
-  Assert-True ($main.Errors.Count -eq 0) ($main.Errors -join "`n")
-  $runtime = Get-ProductionFileSet -Root $root -MainSha $commit.StdOut.Trim() -Policy $policy
+  $draft = New-MainReleaseSource -Root $root -CommitMessage 'Verify repository coverage' -DryRun
+  $runtime = Get-ProductionFileSet -Root $root -MainSha $draft.MainSha -Policy $policy
   Assert-True (($runtime.Errors.Count + $runtime.Drift.Count) -eq 0) (($runtime.Errors + $runtime.Drift) -join "`n")
   $validation = Test-ProductionFileSet -FileSet $runtime -Policy $policy
   Assert-True ($validation.Errors.Count -eq 0) ($validation.Errors -join "`n")
+  Assert-True ((Get-GitTreePaths -Root $root -Commitish $draft.MainSha) -contains 'scripts/verification/test-launcher.ps1') 'launcher verification is eligible for main'
+  Assert-True ($runtime.Paths -notcontains 'scripts/verification/test-launcher.ps1') 'launcher verification is excluded from production'
   foreach ($path in @('apps/chart/state/secret/session.json', 'apps/chart/state/qa/secret/session.json', 'apps/chart/state/qa/data/raw/example.csv', 'apps/chart/state/data/raw/BaseLine/probe.HAR', 'apps/chart/state/data/raw/BaseLine/temp/partial.json', 'apps/chart/server/run.faraz-responses.ndjson', 'engine/engine.zip')) {
     $ignore = Invoke-ReleaseGit -Root $root -Arguments @('check-ignore', '-q', '--no-index', '--', $path)
     Assert-True ($ignore.ExitCode -eq 0) "the working tree ignores local material: $path"
@@ -374,7 +374,7 @@ function Invoke-SnapshotTests {
 
     $policy = @{
       Production = @{
-        MandatoryPaths = @('scripts/launch.bat', 'scripts/start.ps1', 'apps/chart/package.json', 'apps/chart/package-lock.json', 'apps/chart/vite.config.js', 'apps/chart/index.html', 'apps/chart/review.html', 'engine/bridge/trading_pipeline.py', 'engine/pipeline/detector.py')
+    MandatoryPaths = @('scripts/launch.bat', 'scripts/start.ps1', 'apps/chart/package.json', 'apps/chart/package-lock.json', 'apps/chart/vite.config.js', 'apps/chart/index.html', 'apps/chart/review.html', 'engine/bridge/trading_pipeline.py', 'engine/pipeline/detector.py')
         RuntimeRoots = @('apps/chart/src/', 'apps/chart/server/', 'engine/bridge/', 'engine/pipeline/')
         ExcludedPathPatterns = @('apps/chart/state/**', 'apps/chart/tests/**', 'engine/tests/**', 'engineering/**', 'scripts/git/**')
       }

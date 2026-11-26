@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-24T01:37:14+03:30
+last_modified_at: 2026-11-24T23:11:55+03:30
 ---
 
 # TradingBot release operations
@@ -50,9 +50,9 @@ The main release stops if an excluded artifact is already tracked, including one
 
 `production` uses a dependency-derived runtime inventory from the exact committed main SHA. Every eligible file under the runtime-owned `apps/chart`, `engine`, and `scripts` roots is included, even if it is not imported yet. Import traversal validates dependencies and adds referenced paths; it does not decide whether a new runtime file is eligible. Dedicated and colocated tests, engineering evidence, development documentation, Algorithm References, ZIP snapshots, local chart state, credentials, dependencies, and disposable artifacts stay outside production. The snapshot also carries `.gitattributes` so Windows and Linux honor the source checkout rules. The workflow validates policy, sensitive markers, PowerShell and JavaScript syntax, Python AST, both Engine entry points, `npm ci --include=dev`, and the chart build in an isolated worktree.
 
-Run the workstation from `scripts\launch.bat`. The batch file resolves the checkout relative to itself and passes the local startup exit code back to the caller. The PowerShell startup script requires the chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
+Run the workstation with [the PowerShell launcher](../start.ps1) or double-click [the Windows entry point](../launch.bat). The launcher resolves the checkout relative to itself and reports startup status in the terminal. It requires the Chart lockfile and both Engine entry points. Its Python syntax check discovers the current bridge and pipeline modules.
 
-Startup validates available Python executables before installing a runtime. It runs `npm ci --include=dev` when the chart lockfile differs from the last successful launcher installation or a required package file is missing. It stores the lockfile digest under `node_modules` and reuses a complete installation with a matching digest. After validation it starts the installed Vite CLI directly with the native config loader.
+Startup validates available Python executables before installing packages. It runs `npm ci --include=dev` when the Chart lockfile differs from the last successful launcher installation or a required package file is missing. It stores the lockfile digest under `node_modules` and reuses a complete installation with a matching digest. The Chart server starts through the native Vite config loader and reports its actual port after an HTTP readiness check.
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
@@ -100,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-GitMana
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\git\Test-ReleaseWorkflow.ps1
 ```
 
-The launcher fixture checks dependency repair, warm startup, a missing lockfile, and the batch exit code from a different working directory. The publication fixtures use disposable repositories and local bare remotes. They preserve the active checkout's index, branches, tags, and merge state. They do not prove live GitHub authorization or branch protection behavior.
+The launcher fixture checks the fixed terminal footer, production updates and state preservation, dependency repair, warm startup, a missing lockfile, and actual port propagation. The publication fixtures use disposable repositories and local bare remotes. They preserve the active checkout's index, branches, tags, and merge state. Live GitHub authorization and branch protection require separate verification.
 
 Coverage includes a production inventory exceeding the Windows command-line limit and a real `git.bat` Both operation through commit, runtime validation, and push to a disposable local remote. That operation verifies new and ignored-but-eligible files, edits, renames, deletions, the different main/production content policies, and preservation of excluded local state.
 

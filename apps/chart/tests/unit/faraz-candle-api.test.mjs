@@ -187,6 +187,7 @@ test("recent verification rechecks the union of append windows and excludes the 
   const response = await post({ phase: "recent", previousTail, file: latest.file, baseSha256: latest.file.metadata.dataSha256 });
   assert.equal(response.status, 200);
   const result = await response.json();
+  requests.sort(([left], [right]) => left - right);
   assert.equal(requests[0][0], rows.at(-1001).time);
   assert.equal(requests.at(-1)[1], newest); // FARAZ has an exclusive upper bound.
   assert.ok(requests.every(([from, to]) => to - from <= 1_000 * 5));
@@ -329,6 +330,61 @@ test("Verify All fills native-timeframe gaps across packet boundaries and leaves
   assert.deepEqual(result.file.metadata.candleVerification.ranges, [[0, 4]]);
   assert.equal(result.verification.recoveredCount, 3);
   assert.equal(result.verification.correctedCount, 1);
+});
+
+test("Verify All overlaps paced packets and publishes only the verified prefix after a packet fails", async (t) => {
+  const fourthStarted = deferred();
+  const lastCancelled = deferred();
+  const release = deferred();
+  const starts = [];
+  const { old, post, rawStore } = await realtimeFixture(t, async (url, { signal }) => {
+    const from = Number(url.searchParams.get("from"));
+    starts.push({ from, at: performance.now() });
+    if (from === 100) {
+      await release.promise;
+      return historyResponse([100, 105]);
+    }
+    if (from === 5100) {
+      await release.promise;
+      return new Response("Unavailable", { status: 503 });
+    }
+    if (from === 10100) {
+      return historyResponse([10100, 10105]);
+    }
+    if (from === 15100) {
+      fourthStarted.resolve();
+      try {
+        if (!signal.aborted) await new Promise(resolve => signal.addEventListener("abort", resolve, { once: true }));
+        signal.throwIfAborted();
+      } finally { lastCancelled.resolve(); }
+    }
+    assert.fail("A packet beyond the bounded lookahead was started.");
+  }, { nowSeconds: 20105, rows: [{ ...realtimeCandle(100), close: 1 }, realtimeCandle(20100)] });
+
+  const pending = post({ verifyAll: true });
+  const deadline = AbortSignal.timeout(1_500);
+  try {
+    await Promise.race([fourthStarted.promise, new Promise((_, reject) =>
+      deadline.addEventListener("abort", () => reject(new Error("Verification fetched packets serially")), { once: true }))]);
+  } finally {
+    // Allow the baseline request to settle even when the concurrency check fails.
+    release.resolve();
+  }
+  const response = await pending;
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.deepEqual(result.verification, {
+    status: "unavailable", verifiedCount: 2, totalCount: 3,
+    checkedCount: 1, correctedCount: 1, recoveredCount: 1,
+  });
+  assert.deepEqual(result.corrections, [realtimeCandle(100)]);
+  assert.deepEqual(result.gapCandles, [realtimeCandle(105)]);
+  assert.deepEqual(rawStore.read(old.id), [100, 105, 20100].map(realtimeCandle));
+  assert.deepEqual(result.file.metadata.candleVerification.ranges, [[0, 1]]);
+  for (let index = 1; index < starts.length; index++) {
+    assert.ok(starts[index].at - starts[index - 1].at >= 29, "FARAZ starts remain paced");
+  }
+  await lastCancelled.promise;
 });
 
 test("a polling stream reports actual work and counts repairs to both historical and new 5S candles", async (t) => {
@@ -1369,9 +1425,16 @@ test("chart verification persists FARAZ checked coverage without changing RAW ca
   const rawDir = path.join(path.join(workspaceRoot, "apps", "chart", "state"), "data", "raw");
   fs.mkdirSync(rawDir, { recursive: true });
   const fileId = buildCandleFilename("TEST:PAIR", "5S", 100, 105);
+  const rawPath = path.join(rawDir, fileId);
   const rows = [100, 105].map((time) => ({ time, open: 1, high: 1, low: 1, close: 1 }));
-  fs.writeFileSync(path.join(rawDir, fileId), JSON.stringify(rows));
+  fs.writeFileSync(rawPath, JSON.stringify(rows));
   const origin = await listenForApi(t, createFarazCandleApi({ workspaceRoot }));
+  const readFile = fs.readFileSync;
+  let rawReads = 0;
+  t.mock.method(fs, "readFileSync", (file, ...options) => {
+    if (file === rawPath) rawReads++;
+    return readFile(file, ...options);
+  });
 
   const response = await fetch(`${origin}/api/candle-files/verification`, {
     method: "POST", headers: { "content-type": "application/json" },
@@ -1383,11 +1446,12 @@ test("chart verification persists FARAZ checked coverage without changing RAW ca
   const result = await response.json();
 
   assert.equal(response.status, 200, result.error);
+  assert.equal(rawReads, 1);
   assert.equal(result.farazCoverage.chartUpToDate, true);
   assert.deepEqual(result.farazCoverage.ranges.map(({ from, to, status }) => ({ from, to, status })), [
     { from: 100, to: 105, status: "complete" },
   ]);
-  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(rawDir, fileId), "utf8")), rows);
+  assert.deepEqual(JSON.parse(readFile(rawPath, "utf8")), rows);
 });
 
 test("chart verification accepts a large set of checked gap ranges", async (t) => {

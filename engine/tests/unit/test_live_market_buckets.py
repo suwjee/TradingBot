@@ -59,3 +59,33 @@ def test_rejecting_a_nonappend_batch_keeps_buckets_and_decimal_representation():
     assert (repr(state.main_buckets), repr(state.second_buckets)) == before
     state.append([row(90, "12.0", "13", "8", "12.0")])
     assert str(state.main_buckets[-1]["open"]) == "12.0"
+
+
+def test_segment_index_keeps_exact_bounds_and_first_equal_price_across_offsets():
+    from types import SimpleNamespace
+
+    from reaction_engine import LowerTimeframeIndex
+    from trading_pipeline import MarketIndexWindow
+
+    lows = ("1", "6.00", "5.00", "5.0", "7", "1")
+    highs = ("99", "9.0", "12.00", "12.0", "9", "99")
+    candles = [SimpleNamespace(timestamp=i, low=Decimal(low), high=Decimal(high))
+               for i, (low, high) in enumerate(zip(lows, highs))]
+    base = LowerTimeframeIndex(candles, retain_crossings=True)
+    middle = MarketIndexWindow(base, candles[1:5], 1, 5)
+    nested = MarketIndexWindow(middle, candles[2:4], 1, 3)
+    for window in (middle, nested):
+        fresh = LowerTimeframeIndex(window.candles)
+        assert window.times == fresh.times
+        for left in range(-1, len(window.candles) + 1):
+            for right in range(left, len(window.candles) + 2):
+                for level in map(Decimal, ("5", "6", "12", "13")):
+                    assert window.first_less(left, right, level) == fresh.first_less(left, right, level)
+                    assert window.first_greater(left, right, level) == fresh.first_greater(left, right, level)
+                for method in ("range_minimum", "range_maximum"):
+                    query = getattr(window, method)
+                    if 0 <= left < right <= len(window.candles):
+                        assert repr(query(left, right)) == repr(getattr(fresh, method)(left, right))
+                    else:
+                        with pytest.raises(ValueError, match="Range contains no lower-timeframe candles"):
+                            query(left, right)

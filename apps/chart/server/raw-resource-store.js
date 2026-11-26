@@ -535,7 +535,9 @@ export function createRawResourceStore({ rootDir }) {
     const item = resolve(id);
     const timeframe = Math.trunc(Number(timeframeSeconds));
     if (!item || !Number.isSafeInteger(timeframe) || timeframe < 1) return null;
-    const candles = read(id);
+    const serialized = fs.readFileSync(item.dataPath, "utf8");
+    const candles = JSON.parse(serialized);
+    assertCandles(candles);
     let previous = {};
     if (fs.existsSync(item.metaPath)) {
       try { previous = JSON.parse(fs.readFileSync(item.metaPath, "utf8")) || {}; } catch { previous = {}; }
@@ -544,9 +546,9 @@ export function createRawResourceStore({ rootDir }) {
     const priorRanges = hydrated.farazCoverage?.timeframeSeconds === timeframe ? hydrated.farazCoverage.ranges || [] : [];
     const incoming = ranges.map((range) => ({ from: Math.trunc(Number(range?.from)), to: Math.trunc(Number(range?.to)), status: range?.status === "complete" ? "complete" : "source_missing", retryCount: Math.max(0, Math.trunc(Number(retryCount) || 0)) }));
     const mergedRanges = mergeFarazCoverageRanges(priorRanges, incoming, timeframe);
-    const checkedFrom = mergedRanges.length ? Math.min(...mergedRanges.map((range) => range.from)) : null;
-    const checkedTo = mergedRanges.length ? Math.max(...mergedRanges.map((range) => range.to)) : null;
-    const fileRange = runtimeRange(effectiveRange) || { from: candles[0].time, to: candles.at(-1).time };
+    const checkedFrom = mergedRanges[0]?.from ?? null;
+    const checkedTo = mergedRanges.reduce((latest, range) => latest === null ? range.to : Math.max(latest, range.to), null);
+    const fileRange = runtimeRange(effectiveRange) || { from: Number(candles[0].time), to: Number(candles.at(-1).time) };
     let contiguousThrough = fileRange.from;
     for (const range of mergedRanges) {
       if (range.to < contiguousThrough) continue;
@@ -560,7 +562,6 @@ export function createRawResourceStore({ rootDir }) {
     const chartUpToDate = durableCheckpoint !== null ? durableCheckpoint >= fileRange.to : contiguousThrough > fileRange.to;
     const coverage = { schemaVersion: 2, timeframeSeconds: timeframe, chartUpToDate, status: chartUpToDate ? "faraz_checked" : "unchecked_ranges_remain", checkedFrom, checkedTo, checkedThrough: durableCheckpoint, lastMode: mode || hydrated.farazCoverage?.lastMode || null, retryCount: Math.max(0, Math.trunc(Number(retryCount) || 0)), ranges: mergedRanges };
     const identity = parseRawFilename(path.basename(item.dataPath));
-    const serialized = fs.readFileSync(item.dataPath, "utf8");
     const snapshot = snapshotData(candles, serialized);
     const metadata = persistedMetadata({ broker: identity.broker, symbol: identity.symbol, timeframe: identity.timeframe, source: previous.source || "local", filename: path.basename(item.dataPath), snapshot, requestedRange: hydrated.requestedRange, farazCoverage: coverage,
       candleVerification: previous.dataSha256 === snapshot.dataSha256 ? previous.candleVerification : undefined,

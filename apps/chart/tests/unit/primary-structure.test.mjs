@@ -315,6 +315,19 @@ test("MBL label uses its object's custom text font and color", async () => {
   assert.match(drawn[0].font, /^500 18px /);
   assert.equal(drawn[0].x, 250);
   assert.deepEqual(measured, ["Custom MBL"]);
+
+  drawPrimaryStructures(context, {
+    matchingBehaviorLegs: [{ id: "leg", sourceIndex: 0, sourceTime: 100, capTime: 400, price: "10" }],
+  }, {
+    direction: "bearish", timeframe: 30, timeToX: time => time, priceToY: price => price,
+    settings: { mblColor: "#6688aa", mblSize: 14 },
+    objectFor: () => ({ customized: true, text: "Moved MBL", offsetTime: 10 }),
+    offsetRect: (object, x1, y1, x2, y2) => ({ x1: x1 + object.offsetTime, y1, x2: x2 + object.offsetTime, y2 }),
+  });
+  assert.equal(drawn[1].text, "Moved MBL");
+  assert.equal(drawn[1].color, "#6688aa");
+  assert.match(drawn[1].font, /^500 14px /);
+  assert.equal(drawn[1].x, 260);
 });
 
 function primaryPaintContext() {
