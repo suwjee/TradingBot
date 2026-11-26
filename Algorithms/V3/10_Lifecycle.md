@@ -42,19 +42,19 @@ Actual stop time comes from non-null explicit record field, else supplied finder
 ## Detailed lifecycle procedures
 
 ### LC01 — sequence_priority
-Normalize kind and family with str().lower(); dictionary lookup S blue=1, E blue=2, S red=3, E red=4. Unknown pair raises KeyError.
+Normalize kind and family with str().lower(); dictionary lookup S blue=1, E blue=2, S red=3, E red=4. Unknown pair raises KeyError. Evaluate str(kind).lower() before str(family).lower(); do not trim or provide a default.
 
 ### LC02 — _DominantBehavior.priority
-Property delegates to LC01 on kind/family. Frozen slotted record also carries number, count, latest object.
+Property delegates to LC01 on kind/family. Frozen slotted record also carries number, count, latest object. The stored exact key is not normalized; priority is a fresh property lookup on each access. Frozen/slotted record does not deep-freeze latest.
 
 ### LC03 — _DominantBehavior.armed
 True precisely when count >=2.
 
 ### LC04 — _DominantBehavior.key
-Format E number and family if kind exactly E; otherwise S and family.
+Format E number and family if kind exactly E; otherwise S and family. Exact uppercase E is tested without normalization; every other kind uses the S label.
 
 ### LC05 — advance_dominant_behavior
-Create incoming owner count=1. No prior owner => incoming. Exact kind/family/number match => replace previous count+1 and latest. Otherwise replace only on higher priority, or equal priority with both E and LC08 dominance. Otherwise return previous object unchanged. No mutation of owner record.
+Create incoming owner count=1. No prior owner => incoming. Exact kind/family/number match => replace previous count+1 and latest. Otherwise replace only on higher priority, or equal priority with both E and LC08 dominance. Otherwise return previous object unchanged. No mutation of owner record. Construct incoming first. None/exact tuple match do not query priority; exact tuple compares raw key components. For other keys evaluate incoming.priority > owner.priority first, then re-evaluate both for equality only if needed. Equal rank requires chained kind==owner.kind==E before int(number), int(owner.number) and LC08. No local exception catch; exact match replaces count/latest only.
 
 ## StopAll detection
 

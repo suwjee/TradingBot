@@ -494,3 +494,25 @@ W1 cumulative 6861/11504. Next B06 E44 heap loop, line 1294; W2/W3/W4 open.
 ## B06 local completion
 
 [Completion evidence](Semantic_Closure_B06_Completion.json): 1109/1109 original rows; W1 cumulative 7059/11504. E W1 PASS; W2/W3/W4 open. Next B07 engine/pipeline/lifecycle_engine.py line 1. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 98 — Shared sequence priority and immutable StopAll/owner records
+
+[Local review](Semantic_Closure_B07_01.md) and [site evidence](Semantic_Closure_B07_01.json): 50 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 50/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 99 — Dominant-owner transitions, checkpoint initialization and strict stop
+
+[Local review](Semantic_Closure_B07_02.md) and [site evidence](Semantic_Closure_B07_02.json): 43 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 93/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 100 — E-donor StopAll construction and nullable converters
+
+[Local review](Semantic_Closure_B07_03.md) and [site evidence](Semantic_Closure_B07_03.json): 34 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 127/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 101 — S-donor StopAll construction and Order provenance
+
+[Local review](Semantic_Closure_B07_04.md) and [site evidence](Semantic_Closure_B07_04.json): 39 original rows, 3 supplemental items, 1 resolved local clarifications; local partition PASS. Lifecycle 166/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 102 — Event ordering and detection entry point
+
+[Local review](Semantic_Closure_B07_05.md) and [site evidence](Semantic_Closure_B07_05.json): 9 original rows, 2 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 175/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 7234/11504. Next B07 LC15, line 361; W2/W3/W4 open.

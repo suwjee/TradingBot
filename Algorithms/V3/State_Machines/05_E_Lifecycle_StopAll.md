@@ -105,10 +105,10 @@ Native checkpoint fields owner, pending_stop, active tuple, output count. Owner 
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| SA01 | INIT | No owner | owner=null,pending=null,active empty,output empty | EVENT | LC06,LC13,LC14,LC15 |
+| SA01 | INIT | No owner | owner=null,pending=null,active empty,output empty; sorted raw source time/kind/index (E before S on tie) | EVENT | LC06,LC13,LC14,LC15 |
 | SA02 | EVENT | Ordinary acceptance, owner absent | Set incoming count1 | EVENT | LC05,LC17 |
 | SA03 | EVENT | Ordinary acceptance, exact key matches | Increment count, latest=incoming | EVENT | LC03,LC05 |
-| SA04 | EVENT | Ordinary acceptance, higher sequence priority or same-priority E dominates by family/number | Replace with count1 | EVENT | LC05,LC08 |
+| SA04 | EVENT | Ordinary acceptance, higher sequence priority or re-evaluated equal priority and exact E kinds with LC08 dominance | Replace with count1 | EVENT | LC05,LC08 |
 | SA05 | EVENT | Ordinary acceptance, other incoming | Retain same owner unchanged | EVENT | LC05 |
 | SA06 | EVENT | S Red, current Blue owner armed, owner latest decision<S decision | Emit StopAll1 from S, gate=S exact decision, active singleton, clear owner/pending | EVENT | LC12,LC18 |
 | SA07 | EVENT | S otherwise | Find armed stop before source; completed=pending or current valid stop | S_GATE | LC16,LC18 |

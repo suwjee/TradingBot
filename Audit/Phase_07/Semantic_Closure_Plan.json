@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 7059,
+  "verified_independent_site_rows_in_this_plan": 7234,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -1575,7 +1575,7 @@
     {
       "id": "B07",
       "title": "Lifecycle and StopAll",
-      "status": "NOT RUN",
+      "status": "INCOMPLETE",
       "modules": [
         {
           "path": "engine/pipeline/lifecycle_engine.py",
@@ -1588,7 +1588,95 @@
           "calls": 595
         }
       ],
-      "site_category_rows": 1179
+      "site_category_rows": 1179,
+      "review_scope": "Lifecycle and StopAll W1 local owner review in progress; W2/W3/W4 open",
+      "reviewed_original_rows": 175,
+      "supplemental_items": 14,
+      "resolved_findings": 9,
+      "next_source_line": 361,
+      "next_module": "engine/pipeline/lifecycle_engine.py",
+      "sub_batches": [
+        {
+          "id": "B07-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            120
+          ],
+          "procedures": "LC01–LC04 and declarations",
+          "original_rows": 50,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_01.json",
+            "Audit/Phase_07/Semantic_Closure_B07_01.md"
+          ]
+        },
+        {
+          "id": "B07-02",
+          "status": "PASS",
+          "source_range": [
+            121,
+            195
+          ],
+          "procedures": "LC05–LC08 and checkpoint",
+          "original_rows": 43,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_02.json",
+            "Audit/Phase_07/Semantic_Closure_B07_02.md"
+          ]
+        },
+        {
+          "id": "B07-03",
+          "status": "PASS",
+          "source_range": [
+            196,
+            261
+          ],
+          "procedures": "LC09–LC11",
+          "original_rows": 34,
+          "supplemental_items": 3,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_03.json",
+            "Audit/Phase_07/Semantic_Closure_B07_03.md"
+          ]
+        },
+        {
+          "id": "B07-04",
+          "status": "PASS",
+          "source_range": [
+            262,
+            349
+          ],
+          "procedures": "LC12",
+          "original_rows": 39,
+          "supplemental_items": 3,
+          "resolved_findings": 1,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_04.json",
+            "Audit/Phase_07/Semantic_Closure_B07_04.md"
+          ]
+        },
+        {
+          "id": "B07-05",
+          "status": "PASS",
+          "source_range": [
+            350,
+            360
+          ],
+          "procedures": "LC13–LC14",
+          "original_rows": 9,
+          "supplemental_items": 2,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B07_05.json",
+            "Audit/Phase_07/Semantic_Closure_B07_05.md"
+          ]
+        }
+      ]
     },
     {
       "id": "B08",
@@ -1728,5 +1816,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B07 Lifecycle and StopAll W1 local owner review from pinned engine/pipeline/lifecycle_engine.py line 1; W2/W3/W4 open."
+  "next_action": "B07 Lifecycle and StopAll continue LC15 _detect_events from pinned engine/pipeline/lifecycle_engine.py line 361; W2/W3/W4 open."
 }

@@ -31,31 +31,31 @@ Live caches event keys (kind,representation of immutable record) and checkpoints
 ## Detailed StopAll procedures
 
 ### LC06 — StopAllDetector.__init__
-Validate direction against bullish/bearish. Copy S/E collections; retain chronology, main/lower candles, corresponding times and lower index. Checkpoint record defaults owner/pending null, active tuple empty, output_count zero. StopAll record is frozen/slotted, with explicit donor metadata separate from underlying owner.
+Validate direction against bullish/bearish. Copy S/E collections; retain chronology, main/lower candles, corresponding times and lower index. Checkpoint record defaults owner/pending null, active tuple empty, output_count zero. StopAll record is frozen/slotted, with explicit donor metadata separate from underlying owner. Direction validation precedes S then E shallow copies; chronology and all main/lower arrays/index are retained by reference. All eight donor fields are keyword-only with None defaults; frozen record is not a recursive freeze.
 
 ### LC07 — StopAllDetector._strict_stop
-Lower-bound start on lower times; first_less for B or first_greater for R to end of lower candles. Null if no crossing. Otherwise return clamped containing main index, main time, exact lower event. Equality is not a stop; no coarse fallback.
+Lower-bound start on lower times; first_less for B or first_greater for R to end of lower candles. Null if no crossing. Otherwise return clamped containing main index, main time, exact lower event. Equality is not a stop; no coarse fallback. The right-exclusive bound is len(lower); lower_times is used for bisect and selected event lookup. A position of zero is valid. Map event with clamp=True; no local catch or alternative query.
 
 ### LC08 — StopAllDetector._dominates_e
 Same family: strictly greater number. Different families: red dominates blue, not reverse.
 
 ### LC09 — StopAllDetector._stopall_from_e
-Construct immutable StopAll using donor E source/time/price and decision index/time/event. Number, gate type/event and stopped behavior metadata are caller-supplied. Preserve underlying E family/number and full Order provenance (normalize integer fields and Decimal prices); causes tuple defaults empty, parent cause time defaults null. Stop index/time/event initially null. Donor type E, source index/time, family, number and price populated separately; donor-stop fields default null. Do not substitute stopped owner's geometry for donor geometry.
+Construct immutable StopAll using donor E source/time/price and decision index/time/event. Number, gate type/event and stopped behavior metadata are caller-supplied. Preserve underlying E family/number and full Order provenance (normalize integer fields and Decimal prices); causes tuple defaults empty, parent cause time defaults null. Stop index/time/event initially null. Donor type E, source index/time, family, number and price populated separately; donor-stop fields default null. Do not substitute stopped owner's geometry for donor geometry. E Order direction/mode and numeric identity/geometry fields are required and converted as written; only order_causes and parent-stop cause time use getattr defaults. Explicit None causes are not normalized before tuple conversion. Own stop fields are None. Separate donor index/family/number/price are read and converted again; donor-stop fields are not supplied.
 
 ### LC10 — StopAllDetector._optional_int
-Null stays null; otherwise int conversion.
+Null stays null; otherwise int conversion. Identity None test, so zero and other falsy non-null values are converted; conversion errors propagate.
 
 ### LC11 — StopAllDetector._optional_decimal
-Null stays null; otherwise shared as_decimal conversion.
+Null stays null; otherwise shared as_decimal conversion. Identity None test, otherwise delegate directly to as_decimal; no additional rounding or exception fallback.
 
 ### LC12 — StopAllDetector._stopall_from_s
-Construct number 1, gate type opposite-s-group-stop, from S donor's source/time/price and decision. Gate event and stopped owner metadata supplied; optional underlying E tuple supplies family/number, else null. Copy optional Order identity/provenance with LC10/11 conversions; order causes empty; parent stop cause time equals S A-stop event. All own stop fields null. Donor type S, source/time, color, number null, price; donor-stop metadata defaults null.
+Construct number 1, gate type opposite-s-group-stop, from S donor's source/time/price and decision. Gate event and stopped owner metadata supplied; optional underlying E tuple supplies family/number, else null. Copy optional Order identity/provenance with LC10/11 conversions; order causes empty; parent stop cause time equals S A-stop event. All own stop fields null. Donor type S, source/time, color, number null, price; donor-stop metadata defaults null. Underlying E tuple elements are copied unchanged when non-null (no length guard). S optional order_direction/order_mode are not string-normalized, missing attributes default None. Parent-stop cause time is getattr(item,a_stop_event_time,None). Source/decision indices and donor index converted, price and donor price normalized separately; donor color str without lowercase. Own stop and donor-stop fields remain None. Constructor does not itself validate promotion eligibility.
 
 ### LC13 — StopAllDetector._events
-Combine S and E tagged events; sort (source_time, kind, source_index). E sorts before S on exact source tie. Stable sorting for equal keys.
+Combine S and E tagged events; sort (source_time, kind, source_index). E sorts before S on exact source tie. Stable sorting for equal keys. Materialize S-tagged list then E-tagged list before concatenation and sort; raw source_index and source_time are keys, not decision time; stable same-key order.
 
 ### LC14 — StopAllDetector.detect
-Allocate output, run LC15 with default checkpoint, resolve stop fields for each output with LC20 and return.
+Allocate output, run LC15 with default checkpoint, resolve stop fields for each output with LC20 and return. Evaluate sorted events first, default checkpoint second, pass mutable output; resolve each emitted record only after traversal, in output order, producing a new list. No local catch.
 
 ### LC15 — StopAllDetector._detect_events
 Resume checkpoint owner/pending/active, mutate provided output by chronological events. S tag goes LC18; any other tag goes LC19. Optional checkpoints appended after each event, containing current owner, pending, active and output length. Nested helpers share nonlocal state. No stop resolution until LC20.
