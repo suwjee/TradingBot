@@ -253,3 +253,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — B03 W1 local completion
 
 [Blue and A completion evidence](Audit/Phase_07/Semantic_Closure_B03_Completion.json): 1145/1145 original rows, local PASS. W2/W3 open; next B04 S Zone. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 38
+
+[S initialization, chronology indexes and owner input provenance](Audit/Phase_07/Semantic_Closure_B04_01.md): 117 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 39
+
+[Strict A stop, candidate extrema and trend alignment](Audit/Phase_07/Semantic_Closure_B04_02.md): 167 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 3096,
+  "verified_independent_site_rows_in_this_plan": 3380,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -527,7 +527,7 @@
     {
       "id": "B04",
       "title": "S",
-      "status": "NOT RUN",
+      "status": "INCOMPLETE",
       "modules": [
         {
           "path": "engine/pipeline/s_zone_detector.py",
@@ -540,7 +540,48 @@
           "calls": 453
         }
       ],
-      "site_category_rows": 962
+      "site_category_rows": 962,
+      "sub_batches": [
+        {
+          "id": "B04-01",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1,
+            177
+          ],
+          "procedures": "S01–S01",
+          "original_rows": 117,
+          "supplemental_items": 8,
+          "resolved_findings": 2,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_01.json",
+            "Audit/Phase_07/Semantic_Closure_B04_01.md"
+          ]
+        },
+        {
+          "id": "B04-02",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            178,
+            402
+          ],
+          "procedures": "S02–S19",
+          "original_rows": 167,
+          "supplemental_items": 10,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_02.json",
+            "Audit/Phase_07/Semantic_Closure_B04_02.md"
+          ]
+        }
+      ],
+      "review_scope": "S W1 local review through line 402 / S19; W2/W3 open",
+      "reviewed_original_rows": 284,
+      "supplemental_items": 18,
+      "next_module": "engine/pipeline/s_zone_detector.py",
+      "next_source_line": 403
     },
     {
       "id": "B05",
@@ -734,5 +775,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B04 S Zone, begin pinned source line 1 and original site inventory; W2 and W3 open."
+  "next_action": "B04-03 S Zone, line 403 / S20 independent Type3 and Type4 decisions; 678 original S rows remain. W2 and W3 open."
 }

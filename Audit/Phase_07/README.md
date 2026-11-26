@@ -196,3 +196,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## B03 W1 local completion
 
 [Completion evidence](Semantic_Closure_B03_Completion.json): Blue 437/437 and A 708/708 original rows, 57 procedures, 77 supplemental items. Nine contiguous per-module partitions; local PASS. W2/W3 open; next B04 S Zone. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 38 — S initialization, chronology indexes and owner input provenance
+
+[Local review](Semantic_Closure_B04_01.md) and [site evidence](Semantic_Closure_B04_01.json): 117 original rows, 8 supplemental items, 2 resolved findings; local PASS. S 117/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 39 — Strict A stop, candidate extrema and trend alignment
+
+[Local review](Semantic_Closure_B04_02.md) and [site evidence](Semantic_Closure_B04_02.json): 167 original rows, 10 supplemental items, 4 resolved findings; local PASS. S 284/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

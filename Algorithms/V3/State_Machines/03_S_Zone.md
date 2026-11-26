@@ -11,7 +11,7 @@ Registers ordered A list, provisional physical audit, output, cycle_start, owner
 | SOW01 | INIT | Detector constructed | Initialize dependencies; clear windows/audit, provisionally audit every stopped A | NEXT_A | S01,S42,OA75,OA79 |
 | SOW02 | NEXT_A | First matching ownership window contains source event (start inclusive,end exclusive/open), no escape | Skip A; no duplicate accepted S branch | NEXT_A | S25,S26,S27,S42 |
 | SOW03 | NEXT_A | Source earlier than cycle_start, or equal with output already present | Skip A | NEXT_A | S42 |
-| SOW04 | NEXT_A | No strict A stop from exact confirmation | Skip A | NEXT_A | S07,S10,S42 |
+| SOW04 | NEXT_A | No strict A stop from S07 returned confirmation (including native RE61 fallback) | Skip A | NEXT_A | S07,S10,S42 |
 | SOW05 | NEXT_A | A stop exists | Resolve first physical Order after stop before next-A gate; if stop>=next A confirmation skip | NEXT_A or WINDOW | S42,OA76 |
 | SOW06 | WINDOW | Valid stop before next A confirmation | Open (stop,null), resolve S route; missing S leaves window open | NEXT_A or ACCEPT | S40,S42 |
 | SOW07 | ACCEPT | Resolved S | Append, cycle_start=S source main; close latest window at max(stop, decision+1 microsecond) | NEXT_A | S42 |
