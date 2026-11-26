@@ -79,10 +79,42 @@ Use full file rows for calculation; empty raises ValueError. Timed bucket normal
 Batch: build lower candles, shared lower index, main candles or tf1 alias, chronology. Live: require delta, update views, register prepared lower/main indexes, chronology. Determine requested visible bucket epochs (floor for tf>1); bisect start and end+tf minus one. Empty range raises, end clamped to last. Return full context with visible bounds. Exact null live_views selects batch. Timeframe one aliases lower candles rather than rebuilding main. Live branch uses an assertion for non-null delta, updates views then registers lower and main prepared indexes in that order; chronology receives both. Exceptions are not transactionally caught here. Both visible boundaries use integer floor alignment except timeframe one unchanged. Bisect left on bucket time yields inclusive start and exclusive end+timeframe, then subtract one. Reject start beyond candle length or end before start before clamping end to last actual candle. Returned market keeps full calculation arrays and default zero offset/trend flags.
 
 
-### TB103 — LiveClosedRegimes stage and resolver
+### TB103 — LiveClosedRegimes.stage
 
-LiveClosedRegimes owns _published mapping initially empty. stage(first_dirty_main) captures previous mapping by reference and creates empty current map. Returned resolve(direction,market,boundary,calculate) uses absolute excluded end = market.index_offset+boundary; key = ordered tuple(direction,index_offset,end,boundary candle timestamp,market.start_index,min(market.end_index,boundary-1),initial_bullish_trend,initial_bearish_trend). Read prior entry only when end<=first_dirty_main, otherwise None; if None call calculate, then assign current[key]=saved and return saved. Does not consult current for a second same-stage hit. Yield resolver; only successful context exit assigns _published=current, dropping unused prefixes. Failure before normal completion leaves prior map, and outer live wrapper discards views on BaseException. Cached history is unannotated local output; publish recursively copies even zero offset before metadata and horizon-dependent T/F. [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1756-L1785).
+Context manager with first_dirty_main. Capture previous published map by reference, allocate empty current map, yield the resolver TB106. Assign the current map as published only on normal continuation after the yield, dropping unused entries. An exception thrown through the yield bypasses the assignment. Does not catch errors or publish the original cache on failure; outer append error handling replaces the view.
 
-### TB104 — MarketIndexWindow adapter
+### TB104 — MarketIndexWindow.__init__
 
-MarketIndexWindow retains supplied candles and slices index.times[start:stop]; length=stop-start. If index is already a window, flatten base and add its start to new start, otherwise retain original index and start. First-crossing adapter clamps left=max(left,0), right=min(right,length), returns None if left>=right; otherwise call selected strict base query with offset bounds and level, subtract offset from non-null hit (zero valid). Range extreme adapter does not clamp: require 0<=left<right<=length else ValueError; query base range and return value unchanged plus position minus offset. Delegates first_less/first_greater and range_minimum/range_maximum, preserving base tie/price semantics. [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1788-L1823).
+Keep supplied candle reference, slice parent timestamps at [start,stop), and store logical length stop-start. If the supplied index is another MarketIndexWindow, flatten its base and add start to its base offset; otherwise use supplied index and start. No independent bounds validation or candle equality check at construction.
+
+### TB105 — LiveClosedRegimes.__init__
+
+Allocate fresh empty published mapping for this owner instance. No other inputs or return value.
+
+### TB106 — LiveClosedRegimes.stage.resolve
+
+Compute absolute excluded end = market.index_offset + boundary. Key fields in order: direction, index offset, end, boundary candle timestamp, visible start, min(visible end,boundary-1), initial bullish flag, initial bearish flag. Consult previous map only if end<=first_dirty_main; missing/null selects calculate() with no arguments. Store selected result in current map and return same reference. Does not read current for a second same-stage hit. Caller validates the independently confirmed Primary3; projection copies before annotations. Native callback and lookup failures propagate.
+
+### TB107 — MarketIndexWindow._first
+
+Clamp left=max(left,0), right=min(right,length). Empty interval returns null without dispatch. Otherwise query selected base method at [base_offset+left,base_offset+right) with unchanged level. Return null for null hit, otherwise subtract base_offset from position. Position zero is valid.
+
+### TB108 — MarketIndexWindow.first_less
+
+Call TB107 with bound base.first_less and unchanged local bounds/level. Strict Low crossing and earliest qualifying position are delegated.
+
+### TB109 — MarketIndexWindow.first_greater
+
+Call TB107 with bound base.first_greater and unchanged local bounds/level. Strict High crossing and earliest qualifying position are delegated.
+
+### TB110 — MarketIndexWindow._extreme
+
+Require 0<=left<right<=length; otherwise ValueError. Call selected base method at translated half-open bounds. Return base extreme value unchanged and base position minus offset. No clamping, conversion or independent tie rule.
+
+### TB111 — MarketIndexWindow.range_minimum
+
+Delegate to TB110 with bound base.range_minimum and unchanged local bounds. Preserve base extreme/tie semantics.
+
+### TB112 — MarketIndexWindow.range_maximum
+
+Delegate to TB110 with bound base.range_maximum and unchanged local bounds. Preserve base extreme/tie semantics.
