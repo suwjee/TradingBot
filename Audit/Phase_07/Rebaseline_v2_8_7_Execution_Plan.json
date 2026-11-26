@@ -406,7 +406,7 @@
       "phase": "07",
       "title": "Cross-owner reconciliation",
       "status": "IN_PROGRESS",
-      "last_completed_checkpoint": 323,
+      "last_completed_checkpoint": 324,
       "completed_checkpoints": [
         {
           "id": 322,
@@ -417,10 +417,15 @@
           "id": 323,
           "status": "PASS_SCOPED",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_Completion.json"
+        },
+        {
+          "id": 324,
+          "status": "PASS_SCOPED",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_Completion.json"
         }
       ],
-      "completed_scope": "Complete direct named chronology accessor fan-out: reaction_confirmation, reset_time, order_b_reset_event_time, _bridge_reaction_confirmation, plus source provider contracts. First bounded W2 partition only, not all Reaction/Reset lifecycle or Blue/A freeze. CP323 completes bounded Reaction/Reset state transition ownership and Blue/A freeze with immediate downstream gates, native/conditional live distinction, 73 transition rows; CP322 direct accessor census remains separate.",
-      "remaining_scope": "CP324 / W2: S decision chronology (stopped A, opposite Order, Type3/Type4, red/blue/fallback race, shared Order stop, live dependency ownership), then further Order/E/lifecycle/Primary/projection/live chronology and W3/W4. Scope partition chosen from outstanding W2 dependencies."
+      "completed_scope": "Complete direct named chronology accessor fan-out: reaction_confirmation, reset_time, order_b_reset_event_time, _bridge_reaction_confirmation, plus source provider contracts. First bounded W2 partition only, not all Reaction/Reset lifecycle or Blue/A freeze. CP323 completes bounded Reaction/Reset state transition ownership and Blue/A freeze with immediate downstream gates, native/conditional live distinction, 73 transition rows; CP322 direct accessor census remains separate. CP324 reconciles 29 new bounded S/physical Order_A/canonical stop transition rows plus 4 immediate handoff references.",
+      "remaining_scope": "CP325 / W2: Order_A and Order_B accepted ledger, reset-leg discovery and exact parent-stop ownership, E-facing cause filtering and live/feedback boundaries. Then E/lifecycle/Primary/projection/live and W3/W4; adaptive partitions."
     },
     {
       "id": "W3",
@@ -441,7 +446,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP324 / W2: S decision chronology (stopped A, opposite Order, Type3/Type4, red/blue/fallback race, shared Order stop, live dependency ownership), then further Order/E/lifecycle/Primary/projection/live chronology and W3/W4. Scope partition chosen from outstanding W2 dependencies.",
+  "next": "CP325 / W2: Order_A and Order_B accepted ledger, reset-leg discovery and exact parent-stop ownership, E-facing cause filtering and live/feedback boundaries. Then E/lifecycle/Primary/projection/live and W3/W4; adaptive partitions.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -453,6 +458,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "Execute CP324 / W2 from latest verified algorithm HEAD, pin main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, execution plan, CP322/CP323 Completion and CP323 reconciliation. Audit S decision chronology and stopped-A/Order/Type3/Type4/shared-stop/live dependency owners directly from source; preserve CP323 immediate boundaries, exact prices, ordering, identity, no runtime, RAW, ZIP or production changes. Publish individually and verify candidate/remote tree and contents. Up to 10 checkpoints only as gates allow."
+    "next_prompt": "Execute CP325 / W2 from latest verified algorithm HEAD, pin main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, execution plan, CP323 and CP324 completions. Preserve 73 CP323 and 29 CP324 rows. Audit Order_A/Order_B accepted ledger, reset-leg discovery, parent-stop ownership, cause filtering and live/feedback boundaries directly from source; exact prices, ordering, identity. No RAW, runtime, ZIP or production changes. Publish individually and verify candidate/remote tree and contents. Up to 10 checkpoints only as gates allow."
   }
 }

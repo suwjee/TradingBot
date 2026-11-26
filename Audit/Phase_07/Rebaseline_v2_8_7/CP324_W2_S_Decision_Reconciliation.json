@@ -1,0 +1,465 @@
+{
+  "checkpoint": 324,
+  "status": "PASS_SCOPED_SOURCE_RECONCILIATION",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "9690bc911522b1d2f4335ba18e3d02fa05306480",
+  "entry_tree": "dc075ec4fb25cf939392937e7420c5c17a96d8d6",
+  "scope": "Native S decision routes, shared accepted Order stop, stopped-A physical Order selection and canonical stop provider, conditional LiveS continuation; immediate Bridge boundaries retained from CP323. Not all E/Order_B/lifecycle decisions.",
+  "prior": {
+    "cp323": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_Completion.json",
+    "preserved_rows": 73,
+    "referenced_s_rows": [
+      "CP323-S34",
+      "CP323-S35",
+      "CP323-S36",
+      "CP323-S37",
+      "CP323-S38"
+    ]
+  },
+  "source_modules": [
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP324-S01",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        27,
+        64
+      ],
+      "procedure_refs": "S record",
+      "contract": "Frozen slotted SZone preserves separate A, Order, Reset, source and exact/main decision fields; null Order fields distinguish order-free construction, not all later shared-reconciled states."
+    },
+    {
+      "id": "CP324-S02",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        253,
+        276
+      ],
+      "procedure_refs": "S11–12",
+      "contract": "Public first-A-stop delegates native stop; resolved Order-backed route delegates first selected physical match, no later canonical replacement."
+    },
+    {
+      "id": "CP324-S03",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        279,
+        312
+      ],
+      "procedure_refs": "S13–14",
+      "contract": "Inclusive main range rejects reverse. Strict improvement retains earliest tie; <= bullish or >= bearish replaces on equality for last-source variant."
+    },
+    {
+      "id": "CP324-S04",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        314,
+        376
+      ],
+      "procedure_refs": "S15–17",
+      "contract": "Original reaction order first confirmation strictly after Order; bisect only sorted naive exact datetime. Nested candidate First strictly after Order First in index and time and strictly before confirmation, Break <= Order Break, confirmation <= Order, inclusive contained box, first eligible original ordinal. Simple uses last-tie Order Break through aligned Break."
+    },
+    {
+      "id": "CP324-S05",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        378,
+        401
+      ],
+      "procedure_refs": "S18–19",
+      "contract": "Reset owner via First index map, absent/reversed returns null; last-tie inclusive owner Break through Reset containing main. Trend qualifier strictly after A stop and <= crossing."
+    },
+    {
+      "id": "CP324-S06",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        403,
+        450
+      ],
+      "procedure_refs": "S20",
+      "contract": "Type3 Reset window (A-stop,deadline); owner confirmation <= A stop; skip owner already reset at/before A stop. Search first strict lower cross [Reset,deadline); failure of qualifier on first hit discards Reset route, no recross. Earliest exact cross wins, equal retains first stable Reset iteration."
+    },
+    {
+      "id": "CP324-S07",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        453,
+        532
+      ],
+      "procedure_refs": "S21–22",
+      "contract": "Type4 public valid noninternal Blue formation within [candidate source main,cross]. Aligned trend confirmations (A-stop,deadline), Break >= stop main; last tie from stop through Break. Search [max(aligned confirm,candidate event,A stop),min(next filtered aligned confirm,deadline)); equal windows skip. First hit without Blue discards candidate until next aligned reaction; no coarse fallback, no later recross."
+    },
+    {
+      "id": "CP324-S08",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        534,
+        584
+      ],
+      "procedure_refs": "S23",
+      "contract": "Type4 emits blue, preserves A fields and selected geometry; all Order and Reset fields null; aligned reaction number not stored."
+    },
+    {
+      "id": "CP324-S09",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        587,
+        626
+      ],
+      "procedure_refs": "S24",
+      "contract": "After-Order source start clamped by First and range start. Anchor accepted by index lower bound only; otherwise earliest main extreme then earlier containing lower remainder can replace on strict improvement or equality. Clamp/anchor path does not universally establish strictly post-confirmation evidence."
+    },
+    {
+      "id": "CP324-S10",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        696,
+        739
+      ],
+      "procedure_refs": "S29",
+      "contract": "Legacy before/after from Order boundary vs A stop main extreme. Preserve after when nested Advanced exists; otherwise exact-or-fallback candidate time strictly < Order First main means before; equality after."
+    },
+    {
+      "id": "CP324-S11",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        741,
+        783
+      ],
+      "procedure_refs": "S30",
+      "contract": "Compute full main stop..First; then if lower stop remainder exists use strict extreme there and later main candidate only if strictly better; equal retains stop main. Empty lower remainder uses full main candidate."
+    },
+    {
+      "id": "CP324-S12",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        785,
+        804
+      ],
+      "procedure_refs": "S31–32",
+      "contract": "Candidate exact first lower extreme equals level in [max(source,not_before),source+TF); absent returns max(source,not_before), even beyond candle end; public delegate, not proof."
+    },
+    {
+      "id": "CP324-S13",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        854,
+        868
+      ],
+      "procedure_refs": "S35–36",
+      "contract": "Ordinary qualifier first confirmation > behavior start and <= event; candidate crossing uses strict parent directional predicate."
+    },
+    {
+      "id": "CP324-S14",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        870,
+        960
+      ],
+      "procedure_refs": "S37 lower",
+      "contract": "Order stop queried independently from clamped start. Candidate gate max(scan start,candidate start); normal route earliest nonnull Reset Blue or ordinary trend qualifier sets start; fallback scans ungated by qualifier then upgrades candidate winner if qualified. Both null or same lower position rejects; earlier position wins, equal timestamp on different rows is not same-position tie."
+    },
+    {
+      "id": "CP324-S15",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        962,
+        993
+      ],
+      "procedure_refs": "S37 main",
+      "contract": "Only empty lower window enables main scan from containing main, clamped range start. Main candidate gate uses main timestamp; both raw gated candidate and Order crossing rejects before qualification, even unqualified candidate; Order red otherwise, qualified candidate blue, fallback only enabled; main time duplicated."
+    },
+    {
+      "id": "CP324-S16",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        996,
+        1052
+      ],
+      "procedure_refs": "S38",
+      "contract": "Type3 blue with Reset owner number/exact time, all Order fields null; A/source/decision from inputs."
+    },
+    {
+      "id": "CP324-S17",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1054,
+        1223
+      ],
+      "procedure_refs": "S39",
+      "contract": "Canonical Order stop then timing; pre-order race fallback-enabled with ordinal zero and candidate event as behavior start. Null ends, fallback discards decision, otherwise retains pre-route. Advanced nested geometry uses Order opposite source main extreme and nested confirmation gate. Simple aligned later required, last-tie Break..Break; after-order source computed even if unused by non-pre red. Normal race if needed. Red preserves pre source only if pre chosen; otherwise earliest extreme Order Break..decision main. Blue retains chosen source. Full provenance, no new Order search."
+    },
+    {
+      "id": "CP324-S18",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1225,
+        1246
+      ],
+      "procedure_refs": "S40",
+      "contract": "Both independent Type3 and Type4 evaluated before selection; deadline selected Order confirmation or range end. Earliest exact event, Type3 wins equality; only if neither qualifies use Order-backed resolver, absent Order returns null."
+    },
+    {
+      "id": "CP324-S19",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1307,
+        1421
+      ],
+      "procedure_refs": "S43",
+      "contract": "Dedup physical First/Break, first entry unless retained crossing null and new nonnull; malformed nonnull can block richer preference. Require datetime confirmation and crossing shape or compute strict lower crossing, confirmation<cross. Supplied valid-shaped crossing trusted locally. Sort stop,confirm,First,Break; select earliest stop >= S source main and < existing decision; inclusive source, not strictly after as docstring says. Replace color/Order/decision, clear Reset fields; retain A, price, source, formation type, order of zones. No creation cause rewrite; no universal Order-confirmation-before-S-start condition."
+    },
+    {
+      "id": "CP324-S20",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1424,
+        1466
+      ],
+      "procedure_refs": "S44–46",
+      "contract": "Live dependency tuple includes Break main time, side, original zero ordinal, geometry/source/string prices/mode/intrabar/anchor; sets Reset event/owner First, Reset Blue time/number, public Blue time. Set collapses duplicates, does not include every field. Scope initially null."
+    },
+    {
+      "id": "CP324-S21",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1468,
+        1490
+      ],
+      "procedure_refs": "S47",
+      "contract": "Type3/4 frontier decision event; Order-backed requires row presence from max(confirm,range_start) through decision (not proof of crossing or row inside range_end). Frontier max decision, Order Break main, aligned later trend Break main and confirmation if any."
+    },
+    {
+      "id": "CP324-S22",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1492,
+        1525
+      ],
+      "procedure_refs": "S48–49",
+      "contract": "Dirty index 0..len inclusive; scope direction/TF/start index/range start. Same scope dirty=min supplied dirty and earliest dependency symmetric difference, else no prior. Key A ordinal/index/time/string price/stop tuple and Order number/signature/confirmation. Reuse iff through strictly < dirty, no null caching; detector._detect rebuilds ownership/audit even reused resolver result. Commit wrapper state only after success, detector mutation may survive failure. Correctness conditional on caller dirty evidence/signature sufficiency."
+    },
+    {
+      "id": "CP324-S23",
+      "module": "S",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "range": [
+        1528,
+        1551
+      ],
+      "procedure_refs": "S50",
+      "contract": "Stateless public wrapper forwards all arguments then detect; no persistent continuation."
+    },
+    {
+      "id": "CP324-S24",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2520,
+        2544
+      ],
+      "procedure_refs": "OA stopped-A index",
+      "contract": "Map First->last ordinal/reaction; canonical sort (confirmation,First,Break,number,object); cache by exact A stop event."
+    },
+    {
+      "id": "CP324-S25",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2546,
+        2598
+      ],
+      "procedure_refs": "OA physical selection",
+      "contract": "Native candidate first; independent callback gate main/exact stop/end; reject null/unconfirmed Break, First before gate, confirmation <= stop. Map only exact identity to canonical object and recompute confirmation (no second local >stop check), otherwise number zero. If both candidates choose independent only if (First,confirmation) strictly earlier, ties native. No public reaction insertion."
+    },
+    {
+      "id": "CP324-S26",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2601,
+        2620
+      ],
+      "procedure_refs": "OA canonical choice",
+      "contract": "Bisect strictly later confirmation, first sorted entry with First>=gate main; cache hit including null; selection primarily confirmation not earliest First across all native candidates."
+    },
+    {
+      "id": "CP324-S27",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2622,
+        2667
+      ],
+      "procedure_refs": "OA audit",
+      "contract": "First physical identity creates immutable core metadata entry; append unique (A source time,stop exact) causes in encounter order. Audit starts from A confirmation, independent of later eligibility. Missing stop or Order returns."
+    },
+    {
+      "id": "CP324-S28",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2670,
+        2712
+      ],
+      "procedure_refs": "OA shared stop",
+      "contract": "Delegate stop level/source to chronology canonical provider; strict opposite predicate. Shared stop [max(confirm,range_start),range_end) with index if present else linear lower; no main fallback. Scan may return own confirmation row; S43 later excludes equality without rescan."
+    },
+    {
+      "id": "CP324-S29",
+      "module": "RE",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1305,
+        1367
+      ],
+      "procedure_refs": "Canonical stop provider",
+      "contract": "Mode A anchor if present else First-1, clamped start; expand preceding context tag, inclusive scan through Break, strict outer extreme retains first tie. Non-A requires number>1 else raises, uses preceding opposite reaction semantic box edge/source (not re-extremized). Independent zero only supported by A branch; no fallback for non-A zero."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/05_S_Zone.md",
+      "blob": "8e461aae1a14ac08a39fe7c8d73747d8a4a16ef0"
+    },
+    {
+      "path": "Algorithms/V3/06_Order_A.md",
+      "blob": "71b0f5b085c2de298105343f190705cb3578879a"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/03_S_Zone.md",
+      "blob": "376f7c12582b497666dcbb82cdcac5c794c55b2f"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/02_Blue_A_S.md",
+      "blob": "247a11375b5c591b147ec204e10274d8c4e7e139"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md",
+      "blob": "a13e9ac9b7916094e6a7268b362134b39dd2dae9"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/09_W2_Reaction_Blue_A_Reconciliation.md",
+      "blob": "d4ec6368a079f3f790f94ea77547cb1635ffe985"
+    }
+  ],
+  "bridge_edges": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2256,
+        2291
+      ],
+      "contract": "Full reusable native initial S with optional live interface; feedback reuses first S pass. Filter A audit by eligible A sources before E."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2408,
+        2506
+      ],
+      "contract": "Reapply A acceptance after invalidation; accepted_orders plus final E audit only. Shared reconcile replaces candidates by (A source time,S source time), rebuild E once if S changes."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2899,
+        2922
+      ],
+      "contract": "Reusable context consumes accepted S and eligible A; fallback constructs detector and native detect. Public entry optional per-detector live interface not established as active."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2462,
+        2505
+      ],
+      "contract": "Accepted causes source filter, first retained cause chosen; copy only when changed; preserves physical identity."
+    }
+  ],
+  "validation": {
+    "new_rows": 29,
+    "prior_rows_preserved": 73,
+    "overlap_with_cp323_additional": 0,
+    "duplicate_ids": 0,
+    "source_blobs_matched": 3,
+    "bridge_edges_not_counted_as_new_rows": 4,
+    "reference_tree_anchors": 7,
+    "source_only": "PASS_SCOPED",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN",
+    "benchmark": "NOT RUN"
+  },
+  "remaining": "CP325 / W2: Order_A and Order_B accepted ledger, reset-leg discovery and exact parent-stop ownership, E-facing cause filtering and live/feedback boundaries. Then E/lifecycle/Primary/projection/live and W3/W4; adaptive partitions."
+}
