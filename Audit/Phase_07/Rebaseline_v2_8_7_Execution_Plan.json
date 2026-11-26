@@ -18,12 +18,14 @@
       "status": "INCOMPLETE",
       "checkpoint": 287,
       "partial_evidence": "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Partial_Source_Delta.json",
-      "completed_scope": "Pinned 16/16 source byte identities match RB01 SHA-256 manifest and Git tree; two local deterministic CPython supplemental static generations per module; independent AST counts; historical branch-kind counts reproduced; changed-scope and partial exact-location crosswalk summaries published.",
-      "remaining_scope": "Publish full row-level artifacts using GitHub only; reconcile historical schema, call/self/alias candidates, branch outcome IDs, precise source-to-site and scope crosswalks, aggregate indexes and validation. Supplemental output is not historical schema-equivalent. No runtime or RAW tests; no advance to RB03.",
+      "completed_scope": "Pinned 16/16 source byte identities match RB01 SHA-256 manifest and Git tree; two local deterministic CPython supplemental static generations per module; independent AST counts; historical branch-kind counts reproduced; changed-scope and partial exact-location crosswalk summaries published. Reconstructed historical schema field/row structure locally; exact normalized structural comparison of 17 historical True/False sections; diagnostic checksum comparison of 219/272 matching historical sections across all 16 Git blobs, with 53 differences explicitly identified. Published lossless old/new node mapping for changed files (13,767 pairs), and identity mapping for 51,495 nodes in 14 unchanged files; three changed target scope IDs in unchanged live_pipeline.",
+      "remaining_scope": "Investigate 53 historical section discrepancies (especially bridge calls/effects/symbols/CFG/reaching writes); publish and independently validate current row-level inventories and complete source-to-site crosswalk plus aggregate indexes. Diagnostic checksums and regenerated-row mappings alone do not establish historical equivalence. Git DNS unavailable locally; use GitHub only, no Drive or other external storage. No runtime or RAW tests. RB03 remains NOT RUN.",
       "supplementary_evidence": [
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_TrueFalse_Static_Supplement.json",
         "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Static_Execution_Summary.json",
-        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Scope_Delta_and_Imports.json"
+        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Scope_Delta_and_Imports.json",
+        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Historical_Schema_Comparison.json",
+        "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Node_Crosswalk.json"
       ]
     },
     {
@@ -105,6 +107,6 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "Continue CP287/RB02 remaining acceptance gates; do not start RB03 or W2. No Google Drive use for reverse engineering.",
+  "next": "Continue CP287/RB02 from CP287_Historical_Schema_Comparison.json and CP287_Node_Crosswalk.json. Do not start RB03 before RB02 actual acceptance.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence."
 }
