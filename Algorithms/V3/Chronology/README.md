@@ -1,6 +1,6 @@
 # Chronology & Event Ordering — Phase 07 checkpoint 01
 
-**INCOMPLETE for full semantic closure.** Baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`.
+**INCOMPLETE for full semantic closure.** Historical baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`; selected clauses revised for `c99b4c957e932d9ee70c492ca03ce80711447fc1`. [Rebaseline register](../../../Audit/Phase_07/Rebaseline_v2_8_7.json); remaining source anchors and coverage require reconciliation.
 
 - [Time domains and Reaction](01_Time_Reaction.md): CH01–CH08
 - [Blue, A and S](02_Blue_A_S.md): CH09–CH18

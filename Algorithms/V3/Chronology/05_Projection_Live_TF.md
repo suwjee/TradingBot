@@ -10,9 +10,9 @@ Projection horizon exclusive visible last start + timeframe. Recorded strict eve
 
 ## CH38
 
-Independent segment main [start,stop), lower [first main,next main or final + duration); local indices reset, offset accumulated, visible bounds adjusted. Projection offsets nonnegative integer index fields and identity components, not timestamps.
+Independent segment main [start,stop), lower [first main,next main or final + duration); local indices reset when needed, offset accumulated, visible bounds adjusted; explicit indexed mode can reuse zero-start records and register local windows over retained indexes. Projection offsets nonnegative integer index fields and identity components, not timestamps.
 
-[Source engine/bridge/trading_pipeline.py:1755–1789](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1755-L1789)
+[Source independent segment and projection](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1826-L1871)
 
 ## CH39
 
@@ -22,7 +22,7 @@ Live accepts equal positive integer epochs, rejects descending; dirty lower roll
 
 ## CH40
 
-Append validation before transaction; request end moves to latest RAW time. Active path full replay from buckets; failure resets retained market views and rethrows. No generalized rollback of external callback effects.
+Append validation before transaction; request end moves to latest RAW time. Active path prepares trading state from buckets; optional exact-key reuse of settled historical closed prefixes. Failure resets retained market views (including cache) and rethrows. No generalized rollback of external callback effects.
 
 [Source engine/bridge/live_pipeline.py:35–70](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/live_pipeline.py#L35-L70)
 
@@ -54,4 +54,4 @@ T/F clears old annotations, excludes only exact Boolean false, first row per sou
 
 Reversed outputs applied only if transition index <= visible end. Active direction chosen by maximal (segment start index,direction). Repair through = visible last start + duration - one second; closed-through min(through epoch + 1,last lower epoch + raw timeframe). StopAll closure decision epoch + timeframe <= closed-through.
 
-[Source engine/bridge/trading_pipeline.py:3639–3655](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3639-L3655)
+[Source response horizon](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3680-L3705)

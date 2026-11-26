@@ -4,7 +4,7 @@ Source-derived extended-state models complement [Live](../18_Live_Bridge.md), [R
 
 ## LX — Active worker normalized-input transaction
 
-The active worker retains normalized market buckets, view/index suffixes and exact byte lineage; it replays all trading stages. Optional continuations below are separate services, not the active worker's persisted trading state. Registers last_raw_time, prices keyed by (type,value), lower/main arrays (alias at TF1), dirty boundaries and view objects. Last bucket is provisional; settled counts are exclusive.
+The active worker retains normalized market buckets, view/index suffixes and exact byte lineage; it prepares active trading stages afresh and may reuse settled independently calculated closed-regime prefixes. Optional continuations below are separate services, not the active worker's persisted trading state. Registers last_raw_time, prices keyed by (type,value), lower/main arrays (alias at TF1), dirty boundaries and view objects. Last bucket is provisional; settled counts are exclusive.
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
@@ -15,7 +15,7 @@ The active worker retains normalized market buckets, view/index suffixes and exa
 | LX05 | STAGE | New rows | Determine dirty lower if first time=last raw time; dirty main if same timeframe bucket; copy mutable tails, TF1 shared main; normalize/aggregate using prior price cache then local new keys | PREPARE | TB09,TB14,TB15,TB16 |
 | LX06 | PREPARE | Aggregation/validation succeeded | Snapshot previous suffixes and last time; add new prices, replace suffixes, set last time, yield delta | REPLAY | TB14 |
 | LX07 | REPLAY | Views present | Rebuild candle suffix at dirty positions; if index missing or new length>capacity construct fresh index with crossing retention enabled, else refresh suffix; TF1 shares lower objects | CALCULATE | TB18,TB20,TB21 |
-| LX08 | CALCULATE | Full live replay | Clear run caches on entry/exit; prepare market/state without optional live-stage object, build response, report completed stage; final report inside transaction | COMMIT | L02,L03,TB98,TB100,TB101 |
+| LX08 | CALCULATE | Full live replay | Clear run caches on entry/exit; prepare market/state without optional live-stage object, build response with optional closed-prefix resolver, report completed stage; final report inside transaction | COMMIT | L02,L03,TB98,TB100,TB101 |
 | LX09 | STAGE or PREPARE or REPLAY or CALCULATE | BaseException in protected body/context | If transaction had mutated suffixes restore snapshots, last time, delete added keys; discard retained views; propagate; validation before mutation has no suffix rollback | ERROR | L02,TB14 |
 | LX10 | COMMIT | Successful exit | Return payload; next append reuses retained normalized history, not prior trading result | READY | L02 |
 
@@ -129,3 +129,7 @@ Each row describes a separate service; its own previous state is retained only a
 | LV07 | PRIMARY | Recompute successful | Drop previous-run link, commit new run/result/times; callbacks may mutate external ledger, no universal rollback | PRIMARY | P46 |
 
 These are source-supported optional continuation boundaries. They must not be combined into a claim that active worker performs incremental trading-stage execution.
+
+## v2.8.7 closed-prefix cache lifecycle
+
+LiveMarketViews owns a fresh closed-regime cache. The staged resolver reads the previous published mapping only for exact range keys whose absolute exclusive end is no later than first_dirty_main; missing/ineligible results are calculated. Store used results in a fresh mapping, publish only on normal cache-stage completion. On outer protected append failure discard views and their cache. MarketIndexWindow clamps crossing searches, but validates range-extreme queries without clamping; both translate results back to the local segment position. See TB103–104 for precise key order, bounds and errors. [Source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1756-L1857).

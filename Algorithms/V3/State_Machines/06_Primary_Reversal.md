@@ -87,3 +87,7 @@ Neither local cancellation nor pending proposal commits a primary point. Global 
 | TR07 | ACTIVE | No further visible transition | Publish active segment, group by direction, merge list fields and calculationSegments; activeDirection by greatest calculationStartIndex with lexical tie | RETURN | TB90,TB91,TB96 |
 
 No fixed reversal count. Each valid reversal advances boundary. Do not carry historical geometry into new regime, and do not infer a transition from retrospective source position without actual strict crossing after confirmed point decision.
+
+## v2.8.7 reversal integration
+
+The boundary and Primary3 proof remain mandatory even when the explicit closed_regime resolver reuses a settled prefix. The optional resolver selects MarketIndexWindow-backed segment preparation; the live object's closed_regime takes precedence when present. Publication recursively copies cached row lists/dicts, even at offset zero, before adding segment metadata and recalculating final T/F. This is cached result reuse, not a transfer of active trading state. See [TB91 and TB94](../17_Trading_Bridge.md) and [TB103–104](../21_RAW_Aggregation_Contract.md). [Source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3531-L3632).

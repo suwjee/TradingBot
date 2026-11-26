@@ -13,9 +13,9 @@ This is the active Phase 06 companion to the [module algorithm registry](../READ
 | [E, Lifecycle and StopAll](05_E_Lifecycle_StopAll.md) | ER, EC, EQ, EF, LC, SA | 76 |
 | [Primary and reversal](06_Primary_Reversal.md) | MB, PP, PG, PO, TR | 49 |
 | [Continuation and transport](07_Continuation.md) | LX, LT, IX, RC, CV, EV, LV | 75 |
-| [Pipeline, projection and T/F](08_Pipeline_Projection_TF.md) | BF, OF, PJ, TFC, TFB, TFS | 60 |
+| [Pipeline, projection and T/F](08_Pipeline_Projection_TF.md) | BF, OF, PJ, TFC, TFB, TFS | 61 |
 | [Shared services and adapters](09_Shared_Services.md) | CI, MC, RD, PR, ES, LS, IO | 57 |
-| Total | 49 models | 491 |
+| Total | 49 models | 492 |
 
 ## Interpretation and acceptance
 
@@ -61,3 +61,5 @@ This is a compact index of the source-checked race rules, not a complete Phase 0
 ## Scope boundary
 
 All 576 prior named procedures have a role: 550 directly referenced by guarded transition rows, 26 explicitly classified as supporting operations. This is structural traceability of the state-model deliverables, not source-branch equivalence, a formal proof of reachability, mutual exclusion, totality or path feasibility. The full original site inventories, 491 anonymous scopes, exact temporal windows, and conditional bindings still require the later chronology, decision-table, direction, integration and forensic audits. The state models do not authorize RAW reads, engine execution, runtime testing, executable reconstruction or benchmark.
+
+The counts above describe the current tables, not a re-certified v2.8.7 transition inventory. See [active rebaseline](../../../Audit/Phase_07/Rebaseline_v2_8_7.json).

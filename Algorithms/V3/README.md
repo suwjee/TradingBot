@@ -21,16 +21,16 @@ This is the active module-level reading surface for the source-only specificatio
 | 13 | [Primary High/Low roles](13_Primary_High.md) | uses P04–P14, P22–25, P36–43 | 12, 08 |
 | 14 | [Matching Behavior Leg](14_Matching_Behavior_Leg.md) | uses P09, P15–21, TB84 | 10–12, 19 |
 | 15 | [Trend Reversal](15_Trend_Reversal.md) | uses P02–06, TB63–65, TB90–96 | 12, 17, 19, 21 |
-| 16 | [True/False](16_True_False.md) | uses TF01–TF07 | 10, 19, 20, 22 |
+| 16 | [True/False](16_True_False.md) | uses TF01–TF08 | 10, 19, 20, 22 |
 | 17 | [Trading Bridge](17_Trading_Bridge.md) | TB01–08, TB66–67, TB71–78, TB87–102 | all calculation and projection modules |
 | 18 | [Live Bridge](18_Live_Bridge.md) | L01–L03, RE99–RE107 | 17, 20, 21, 23 |
 | 19 | [Serialization](19_Serialization.md) | TB22–62, TB64–65, TB79–86 | 01–15, 17, 20 |
 | 20 | [Indexes, chronology and caches](20_Indexes_And_Caching.md) | C01–06, D01–06, RE31–62 | normalized candle and Decimal contracts |
-| 21 | [RAW aggregation](21_RAW_Aggregation_Contract.md) | TB09–21, TB63, TB68–70 | 20, 17 timestamp conventions |
-| 22 | [True/False exact recurrence](22_True_False_Exact_Contract.md) | TF01–TF07 | 10, 16, 20 |
+| 21 | [RAW aggregation](21_RAW_Aggregation_Contract.md) | TB09–21, TB63, TB68–70, TB103–104 | 20, 17 timestamp conventions |
+| 22 | [True/False exact recurrence](22_True_False_Exact_Contract.md) | TF01–TF08 | 10, 16, 20 |
 | 23 | [Live transport](23_Live_Transport_Contract.md) | L04–L13 | 18, 21 |
 
-Procedure IDs are stable semantic labels, not required implementation symbols. Each of the 576 named operation descriptions appears once in this registry; cross-cutting documents (Reset, PH/PL, MBL, Reversal and T/F overview) compose or refer to the owning procedures rather than duplicate them. For common data types use the record catalog; for input-dependent results follow explicit guards and fallback rules. The module compositions and detailed procedure clauses together define the active Phase 05 deliverables.
+Procedure IDs are stable semantic labels, not required implementation symbols. Each of the 579 named operation descriptions appears once in this registry; cross-cutting documents (Reset, PH/PL, MBL, Reversal and T/F overview) compose or refer to the owning procedures rather than duplicate them. For common data types use the record catalog; for input-dependent results follow explicit guards and fallback rules. The module compositions and detailed procedure clauses together define the active Phase 05 deliverables.
 
 ## Calculation ownership and dependency flow
 
@@ -78,3 +78,7 @@ Read the [state-machine and lifecycle registry](State_Machines/README.md) alongs
 ## Phase 07 companion
 
 [Chronology registry](Chronology/README.md) records selected source-reviewed rules. Semantic closure remains incomplete.
+
+## v2.8.7 source reconciliation
+
+The v2.8.7 active contract revisions are recorded in the [rebaseline register](../../Audit/Phase_07/Rebaseline_v2_8_7.json). The original coverage and evidence remain attached to their historical baseline; new site inventories and dependency reconciliation are still pending. Updated procedure descriptions do not imply a new W1 PASS.

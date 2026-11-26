@@ -1394,3 +1394,5 @@ Latest main `c99b4c957e932d9ee70c492ca03ce80711447fc1` supersedes the pinned his
 ## RB01 — Bridge and Live contract revision
 
 Rewrote accepted donor supplementation and Order_B feedback convergence, state retention, visibility selection, closed-regime cache, MarketIndexWindow and live dispatch contracts against latest pinned main `c99b4c957e932d9ee70c492ca03ce80711447fc1`. Revised related state-machine and chronology clauses. Historical site ledgers remain immutable; new inventory, dependency rechecks and local review still pending. No runtime claim.
+
+RB01 dependent registries and active continuation/chronology explanations updated. Reported ZIP test results remain externally supplied historical evidence, not tests run in this source-only session. W1 new-baseline inventory remains open.
