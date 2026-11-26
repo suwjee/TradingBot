@@ -15,7 +15,11 @@
       "id": "RB02",
       "phase": "02",
       "title": "Static analysis and inventories",
-      "status": "NOT RUN"
+      "status": "INCOMPLETE",
+      "checkpoint": 287,
+      "partial_evidence": "Audit/Phase_02/Rebaseline_v2_8_7/CP287_Partial_Source_Delta.json",
+      "completed_scope": "Exact old/new source patch replay and unchanged-line mapping for both changed modules; lexical declaration and changed-line ownership inventory; True/False AST parse and compile.",
+      "remaining_scope": "Complete CPython AST/CFG, call/data-flow, symbol and dependency inventory regeneration for both modules and aggregate crosswalk validation."
     },
     {
       "id": "RB03",
@@ -96,6 +100,6 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "RB02 / CP287 — regenerate Phase 02 AST/static inventories for pinned engine/pipeline/true_false.py and engine/bridge/trading_pipeline.py; refresh dependencies, source-to-site mappings and metadata; do not start W2 before W1 rebaseline closure.",
+  "next": "Continue RB02 / CP287 from partial evidence; do not start RB03, W2 or Phase 08 before the relevant acceptance gates.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence."
 }
