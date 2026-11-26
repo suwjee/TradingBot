@@ -1,0 +1,77 @@
+{
+  "checkpoint": 359,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs; no cross-owner acceptance or unconditional live dispatch claim",
+  "boundaries": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2663,
+        2727
+      ],
+      "meaning": "Behavior modules enabled by Blue/A/S flags. reusable_full_context requires E module and S enabled. This branch builds both direction geometry detectors; live dispatch uses live.reactions, live.ownership and live.order_geometry if live is not None, otherwise native detect, batch ownership and first_order_reaction_after_gate. Dynamic live object contract is not proof of RE70 invocation."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2757,
+        2790
+      ],
+      "meaning": "Else branch creates independent RE71 closures for both directions, computes required direction results and conditionally builds batch ownership; returns closures in PipelineState. No exact event acceptance by factory."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2262,
+        2267
+      ],
+      "meaning": "S detector receives direction-specific initial_order_geometry; accepted downstream cause admission remains B04/B05 review."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2558,
+        2598
+      ],
+      "meaning": "Native order selected first; optional independent callback receives mapped gate main index, exact A-stop time and end. Reject missing candidate/Break, First<gate and confirmation<=stop; canonical pair remap may recompute confirmation without repeating that exact guard. Unmapped geometry gets number zero; compare (First,confirmation) strictly against native; tie retains native. This bounded call is geometry selection, not final Order creation."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        35,
+        70
+      ],
+      "meaning": "Append validates chronological rows before protected stage. Protected failure replaces retained market view object and reraises; does not establish restoration of any externally held Candidate aliases or prove RE70 is on native worker route."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2429,
+        2456
+      ],
+      "meaning": "Native detect passes retain_cursor false; initial confirmed append occurs before First threshold early exit. Other exits and accepted ledger to be reviewed in later B02 ranges."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP323-S10",
+    "CP323-S11",
+    "CP335",
+    "CP350",
+    "CP358"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Verify actual native live ownership route and dirty frontier, canonical remap chronology admission, all other accepted ledger and cross-owner consumers."
+}

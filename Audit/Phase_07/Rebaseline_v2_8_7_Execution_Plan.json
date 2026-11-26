@@ -590,7 +590,7 @@
       "phase": "07",
       "title": "Separate forensic review",
       "status": "INCOMPLETE",
-      "last_completed_checkpoint": 358,
+      "last_completed_checkpoint": 359,
       "completed_checkpoints": [
         {
           "id": 351,
@@ -631,10 +631,15 @@
           "id": 358,
           "status": "PASS_SCOPED_W3_B02_BATCH_BEHAVIOR_LOCAL",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP358_Completion.json"
+        },
+        {
+          "id": 359,
+          "status": "PASS_SCOPED_W3_B02_LIVE_BEHAVIOR_A_STOP_LOCAL",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP359_Completion.json"
         }
       ],
-      "completed_scope": "Entry evidence reconciliation and independent B01 local source owner category review; bounded consumer sample review only; CP352 RE53–RE62 local source contracts 613 category rows and 8 historical supplemental items; bounded consumer checks, no B02 closure.; CP353 RE31–RE52 local source contracts 1009 category rows and 11 historical supplemental items; bounded consumer checks, no B02 closure.; CP354 declarations and RE01–RE08 local source contracts 586 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP355 RE09–RE12 local source contracts 294 category rows and 4 historical supplemental items; bounded consumer checks, no B02 closure.; CP356 RE13–RE18 local source contracts 837 category rows and 15 historical supplemental items; bounded consumer checks, no B02 closure.; CP357 RE19–RE30 local source contracts 516 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP358 RE63–RE68 local source contracts 394 category rows and 5 historical supplemental items; bounded consumer checks, no B02 closure.",
-      "remaining_scope": "B02 remaining lines 1481–2908; B03–B10 local and all cross-owner obligations; W3 independent acceptance",
+      "completed_scope": "Entry evidence reconciliation and independent B01 local source owner category review; bounded consumer sample review only; CP352 RE53–RE62 local source contracts 613 category rows and 8 historical supplemental items; bounded consumer checks, no B02 closure.; CP353 RE31–RE52 local source contracts 1009 category rows and 11 historical supplemental items; bounded consumer checks, no B02 closure.; CP354 declarations and RE01–RE08 local source contracts 586 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP355 RE09–RE12 local source contracts 294 category rows and 4 historical supplemental items; bounded consumer checks, no B02 closure.; CP356 RE13–RE18 local source contracts 837 category rows and 15 historical supplemental items; bounded consumer checks, no B02 closure.; CP357 RE19–RE30 local source contracts 516 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.; CP358 RE63–RE68 local source contracts 394 category rows and 5 historical supplemental items; bounded consumer checks, no B02 closure.; CP359 RE69–RE72 local source contracts 495 category rows and 7 historical supplemental items; bounded consumer checks, no B02 closure.",
+      "remaining_scope": "B02 remaining lines 1617–2908; B03–B10 local and all cross-owner obligations; W3 independent acceptance",
       "current_w3": {
         "local_modules": {
           "reviewed": 5,
@@ -645,15 +650,15 @@
           "denominator": 10
         },
         "local_category_rows": {
-          "reviewed": 4585,
+          "reviewed": 5080,
           "denominator": 50220
         },
         "w1_category_rows": {
-          "reviewed": 980,
+          "reviewed": 1091,
           "denominator": 11575
         },
         "additional_category_rows": {
-          "reviewed": 3605,
+          "reviewed": 3989,
           "denominator": 38645
         },
         "b01_category_rows": {
@@ -666,15 +671,15 @@
         },
         "cross_owner_denominator": null,
         "b02_category_rows": {
-          "reviewed": 4249,
+          "reviewed": 4744,
           "denominator": 8697
         },
         "b02_w1": {
-          "reviewed": 906,
+          "reviewed": 1017,
           "denominator": 1877
         },
         "b02_additional": {
-          "reviewed": 3343,
+          "reviewed": 3727,
           "denominator": 6820
         },
         "b02_completed_ranges": [
@@ -705,9 +710,13 @@
           [
             1370,
             1480
+          ],
+          [
+            1481,
+            1616
           ]
         ],
-        "b02_historical_supplemental_reviewed": 57
+        "b02_historical_supplemental_reviewed": 64
       },
       "supplementary_evidence": [
         "Audit/Phase_07/Rebaseline_v2_8_7/CP351_W3_B01_Local_Forensic_Register.json",
@@ -742,7 +751,12 @@
         "Audit/Phase_07/Rebaseline_v2_8_7/CP358_W3_Batch_Behavior_Local_Forensic_Register.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP358_W3_Batch_Behavior_Consumer_Boundaries.json",
         "Algorithms/V3/01_Reaction_Engine.md",
-        "Algorithms/V3/Chronology/43_W3_Batch_Behavior_Containment_Forensic.md"
+        "Algorithms/V3/Chronology/43_W3_Batch_Behavior_Containment_Forensic.md",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP359_W3_Live_Behavior_A_Stop_Local_Forensic_Register.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP359_W3_Live_Behavior_A_Stop_Consumer_Boundaries.json",
+        "Algorithms/V3/01_Reaction_Engine.md",
+        "Algorithms/V3/State_Machines/07_Continuation.md",
+        "Algorithms/V3/Chronology/44_W3_Live_Behavior_And_A_Stop_Forensic.md"
       ]
     },
     {
@@ -758,7 +772,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP359 / W3 B02 independent LiveBehaviorReactionViews and directional A-stop order finder source review, starting from actual published CP358 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–358 evidence. Source before prior conclusions: review reaction_engine.py lines 1481–1616, complete historical B02-07 (RE69–RE72), live ordinal geometry equality and dirty frontier, all-owner pairs and removal, metadata-before-map commit, failures, directional A-stop gate/cache/alias and exact event ownership; then 1617–2908 in complete adaptive partitions. Compare historical B02-07 and subsequent partitions by actual range, active contracts, exact canonical W1/additional rows and consumer obligations. Preserve all prior evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, resolved findings and RE01–RE68 corrections. B02 4249/8697 local category rows (906/1877 W1, 3343/6820 additional), 57 historical supplemental, completed range 1–1480; W3 local category 4585/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open; complete B02–B10 local and cross-owner review including chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, project runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian.",
+  "next": "CP360 / W3 B02 independent Unified Reaction initialization, append/canonical geometry, reset and analysis source review. Recheck actual published CP359 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–359 evidence. Start directly from pinned reaction_engine.py line 1617, review complete adaptive source partitions through 2908; match historical B02-08 and later by actual ranges, canonical W1/additional rows including synthetic filter IDs, active specification and cross-owner consumers. Inspect direction admission, lazy helper construction, accepted ledger append and geometry refinement, adjacent anchor, exact Decimal/time/source identity, reset and remainder ownership, initial/trend/cross-direction routes, gates, caches, dirty frontier and failures. Preserve all prior evidence, CP350 registers, CP321/350 PASS_SCOPED, resolved findings and RE01–RE72 corrections. B02 4744/8697 local rows (1017/1877 W1, 3727/6820 additional), 64 historical supplemental, completed range 1–1616; W3 local category 5080/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03 and CP355-F02 remain open; complete B02–B10 local and cross-owner obligations, chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -770,6 +784,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "CP359 / W3 B02 independent LiveBehaviorReactionViews and directional A-stop order finder source review, starting from actual published CP358 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–358 evidence. Source before prior conclusions: review reaction_engine.py lines 1481–1616, complete historical B02-07 (RE69–RE72), live ordinal geometry equality and dirty frontier, all-owner pairs and removal, metadata-before-map commit, failures, directional A-stop gate/cache/alias and exact event ownership; then 1617–2908 in complete adaptive partitions. Compare historical B02-07 and subsequent partitions by actual range, active contracts, exact canonical W1/additional rows and consumer obligations. Preserve all prior evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, resolved findings and RE01–RE68 corrections. B02 4249/8697 local category rows (906/1877 W1, 3343/6820 additional), 57 historical supplemental, completed range 1–1480; W3 local category 4585/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open; complete B02–B10 local and cross-owner review including chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, project runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
+    "next_prompt": "CP360 / W3 B02 independent Unified Reaction initialization, append/canonical geometry, reset and analysis source review. Recheck actual published CP359 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Read AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–359 evidence. Start directly from pinned reaction_engine.py line 1617, review complete adaptive source partitions through 2908; match historical B02-08 and later by actual ranges, canonical W1/additional rows including synthetic filter IDs, active specification and cross-owner consumers. Inspect direction admission, lazy helper construction, accepted ledger append and geometry refinement, adjacent anchor, exact Decimal/time/source identity, reset and remainder ownership, initial/trend/cross-direction routes, gates, caches, dirty frontier and failures. Preserve all prior evidence, CP350 registers, CP321/350 PASS_SCOPED, resolved findings and RE01–RE72 corrections. B02 4744/8697 local rows (1017/1877 W1, 3727/6820 additional), 64 historical supplemental, completed range 1–1616; W3 local category 5080/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03 and CP355-F02 remain open; complete B02–B10 local and cross-owner obligations, chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
   }
 }

@@ -87,8 +87,8 @@ Each row describes a separate service; its own previous state is retained only a
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| CV01 | RX_VIEW | Dirty main valid | For each native position reuse prior entry only equal geometry signature and Break<dirty; otherwise recompute span/path and changed set | RX_VIEW | RE69,RE70 |
-| CV02 | RX_VIEW | Updated inner/outer entries | Retain matched pairs with surviving unchanged positions; changed inner checks all outer, unchanged inner changed outer; rebuild blocked identities and mutate metadata on original full reaction objects; commit maps after metadata application | RX_VIEW | RE70 |
+| CV01 | RX_VIEW | Dirty main inclusive 0..len(main) | Same ordinal reuse only old non-null, equal geometry signature and Break<dirty; else recompute span/path, mark changed only on full entry inequality, append rebuilt entry even when equal | RX_VIEW | RE69,RE70 |
+| CV02 | RX_VIEW | Updated inner/outer entries | Retain pairs with surviving unchanged positions; changed inner checks all outer, unchanged inner changed outer; keep all passing ordinal pairs and derive blocked physical identities; mutate original full reaction metadata before committing maps; partial metadata writes not rolled back on failure | RX_VIEW | RE70 |
 | CV03 | BLUE | first_changed valid existing checkpoint <= reaction count | Rewind earlier if previous reaction Break>=dirty main or First owns Reset index>=dirty; retain output through checkpoint line_count | BLUE | BL11,BL13 |
 | CV04 | BLUE | Recompute suffix | Replay previous count/spacing/checkpoints; commit new lists, shallow result | BLUE | BL09,BL12,BL13 |
 | CV05 | A | Same timeframe, dirty within min old/new size | Dirty instant=min old/new time at dirty else new end; build fresh detector/current history and longest equal First/Break/confirmation prefix | A | A24,A39 |
