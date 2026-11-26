@@ -199,3 +199,25 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **Audit schema (950–985).** Direction/mode normalized, physical first/break plus int indices; box strings including str(None) from missing default; stop level/source time and stoppedAt, causes; no sort.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L702-L987). [CP302 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP302_Completion.json).
+
+## CP303 source-only clarification — Native Stop Delegates and Reaction/Reset/Blue Projection
+
+**E parent stop delegate (988–1006).** Absent detector or caught AttributeError/TypeError/ValueError null pair; call authoritative parent_stop (may search); null result null; int index bounds and main timestamp plus native event. Unpack/conversion outside catch.
+
+**S A stop delegate (1009–1027).** Absent detector null; first_a_stop with Decimal price and native A confirmation; catches AttributeError/IndexError/TypeError/ValueError; null result null; preserve native main/event. Native fallback may use main candle when no lower rows.
+
+**Behavior stop (1030–1042).** Spread proof/horizon stop view and add price string; no new stop search.
+
+**Blue formation (1045–1065).** Non-scale (lowercased) source time and null event; scale 1-based reaction ordinal and valid Break bounds; native Break timestamp and confirmation with intrabar-start false.
+
+**Reaction first identity (1068–1087).** Raw First/Break int indices without local bounds, native first color/time, direction label and public mode.
+
+**Reaction geometry (1088–1108).** Public box times/prices; raw Break time and raw candidate confirmation with default intrabar flag; no geometry re-selection.
+
+**Reset (1111–1131).** Bounded previous reaction First lookup; direct display/second times without strict/horizon guard here; broken level string.
+
+**Blue projection (1134–1167).** Lowercased scale/reset mapping, unknown null; exact price/source extreme; stop main/event always null (no standalone retained evidence), source extreme as stop price; reset-only brokenLevel.
+
+**Blue full ordinal (1170–1179).** Stable sort by int reaction number, source_time, str(kind), enumerate from one; full rather than visible list.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L988-L1181). [CP303 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP303_Completion.json).
