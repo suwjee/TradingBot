@@ -1,0 +1,408 @@
+{
+  "checkpoint": 322,
+  "work_package": "W2",
+  "scope": "Complete direct named chronology accessor fan-out: reaction_confirmation, reset_time, order_b_reset_event_time, _bridge_reaction_confirmation, plus source provider contracts. First bounded W2 partition only, not all Reaction/Reset lifecycle or Blue/A freeze.",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "22f9ae08d50930b0b44814f0e59113e42ba34014",
+  "entry_tree": "e2490c24cac93b77d8173d4b1828a476baf2f4d3",
+  "source_modules": [
+    {
+      "path": "engine/bridge/__init__.py",
+      "blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4"
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "blob": "656ba15cfbd7edab34a66cd5bc907171940af38c"
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b"
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891"
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373"
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7"
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e"
+    }
+  ],
+  "discovery": {
+    "method": "Read all 15 direct engine/pipeline and engine/bridge Python modules at pinned main; exact SHA matched recursive main tree for each. Scan line text for four named call forms excluding def declarations; inspect each direct occurrence and surrounding owner predicates. 20 distinct path/line/target keys matched. Not an AST/dynamic-dispatch census; indirect wrappers and further transitive owner rules outside this bounded partition.",
+    "counts": {
+      "reaction_confirmation": 12,
+      "reset_time": 3,
+      "order_b_reset_event_time": 1,
+      "_bridge_reaction_confirmation": 4
+    },
+    "total": 20
+  },
+  "providers": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1185,
+        1302
+      ],
+      "contract": "main_index right-bisect minus one, only underflow optionally clamps to zero, no upper-bound check; lower_bounds left-bisect both endpoints, missing end len(seconds). Reset key includes index/from_first, second/display/timestamp/broken-level string; cached non-None wins, then truthy second_time parsed, else truthy display parsed, else timestamp. Confirmation key direction/flag/First/Break/box strings/conditional intrabar start; valid intrabar start in [Break open,end), otherwise Break open; false disables intrabar start. Strict high>top bullish else low<bottom, first row in half-open bounds; no hit returns and caches Break open. Fallback not proof."
+    },
+    {
+      "range": [
+        691,
+        783
+      ],
+      "contract": "Upper horizon last selected main timestamp+tf exclusive, no lower-bound gate in helper. Null level/time or time >= horizon -> None. bisect_left exact timestamp; examine all duplicate timestamp rows until strict hit or timestamp changes. bearish high>level else low<level. Reaction proof passes opposite direction to stop predicate; never substitutes a later/earlier event. Stop view separately gates main stop time. A fallback coinciding with actual strict timestamp can pass predicate, so no blanket claim that every fallback is null."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        139,
+        165
+      ],
+      "contract": "Truthy precise second_time trusted through native resolver; otherwise strict Reset crossing in owning main half-open interval, no display/open fallback; index or linear branch; absent hit None."
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "range": [
+        216,
+        245
+      ],
+      "contract": "Scale formation uses A false-flag confirmation and starts stop scan there; reset formation independently searches strict crossing of broken level in source main interval, falls back to open, stop scan starts next main open."
+    },
+    {
+      "range": [
+        1111,
+        1131
+      ],
+      "contract": "Reset display reads display_time and second_time separately, no crossing recovery here; previous Reaction First bounded by main list."
+    }
+  ],
+  "edges": [
+    {
+      "id": "CP322-E01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 771,
+      "target": "reaction_confirmation",
+      "span": [
+        762,
+        783
+      ],
+      "meaning": "Bridge proof delegates native with caller flag; box_top bullish else box_bottom; catches AttributeError/IndexError/TypeError/ValueError only around native and level read; then opposite direction strict-event proof. No alternate event scan."
+    },
+    {
+      "id": "CP322-E02",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 837,
+      "target": "_bridge_reaction_confirmation",
+      "span": [
+        826,
+        853
+      ],
+      "meaning": "Order output uses physical order_direction and default true; First/Break main times separate from proof time; invalid bounds return None."
+    },
+    {
+      "id": "CP322-E03",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1062,
+      "target": "_bridge_reaction_confirmation",
+      "span": [
+        1045,
+        1065
+      ],
+      "meaning": "Scale Blue formation uses 1-based Reaction ordinal and bounded Break; false intrabar flag; non-scale returns source time and absent event time."
+    },
+    {
+      "id": "CP322-E04",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1102,
+      "target": "_bridge_reaction_confirmation",
+      "span": [
+        1068,
+        1108
+      ],
+      "meaning": "Public Reaction breakout main time from raw Break; default true proof uses raw candidate, not public box geometry displayed separately."
+    },
+    {
+      "id": "CP322-E05",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 1252,
+      "target": "_bridge_reaction_confirmation",
+      "span": [
+        1245,
+        1262
+      ],
+      "meaning": "A output uses false intrabar flag and optional reaction; absent reaction yields null; stored A Break time separate."
+    },
+    {
+      "id": "CP322-E06",
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "line": 2434,
+      "target": "reaction_confirmation",
+      "span": [
+        2431,
+        2437
+      ],
+      "meaning": "Order-context callback binds opposite direction with default true; invoked through lifecycle resolver, not presentation proof."
+    },
+    {
+      "id": "CP322-E07",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "line": 653,
+      "target": "reaction_confirmation",
+      "span": [
+        644,
+        680
+      ],
+      "meaning": "Physical direction opposite owner (PH bearish else bullish); primary role gate >= event, secondary First >= gate and confirmation > event; canonical secondary number positive. Parent-stop first direct ordered First,confirmation,Break; accepted reset-leg secondary exceptions; stop strictly > max(confirmation,event)."
+    },
+    {
+      "id": "CP322-E08",
+      "path": "engine/pipeline/a_zone_detector.py",
+      "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "line": 498,
+      "target": "reaction_confirmation",
+      "span": [
+        497,
+        501
+      ],
+      "meaning": "A disables intrabar start; downstream selection and formation consume Break-open result, not exact-public proof. Live override key Break index and directional level string; reuse only settled previous key, otherwise super."
+    },
+    {
+      "id": "CP322-E09",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 97,
+      "target": "reaction_confirmation",
+      "span": [
+        90,
+        140
+      ],
+      "meaning": "Default true; scan lower window [start, Break end); stop when row time > confirmation; strict penetration appended before same-row strict breakout; choose min/max eligible first tie; map decisive lower time to main source."
+    },
+    {
+      "id": "CP322-E10",
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "line": 168,
+      "target": "reaction_confirmation",
+      "span": [
+        143,
+        199
+      ],
+      "meaning": "Default true; Break main prefix lower rows <= confirmation within half-open candle; absent prefix produces None and cannot add strike; main candles First through Break inclusive."
+    },
+    {
+      "id": "CP322-E11",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 414,
+      "target": "reset_time",
+      "span": [
+        413,
+        417
+      ],
+      "meaning": "Native Reset provenance priority delegated unchanged; not Order_B strict recovery and not presentation proof."
+    },
+    {
+      "id": "CP322-E12",
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "line": 560,
+      "target": "reaction_confirmation",
+      "span": [
+        559,
+        563
+      ],
+      "meaning": "Default true; _confirmation delegates using self.order_direction; no new local proof or flag override."
+    },
+    {
+      "id": "CP322-E13",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 145,
+      "target": "reset_time",
+      "span": [
+        139,
+        165
+      ],
+      "meaning": "Truthy precise second_time delegates native resolver; otherwise strict crossing search in Reset main [open,open+tf), index first_less bullish/first_greater otherwise or linear same strict predicate; no hit None."
+    },
+    {
+      "id": "CP322-E14",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 242,
+      "target": "reaction_confirmation",
+      "span": [
+        240,
+        253
+      ],
+      "meaning": "Default true, same direction sorted confirmation, integer First, Break, zero-based ordinal, reaction; grouping by First preserves sorted order."
+    },
+    {
+      "id": "CP322-E15",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 256,
+      "target": "reaction_confirmation",
+      "span": [
+        254,
+        263
+      ],
+      "meaning": "Default true opposite direction sorted confirmation, First, Break, one-based number, reaction; distinct owner coordinate."
+    },
+    {
+      "id": "CP322-E16",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 270,
+      "target": "order_b_reset_event_time",
+      "span": [
+        264,
+        272
+      ],
+      "meaning": "Only non-null resolved events included; sorted event time, from_first_idx, zero-based ordinal, reset."
+    },
+    {
+      "id": "CP322-E17",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "line": 468,
+      "target": "reaction_confirmation",
+      "span": [
+        459,
+        481
+      ],
+      "meaning": "Accepted A excludes invalid source identity pair; default true on trend reaction ordinal-1; first_a_stop uses price and confirmation; lifetime stores tuple index 2 or None; S/E use parent_stop tuple index 1."
+    },
+    {
+      "id": "CP322-E18",
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "line": 1384,
+      "target": "reaction_confirmation",
+      "span": [
+        1378,
+        1405
+      ],
+      "meaning": "Behavior span stores raw integer First/Break identity, First main timestamp, default true confirmation, published Decimal top/bottom. Containment strict earlier First, inclusive confirmation and price edges; path nonempty lower interval inclusive end required, not gap-free proof."
+    },
+    {
+      "id": "CP322-E19",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 189,
+      "target": "reaction_confirmation",
+      "span": [
+        186,
+        207
+      ],
+      "meaning": "Native S default true; public wrapper delegates. A-zone lookup requires valid one-based reaction ordinal and uses S default true, not A's false formation flag. Native trend sort separated from original order; opposite First dictionary last duplicate wins."
+    },
+    {
+      "id": "CP322-E20",
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "line": 199,
+      "target": "reset_time",
+      "span": [
+        198,
+        200
+      ],
+      "meaning": "Native Reset provenance delegated; opposite reset events stable sort by event time, owner grouped by from_first_idx; no Order_B strict recovery imposed."
+    }
+  ],
+  "reference_reconciliation": {
+    "documents": {
+      "Algorithms/V3/Chronology/01_Time_Reaction.md": "9cca7bd5bdbd4b01837ce07d9a3d194a639186b4",
+      "Algorithms/V3/Chronology/02_Blue_A_S.md": "247a11375b5c591b147ec204e10274d8c4e7e139",
+      "Algorithms/V3/Chronology/03_Order_E.md": "a7b5eeb9fd3cb9a35ec60ab92b36dc4eaf1d4391",
+      "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3",
+      "Algorithms/V3/Chronology/08_Current_Chronology_Rebaseline.md": "a13e9ac9b7916094e6a7268b362134b39dd2dae9"
+    },
+    "prior_acceptance": {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Final_Acceptance_Review.json",
+      "blob": "55c4e9c3ebe4c0ef6ea2029d8e3ee9e99ccacb98",
+      "contracts": [
+        "CP321-D05",
+        "CP321-D06",
+        "CP321-D07",
+        "CP321-D09",
+        "CP321-D11",
+        "CP321-D13",
+        "CP321-D14",
+        "CP321-D17",
+        "CP321-D20",
+        "CP321-D21",
+        "CP321-D23",
+        "CP321-D27",
+        "CP321-D30",
+        "CP321-D31"
+      ]
+    },
+    "findings": [
+      "CH01 time/Reaction native distinction, CH02 Blue/A confirmation cutoff and false flag, CH03 Order_B Reset no-fallback and ordering, CH07 cross-owner chronology and CH08 proof horizon agree with scoped source. Qualifications: native fallback can coincide with a real exact-row hit; Bridge guard proves recorded timestamp predicate, not provenance of selection. Reset projection only serializes stored times; Order_B recovery is distinct. A formation false flag differs from S lifetime default true. No source or historic evidence changes."
+    ]
+  },
+  "validation": {
+    "direct_named_sites": 20,
+    "duplicate_keys": 0,
+    "missing_from_scoped_scan": 0,
+    "source_module_blobs_matched": 15,
+    "provider_count": 5,
+    "reference_docs": 5,
+    "raw": "NOT RUN",
+    "runtime": "NOT RUN"
+  },
+  "remaining": "CP323: Reaction/Reset state transition ownership and Blue/A freeze including live/batch mutation, conditional stages, identity, exact source order and invalidation. Continue W2 per plan; all transitive owners, other chronology groups, W3/W4 open."
+}
