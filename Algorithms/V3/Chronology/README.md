@@ -35,3 +35,7 @@ Distinguish lower position, timestamp, source/decision/confirmation/stop, main b
 ## CP292 current-baseline supplement
 
 [Current chronology rebaseline](08_Current_Chronology_Rebaseline.md): 18 scoped source reviews; RB07 remains INCOMPLETE, including unresolved exact site linkage.
+
+## CP292 scoped acceptance update
+
+[Completion evidence](../../../Audit/Phase_07/Rebaseline_v2_8_7/CP292_Completion.json) reconciles all 123 chronology clauses, 124 source anchors and 589 Bridge gap sites. RB07 scoped source chronology/gap linkage PASS; W1–W4 and overall Phase 07 semantic closure remain incomplete. Full canonical inventory replay and runtime verification are not asserted.
