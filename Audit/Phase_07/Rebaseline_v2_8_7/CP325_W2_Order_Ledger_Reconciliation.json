@@ -1,0 +1,720 @@
+{
+  "checkpoint": 325,
+  "status": "PASS_SCOPED_SOURCE_RECONCILIATION",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "08f2332d63f7a8b9ef98f90c4f789c860e645fcd",
+  "entry_tree": "e3af8412675caa486a00885f4e91360105e24801",
+  "scope": "Order_A/Order_B transition and ledger ownership including stopped-A prior evidence, Reset-leg discovery, direct/carried/accepted Order availability, cause invalidation/recovery, primary reparent and prepared audit, immediate E/lifecycle/Bridge handoffs. Full E and later lifecycle state machines remain open.",
+  "prior": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Partial.json",
+      "blob": "1027cb4a9241b8adb5a0b7f11c8c2a5fcbfa9c45",
+      "rows": 29
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "blob": "9dcc81cc416ffced36e2ef87e86ad58504c28201",
+      "rows": 44
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP324_W2_S_Decision_Reconciliation.json",
+      "blob": "44bc985228f9d698da7b1fb30173f55f886b60f4",
+      "rows": 29
+    }
+  ],
+  "source_modules": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373"
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f"
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+    }
+  ],
+  "additional_rows": [
+    {
+      "id": "CP325-S01",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        25,
+        37
+      ],
+      "procedure_refs": "OA01",
+      "contract": "Deep-copy cause dictionaries; relabel parent/post/anchor types starting PH or PL if corresponding source in labels. Equality dedup in encounter order, no geometry change."
+    },
+    {
+      "id": "CP325-S02",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        39,
+        75
+      ],
+      "procedure_refs": "Order_B schemas",
+      "contract": "Frozen slotted stop, anchor and leg records distinguish dominant post-stop from independent anchor, exact Reset/strict break/physical confirmation and main source. Nested reaction object not recursively frozen."
+    },
+    {
+      "id": "CP325-S03",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        77,
+        136
+      ],
+      "procedure_refs": "OA02",
+      "contract": "Rank active lifetimes by priority,number,source time,index, earliest input ordinal on equal. Activation trigger or decision or source by truthiness. Sweep distinct stop events with inclusive activation and expiry, discard expired heap heads. Only identical behavior object owning exact event qualifies. Clamped main groups choose max(priority,number,source time,index,event); strict replacement, first full tie retained. Sort event,source index."
+    },
+    {
+      "id": "CP325-S04",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        170,
+        195
+      ],
+      "procedure_refs": "OA04–05",
+      "contract": "Anchor through First inclusive; strict Low min bullish/High max bearish, earliest equal. Anchor read even if last<first. Crossing from supplied lower position through end, indexed if present else linear strict scan; no main fallback or retry on index miss."
+    },
+    {
+      "id": "CP325-S05",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        198,
+        239
+      ],
+      "procedure_refs": "OA06 entry",
+      "contract": "Validate direction before empty shortcut. Parent extreme Low bullish/High bearish. Truthy optional boundary/cross callback; default crossing uses bisect_right Reset time, excluding rows equal to Reset. Callback trusted subject to later checks."
+    },
+    {
+      "id": "CP325-S06",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        240,
+        289
+      ],
+      "procedure_refs": "OA06 ordering",
+      "contract": "Trend tuples sorted confirmation,First,Break,zero ordinal; group First. Opposite same keys with one-based number. CP322 Reset provider non-null events only, sort event,owner First,ordinal. Stops sort event,source time,index,type; anchors source time,index,priority,number,type; A trigger times sorted. Native chronology fallback is not new exact proof."
+    },
+    {
+      "id": "CP325-S07",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        291,
+        324
+      ],
+      "procedure_refs": "OA06 ownership",
+      "contract": "For each Reset choose last same-First trend tuple with confirmation strictly before Reset. Latest dominant stop event and anchor source time strictly before owner First main, last sorted tie; anchor index>First rejects without retry. Boundary must strictly extend anchor extreme and source index strictly before First. Stop and anchor independent."
+    },
+    {
+      "id": "CP325-S08",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        326,
+        375
+      ],
+      "procedure_refs": "OA06 expiry/physical",
+      "contract": "First strict post-Reset boundary break (default lower only), clamp to main. Next accepted A trigger strictly after owner First expires if mapped main<=break main. First opposite confirmation-sorted native reaction with First>=break main and confirmation>exact break; same-main First permitted, equality confirmation rejected. Store independent provenance, preserve Reset iteration and duplicate legs."
+    },
+    {
+      "id": "CP325-S09",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        378,
+        415
+      ],
+      "procedure_refs": "OA07–09",
+      "contract": "Live direction fixed, dirty main 0..length. Dirty null at end; old lower coverage upper-bound previous last time in current array. Boundary key first,last, current first then prior only last<dirty main, else recompute. New queried-only dictionaries."
+    },
+    {
+      "id": "CP325-S10",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        416,
+        439
+      ],
+      "procedure_refs": "OA10",
+      "contract": "Crossing key Reset time,Decimal level using numeric equality, including null cached. Prior non-null reused only strictly before dirty or dirty null, latest lower exists and old<=latest. Otherwise search after Reset; prior key enables max(original left,min(old coverage,dirty lower)). Commit queried caches/last time only after successful discovery; caller guarantees prefix/dirty validity."
+    },
+    {
+      "id": "CP325-S11",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        442,
+        520
+      ],
+      "procedure_refs": "OA11",
+      "contract": "Accepted A excludes invalid source pair; ordinal−1 access without local validity guard, default confirmation then S first stop tuple[2]. S/E parent stop tuple[1]; StopAll explicit event. Open lifetimes retained. Dominant stops separate from anchors of all accepted behaviors incl unstopped. Per source pair rank priority,number,type, strict replacement. Truthy finder override, pass accepted A trigger times not source."
+    },
+    {
+      "id": "CP325-S12",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        523,
+        550
+      ],
+      "procedure_refs": "OA12 / OrderMatch",
+      "contract": "Match number,reaction,confirmation,stop level/source,nullable crossing,route labels,nullable parent creation event. Feedback signature sorted tuples includes stop type/index/event, anchor identity/extreme, Reset identity/index/level/time, boundary/source, strict break, physical identity. Omits post-stop source time, Reset confirmation, leg source time, physical number/confirmation; preserves duplicates; Decimal tuple numeric not byte equality."
+    },
+    {
+      "id": "CP325-S13",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        557,
+        651
+      ],
+      "procedure_refs": "OA13",
+      "contract": "Fresh ledger/caches/indexes. Four input-order First/confirmation passes; trend triples stable sort confirmation only; opposite arrays supplied order. Opposite resets grouped supplied order. Last duplicate First map; first duplicate physical identity canonical position. No local sortedness verification."
+    },
+    {
+      "id": "CP325-S14",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        653,
+        686
+      ],
+      "procedure_refs": "OA14–15",
+      "contract": "Ignore context_start; exact canonical object at valid ordinal caches stop by ordinal; noncanonical uncached canonical provider CP324-S29. No context-only stop manufacture."
+    },
+    {
+      "id": "CP325-S15",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        689,
+        761
+      ],
+      "procedure_refs": "OA16",
+      "contract": "No finder null. Gate containing main/exact start. Blocked First at original gate advances First+1, search event First. Prior owner latest opposite confirmation<=search event via bisect; first stored Reset with search_event<Reset<=candidate confirmation restarts at Reset main/exact event. Require canonical identity, return canonical object/confirmation without repeating candidate checks. allow_bounded_continue unused locally, restarted assigned not read; no local progress guard."
+    },
+    {
+      "id": "CP325-S16",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        809,
+        918
+      ],
+      "procedure_refs": "OA19–20",
+      "contract": "Cache nullable result by start/deadline/bounded/E flag/confirmation_after. Geometry optional confirmation filter; native lower bound First at gate main then initial confirmation threshold loop, followed by blocked same-gate skip (no threshold recheck). E exception exact (start,gate) and confirmation>start. Prefer restart geometry with supplied deadline==range_end or deadline<geometry confirmation; independent stop/cross evaluated even then. Otherwise geometry only if independent crossing absent AND independent absent or geometry First strictly earlier; else independent; empty pool null."
+    },
+    {
+      "id": "CP325-S17",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        921,
+        979
+      ],
+      "procedure_refs": "OA21–22",
+      "contract": "Merge direct by physical identity, compute canonical stop/cross; replace only earlier confirmation/First/Break. At most one parent-stop among current map, min confirmation,First,Break; remove parent-stop from losers, retain independent reset-leg with null parent creation time; otherwise remove row."
+    },
+    {
+      "id": "CP325-S18",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        982,
+        1086
+      ],
+      "procedure_refs": "OA23–24",
+      "contract": "Cache start/deadline/bounded/trend/E flags, copy on hit. Direct and optional trend continuation, then each B leg with First strictly after start; existing geometry retained with reset-leg label appended uniquely. Enforce parent owner, earliest actual crossing (range_end only if none) clipped by deadline; retain confirmation<=deadline, stable sort crossing or range_end then First. First-order convenience filters nonnull crossings."
+    },
+    {
+      "id": "CP325-S19",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1089,
+        1132
+      ],
+      "procedure_refs": "OA25–29",
+      "contract": "Hard Reset in (start,end] via upper bound. New physical confirmation tuple inserted after equals; pending append if sorted audit dict else reset sorted view. Clear ledger/index in place then carried/post-stop caches, not all geometry caches. Carried invalidation drops creation index/pending append; post-stop invalidation clears results/sorted view/pending. Cause-only changes not automatically post-stop flush."
+    },
+    {
+      "id": "CP325-S20",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1135,
+        1199
+      ],
+      "procedure_refs": "OA30",
+      "contract": "Truthy B list invalidates carried upfront. New physical row canonical stop/cross, empty parent set then index; existing geometry untouched. Full cause dictionary includes stop/anchor/Reset/boundary/break/physical provenance, strings for three prices. Equality dedup, stable sort stop,Reset,strict break,physical pair; invalidate carried on unique cause. No local acceptance revalidation/rollback."
+    },
+    {
+      "id": "CP325-S21",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1202,
+        1248
+      ],
+      "procedure_refs": "OA31",
+      "contract": "Primary reparent parent-stop StopAll-prefix same source TIME, non-null equal stop strictly after decision; matching cause relabelled only on selected direct identity otherwise revoked. B post-stop relabel exact source pair/equal stop/strict decision bound, independent of direct identity. B anchor relabel exact pair, truthy Reset identity and Reset First main>=decision; independent of stop. Delete all causeless rows, filter index in place, flush post-stop on revocation and carried on change/revocation. Sequence reset history untouched."
+    },
+    {
+      "id": "CP325-S22",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1250,
+        1310
+      ],
+      "procedure_refs": "OA32–36",
+      "contract": "PH bearish / PL bullish owner only; strict primary stop lower (decision,range_end), direct confirmation_after=stop (OA20 caveat). Dependency stop,null or stop,repr(direct),str(level),source index/time,cross. Reparent before null-direct return, add selected row/index if absent and exact primary parent-stop cause, invalidate carried on addition."
+    },
+    {
+      "id": "CP325-S23",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1312,
+        1337
+      ],
+      "procedure_refs": "OA37–39",
+      "contract": "Last source wins label map. Parent tuples relabel prefix-specific only, set dedup; B helper accepts either PH/PL prefix using supplied map, deep-copy/dedup. Mutate only changed collections and invalidate carried; no rediscovery/index change."
+    },
+    {
+      "id": "CP325-S24",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1339,
+        1433
+      ],
+      "procedure_refs": "OA40",
+      "contract": "S creator veto by invalid or accepted E-owned source pair; sequence reset between parent source and stop veto. Query pool S bounded/E trend flags; append direct if identity absent even after earlier deadline/single-owner filtering, no second enforcement. Only parent-stop-labelled matches register. Preserve geometry; new row/index then cause E number or sequence StopAll override (empty family). Exact cause set; carried invalidated for new entry or earlier existing creation (conservative on malformed causes). Later/equal cause does not alter earliest creation availability. Deferred append only matching prior ledger, valid payload, expected count. Distinguish candidate-local one-owner rule from final export dedup."
+    },
+    {
+      "id": "CP325-S25",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1436,
+        1456
+      ],
+      "procedure_refs": "OA41",
+      "contract": "Static method explicit self argument; first opposite First>=start and confirmation>=start; singleton stop/cross and false flag or empty; no creation."
+    },
+    {
+      "id": "CP325-S26",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1459,
+        1484
+      ],
+      "procedure_refs": "OA42–43",
+      "contract": "Cache strict opposite crossing start,level including null. Lower [max(start,range_start),range_end), less iff Order not bearish, via owner first-cross service. Map main/exact event, no coarse fallback. Public delegate."
+    },
+    {
+      "id": "CP325-S27",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1487,
+        1521
+      ],
+      "procedure_refs": "OA44",
+      "contract": "Unconsumed S only exact blue, confirmation/level non-null. Compute strict crossing require >=parent stop (equality allowed). Copy recorded geometry namespace, carried-live null creation; no remapping/ledger mutation."
+    },
+    {
+      "id": "CP325-S28",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1524,
+        1609
+      ],
+      "procedure_refs": "OA45–47",
+      "contract": "Lazy initial A audit records: compute crossing, normalize level, number/source; stable First time,confirmation,First,Break sort. Reuse records in First buckets and confirmation-sorted index, preserve references. Match conversion drops First time, supplied route/null creation. Entry conversion computes cross. No local invalidation for mutating initial audit."
+    },
+    {
+      "id": "CP325-S29",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1612,
+        1642
+      ],
+      "procedure_refs": "OA48–49",
+      "contract": "Gate-owned initial First exact containing main; confirmation>=parent stop and crossing>=parent stop, min crossing then First. Carried creation times earliest parent-stop cause if multiple, plus every B physical confirmation, without dedup here."
+    },
+    {
+      "id": "CP325-S30",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1644,
+        1697
+      ],
+      "procedure_refs": "OA50",
+      "contract": "Native carried index validation under local Decimal context: exact dict, accepted cause containers/element shapes, skip no-creation rows after shape checks, exact datetime and identical tzinfo object for all dates, cross tuple shape/int position, exact ints number/source/First/Break, allowed price types finite after normalization. Per-row dedup created events, original ordinal; sort. Invalid/exception null, legacy owns exception ordering; no index bounds validation."
+    },
+    {
+      "id": "CP325-S31",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1699,
+        1720
+      ],
+      "procedure_refs": "OA51",
+      "contract": "Consume deferred append before checks. Same ledger object/expected count, validate new rows; compatible timezone when both event lists nonempty, adopt new if old empty. Insert old ordinal offset and extend old entries; no rollback."
+    },
+    {
+      "id": "CP325-S32",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1722,
+        1795
+      ],
+      "procedure_refs": "OA52",
+      "contract": "Null lifecycle decision empty; cache decision,parent stop. Native index unique ordinals in strict creation interval (decision,stop), ledger order. Fallback lazy creation scan, same interval. Require confirmation<=stop, stored crossing nonnull>=stop. Initial A separate inclusive First [decision,stop] same confirmation/cross guards, no cross-route dedup. Sort crossing then negative First; stable accepted-before-initial tie. Caller invalidation critical."
+    },
+    {
+      "id": "CP325-S33",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1798,
+        1877
+      ],
+      "procedure_refs": "OA53–54",
+      "contract": "Eager accepted-live cache stop,index length. Initial confirmation strictly >stop; audit tuple-index bound exact 2^63−1 sentinel, current row confirmation used without separate >stop recheck. Skip incomplete geometry, malformed/absent cross recomputed locally. Require crossing>parent stop and own confirmation, no sequence Reset (stop,cross]. Dedup identity strictly earlier (cross,confirmation,First), keep insertion rank; final sort cross,confirmation,-First. Return list copy."
+    },
+    {
+      "id": "CP325-S34",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1879,
+        1934
+      ],
+      "procedure_refs": "OA55–57 initial validation",
+      "contract": "Lazy key cross,confirmation,-First; exact native datetime/timezone identity, exact ints, finite exact Decimal and crossing shape. Non-native query eager fallback. Initial records materialized before validation try; validate all under localcontext then only cross>confirmation. Conflicting same identity event pair disables optimized initial view; False fallback, not proof price/source equality."
+    },
+    {
+      "id": "CP325-S35",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1935,
+        1993
+      ],
+      "procedure_refs": "OA55 audit runs",
+      "contract": "Build full audit if None else pending. Validate exact index types, row dict, allowed price type/finite normalized, confirmation matches index; null crossing requires cached known-null. Include cross>confirmation; conflict with initial event pair fallback, no audit-audit pair conflict check. Key plus indexed First/Break. Copy tier mapping, merge older equal bit_length tiers into new runs; clear pending, assign dict or False; exceptions fallback. False+pending can attempt copy and fail again."
+    },
+    {
+      "id": "CP325-S36",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        1994,
+        2017
+      ],
+      "procedure_refs": "OA58–59",
+      "contract": "Capture first hard Reset strictly after parent stop. Per run begin cross>stop, terminate at cross>=Reset, require confirmation>stop. Merge audit runs full key then initial first on equal main key; first physical identity emitted. Lazy iteration errors outside validation catches; no empirical parity claim."
+    },
+    {
+      "id": "CP325-S37",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2020,
+        2043
+      ],
+      "procedure_refs": "OA60–61",
+      "contract": "Disowned-S-only false if missing/no parent causes, B cause or initial identity. Otherwise every cause parent-stop S and source in disowned set or equals prospective source. Gate-owned veto only for E parent-stop use if initial confirmation strictly earlier than zone Order First. Neither creates cause."
+    },
+    {
+      "id": "CP325-S38",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2046,
+        2104
+      ],
+      "procedure_refs": "OA62–63 rebuild start",
+      "contract": "Set accepted E source pairs, project invalid S roots and occupied E to source times; filter prior parent-stop causes (S invalid times rejected), shallow snapshot, clear, register B, then original S and numbered E/StopAll parents. Supplemental S not registration list. Skip recovery if numbered E identity already present."
+    },
+    {
+      "id": "CP325-S39",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2124,
+        2204
+      ],
+      "procedure_refs": "OA62 recovery",
+      "contract": "Missing identity geometry uses prior CP323-S44. Recover valid prior parent causes and initial accepted A pairs skipping null; if no causes and carried-live S parent, first matching source pair/Order identity in original then supplemental S recovers A creation. Explicit nonnull Order parent cause time enables parent label from E/StopAll; actual event zone parent stop, family override. Refilter; no cause no insert. Recompute strict crossing, store original stop level/geometry, index."
+    },
+    {
+      "id": "CP325-S40",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2206,
+        2288
+      ],
+      "procedure_refs": "OA62/64–65 retention",
+      "contract": "Retain prior valid parent causes even if not consumed; current geometry wins and union parent set else restore prior shallow entry/index. Prior B-only not restored by OA62 solely on B. Return sorted numbered source time,index. Ensure snapshot then rebuild; absent prior identity restore if remaining non-invalid S cause or B, index; existing skipped not merged by ensure. Unconditional carried invalidation on success."
+    },
+    {
+      "id": "CP325-S41",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2291,
+        2401
+      ],
+      "procedure_refs": "OA66–69",
+      "contract": "Parent-stop key type,family,event,source time. Collect S first accepted A source filter; E parent tuples sorted by str and accepted A filter then B causes. Merge physical identity with First inclusive range or required identity. First geometry/cross wins, explicit null retained, only missing key invokes crossing. Later distinct full-dict causes appended; first-list duplicates preserved."
+    },
+    {
+      "id": "CP325-S42",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2404,
+        2459
+      ],
+      "procedure_refs": "OA70–71",
+      "contract": "Final prepared view one owner per exact parent-stop cause key by min confirmation,First,Break; first tie, owner object identity. Keep nonparent causes/duplicate winning causes; drop causeless row, preserve order. Required identity bypasses range not cause filter."
+    },
+    {
+      "id": "CP325-S43",
+      "module": "OA",
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "range": [
+        2508,
+        2514
+      ],
+      "procedure_refs": "OA74",
+      "contract": "Missing either index false, otherwise int physical pair membership in internal identities; zero allowed."
+    },
+    {
+      "id": "CP325-S44",
+      "module": "LC",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "range": [
+        606,
+        693
+      ],
+      "procedure_refs": "LC25 cross-owner invalidation",
+      "contract": "Filter accepted A audit by accepted source; union inherited First veto and invalid-A pending-S leg blocks; remove accepted initial First times (parse strings). E-only exception exact stop equal accepted E stop, First same stop main and blocked not inherited, invalid A source<=First<exact stop, opposite confirmation>stop. Return accepted ledger and blocks, optional set update; no global unblock."
+    },
+    {
+      "id": "CP325-S45",
+      "module": "CU",
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        51,
+        66
+      ],
+      "procedure_refs": "Decimal / identity primitive",
+      "contract": "Existing Decimal instance unchanged; other numeric input Decimal(str(value)). Physical identity int First/Break, scoped by direction/segment externally; no price or parent fields in pair."
+    }
+  ],
+  "reference_anchors": [
+    {
+      "path": "Algorithms/V3/06_Order_A.md",
+      "blob": "71b0f5b085c2de298105343f190705cb3578879a"
+    },
+    {
+      "path": "Algorithms/V3/07_Order_B.md",
+      "blob": "34ae423d242530f5bcfc0a8a0bb4dd68df0c0766"
+    },
+    {
+      "path": "Algorithms/V3/08_Order_Audit.md",
+      "blob": "ef19e2119131c7123bf554a0a7af34262507a93a"
+    },
+    {
+      "path": "Algorithms/V3/State_Machines/04_Order_Ledger.md",
+      "blob": "098c1f0e76cc1b193f5979ec2fe338ecf33a5171"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/07_Cross_Owner_Chronology.md",
+      "blob": "118a4e00b9f8c647ac3ebdb7dabfa04a7f39ffd3"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/09_W2_Reaction_Blue_A_Reconciliation.md",
+      "blob": "d4ec6368a079f3f790f94ea77547cb1635ffe985"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/10_W2_S_Decision_Reconciliation.md",
+      "blob": "5734a6cb2b7ce288c55b08639ced8b48e2d4315d"
+    }
+  ],
+  "retained_prior_boundaries": [
+    {
+      "id": "CP322-E16/provider",
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP322_W2_Chronology_Accessor_Edges.json",
+      "blob": "bde767dbcf80522c0561ec7dd2efe2b26b6ba57e",
+      "scope": "OA139–167 exact Reset resolver, CP322 counted separately; truthy precise value trusted through chronology, else first strict lower crossing, no main fallback."
+    },
+    {
+      "id": "CP323-S43",
+      "scope": "OA776–806 trend-leg direct, cached by sorted trend position; noninternal, continue gate, strictly later First and canonical identity."
+    },
+    {
+      "id": "CP323-S44",
+      "scope": "OA2105–2122 canonical or recorded geometry fallback."
+    },
+    {
+      "id": "CP324-S24–S29",
+      "scope": "S stopped-A Order selection/audit and shared cross, canonical stop provider."
+    },
+    {
+      "id": "CP324 bridge edge 4",
+      "scope": "OA2462–2505 accepted A source filter, first retained cause, shallow copy only when changed; not recounted."
+    }
+  ],
+  "cross_owner_edges": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        608,
+        675
+      ],
+      "contract": "E obtains inherited S only for S, gate-owned lookup (not separately merged as route here), carried BEFORE register, post-stop accepted AFTER register. Direct deadline only S with no carried. Global race exact crossing,-First, not public query confirmation tie order; direct/inherited/carried/accepted merge order, disowned S-only skip using prospective frozen source. CP326 owns full E review."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1040,
+        1059
+      ],
+      "contract": "Pre-register stopped S creators before recursive chains."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1220,
+        1227
+      ],
+      "contract": "Reject disowned-only S, gate-owned veto and invalid-S-without-cause."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1294,
+        1317
+      ],
+      "contract": "Disownership can reopen complete parent race; retained checkpoint triggers _ReopenedERace, not silent reuse."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "range": [
+        1495,
+        1506
+      ],
+      "contract": "Clear accepted state and ledger; register B; discover/reconcile/consumed-S/source conflict; rebuild accepted audit."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2570,
+        2645
+      ],
+      "contract": "CP323-S28 retained: 8-pass feedback, share initial stages, optional independent missing-source donors, restore roots/ensure audit before discovery; pass eligible A minus invalid pair, S/E/StopAll and priority; callback only with live object; equality of semantic signature registers discovered B and returns; repeated changed identity or exhaustion raises."
+    }
+  ],
+  "qualifications": [
+    "CH100 candidate-local single parent owner is not a blanket invariant of intermediate registration: OA40 may append a direct identity removed by candidate filtering without reapplying owner gate. Final OA70 independently enforces exact cause-key ownership on prepared rows.",
+    "CH101 eager accepted-live index uses integer sentinel and current entry confirmation, not universal strict confirmation recheck for arbitrary input; optimized lazy branch does recheck. Do not claim runtime equivalence.",
+    "Order_B feedback identity omits specific fields; equality does not prove complete record equality or Decimal lexical equality. Live callback is conditional; active public path does not establish per-detector continuation.",
+    "Creation and use routes distinct. A/S/E/StopAll ownership and primary reparent do not change physical identity; final view filtering not a new trading decision."
+  ],
+  "validation": {
+    "new_rows": 45,
+    "prior_rows_preserved": 102,
+    "overlap_with_prior_transition_rows": 0,
+    "overlap_new_rows": 0,
+    "duplicate_ids": 0,
+    "source_blobs_matched": 5,
+    "cross_owner_edges_not_counted_as_new_rows": 6,
+    "reference_anchors": 7,
+    "source_only": "PASS_SCOPED",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN",
+    "benchmark": "NOT RUN"
+  },
+  "remaining": "CP326 / W2: E candidate chains, exact parent stop/source freezing, global Order-route race, invalid S and independent roots, numbering/reconciliation/live replay; then lifecycle/StopAll, Primary, projection/live and W3/W4. Adaptive partitions."
+}
