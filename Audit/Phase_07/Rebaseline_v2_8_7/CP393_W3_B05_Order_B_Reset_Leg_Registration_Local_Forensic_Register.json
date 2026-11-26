@@ -1,0 +1,4568 @@
+{
+  "checkpoint": 393,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "feab9ddb76773d255e3df17b7b4ec5262ab6e040",
+  "scope": "B05-10 OA30 independent local",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+    "range": [
+      1135,
+      1201
+    ],
+    "canonical": "8e8de138a2e4d165994792923d427ee6d1ac9c09",
+    "historical": "a69f6169bde12645964b825387134414206a91d5",
+    "reconciliation": [
+      "129048fd58a4b43304e467134baae83c36145417",
+      "a35141b33fdcfa207597258ebcccadd7d2b8e9e2",
+      "0ba1af5bdffc8988a7897f277ec51aeb56ec527b"
+    ],
+    "crosswalk": "62645cd2b92c3cbe35f6c0a9500299ec6f44cbc8"
+  },
+  "groups": [
+    {
+      "id": "OA30-A",
+      "span": [
+        1135,
+        1141
+      ],
+      "contract": "Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here."
+    },
+    {
+      "id": "OA30-B",
+      "span": [
+        1142,
+        1145
+      ],
+      "contract": "Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry."
+    },
+    {
+      "id": "OA30-C",
+      "span": [
+        1146,
+        1160
+      ],
+      "contract": "On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain."
+    },
+    {
+      "id": "OA30-D",
+      "span": [
+        1161,
+        1164
+      ],
+      "contract": "Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity."
+    },
+    {
+      "id": "OA30-E",
+      "span": [
+        1165,
+        1175
+      ],
+      "contract": "After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization."
+    },
+    {
+      "id": "OA30-F",
+      "span": [
+        1176,
+        1184
+      ],
+      "contract": "Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors."
+    },
+    {
+      "id": "OA30-G",
+      "span": [
+        1185,
+        1191
+      ],
+      "contract": "Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation."
+    },
+    {
+      "id": "OA30-H",
+      "span": [
+        1192,
+        1194
+      ],
+      "contract": "Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened."
+    },
+    {
+      "id": "OA30-I",
+      "span": [
+        1195,
+        1199
+      ],
+      "contract": "Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance."
+    },
+    {
+      "id": "OA30-J",
+      "span": [
+        1200,
+        1201
+      ],
+      "contract": "Implicit null return on normal exhaustion; no return of accepted rows or proof of acceptance. Source-only record mutation; no runtime claim."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 190,
+      "node": 4161,
+      "ast_node": 4161,
+      "span": [
+        1139,
+        8,
+        1140,
+        51
+      ],
+      "operation": [
+        72,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "branches [72,\"If\",[\"true\",\"false\"]]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": {
+        "original_id": 4161,
+        "disposition": "VERIFIED",
+        "interpretation": "If supplied leg sequence truthy, invalidate carried state before visiting any leg, even if all causes already exist."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 191,
+      "node": 4167,
+      "ast_node": 4167,
+      "span": [
+        1141,
+        8,
+        1199,
+        55
+      ],
+      "operation": [
+        72,
+        "For",
+        [
+          "next",
+          "exhausted"
+        ]
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A",
+        "OA30-B",
+        "OA30-C",
+        "OA30-D",
+        "OA30-E",
+        "OA30-F",
+        "OA30-G",
+        "OA30-H",
+        "OA30-I"
+      ],
+      "semantic_role": "branches [72,\"For\",[\"next\",\"exhausted\"]]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here. Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry. On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain. Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity. After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization. Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors. Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation. Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened. Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": {
+        "original_id": 4167,
+        "disposition": "VERIFIED",
+        "interpretation": "Traverse legs in supplied order with no local sort, filtering or acceptance revalidation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 192,
+      "node": 4186,
+      "ast_node": 4186,
+      "span": [
+        1145,
+        12,
+        1164,
+        17
+      ],
+      "operation": [
+        72,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B",
+        "OA30-C",
+        "OA30-D"
+      ],
+      "semantic_role": "branches [72,\"If\",[\"true\",\"false\"]]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry. On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain. Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": {
+        "original_id": 4186,
+        "disposition": "VERIFIED",
+        "interpretation": "Only None entry triggers new geometry computation; existing entry remains authoritative."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 193,
+      "node": 4350,
+      "ast_node": 4350,
+      "span": [
+        1193,
+        12,
+        1199,
+        55
+      ],
+      "operation": [
+        72,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H",
+        "OA30-I"
+      ],
+      "semantic_role": "branches [72,\"If\",[\"true\",\"false\"]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened. Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": {
+        "original_id": 4350,
+        "disposition": "VERIFIED",
+        "interpretation": "Full dictionary equality membership excludes duplicate cause; duplicate skips append, sort and per-cause invalidation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 131,
+      "node": 4187,
+      "ast_node": 4187,
+      "span": [
+        1145,
+        15,
+        1145,
+        28
+      ],
+      "operation": [
+        72,
+        [
+          "Is"
+        ]
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "comparisons [72,[\"Is\"]]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": {
+        "original_id": 4187,
+        "disposition": "VERIFIED",
+        "interpretation": "Entry identity-to-None, not truthiness."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 132,
+      "node": 4351,
+      "ast_node": 4351,
+      "span": [
+        1193,
+        15,
+        1193,
+        34
+      ],
+      "operation": [
+        72,
+        [
+          "NotIn"
+        ]
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "comparisons [72,[\"NotIn\"]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": {
+        "original_id": 4351,
+        "disposition": "VERIFIED",
+        "interpretation": "Full dict not-in-list equality test."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 292,
+      "node": 4164,
+      "ast_node": 4164,
+      "span": [
+        1140,
+        12,
+        1140,
+        51
+      ],
+      "operation": [
+        72,
+        "self._invalidate_carried_order_caches",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches"
+        ],
+        0,
+        []
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "calls [72,\"self._invalidate_carried_order_caches\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches\"],0,[]]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": {
+        "original_id": 4164,
+        "disposition": "VERIFIED",
+        "interpretation": "Invoke carried invalidation once before loop when legs truthy."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 293,
+      "node": 4176,
+      "ast_node": 4176,
+      "span": [
+        1143,
+        23,
+        1143,
+        50
+      ],
+      "operation": [
+        72,
+        "reaction_identity",
+        "IMPORTED_INTERNAL_CANDIDATE",
+        [
+          "engine/pipeline/core_utils.py:64:0:reaction_identity"
+        ],
+        1,
+        []
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "calls [72,\"reaction_identity\",\"IMPORTED_INTERNAL_CANDIDATE\",[\"engine/pipeline/core_utils.py:64:0:reaction_identity\"],1,[]]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": {
+        "original_id": 4176,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Normalize physical reaction First/Break to integer identity using helper."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 294,
+      "node": 4181,
+      "ast_node": 4181,
+      "span": [
+        1144,
+        20,
+        1144,
+        50
+      ],
+      "operation": [
+        72,
+        "self.order_audit.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "calls [72,\"self.order_audit.get\",\"UNRESOLVED_DYNAMIC\",[],1,[]]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": {
+        "original_id": 4181,
+        "disposition": "VERIFIED",
+        "interpretation": "Lookup authoritative entry by physical pair; missing defaults None."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 295,
+      "node": 4195,
+      "ast_node": 4195,
+      "span": [
+        1146,
+        45,
+        1148,
+        17
+      ],
+      "operation": [
+        72,
+        "self._order_stop",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:653:4:_order_stop"
+        ],
+        2,
+        []
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "calls [72,\"self._order_stop\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:653:4:_order_stop\"],2,[]]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": {
+        "original_id": 4195,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Call stop resolver with leg reaction number and physical reaction; unpack level, source index, source time unchanged."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 296,
+      "node": 4220,
+      "ast_node": 4220,
+      "span": [
+        1156,
+        34,
+        1158,
+        21
+      ],
+      "operation": [
+        72,
+        "self._cross_order",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1459:4:_cross_order"
+        ],
+        2,
+        []
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "calls [72,\"self._cross_order\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1459:4:_cross_order\"],2,[]]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": {
+        "original_id": 4220,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Resolve crossing using leg physical confirmation and stop level; crossing may be null."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 297,
+      "node": 4226,
+      "ast_node": 4226,
+      "span": [
+        1159,
+        30,
+        1159,
+        35
+      ],
+      "operation": [
+        72,
+        "set",
+        "BUILTIN_CANDIDATE",
+        [],
+        0,
+        []
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "calls [72,\"set\",\"BUILTIN_CANDIDATE\",[],0,[]]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": {
+        "original_id": 4226,
+        "disposition": "VERIFIED",
+        "interpretation": "Allocate new empty parent-cause set; B provenance is separate."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 298,
+      "node": 4235,
+      "ast_node": 4235,
+      "span": [
+        1162,
+        16,
+        1164,
+        17
+      ],
+      "operation": [
+        72,
+        "self._index_order_audit_identity",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1100:4:_index_order_audit_identity"
+        ],
+        2,
+        []
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "calls [72,\"self._index_order_audit_identity\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1100:4:_index_order_audit_identity\"],2,[]]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": {
+        "original_id": 4235,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "After publishing new authoritative entry, insert confirmation/index tuple using leg physical confirmation; no new index for existing entry."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 299,
+      "node": 4288,
+      "ast_node": 4288,
+      "span": [
+        1175,
+        41,
+        1175,
+        73
+      ],
+      "operation": [
+        72,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "calls [72,\"str\",\"BUILTIN_CANDIDATE\",[],1,[]]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": {
+        "original_id": 4288,
+        "disposition": "VERIFIED",
+        "interpretation": "str(anchor extreme) as supplied."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 300,
+      "node": 4293,
+      "ast_node": 4293,
+      "span": [
+        1177,
+        20,
+        1177,
+        54
+      ],
+      "operation": [
+        72,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"int\",\"BUILTIN_CANDIDATE\",[],1,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4293,
+        "disposition": "VERIFIED",
+        "interpretation": "Int-normalize reset First."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 301,
+      "node": 4295,
+      "ast_node": 4295,
+      "span": [
+        1177,
+        24,
+        1177,
+        53
+      ],
+      "operation": [
+        72,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"getattr\",\"BUILTIN_CANDIDATE\",[],2,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4295,
+        "disposition": "VERIFIED",
+        "interpretation": "Read reset First attribute."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 302,
+      "node": 4299,
+      "ast_node": 4299,
+      "span": [
+        1178,
+        20,
+        1178,
+        54
+      ],
+      "operation": [
+        72,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"int\",\"BUILTIN_CANDIDATE\",[],1,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4299,
+        "disposition": "VERIFIED",
+        "interpretation": "Int-normalize reset Break."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 303,
+      "node": 4301,
+      "ast_node": 4301,
+      "span": [
+        1178,
+        24,
+        1178,
+        53
+      ],
+      "operation": [
+        72,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"getattr\",\"BUILTIN_CANDIDATE\",[],2,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4301,
+        "disposition": "VERIFIED",
+        "interpretation": "Read reset Break attribute."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 304,
+      "node": 4308,
+      "ast_node": 4308,
+      "span": [
+        1180,
+        56,
+        1180,
+        90
+      ],
+      "operation": [
+        72,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"int\",\"BUILTIN_CANDIDATE\",[],1,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4308,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Int-normalize Break again for main timestamp."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 305,
+      "node": 4310,
+      "ast_node": 4310,
+      "span": [
+        1180,
+        60,
+        1180,
+        89
+      ],
+      "operation": [
+        72,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"getattr\",\"BUILTIN_CANDIDATE\",[],2,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4310,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Read reset Break again."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 306,
+      "node": 4318,
+      "ast_node": 4318,
+      "span": [
+        1183,
+        36,
+        1183,
+        63
+      ],
+      "operation": [
+        72,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "calls [72,\"str\",\"BUILTIN_CANDIDATE\",[],1,[]]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": {
+        "original_id": 4318,
+        "disposition": "VERIFIED",
+        "interpretation": "Serialize reset broken level with native str, no quantization."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 307,
+      "node": 4324,
+      "ast_node": 4324,
+      "span": [
+        1185,
+        31,
+        1185,
+        52
+      ],
+      "operation": [
+        72,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "calls [72,\"str\",\"BUILTIN_CANDIDATE\",[],1,[]]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": {
+        "original_id": 4324,
+        "disposition": "VERIFIED",
+        "interpretation": "Serialize leg boundary with native str, no quantization."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 308,
+      "node": 4345,
+      "ast_node": 4345,
+      "span": [
+        1192,
+        21,
+        1192,
+        59
+      ],
+      "operation": [
+        72,
+        "entry.setdefault",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "calls [72,\"entry.setdefault\",\"UNRESOLVED_DYNAMIC\",[],2,[]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": {
+        "original_id": 4345,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Get or create order_b_causes list on entry; setdefault preserves existing list even if empty."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 309,
+      "node": 4355,
+      "ast_node": 4355,
+      "span": [
+        1194,
+        16,
+        1194,
+        36
+      ],
+      "operation": [
+        72,
+        "causes.append",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "calls [72,\"causes.append\",\"UNRESOLVED_DYNAMIC\",[],1,[]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": {
+        "original_id": 4355,
+        "disposition": "VERIFIED",
+        "interpretation": "Append unique cause dictionary to existing list in place."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 310,
+      "node": 4360,
+      "ast_node": 4360,
+      "span": [
+        1195,
+        16,
+        1198,
+        18
+      ],
+      "operation": [
+        72,
+        "causes.sort",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        [
+          "key"
+        ]
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "calls [72,\"causes.sort\",\"UNRESOLVED_DYNAMIC\",[],0,[\"key\"]]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": {
+        "original_id": 4360,
+        "disposition": "SOURCE_CONDITIONAL",
+        "interpretation": "Stable in-place sort by postBehaviorStopTime, resetTime, strictBreakTime, physicalOrderIdentity; equal key preserves insertion order."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 311,
+      "node": 4380,
+      "ast_node": 4380,
+      "span": [
+        1199,
+        16,
+        1199,
+        55
+      ],
+      "operation": [
+        72,
+        "self._invalidate_carried_order_caches",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches"
+        ],
+        0,
+        []
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "calls [72,\"self._invalidate_carried_order_caches\",\"SELF_CLASS_CANDIDATE\",[\"engine/pipeline/order_audit_engine.py:1120:4:_invalidate_carried_order_caches\"],0,[]]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": {
+        "original_id": 4380,
+        "disposition": "VERIFIED",
+        "interpretation": "Invalidate carried caches after unique append and sort; pre-loop invalidation still happened for nonempty input."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2292,
+      "node": 4156,
+      "ast_node": 4156,
+      "span": [
+        1136,
+        20,
+        1136,
+        44
+      ],
+      "operation": [
+        39,
+        4153,
+        "Load",
+        "Sequence[]"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [39,4153,\"Load\",\"Sequence[]\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2293,
+      "node": 4157,
+      "ast_node": 4157,
+      "span": [
+        1136,
+        20,
+        1136,
+        28
+      ],
+      "operation": [
+        39,
+        4153,
+        "Load",
+        "Sequence"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [39,4153,\"Load\",\"Sequence\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2294,
+      "node": 4158,
+      "ast_node": 4158,
+      "span": [
+        1136,
+        29,
+        1136,
+        43
+      ],
+      "operation": [
+        39,
+        4153,
+        "Load",
+        "OrderBResetLeg"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [39,4153,\"Load\",\"OrderBResetLeg\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2295,
+      "node": 4162,
+      "ast_node": 4162,
+      "span": [
+        1139,
+        11,
+        1139,
+        15
+      ],
+      "operation": [
+        72,
+        4161,
+        "Load",
+        "legs"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [72,4161,\"Load\",\"legs\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2296,
+      "node": 4165,
+      "ast_node": 4165,
+      "span": [
+        1140,
+        12,
+        1140,
+        49
+      ],
+      "operation": [
+        72,
+        4163,
+        "Load",
+        "self._invalidate_carried_order_caches"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [72,4163,\"Load\",\"self._invalidate_carried_order_caches\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2297,
+      "node": 4166,
+      "ast_node": 4166,
+      "span": [
+        1140,
+        12,
+        1140,
+        16
+      ],
+      "operation": [
+        72,
+        4163,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [72,4163,\"Load\",\"self\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2298,
+      "node": 4168,
+      "ast_node": 4168,
+      "span": [
+        1141,
+        12,
+        1141,
+        15
+      ],
+      "operation": [
+        72,
+        4167,
+        "Store",
+        "leg"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [72,4167,\"Store\",\"leg\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2299,
+      "node": 4169,
+      "ast_node": 4169,
+      "span": [
+        1141,
+        19,
+        1141,
+        23
+      ],
+      "operation": [
+        72,
+        4167,
+        "Load",
+        "legs"
+      ],
+      "group": "OA30-A",
+      "contained_groups": [
+        "OA30-A"
+      ],
+      "semantic_role": "accesses [72,4167,\"Load\",\"legs\"]; Input is a sequence of discovered accepted reset-leg records, not an acceptance calculation. Truthiness triggers carried invalidation before iteration, including all-duplicate sequences. Iteration follows supplied order; native empty sequence does no work. No new sort of leg input, parent-stop eligibility or reset/cross search validation here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2300,
+      "node": 4171,
+      "ast_node": 4171,
+      "span": [
+        1142,
+        12,
+        1142,
+        20
+      ],
+      "operation": [
+        72,
+        4170,
+        "Store",
+        "reaction"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4170,\"Store\",\"reaction\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2301,
+      "node": 4172,
+      "ast_node": 4172,
+      "span": [
+        1142,
+        23,
+        1142,
+        44
+      ],
+      "operation": [
+        72,
+        4170,
+        "Load",
+        "leg.physical_reaction"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4170,\"Load\",\"leg.physical_reaction\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2302,
+      "node": 4173,
+      "ast_node": 4173,
+      "span": [
+        1142,
+        23,
+        1142,
+        26
+      ],
+      "operation": [
+        72,
+        4170,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4170,\"Load\",\"leg\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2303,
+      "node": 4175,
+      "ast_node": 4175,
+      "span": [
+        1143,
+        12,
+        1143,
+        20
+      ],
+      "operation": [
+        72,
+        4174,
+        "Store",
+        "identity"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4174,\"Store\",\"identity\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2304,
+      "node": 4177,
+      "ast_node": 4177,
+      "span": [
+        1143,
+        23,
+        1143,
+        40
+      ],
+      "operation": [
+        72,
+        4174,
+        "Load",
+        "reaction_identity"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4174,\"Load\",\"reaction_identity\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2305,
+      "node": 4178,
+      "ast_node": 4178,
+      "span": [
+        1143,
+        41,
+        1143,
+        49
+      ],
+      "operation": [
+        72,
+        4174,
+        "Load",
+        "reaction"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4174,\"Load\",\"reaction\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2306,
+      "node": 4180,
+      "ast_node": 4180,
+      "span": [
+        1144,
+        12,
+        1144,
+        17
+      ],
+      "operation": [
+        72,
+        4179,
+        "Store",
+        "entry"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4179,\"Store\",\"entry\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2307,
+      "node": 4182,
+      "ast_node": 4182,
+      "span": [
+        1144,
+        20,
+        1144,
+        40
+      ],
+      "operation": [
+        72,
+        4179,
+        "Load",
+        "self.order_audit.get"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4179,\"Load\",\"self.order_audit.get\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2308,
+      "node": 4183,
+      "ast_node": 4183,
+      "span": [
+        1144,
+        20,
+        1144,
+        36
+      ],
+      "operation": [
+        72,
+        4179,
+        "Load",
+        "self.order_audit"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4179,\"Load\",\"self.order_audit\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2309,
+      "node": 4184,
+      "ast_node": 4184,
+      "span": [
+        1144,
+        20,
+        1144,
+        24
+      ],
+      "operation": [
+        72,
+        4179,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4179,\"Load\",\"self\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2310,
+      "node": 4185,
+      "ast_node": 4185,
+      "span": [
+        1144,
+        41,
+        1144,
+        49
+      ],
+      "operation": [
+        72,
+        4179,
+        "Load",
+        "identity"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4179,\"Load\",\"identity\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2311,
+      "node": 4188,
+      "ast_node": 4188,
+      "span": [
+        1145,
+        15,
+        1145,
+        20
+      ],
+      "operation": [
+        72,
+        4186,
+        "Load",
+        "entry"
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "accesses [72,4186,\"Load\",\"entry\"]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2312,
+      "node": 4192,
+      "ast_node": 4192,
+      "span": [
+        1146,
+        16,
+        1146,
+        21
+      ],
+      "operation": [
+        72,
+        4190,
+        "Store",
+        "level"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Store\",\"level\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2313,
+      "node": 4193,
+      "ast_node": 4193,
+      "span": [
+        1146,
+        23,
+        1146,
+        29
+      ],
+      "operation": [
+        72,
+        4190,
+        "Store",
+        "source"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Store\",\"source\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2314,
+      "node": 4194,
+      "ast_node": 4194,
+      "span": [
+        1146,
+        31,
+        1146,
+        42
+      ],
+      "operation": [
+        72,
+        4190,
+        "Store",
+        "source_time"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Store\",\"source_time\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2315,
+      "node": 4196,
+      "ast_node": 4196,
+      "span": [
+        1146,
+        45,
+        1146,
+        61
+      ],
+      "operation": [
+        72,
+        4190,
+        "Load",
+        "self._order_stop"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Load\",\"self._order_stop\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2316,
+      "node": 4197,
+      "ast_node": 4197,
+      "span": [
+        1146,
+        45,
+        1146,
+        49
+      ],
+      "operation": [
+        72,
+        4190,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Load\",\"self\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2317,
+      "node": 4198,
+      "ast_node": 4198,
+      "span": [
+        1147,
+        20,
+        1147,
+        39
+      ],
+      "operation": [
+        72,
+        4190,
+        "Load",
+        "leg.reaction_number"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Load\",\"leg.reaction_number\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2318,
+      "node": 4199,
+      "ast_node": 4199,
+      "span": [
+        1147,
+        20,
+        1147,
+        23
+      ],
+      "operation": [
+        72,
+        4190,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Load\",\"leg\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2319,
+      "node": 4200,
+      "ast_node": 4200,
+      "span": [
+        1147,
+        41,
+        1147,
+        49
+      ],
+      "operation": [
+        72,
+        4190,
+        "Load",
+        "reaction"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4190,\"Load\",\"reaction\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2320,
+      "node": 4202,
+      "ast_node": 4202,
+      "span": [
+        1149,
+        16,
+        1149,
+        21
+      ],
+      "operation": [
+        72,
+        4201,
+        "Store",
+        "entry"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Store\",\"entry\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2321,
+      "node": 4212,
+      "ast_node": 4212,
+      "span": [
+        1150,
+        39,
+        1150,
+        58
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg.reaction_number"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg.reaction_number\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2322,
+      "node": 4213,
+      "ast_node": 4213,
+      "span": [
+        1150,
+        39,
+        1150,
+        42
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2323,
+      "node": 4214,
+      "ast_node": 4214,
+      "span": [
+        1151,
+        32,
+        1151,
+        40
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "reaction"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"reaction\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2324,
+      "node": 4215,
+      "ast_node": 4215,
+      "span": [
+        1152,
+        41,
+        1152,
+        71
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg.physical_confirmation_time"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg.physical_confirmation_time\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2325,
+      "node": 4216,
+      "ast_node": 4216,
+      "span": [
+        1152,
+        41,
+        1152,
+        44
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2326,
+      "node": 4217,
+      "ast_node": 4217,
+      "span": [
+        1153,
+        34,
+        1153,
+        39
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "level"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"level\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2327,
+      "node": 4218,
+      "ast_node": 4218,
+      "span": [
+        1154,
+        41,
+        1154,
+        47
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "source"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"source\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2328,
+      "node": 4219,
+      "ast_node": 4219,
+      "span": [
+        1155,
+        40,
+        1155,
+        51
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "source_time"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"source_time\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2329,
+      "node": 4221,
+      "ast_node": 4221,
+      "span": [
+        1156,
+        34,
+        1156,
+        51
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "self._cross_order"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"self._cross_order\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2330,
+      "node": 4222,
+      "ast_node": 4222,
+      "span": [
+        1156,
+        34,
+        1156,
+        38
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"self\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2331,
+      "node": 4223,
+      "ast_node": 4223,
+      "span": [
+        1157,
+        24,
+        1157,
+        54
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg.physical_confirmation_time"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg.physical_confirmation_time\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2332,
+      "node": 4224,
+      "ast_node": 4224,
+      "span": [
+        1157,
+        24,
+        1157,
+        27
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"leg\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2333,
+      "node": 4225,
+      "ast_node": 4225,
+      "span": [
+        1157,
+        56,
+        1157,
+        61
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "level"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"level\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2334,
+      "node": 4227,
+      "ast_node": 4227,
+      "span": [
+        1159,
+        30,
+        1159,
+        33
+      ],
+      "operation": [
+        72,
+        4201,
+        "Load",
+        "set"
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "accesses [72,4201,\"Load\",\"set\"]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2335,
+      "node": 4229,
+      "ast_node": 4229,
+      "span": [
+        1161,
+        16,
+        1161,
+        42
+      ],
+      "operation": [
+        72,
+        4228,
+        "Store",
+        "self.order_audit[]"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4228,\"Store\",\"self.order_audit[]\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2336,
+      "node": 4230,
+      "ast_node": 4230,
+      "span": [
+        1161,
+        16,
+        1161,
+        32
+      ],
+      "operation": [
+        72,
+        4228,
+        "Load",
+        "self.order_audit"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4228,\"Load\",\"self.order_audit\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2337,
+      "node": 4231,
+      "ast_node": 4231,
+      "span": [
+        1161,
+        16,
+        1161,
+        20
+      ],
+      "operation": [
+        72,
+        4228,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4228,\"Load\",\"self\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2338,
+      "node": 4232,
+      "ast_node": 4232,
+      "span": [
+        1161,
+        33,
+        1161,
+        41
+      ],
+      "operation": [
+        72,
+        4228,
+        "Load",
+        "identity"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4228,\"Load\",\"identity\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2339,
+      "node": 4233,
+      "ast_node": 4233,
+      "span": [
+        1161,
+        45,
+        1161,
+        50
+      ],
+      "operation": [
+        72,
+        4228,
+        "Load",
+        "entry"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4228,\"Load\",\"entry\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2340,
+      "node": 4236,
+      "ast_node": 4236,
+      "span": [
+        1162,
+        16,
+        1162,
+        48
+      ],
+      "operation": [
+        72,
+        4234,
+        "Load",
+        "self._index_order_audit_identity"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4234,\"Load\",\"self._index_order_audit_identity\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2341,
+      "node": 4237,
+      "ast_node": 4237,
+      "span": [
+        1162,
+        16,
+        1162,
+        20
+      ],
+      "operation": [
+        72,
+        4234,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4234,\"Load\",\"self\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2342,
+      "node": 4238,
+      "ast_node": 4238,
+      "span": [
+        1163,
+        20,
+        1163,
+        28
+      ],
+      "operation": [
+        72,
+        4234,
+        "Load",
+        "identity"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4234,\"Load\",\"identity\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2343,
+      "node": 4239,
+      "ast_node": 4239,
+      "span": [
+        1163,
+        30,
+        1163,
+        60
+      ],
+      "operation": [
+        72,
+        4234,
+        "Load",
+        "leg.physical_confirmation_time"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4234,\"Load\",\"leg.physical_confirmation_time\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2344,
+      "node": 4240,
+      "ast_node": 4240,
+      "span": [
+        1163,
+        30,
+        1163,
+        33
+      ],
+      "operation": [
+        72,
+        4234,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "accesses [72,4234,\"Load\",\"leg\"]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2345,
+      "node": 4242,
+      "ast_node": 4242,
+      "span": [
+        1165,
+        12,
+        1165,
+        19
+      ],
+      "operation": [
+        72,
+        4241,
+        "Store",
+        "current"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4241,\"Store\",\"current\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2346,
+      "node": 4243,
+      "ast_node": 4243,
+      "span": [
+        1165,
+        22,
+        1165,
+        40
+      ],
+      "operation": [
+        72,
+        4241,
+        "Load",
+        "leg.reset_reaction"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4241,\"Load\",\"leg.reset_reaction\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2347,
+      "node": 4244,
+      "ast_node": 4244,
+      "span": [
+        1165,
+        22,
+        1165,
+        25
+      ],
+      "operation": [
+        72,
+        4241,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4241,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2348,
+      "node": 4246,
+      "ast_node": 4246,
+      "span": [
+        1166,
+        12,
+        1166,
+        17
+      ],
+      "operation": [
+        72,
+        4245,
+        "Store",
+        "cause"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Store\",\"cause\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2349,
+      "node": 4270,
+      "ast_node": 4270,
+      "span": [
+        1168,
+        36,
+        1168,
+        63
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop.behavior_type"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop.behavior_type\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2350,
+      "node": 4271,
+      "ast_node": 4271,
+      "span": [
+        1168,
+        36,
+        1168,
+        49
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2351,
+      "node": 4272,
+      "ast_node": 4272,
+      "span": [
+        1168,
+        36,
+        1168,
+        39
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2352,
+      "node": 4273,
+      "ast_node": 4273,
+      "span": [
+        1169,
+        40,
+        1169,
+        64
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop.event_time"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop.event_time\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2353,
+      "node": 4274,
+      "ast_node": 4274,
+      "span": [
+        1169,
+        40,
+        1169,
+        53
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2354,
+      "node": 4275,
+      "ast_node": 4275,
+      "span": [
+        1169,
+        40,
+        1169,
+        43
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2355,
+      "node": 4276,
+      "ast_node": 4276,
+      "span": [
+        1170,
+        43,
+        1170,
+        78
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop.behavior_source_index"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop.behavior_source_index\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2356,
+      "node": 4277,
+      "ast_node": 4277,
+      "span": [
+        1170,
+        43,
+        1170,
+        56
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2357,
+      "node": 4278,
+      "ast_node": 4278,
+      "span": [
+        1170,
+        43,
+        1170,
+        46
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2358,
+      "node": 4279,
+      "ast_node": 4279,
+      "span": [
+        1171,
+        42,
+        1171,
+        76
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop.behavior_source_time"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop.behavior_source_time\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2359,
+      "node": 4280,
+      "ast_node": 4280,
+      "span": [
+        1171,
+        42,
+        1171,
+        55
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.post_stop"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.post_stop\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2360,
+      "node": 4281,
+      "ast_node": 4281,
+      "span": [
+        1171,
+        42,
+        1171,
+        45
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2361,
+      "node": 4282,
+      "ast_node": 4282,
+      "span": [
+        1172,
+        38,
+        1172,
+        62
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.anchor_behavior_type"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.anchor_behavior_type\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2362,
+      "node": 4283,
+      "ast_node": 4283,
+      "span": [
+        1172,
+        38,
+        1172,
+        41
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2363,
+      "node": 4284,
+      "ast_node": 4284,
+      "span": [
+        1173,
+        45,
+        1173,
+        77
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.anchor_behavior_source_index"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.anchor_behavior_source_index\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2364,
+      "node": 4285,
+      "ast_node": 4285,
+      "span": [
+        1173,
+        45,
+        1173,
+        48
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2365,
+      "node": 4286,
+      "ast_node": 4286,
+      "span": [
+        1174,
+        44,
+        1174,
+        75
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.anchor_behavior_source_time"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.anchor_behavior_source_time\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2366,
+      "node": 4287,
+      "ast_node": 4287,
+      "span": [
+        1174,
+        44,
+        1174,
+        47
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2367,
+      "node": 4289,
+      "ast_node": 4289,
+      "span": [
+        1175,
+        41,
+        1175,
+        44
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "str"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"str\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2368,
+      "node": 4290,
+      "ast_node": 4290,
+      "span": [
+        1175,
+        45,
+        1175,
+        72
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.anchor_behavior_extreme"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.anchor_behavior_extreme\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2369,
+      "node": 4291,
+      "ast_node": 4291,
+      "span": [
+        1175,
+        45,
+        1175,
+        48
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-E",
+      "contained_groups": [
+        "OA30-E"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; After creation or reuse, read reset reaction and construct full B cause. Kind reset-leg; record post-stop behavior type, exact stop time, source index, source time independently from anchor behavior type/index/time/extreme. Anchor extreme uses native str of supplied value only, no rounding or Decimal normalization.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2370,
+      "node": 4294,
+      "ast_node": 4294,
+      "span": [
+        1177,
+        20,
+        1177,
+        23
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "int"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"int\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2371,
+      "node": 4296,
+      "ast_node": 4296,
+      "span": [
+        1177,
+        24,
+        1177,
+        31
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "getattr"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"getattr\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2372,
+      "node": 4297,
+      "ast_node": 4297,
+      "span": [
+        1177,
+        32,
+        1177,
+        39
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "current"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"current\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2373,
+      "node": 4300,
+      "ast_node": 4300,
+      "span": [
+        1178,
+        20,
+        1178,
+        23
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "int"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"int\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2374,
+      "node": 4302,
+      "ast_node": 4302,
+      "span": [
+        1178,
+        24,
+        1178,
+        31
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "getattr"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"getattr\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2375,
+      "node": 4303,
+      "ast_node": 4303,
+      "span": [
+        1178,
+        32,
+        1178,
+        39
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "current"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"current\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2376,
+      "node": 4305,
+      "ast_node": 4305,
+      "span": [
+        1180,
+        45,
+        1180,
+        91
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "self.times[]"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"self.times[]\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2377,
+      "node": 4306,
+      "ast_node": 4306,
+      "span": [
+        1180,
+        45,
+        1180,
+        55
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "self.times"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"self.times\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2378,
+      "node": 4307,
+      "ast_node": 4307,
+      "span": [
+        1180,
+        45,
+        1180,
+        49
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"self\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2379,
+      "node": 4309,
+      "ast_node": 4309,
+      "span": [
+        1180,
+        56,
+        1180,
+        59
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "int"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"int\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2380,
+      "node": 4311,
+      "ast_node": 4311,
+      "span": [
+        1180,
+        60,
+        1180,
+        67
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "getattr"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"getattr\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2381,
+      "node": 4312,
+      "ast_node": 4312,
+      "span": [
+        1180,
+        68,
+        1180,
+        75
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "current"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"current\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2382,
+      "node": 4314,
+      "ast_node": 4314,
+      "span": [
+        1181,
+        49,
+        1181,
+        76
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.reset_confirmation_time"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.reset_confirmation_time\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2383,
+      "node": 4315,
+      "ast_node": 4315,
+      "span": [
+        1181,
+        49,
+        1181,
+        52
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2384,
+      "node": 4316,
+      "ast_node": 4316,
+      "span": [
+        1182,
+        30,
+        1182,
+        52
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.reset_source_index"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.reset_source_index\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2385,
+      "node": 4317,
+      "ast_node": 4317,
+      "span": [
+        1182,
+        30,
+        1182,
+        33
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2386,
+      "node": 4319,
+      "ast_node": 4319,
+      "span": [
+        1183,
+        36,
+        1183,
+        39
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "str"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"str\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2387,
+      "node": 4320,
+      "ast_node": 4320,
+      "span": [
+        1183,
+        40,
+        1183,
+        62
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.reset_broken_level"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.reset_broken_level\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2388,
+      "node": 4321,
+      "ast_node": 4321,
+      "span": [
+        1183,
+        40,
+        1183,
+        43
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2389,
+      "node": 4322,
+      "ast_node": 4322,
+      "span": [
+        1184,
+        29,
+        1184,
+        43
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.reset_time"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.reset_time\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2390,
+      "node": 4323,
+      "ast_node": 4323,
+      "span": [
+        1184,
+        29,
+        1184,
+        32
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-F",
+      "contained_groups": [
+        "OA30-F"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Reset reaction identity is fresh list of int First and int Break. Breakout timestamp read from main times at integer Break, distinct from supplied exact reset confirmation. Store supplied reset source index, string of broken level and reset event time. No clamping, sorting, recomputing reset or fallback on missing/index/type errors.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2391,
+      "node": 4325,
+      "ast_node": 4325,
+      "span": [
+        1185,
+        31,
+        1185,
+        34
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "str"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"str\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2392,
+      "node": 4326,
+      "ast_node": 4326,
+      "span": [
+        1185,
+        35,
+        1185,
+        51
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.leg_boundary"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.leg_boundary\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2393,
+      "node": 4327,
+      "ast_node": 4327,
+      "span": [
+        1185,
+        35,
+        1185,
+        38
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2394,
+      "node": 4328,
+      "ast_node": 4328,
+      "span": [
+        1186,
+        42,
+        1186,
+        62
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.leg_source_index"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.leg_source_index\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2395,
+      "node": 4329,
+      "ast_node": 4329,
+      "span": [
+        1186,
+        42,
+        1186,
+        45
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2396,
+      "node": 4330,
+      "ast_node": 4330,
+      "span": [
+        1187,
+        41,
+        1187,
+        60
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.leg_source_time"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.leg_source_time\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2397,
+      "node": 4331,
+      "ast_node": 4331,
+      "span": [
+        1187,
+        41,
+        1187,
+        44
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2398,
+      "node": 4332,
+      "ast_node": 4332,
+      "span": [
+        1188,
+        35,
+        1188,
+        56
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.strict_break_time"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.strict_break_time\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2399,
+      "node": 4333,
+      "ast_node": 4333,
+      "span": [
+        1188,
+        35,
+        1188,
+        38
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2400,
+      "node": 4335,
+      "ast_node": 4335,
+      "span": [
+        1189,
+        42,
+        1189,
+        53
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "identity[]"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"identity[]\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2401,
+      "node": 4336,
+      "ast_node": 4336,
+      "span": [
+        1189,
+        42,
+        1189,
+        50
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "identity"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"identity\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2402,
+      "node": 4338,
+      "ast_node": 4338,
+      "span": [
+        1189,
+        55,
+        1189,
+        66
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "identity[]"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"identity[]\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2403,
+      "node": 4339,
+      "ast_node": 4339,
+      "span": [
+        1189,
+        55,
+        1189,
+        63
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "identity"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"identity\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2404,
+      "node": 4341,
+      "ast_node": 4341,
+      "span": [
+        1190,
+        49,
+        1190,
+        79
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg.physical_confirmation_time"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg.physical_confirmation_time\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2405,
+      "node": 4342,
+      "ast_node": 4342,
+      "span": [
+        1190,
+        49,
+        1190,
+        52
+      ],
+      "operation": [
+        72,
+        4245,
+        "Load",
+        "leg"
+      ],
+      "group": "OA30-G",
+      "contained_groups": [
+        "OA30-G"
+      ],
+      "semantic_role": "accesses [72,4245,\"Load\",\"leg\"]; Record native string of leg boundary, supplied boundary source index/time, strict-break time, fresh physical identity list from normalized key and supplied physical confirmation. Exactly three price-like fields stringified in cause (anchor extreme, reset broken level, leg boundary); authoritative row stop level remains returned Decimal. Cause may record new supplied physical confirmation even when existing row retains older one; no local consistency reconciliation.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2406,
+      "node": 4344,
+      "ast_node": 4344,
+      "span": [
+        1192,
+        12,
+        1192,
+        18
+      ],
+      "operation": [
+        72,
+        4343,
+        "Store",
+        "causes"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4343,\"Store\",\"causes\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2407,
+      "node": 4346,
+      "ast_node": 4346,
+      "span": [
+        1192,
+        21,
+        1192,
+        37
+      ],
+      "operation": [
+        72,
+        4343,
+        "Load",
+        "entry.setdefault"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4343,\"Load\",\"entry.setdefault\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2408,
+      "node": 4347,
+      "ast_node": 4347,
+      "span": [
+        1192,
+        21,
+        1192,
+        26
+      ],
+      "operation": [
+        72,
+        4343,
+        "Load",
+        "entry"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4343,\"Load\",\"entry\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2409,
+      "node": 4352,
+      "ast_node": 4352,
+      "span": [
+        1193,
+        15,
+        1193,
+        20
+      ],
+      "operation": [
+        72,
+        4350,
+        "Load",
+        "cause"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4350,\"Load\",\"cause\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2410,
+      "node": 4353,
+      "ast_node": 4353,
+      "span": [
+        1193,
+        28,
+        1193,
+        34
+      ],
+      "operation": [
+        72,
+        4350,
+        "Load",
+        "causes"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4350,\"Load\",\"causes\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2411,
+      "node": 4356,
+      "ast_node": 4356,
+      "span": [
+        1194,
+        16,
+        1194,
+        29
+      ],
+      "operation": [
+        72,
+        4354,
+        "Load",
+        "causes.append"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4354,\"Load\",\"causes.append\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2412,
+      "node": 4357,
+      "ast_node": 4357,
+      "span": [
+        1194,
+        16,
+        1194,
+        22
+      ],
+      "operation": [
+        72,
+        4354,
+        "Load",
+        "causes"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4354,\"Load\",\"causes\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2413,
+      "node": 4358,
+      "ast_node": 4358,
+      "span": [
+        1194,
+        30,
+        1194,
+        35
+      ],
+      "operation": [
+        72,
+        4354,
+        "Load",
+        "cause"
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "accesses [72,4354,\"Load\",\"cause\"]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2414,
+      "node": 4361,
+      "ast_node": 4361,
+      "span": [
+        1195,
+        16,
+        1195,
+        27
+      ],
+      "operation": [
+        72,
+        4359,
+        "Load",
+        "causes.sort"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [72,4359,\"Load\",\"causes.sort\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2415,
+      "node": 4362,
+      "ast_node": 4362,
+      "span": [
+        1195,
+        16,
+        1195,
+        22
+      ],
+      "operation": [
+        72,
+        4359,
+        "Load",
+        "causes"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [72,4359,\"Load\",\"causes\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2416,
+      "node": 4367,
+      "ast_node": 4367,
+      "span": [
+        1196,
+        20,
+        1196,
+        48
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item[]"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item[]\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2417,
+      "node": 4368,
+      "ast_node": 4368,
+      "span": [
+        1196,
+        20,
+        1196,
+        24
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2418,
+      "node": 4370,
+      "ast_node": 4370,
+      "span": [
+        1196,
+        50,
+        1196,
+        67
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item[]"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item[]\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2419,
+      "node": 4371,
+      "ast_node": 4371,
+      "span": [
+        1196,
+        50,
+        1196,
+        54
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2420,
+      "node": 4373,
+      "ast_node": 4373,
+      "span": [
+        1197,
+        20,
+        1197,
+        43
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item[]"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item[]\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2421,
+      "node": 4374,
+      "ast_node": 4374,
+      "span": [
+        1197,
+        20,
+        1197,
+        24
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2422,
+      "node": 4376,
+      "ast_node": 4376,
+      "span": [
+        1197,
+        45,
+        1197,
+        74
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item[]"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item[]\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2423,
+      "node": 4377,
+      "ast_node": 4377,
+      "span": [
+        1197,
+        45,
+        1197,
+        49
+      ],
+      "operation": [
+        73,
+        4359,
+        "Load",
+        "item"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [73,4359,\"Load\",\"item\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2424,
+      "node": 4381,
+      "ast_node": 4381,
+      "span": [
+        1199,
+        16,
+        1199,
+        53
+      ],
+      "operation": [
+        72,
+        4379,
+        "Load",
+        "self._invalidate_carried_order_caches"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [72,4379,\"Load\",\"self._invalidate_carried_order_caches\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 2425,
+      "node": 4382,
+      "ast_node": 4382,
+      "span": [
+        1199,
+        16,
+        1199,
+        20
+      ],
+      "operation": [
+        72,
+        4379,
+        "Load",
+        "self"
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "accesses [72,4379,\"Load\",\"self\"]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 143,
+      "node": 4181,
+      "ast_node": 4181,
+      "span": [
+        1144,
+        20,
+        1144,
+        50
+      ],
+      "operation": [
+        72,
+        "self.order_audit.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA30-B",
+      "contained_groups": [
+        "OA30-B"
+      ],
+      "semantic_role": "effects [72,\"self.order_audit.get\",[\"DYNAMIC_EFFECT_UNKNOWN\"]]; Read physical reaction, derive canonical integer First/Break identity via owner helper, then authoritative ledger get. Exact None (absent or explicit None) enters creation. Existing non-null entry reused without geometry, number, confirmation, stop/cross or parent causes replacement; no comparison of supplied evidence with previously recorded geometry.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 144,
+      "node": 4226,
+      "ast_node": 4226,
+      "span": [
+        1159,
+        30,
+        1159,
+        35
+      ],
+      "operation": [
+        72,
+        "set",
+        [
+          "POTENTIAL_MUTATION"
+        ]
+      ],
+      "group": "OA30-C",
+      "contained_groups": [
+        "OA30-C"
+      ],
+      "semantic_role": "effects [72,\"set\",[\"POTENTIAL_MUTATION\"]]; On creation resolve canonical stop with supplied reaction number and physical reaction; retain returned exact Decimal level, source index and source time. Construct new row using leg number, reaction reference, leg physical confirmation, returned stop triple, crossing from leg physical confirmation with unchanged level, and fresh empty parent cause set. All field expressions and crossing evaluated before publishing ledger row; exception leaves no newly published row here, but pre-loop invalidation or delegated caches may remain.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 145,
+      "node": 4229,
+      "ast_node": 4229,
+      "span": [
+        1161,
+        16,
+        1161,
+        42
+      ],
+      "operation": [
+        72,
+        "self.order_audit[]",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "OA30-D",
+      "contained_groups": [
+        "OA30-D"
+      ],
+      "semantic_role": "effects [72,\"self.order_audit[]\",[\"EXPLICIT_OBJECT_MUTATION\"]]; Publish newly constructed row at physical identity, then index that identity using supplied physical confirmation. OA26 right insertion and pending-state effects apply. If insertion fails, row may already exist; no transaction. Existing non-null row skips stop/cross and index insertion, including repeated physical identity.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 146,
+      "node": 4345,
+      "ast_node": 4345,
+      "span": [
+        1192,
+        21,
+        1192,
+        59
+      ],
+      "operation": [
+        72,
+        "entry.setdefault",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "effects [72,\"entry.setdefault\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 147,
+      "node": 4355,
+      "ast_node": 4355,
+      "span": [
+        1194,
+        16,
+        1194,
+        36
+      ],
+      "operation": [
+        72,
+        "causes.append",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA30-H",
+      "contained_groups": [
+        "OA30-H"
+      ],
+      "semantic_role": "effects [72,\"causes.append\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Evaluate fresh empty list default and setdefault order_b_causes; existing list reference reused, not replaced. Full native dictionary equality membership determines duplicate, not partial key, physical pair or separate OA12 signature. New distinct dictionary appended to same list before sorting. Duplicate does not sort or invoke per-add invalidation; initial truthy-sequence invalidation still happened.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 148,
+      "node": 4360,
+      "ast_node": 4360,
+      "span": [
+        1195,
+        16,
+        1198,
+        18
+      ],
+      "operation": [
+        72,
+        "causes.sort",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "OA30-I",
+      "contained_groups": [
+        "OA30-I"
+      ],
+      "semantic_role": "effects [72,\"causes.sort\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Stable in-place ascending sort of entire cause list by exact postBehaviorStopTime, resetTime, strictBreakTime and physicalOrderIdentity list lexicographically. No anchor, confirmation, source or ordinal tie key; equal ranks retain prior order, new equal-ranked cause follows earlier existing ones. After successful sort, invalidate carried results and creation state. Append/sort failure propagates, no guaranteed rollback or subsequent invalidation. No explicit post-stop flush other than earlier OA26 index maintenance.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B05-10-S1",
+      "span": [
+        1139,
+        1164
+      ],
+      "prior_interpretation": "Nonempty legs invalidate carried before any registration, even all duplicates; iterate input order. Existing physical row preserved; new row stop/cross computed using supplied leg number and confirmation, publish before confirmation-index insertion.",
+      "groups": [
+        "OA30-A",
+        "OA30-B",
+        "OA30-C",
+        "OA30-D"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-10-S2",
+      "span": [
+        1165,
+        1191
+      ],
+      "prior_interpretation": "Cause dictionary preserves post-stop and independent anchor, Reset owner and physical identity; Reset breakout is main timestamp at int Break, distinct from exact Reset Reaction confirmation.",
+      "groups": [
+        "OA30-E",
+        "OA30-F",
+        "OA30-G"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-10-S3",
+      "span": [
+        1175,
+        1185
+      ],
+      "prior_interpretation": "Only anchor extreme, broken level and leg boundary converted to native str; no local rounding or Decimal reconstruction. Reset identity int First/Break; physical identity list from normalized pair.",
+      "groups": [
+        "OA30-E",
+        "OA30-F",
+        "OA30-G"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-10-S4",
+      "span": [
+        1192,
+        1199
+      ],
+      "prior_interpretation": "setdefault B list; full dictionary equality dedup; append distinct cause then stable sort by post-stop, Reset, strict-break, physical pair. Per-cause carried invalidation only on addition; no post-stop invalidation here beyond OA26 pending/index effects.",
+      "groups": [
+        "OA30-H",
+        "OA30-I"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B05-10-S5",
+      "span": [
+        1139,
+        1199
+      ],
+      "prior_interpretation": "No local acceptance or consistency revalidation of supplied leg; no atomic rollback if error occurs after ledger/index publication or cause append. Repeated leg physical identity never replaces first recorded geometry.",
+      "groups": [
+        "OA30-A",
+        "OA30-B",
+        "OA30-C",
+        "OA30-D",
+        "OA30-E",
+        "OA30-F",
+        "OA30-G",
+        "OA30-H",
+        "OA30-I"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 4,
+      "comparisons": 2,
+      "arithmetic": 0,
+      "calls": 20,
+      "accesses": 134,
+      "effects": 6,
+      "exits": 0
+    },
+    "rows": 166,
+    "w1": 26,
+    "additional": 140,
+    "supplemental": 5,
+    "identity_errors": 0,
+    "overlap": 0,
+    "prior_rows_revalidated": 3170,
+    "prior_registers": [
+      "5141c2ab2b056226e0f7d9a65aa5e8e7766b2da7",
+      "60b00bd427681009ec0affd686715fe056cff60f",
+      "f19d3ccbd57fd9d1bb37b73798402e2f857c7929",
+      "7360353b463cab1583d578fd231afde72aa6b05a",
+      "342d0f3087825d76fc9a55ceeb6179a219fefabe",
+      "d5a7cf21c597c33d1a77b68d1d3fcb8ec239a0d0",
+      "edfc54179362ceb4e147c2a65bd29c7981648643",
+      "d5ee7b7bf2adef9032e8a1da15f38a2e276d49a6",
+      "4bed7c985cd20b729d82c4add910e86b98311100"
+    ],
+    "range": [
+      1135,
+      1201
+    ],
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP393-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "description": "Clarified exact None entry gate, truthy-sequence pre-invalidation, first recorded physical geometry versus later cause confirmation, full-dictionary versus OA12 signature equality, field evaluation order, stable tie and partial publication/append failure boundaries. No new production defect asserted."
+    }
+  ],
+  "limitations": [
+    "Separate source-first pass by GPT, not independently staffed. Local review only; supplied accepted leg consistency, native types, chronology and cache lifetime remain owner-dependent; cross-owner closure not asserted.",
+    "No runtime, RAW payload, ZIP or production changes."
+  ],
+  "tooling_note": "Initial connector batch exceeded per-call tool count; repeated static reconciliation and split publication. No waiver of source or publication gate."
+}

@@ -1,0 +1,23 @@
+{
+  "checkpoint": 393,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/order_audit_engine.py:40–76,530–553; engine/pipeline/core_utils.py:59–66",
+      "contract": "Frozen reset-leg record fields carry owner-provided stop/anchor/reset/physical evidence; references inside need not be immutable. Physical identity is integer First/Break. OA12 multi-field leg signature is distinct from full dictionary equality dedup here, including fields omitted by signature; do not substitute."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:653–688,1100–1132,1459–1477",
+      "contract": "Canonical stop/strict lower crossing delegates unchanged Decimal level. Exact object number cache conditional. Index insertion after publication, full-tuple right bisect; dict sorted audit appends pending, otherwise reset None. Carried invalidator clears result map and nulls creation index/append; post-stop invalidator not called here. No local direction-specific arithmetic."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:1202–1249,2074–2099",
+      "contract": "Later reparent may mutate post/anchor role labels separately and revoke empty entries, with explicit invalidation. Rebuild snapshots prior parent causes, clears ledger/index and appropriate caches, registers stored B legs before S/E parents. OA30 does not guarantee downstream accepted identity or reparent consistency."
+    },
+    {
+      "source": "Algorithms/V3/State_Machines/04_Order_Ledger.md OB12",
+      "contract": "Registration is distinct from discovery/acceptance; source has eager sequence-level and successful unique-add invalidation. Parent set and B list remain separate. No runtime, arbitrary mutation, or cross-owner certification."
+    }
+  ]
+}
