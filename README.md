@@ -178,3 +178,23 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 25
 
 [Order gate chronology, cache, and earliest healthy geometry](Audit/Phase_07/Semantic_Closure_B02_11.md): 182 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 26
+
+[Direct candidate, boundary race and result publication](Audit/Phase_07/Semantic_Closure_B02_12.md): 94 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 27
+
+[Unified initial handoff and Normal/Reset continuation](Audit/Phase_07/Semantic_Closure_B02_13.md): 209 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 28
+
+[Committed live Reaction seed, validation, preview and extension](Audit/Phase_07/Semantic_Closure_B02_14.md): 93 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — B02 W1 local completion
+
+[Reaction completion evidence](Audit/Phase_07/Semantic_Closure_B02_Completion.json): 1877/1877 original rows, local PASS. W2/W3 remain open. Next B03 Blue and A. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

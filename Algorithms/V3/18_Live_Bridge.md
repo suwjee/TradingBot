@@ -34,7 +34,7 @@ Input label. Increment captured completed_stages before emitting completed progr
 ## Committed Reaction continuation procedures
 
 ### RE99 — LiveReactionContinuation.__init__
-Validate direction via policy, require >=2 committed main else LiveReactionUnavailable. Copy candles/lower, options and timeframe. RE104 initial validation; construct RE102, RE97 retain cursor, always release indexes finally. Save result/checkpoint/initial cursor, processed_main_candles=0.
+Validate direction via policy, require >=2 committed main else LiveReactionUnavailable. Copy candles/lower, options and timeframe. RE104 initial validation; construct RE102 before try, run RE97 retain cursor inside try and release indexes finally. Construction failure lies outside this cleanup scope. Save result/checkpoint/initial cursor, processed_main_candles=0.
 
 ### RE100 — result
 RE101 snapshot.
@@ -58,4 +58,4 @@ RE107 commit true.
 RE107 commit false.
 
 ### RE107 — _extend
-Both empty return snapshot. Validate against last committed main/lower; concatenate into new lists, new detector. No checkpoint: processed=len(new batch main), RE97 with initial cursor. Else copy prior reaction/reset prefixes at checkpoint counts, clone cursor previous/candidate, processed=len(full main)-cursor.next_index, RE98. Always release new sequence indexes finally. Only commit true updates owned lists/result/checkpoints/initial cursor and processed count. Return snapshot either way.
+Both empty return snapshot. Validate against last committed main/lower; concatenate into new lists, new detector. No checkpoint: processed=len(new batch main), RE97 with initial cursor. Else copy prior reaction/reset prefixes at checkpoint counts, clone cursor previous/candidate, processed=len(full main)-cursor.next_index, RE98. Release new sequence indexes finally for replay after detector construction; constructor failure is outside try. Only commit true updates owned lists/result/checkpoints/initial cursor and processed count. Return snapshot either way after optional commit (snapshot failure is not a rollback trigger).

@@ -44,7 +44,7 @@ State: previous confirmed candidate, optional current candidate, next main, runn
 | RXU10 | NORMAL | No reset, candidate exists | Strict outward improvement updates edge and source | NORMAL | RE98 |
 | RXU11 | NORMAL | Candidate strict confirmation | Set Break, refine exact prefix, evaluate later reset, append canonical; optional early return before recording post-reset; otherwise previous copy, running edge=current | REMAINDER or RETURN | RE78,RE98 |
 | RXU12 | NORMAL | No candidate; correct First tag | Freeze confirmation edge from current/running (running wins equality), opposite extreme from edge source+1 through First or First alone | NORMAL | RE07,RE08,RE98 |
-| RXU13 | NORMAL | Main traversal continues | Update running opposite extreme on strict improvement; advance index | NORMAL | RE98 |
+| RXU13 | NORMAL | Main traversal continues | Initialize null running opposite extreme or update on strict improvement; advance index | NORMAL | RE98 |
 | RXU14 | NORMAL | Horizon | Return lists; retain earliest unresolved reset-search checkpoint else current normal cursor and counts | RETURN | RE95,RE98 |
 
 RXU02/09/11 canonicalization: adjacent confirmed opposite anchor may replace confirmation edge only with source conditions in RE76 (B anchor Low >= First Low; R anchor High <= First High); then outward edge recomputation. No public clipping of the native accepted lists.

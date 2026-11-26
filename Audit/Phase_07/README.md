@@ -121,3 +121,23 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 25 — Order gate chronology, cache, and earliest healthy geometry
 
 [Local review](Semantic_Closure_B02_11.md) and [site evidence](Semantic_Closure_B02_11.json): 182 original rows, 9 supplemental items, 2 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1481/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 26 — Direct candidate, boundary race and result publication
+
+[Local review](Semantic_Closure_B02_12.md) and [site evidence](Semantic_Closure_B02_12.json): 94 original rows, 6 supplemental items, 1 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1575/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 27 — Unified initial handoff and Normal/Reset continuation
+
+[Local review](Semantic_Closure_B02_13.md) and [site evidence](Semantic_Closure_B02_13.json): 209 original rows, 9 supplemental items, 2 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1784/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 28 — Committed live Reaction seed, validation, preview and extension
+
+[Local review](Semantic_Closure_B02_14.md) and [site evidence](Semantic_Closure_B02_14.json): 93 original rows, 7 supplemental items, 2 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1877/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## B02 W1 local completion
+
+[Completion evidence](Semantic_Closure_B02_Completion.json): all 1877 original category IDs accounted for exactly once across 14 contiguous source partitions; 2908 lines (including terminal blanks), 114 supplemental items. **B02 local PASS; W2/W3 remain open.** Next B03 Blue and A. No runtime equivalence claimed.
