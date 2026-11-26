@@ -39,11 +39,11 @@ Registers heap of source groups (earliest source time, earliest decision,source 
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| EQ01 | INIT | Candidates/checkpoint | Build indexes and pending source groups; restore allowed prefix if replay; active/numbered/sequence state | SOURCE | E07,E43,E44,E45,E46 |
+| EQ01 | INIT | Candidates/checkpoint | Group/index all candidates; initial heap only source>=frontier with independent minima; restore prefix/active by checkpoint presence; accepted set aliases local | SOURCE | E07,E43,E44,E45,E46 |
 | EQ02 | SOURCE | Next group contains Order whose sole cause is now disowned S and active parent exists | Reopen full ER race; if checkpoint replay raise internal reopen signal, otherwise enqueue regenerated source; no geometry patch | SOURCE or REPLAY | E44,E47,E49,OA60 |
 | EQ03 | SOURCE | Invalid Order (disowned, blocked gate-owned, invalid S without independent cause) or inactive parent | Reject candidate | FILTER | E41,E48,E49,OA60,OA61 |
-| EQ04 | FILTER | S parent | Require existing S not E-owned, source>sequence_start and A-source>=sequence_start when reset exists; later prior E requires rebuilt-after-E or unused earlier Red S dominating prior Blue E | FILTER | E49 |
-| EQ05 | FILTER | E parent | Permit sequence-start parent or active physical parent; preliminary skipped-parent recursion allowed only through invalid Order but not invalid-S-without-cause, seen guards; final winner still needs active/boundary parent | FILTER | E49,E44 |
+| EQ04 | FILTER | S parent | Require existing S not E-owned, source>sequence_start and A-source>=sequence_start when reset exists; prior time strictly earlier via lower bound; after boundary guards compute rebuilt-after-E and unused earlier Red S dominating prior Blue E separately, then OR | FILTER | E49 |
+| EQ05 | FILTER | Non-S parent | Permit sequence-start parent or active physical parent; preliminary skipped-parent recursion allowed only through invalid Order but not invalid-S-without-cause, shared seen set mutated before lookup; final winner still needs active/boundary parent | FILTER | E49,E44 |
 | EQ06 | FILTER | Lower S competes with active E it strictly stops, owner Red or candidate Blue, owner child decision>=candidate decision | Exclude candidate | FILTER | E44,E50 |
 | EQ07 | FILTER | Any remaining candidates not blocked by still-unaccepted later Red S before Blue E parent stop | Restrict to that subset; if subset empty retain original | SELECT | E44 |
 | EQ08 | FILTER or SELECT | No eligible candidate | Skip group | SOURCE | E44 |

@@ -456,3 +456,17 @@ W1 cumulative 6553/11504. Next B06 E40, line 915; W2/W3/W4 open.
 [Local review](Semantic_Closure_B06_17.md) and [site evidence](Semantic_Closure_B06_17.json): 67 original rows, 5 supplemental items, 3 resolved local clarifications; local PASS. E 767/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 6717/11504. Next B06 E44, line 1132; W2/W3/W4 open.
+
+## Checkpoint 90 — Reconciliation setup, replay prefix and source indexes
+
+[Local review](Semantic_Closure_B06_18.md) and [site evidence](Semantic_Closure_B06_18.json): 51 original rows, 3 supplemental items, 3 resolved local clarifications; local partition PASS. E 818/1109. E44 outer procedure INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 91 — Generated candidate enqueue, heap scheduling and Order validation
+
+[Local review](Semantic_Closure_B06_19.md) and [site evidence](Semantic_Closure_B06_19.json): 27 original rows, 3 supplemental items, 2 resolved local clarifications; local partition PASS. E 845/1109. E44 outer procedure INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 92 — Parent eligibility, sequence reset, ancestry and strict stop relation
+
+[Local review](Semantic_Closure_B06_20.md) and [site evidence](Semantic_Closure_B06_20.json): 66 original rows, 4 supplemental items, 3 resolved local clarifications; local partition PASS. E 911/1109. E44 outer procedure INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 6861/11504. Next B06 E44 heap loop, line 1294; W2/W3/W4 open.
