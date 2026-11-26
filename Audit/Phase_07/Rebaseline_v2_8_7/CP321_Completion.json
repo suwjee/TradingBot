@@ -1,0 +1,48 @@
+{
+  "checkpoint": 321,
+  "status": "PASS_SCOPED_RB11_W1_LOCAL_OWNER_ACCEPTANCE",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "f8dabf15896685e2afd53afb21708b97a90036e9",
+  "scope": "Current source-only integrated local owner W1 acceptance, not W2/W3/W4 or Phase07/08 acceptance.",
+  "census": {
+    "modules": 16,
+    "batches": 10,
+    "branches": 3153,
+    "comparisons": 2188,
+    "arithmetic": 1089,
+    "calls": 5145,
+    "accesses": 35384,
+    "effects": 2064,
+    "exits": 1197,
+    "w1": 11575,
+    "additional": 38645,
+    "additional_structural_identity": 29652,
+    "additional_local_source_linked": 8993,
+    "all_category_rows": 50220
+  },
+  "evidence": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP321_W1_Acceptance_Reconciliation.json": "e386789d01d7d4aa0cc037b4b37d421b44504278",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Independent_Readback_Supplement.json": "4e94fb4283332a429c31216734c11cfb507b2d18",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Final_Acceptance_Review.json": "55c4e9c3ebe4c0ef6ea2029d8e3ee9e99ccacb98"
+  },
+  "validation": {
+    "historical_disposition_exact_readback": 8908,
+    "source_dependency_contracts_rechecked": 33,
+    "bridge_cross_part_unique_ids": 10347,
+    "b10_spanning_controls_verified": 4,
+    "remaining_w1_local_category_rows": 0,
+    "all_owner_partitions_scoped_pass": true,
+    "waiver": "RB02 WAIVED_NON_BLOCKING",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN",
+    "benchmarks": "NOT RUN",
+    "publication_gate": "Verify exact full candidate tree diff, blob content and parent; lease-protected branch update then remote readback."
+  },
+  "limitations": [
+    "No exact complete canonical AST replay of Bridge or TF; CP287 waiver remains WAIVED_NON_BLOCKING. Missing full inventories not required for this scoped closure because exact row projection, crosswalk and local reviews already published.",
+    "This review carries forward historical unchanged-source local dispositions; does not claim W3 or full fresh per-row semantic reinterpretation of all historical source. W2 and W3 must revisit cross-owner ordering and any disputed boundaries.",
+    "All material source qualifications above additive; no historical file edits. No RAW payload read, runtime execution, benchmark, ZIP, production changes, or main update.",
+    "One initial combined B05 readback exceeded connector per-call limit; rerun as two complete separate partitions yielded exact zero join errors. Initial B01 sample printer failed on empty array, rerun successfully."
+  ],
+  "next": "CP322 / W2 — cross-owner Reaction/Reset and Blue/A freeze; review source chronology, exact owner identities and event priority. W3/W4 NOT RUN. Phase07 INCOMPLETE; Phase08 BLOCKED."
+}

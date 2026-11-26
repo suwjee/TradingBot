@@ -350,6 +350,26 @@
       "last_completed_checkpoint": 320,
       "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP320_Completion.json",
       "remaining_scope": "None in RB10 scoped dependency rebaseline; W2–W4 and overall W1 gate remain open."
+    },
+    {
+      "id": "RB11",
+      "phase": "07/W1",
+      "title": "W1 acceptance",
+      "status": "PASS_SCOPED",
+      "checkpoint": 321,
+      "last_completed_checkpoint": 321,
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Completion.json",
+      "supplementary_evidence": [
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP321_W1_Acceptance_Reconciliation.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Independent_Readback_Supplement.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP321_Final_Acceptance_Review.json"
+      ],
+      "current_w1": {
+        "reviewed": 11575,
+        "denominator": 11575
+      },
+      "completed_scope": "All ten local owner partitions; 16 modules, 11575 W1 and 38645 additional category rows; historical exact source/row disposition continuity, 33 dependency contracts source-rechecked, all B09 cross-part IDs and four B10 spanning-control links validated. No W2/W3/W4 acceptance.",
+      "remaining_scope": "None within defined W1 local owner census; CP287 waiver retained; cross-owner and forensic gates open."
     }
   ],
   "pending": [
@@ -382,13 +402,6 @@
       "archive_policy": "CANCELLED_NOT_REQUIRED"
     },
     {
-      "id": "RB11",
-      "phase": "07/W1",
-      "title": "W1 acceptance",
-      "status": "IN PROGRESS",
-      "checkpoint": 321
-    },
-    {
       "id": "W2",
       "phase": "07",
       "title": "Cross-owner reconciliation",
@@ -413,7 +426,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP321 / RB11 / W1 — independently reconcile all 16 module partitions, historical W1 and current owner acceptance, scope and waiver limits; accept W1 only if every applicable gate passes.",
+  "next": "CP322 / W2 — source-first cross-owner Reaction/Reset and Blue/A freeze event/ownership and dependency register; preserve exact chronology, conditional dispatch, stable ordering and strict/equality boundaries. W3/W4 and Phase07/08 acceptance remain open.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
