@@ -251,3 +251,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 47 — Order Audit provenance, dominant stops and strict crossing primitives
 
 [Local review](Semantic_Closure_B05_01.md) and [site evidence](Semantic_Closure_B05_01.json): 146 original rows, 8 supplemental items, 4 resolved findings; local PASS. Order Audit 146/1892. Next OA06, line 198. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 48 — Order_B Reset-Leg Discovery
+
+[Local review](Semantic_Closure_B05_02.md) and [site evidence](Semantic_Closure_B05_02.json): 100 original rows, 6 supplemental items, 4 resolved findings; local PASS. Order Audit 246/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 49 — Live Order_B Continuation and Cache Frontiers
+
+[Local review](Semantic_Closure_B05_03.md) and [site evidence](Semantic_Closure_B05_03.json): 50 original rows, 5 supplemental items, 3 resolved findings; local PASS. Order Audit 296/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 50 — Accepted Order_B Owners and Feedback Identity
+
+[Local review](Semantic_Closure_B05_04.md) and [site evidence](Semantic_Closure_B05_04.json): 61 original rows, 5 supplemental items, 3 resolved findings; local PASS. Order Audit 357/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

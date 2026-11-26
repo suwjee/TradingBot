@@ -47,7 +47,7 @@ Registers accepted dominant stop records, distinct accepted anchor records, sort
 | OB04 | RESET | No same-First canonical trend owner confirmed strictly before Reset | Skip Reset | RESET | OA06 |
 | OB05 | RESET | Owner exists | Select last matching owner; latest dominant stop and latest anchor strictly before First main; missing either or anchor index>First rejects | BOUNDARY or RESET | OA06 |
 | OB06 | BOUNDARY | Anchor..First inclusive | Strict directional min/max with earliest equal source; require strict extension beyond anchor and source<First | CROSS or RESET | OA04,OA06 |
-| OB07 | CROSS | Actual exact Reset, search strictly later lower rows for outward boundary crossing | If none, skip; else retain exact event and clamped containing main | EXPIRY or RESET | OA03,OA05,OA06 |
+| OB07 | CROSS | Actual exact Reset; default searches strictly later lower rows for outward boundary crossing; supplied truthy callback supplies crossing without independent strict/time verification | If null, skip; else retain returned exact event and clamped containing main | EXPIRY or RESET | OA03,OA05,OA06 |
 | OB08 | EXPIRY | Next accepted A formation strictly after owner First, its main <= crossing main | Expire setup | RESET | OA06 |
 | OB09 | EXPIRY | No expiring A | Choose first canonical opposite sorted by confirmation,First,Break,ordinal with First>=cross main and confirmation>cross exact | PHYSICAL or RESET | OA06 |
 | OB10 | PHYSICAL | Candidate exists | Freeze complete stop/anchor/reset/boundary/crossing/Order evidence as reset-leg | RESET | OA06 |
