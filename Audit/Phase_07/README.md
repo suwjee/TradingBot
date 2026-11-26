@@ -231,3 +231,18 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 44 — Order-backed Simple and Advanced S ownership
 
 [Local review](Semantic_Closure_B04_07.md) and [site evidence](Semantic_Closure_B04_07.json): 69 original rows, 6 supplemental items, 3 resolved findings; local PASS. S 743/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 45 — S route arbitration, ownership sweep and shared Order reconciliation
+
+[Local review](Semantic_Closure_B04_08.md) and [site evidence](Semantic_Closure_B04_08.json): 143 original rows, 8 supplemental items, 4 resolved findings; local PASS. S 886/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 46 — Live S dependency signatures, settlement and replay publication
+
+[Local review](Semantic_Closure_B04_09.md) and [site evidence](Semantic_Closure_B04_09.json): 76 original rows, 8 supplemental items, 3 resolved findings; local PASS. S 962/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## B04 W1 local completion
+
+[Completion evidence](Semantic_Closure_B04_Completion.json): 962/962 original rows, 50 procedures, 1552 lines including terminal blank, 71 supplemental items, nine contiguous partitions; local PASS. W2/W3 open. Next B05 Order Audit Engine. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

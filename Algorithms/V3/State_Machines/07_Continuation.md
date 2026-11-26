@@ -97,7 +97,7 @@ Each row describes a separate service; its own previous state is retained only a
 | CV08 | A | New detect successful | Clear previous-history pointer, replace detector/result; no shared transaction guarantee for external state | A | A37,A39 |
 | CV09 | S | Scope unchanged (direction,TF,start index,range start) | Dirty=min market dirty, earliest symmetric-difference dependency (trend/opposite Break geometry, Reset, Reset Blue, public Blue); otherwise discard previous decisions | S | S44,S45,S46,S48 |
 | CV10 | S | Resolve candidate matching key, cached settled_through<dirty | Reuse non-null S decision; still run A ownership/audit pass | S | S48,S49 |
-| CV11 | S | Cache miss | Recompute, retain only non-null decision with settled_through: Type3/4 own decision; Order-backed requires lower evidence no later than decision, includes Order Break and aligned trend Break/confirmation | S | S47,S49 |
+| CV11 | S | Cache miss | Recompute, retain only non-null decision with settled_through: Type3/4 own decision; Order-backed requires a lower row at/after clamped confirmation no later than decision (not independent crossing proof), includes Order Break and first later aligned trend Break/returned confirmation | S | S47,S49 |
 | CV12 | S | Detection successful | Replace scope,dependencies,decision map | S | S48 |
 
 ## EV — Optional E and Order_B retained services

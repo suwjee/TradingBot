@@ -288,3 +288,18 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 44
 
 [Order-backed Simple and Advanced S ownership](Audit/Phase_07/Semantic_Closure_B04_07.md): 69 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 45
+
+[S route arbitration, ownership sweep and shared Order reconciliation](Audit/Phase_07/Semantic_Closure_B04_08.md): 143 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 46
+
+[Live S dependency signatures, settlement and replay publication](Audit/Phase_07/Semantic_Closure_B04_09.md): 76 original rows, local PASS. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — B04 W1 local completion
+
+[S Zone completion evidence](Audit/Phase_07/Semantic_Closure_B04_Completion.json): 962/962 original rows, local PASS. W2/W3 open; next B05 Order Audit Engine. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

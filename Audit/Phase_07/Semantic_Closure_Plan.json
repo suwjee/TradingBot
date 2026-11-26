@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 3839,
+  "verified_independent_site_rows_in_this_plan": 4058,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -527,7 +527,7 @@
     {
       "id": "B04",
       "title": "S",
-      "status": "INCOMPLETE",
+      "status": "PASS",
       "modules": [
         {
           "path": "engine/pipeline/s_zone_detector.py",
@@ -660,13 +660,48 @@
             "Audit/Phase_07/Semantic_Closure_B04_07.json",
             "Audit/Phase_07/Semantic_Closure_B04_07.md"
           ]
+        },
+        {
+          "id": "B04-08",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1225,
+            1423
+          ],
+          "procedures": "S40–S43",
+          "original_rows": 143,
+          "supplemental_items": 8,
+          "resolved_findings": 4,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_08.json",
+            "Audit/Phase_07/Semantic_Closure_B04_08.md"
+          ]
+        },
+        {
+          "id": "B04-09",
+          "status": "PASS",
+          "path": "engine/pipeline/s_zone_detector.py",
+          "source_range": [
+            1424,
+            1552
+          ],
+          "procedures": "S44–S50",
+          "original_rows": 76,
+          "supplemental_items": 8,
+          "resolved_findings": 3,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B04_09.json",
+            "Audit/Phase_07/Semantic_Closure_B04_09.md"
+          ]
         }
       ],
-      "review_scope": "S W1 local review through line 1224 / S39; W2/W3 open",
-      "reviewed_original_rows": 743,
-      "supplemental_items": 55,
-      "next_module": "engine/pipeline/s_zone_detector.py",
-      "next_source_line": 1225
+      "review_scope": "S W1 local owner review complete; W2/W3 open",
+      "reviewed_original_rows": 962,
+      "supplemental_items": 71,
+      "next_module": null,
+      "next_source_line": null,
+      "completion_evidence": "Audit/Phase_07/Semantic_Closure_B04_Completion.json"
     },
     {
       "id": "B05",
@@ -860,5 +895,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B04-08 S Zone, line 1225 / S40 cross-route arbitration and lifecycle; 219 original S rows remain. W2 and W3 open."
+  "next_action": "B05 Order Audit Engine, begin pinned source line 1 and original site inventory; W2 and W3 open."
 }

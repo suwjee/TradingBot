@@ -57,7 +57,7 @@ Do not convert a lower-window miss into a main-only scan. Distinguish equal time
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| SR01 | INIT | S list and accepted ledger | Dedup physical First/Break, retain available crossing; require confirmation<stop; sort stop,confirmation,First,Break | NEXT | S43 |
+| SR01 | INIT | S list and accepted ledger | Dedup physical First/Break, prefer non-null crossing before shape validation; use supplied tuple len>=3 with datetime element 2 or recompute; require confirmation<stop; sort stop,confirmation,First,Break | NEXT | S43 |
 | SR02 | NEXT | Earliest accepted physical stop >= frozen S source main and < existing decision | Replace S color with Red and Order/decision provenance, retain source,price,A and formation type; clear reset provenance | NEXT | S43 |
 | SR03 | NEXT | No earlier eligible shared stop | Preserve S | NEXT | S43 |
 | SR04 | NEXT | End | Return reconciled records; stage re-evaluates accepted roots and E when changed | RETURN | S43,TB73 |
