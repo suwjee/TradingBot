@@ -268,9 +268,9 @@ Use non-S-stage-invalid candidates. Continuation replacement restricted to accep
 
 ## CH120 — Order_B feedback
 
-At most eight passes. Same StopAll policy as final, restore independent roots and accepted audit before rediscovery. Equal identity returns current state; repeated changed identity and exhaustion error. Do not rerun Reaction/Blue/A/initial S.
+At most eight passes. Optional StopAll receives accepted E plus missing independent physical donors; restore roots and accepted audit before discovery. Equal identity registers discovered legs and returns replaced state with converged E and StopAll; repeated changed identity and exhaustion error. Shared initial geometry retained.
 
-[Source engine/bridge/trading_pipeline.py:2485–2549](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2485-L2549). Overlapping procedures: TB74.
+[Source feedback](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2569-L2645). Overlapping procedures: TB74.
 
 ## CH121 — Full history versus selected view
 
@@ -280,12 +280,13 @@ Blue/A view may clip by inclusive source index; S/E and eligible A full calculat
 
 ## CH122 — Final lifecycle before visibility
 
-Supplement StopAll donors only at missing E source identities. Optional StopAll then restore roots and synchronize audit; rediscovered Order_B identity must equal converged legs. Capture parent projection and Primary groups before source clipping. Filter display invalid/internal after. Required visible Order identities preserve referenced accepted audit outside view.
+Visibility copies converged E and StopAll; no additional donor restoration, reconciliation or reset-leg rediscovery. Capture projection and Primary groups before source clipping; filter invalid/internal after. Required visible audit identities may retain out-of-range accepted orders.
 
-[Source engine/bridge/trading_pipeline.py:2840–3078](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2840-L3078). Overlapping procedures: TB77.
+[Source visibility](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2939-L3112). Overlapping procedures: TB77.
 
 ## CH123 — Reversal regime
 
-Boundary main index strictly between zero and length. Recalculate historical [0,boundary), verify Primary3 source time/price; else fail. New independent regime begins boundary inclusive with target bootstrap and offset. Publish incoming transition, cap closed MBL display. Continue only while next reversal within selected end.
+Boundary main index strictly between zero and length. Recalculate historical [0,boundary), verify Primary3 source time/price; else fail. New independent regime begins boundary inclusive with target bootstrap and offset. Publish incoming transition, cap closed MBL display. Continue only while next reversal within selected end. Optional closed prefix resolver may reuse settled cache only under exact key and dirty bound; still require matching confirmed Primary3 before publication.
 
-[Source engine/bridge/trading_pipeline.py:3500–3598](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3500-L3598). Overlapping procedures: TB91, TB92, TB93, TB94, TB95, TB96.
+[Source reversal](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3531-L3632). Overlapping procedures: TB91–TB95; [response](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L3633-L3710).
+

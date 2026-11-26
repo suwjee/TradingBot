@@ -15,7 +15,7 @@ Batch and active Live both use fresh calculation scope, full market context, nat
 | BF05 | STAGES | Full direction | Shared Blue/A/S, initial S candidate/audit state, then E provisional acceptance and lifecycle invalid A/S, blocked context, accepted E rebuild; reconcile S and E, consumed S evidence, rebuild ledger | FEEDBACK | TB71,TB72,TB73 |
 | BF06 | FEEDBACK | Feedback signature stable | Return accepted full direction state per OF machine | RANGE | TB74 |
 | BF07 | STAGES | Non-full/range path | Compute necessary upstream dependencies even if hidden, use available full-state ranges where provided | RANGE | TB76 |
-| BF08 | RANGE | Direction visibility finalization | Preserve full historical donor groups; apply StopAll optional lifecycle, independent root restoration and audit; verify final reset-leg signature; accepted ledger before view clipping | VISIBILITY | TB77 |
+| BF08 | RANGE | Direction visibility finalization | Copy converged E/StopAll; use E parent stop or S first A stop callback; capture accepted donor groups, no lifecycle rediscovery | VISIBILITY | TB77 |
 | BF09 | VISIBILITY | Final source selection | Finalize A/S/E/StopAll, clip visible source indexes, filter invalid A/S, mark internal Blue, public Blue filter; prepare audit retaining required out-of-range identities, validate | PRIMARY | TB77,TB61 |
 | BF10 | PRIMARY | Enabled primary with E/lifecycle and matching direction | Full primary groups and native audit services, primary commit callback, physical label reconciliation and StopAll ownership; reprepare audit and validate | SERIALIZE | TB87,TB88,TB89 |
 | BF11 | PRIMARY | Primary not enabled/eligible | No primary calculation | SERIALIZE | TB87,TB89 |
@@ -35,13 +35,13 @@ Registers current reset legs (empty first), seen semantic signatures (empty firs
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | OF01 | INIT | First pass | Calculate full direction with current legs, set shared state only first pass | RECONCILE | TB73,TB74 |
-| OF02 | RECONCILE | StopAll enabled | Reconcile StopAll with same flag as final visibility; otherwise E copy and empty StopAll | REDISCOVER | TB74,LC40 |
+| OF02 | RECONCILE | StopAll enabled | Supplement missing independent physical E sources without replacing accepted donors; reconcile StopAll; disabled copies E and empty StopAll | REDISCOVER | TB74,LC40 |
 | OF03 | REDISCOVER | Accepted state | Restore independent roots and ensure audit; discover reset legs using eligible A, invalid A set, accepted S/E/StopAll, native trend/opposite streams | COMPARE | OA11,OA65,TB74 |
-| OF04 | COMPARE | New semantic signature == old | Return the current full-direction state (not arbitrary replacement with local E list) | RETURN | OA12,TB74 |
+| OF04 | COMPARE | New semantic signature == old | Register discovered legs, return replaced full-direction state with converged E and StopAll | RETURN | OA12,TB74 |
 | OF05 | COMPARE | Unequal signature already seen | RuntimeError nonconvergence | ERROR | TB74 |
 | OF06 | COMPARE | Unequal unseen signature and more passes remain | Add signature to seen, replace legs, reuse shared stages, increment pass | INIT | TB74 |
 | OF07 | COMPARE | Eighth pass ends unequal and not repeated | RuntimeError exceeded eight passes | ERROR | TB74 |
-| OF08 | RETURN | Final visibility rediscovery | Require same converged semantic signature; mismatch raises; register accepted legs on matching state | RETURN or ERROR | TB77,OA30 |
+| OF08 | RETURN | Final visibility | Select from stored converged E/StopAll; no second discovery or signature comparison | RETURN | TB77 |
 
 No other stage inherits this eight-pass cap. Stable signature includes complete semantic fields described by OA12, not just number of Orders.
 
@@ -112,3 +112,4 @@ Registers previous_number, previous_series_end, largest_prior_end initially 0; g
 | TFS08 | MATCH | Bridge closure callback supplied | Closed iff decision main epoch+TF<=minimum(visible main end,last raw epoch+raw TF) under exact supplied horizon | MATCH | TB96,TB97 |
 
 A later larger boundary can overwrite earlier temporary verdicts. T/F is not a new trading confirmation or formation algorithm. No transfer of verdict history across independently serialized regimes.
+

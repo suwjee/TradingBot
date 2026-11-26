@@ -1390,3 +1390,7 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## RB01 — v2.8.7 baseline reconciliation opened
 
 Latest main `c99b4c957e932d9ee70c492ca03ce80711447fc1` supersedes the pinned historical W1 baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`. [Active rebaseline register](Rebaseline_v2_8_7.json). The prior 11,504/11,504 W1 completion is historical only; do not apply it to the new source. Two engine module blobs changed; 14 unchanged, with downstream dependency checks pending. Active T/F contracts, T/F state transitions, record additions and chronology revised; changed-module site inventory and bridge reconciliation remain incomplete. Phase 07 INCOMPLETE; Phase 08 BLOCKED. W2 held. No runtime/RAW execution.
+
+## RB01 — Bridge and Live contract revision
+
+Rewrote accepted donor supplementation and Order_B feedback convergence, state retention, visibility selection, closed-regime cache, MarketIndexWindow and live dispatch contracts against latest pinned main `c99b4c957e932d9ee70c492ca03ce80711447fc1`. Revised related state-machine and chronology clauses. Historical site ledgers remain immutable; new inventory, dependency rechecks and local review still pending. No runtime claim.
