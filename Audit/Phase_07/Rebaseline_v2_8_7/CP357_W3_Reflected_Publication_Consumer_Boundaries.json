@@ -1,0 +1,76 @@
+{
+  "checkpoint": 357,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native handoffs; no cross-owner closure",
+  "consumers": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1119,
+        1129
+      ],
+      "meaning": "Global clear removes all three process-local registries, release pops id for each supplied sequence from each cache. No mutation of retained external view/candle objects; no automatic dirty generation.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1194,
+        1209
+      ],
+      "meaning": "Native lower_bounds uses bisect_left for start/end; end None uses current seconds length. RE30 uses full Break interval; order and index alignment prerequisites remain.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1379,
+        1386
+      ],
+      "meaning": "Behavior span consumes clone geometry but First/Break identity and confirmation from original reaction; _decimal_value conversion follows publication. Does not accept clone as canonical reaction.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1409,
+        1430
+      ],
+      "meaning": "Behavior fields written on original full-result reaction objects using zip, not on publication clone. Full result object retained; number maps and blocked timestamps built independently. Full local review pending CP358.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1433,
+        1478
+      ],
+      "meaning": "Batch builds behavior spans then computes opposite ownership from enclosing time/path, applies fields only after blocked sets assembled. Full decision and failure review pending.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        1501,
+        1551
+      ],
+      "meaning": "Live reuse depends on positional old entry, geometry equality and break_idx before dirty main; new spans use publication clone; match pairs recomputed for changed positions. Writes reaction behavior fields before entry/match state assignment. Full dirty/rollback review pending.",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP313",
+    "CP321",
+    "CP335",
+    "CP347",
+    "CP350",
+    "CP356"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Full B02 local 1370–2908, consumer invalidation, accepted ledger, projection and serialization across owners."
+}

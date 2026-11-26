@@ -101,40 +101,40 @@ Null=>null. Shallow replacement, swap and sign-copy top/bottom and paired source
 Null=>null. Construct new IntrabarAnalysis by mirroring event Candle, sign-copying extreme, then mirroring source Candle separately in that order. Distinct new Candle objects even if original event/source alias; preserve stored index/time, not reference identity.
 
 ### RE19 — _ReflectedCandles.__init__
-Retain source and allocate null mirror cache to its initial length; current length queries use the source, and no automatic cache resize or freshness check is implemented.
+Retain original source and allocate null mirror cache to initial source length; current length queries use source, and no automatic cache resize, mutation detection or freshness check is implemented.
 
 ### RE20 — _ReflectedCandles.__len__
-Source length.
+Return current source length, not fixed cache capacity.
 
 ### RE21 — _ReflectedCandles.__getitem__
-Slice materializes list via normalized slice indices; single index cache miss mirrors and saves candle; return cached object.
+Slice materializes a list via indices normalized against current source length, preserving requested order; repeated scalar reads may fill earlier slots before a later failure. Scalar lookup indexes the fixed cache first (including negative indexes), mirrors source[index] only on a null slot, stores and returns exact cached object. Source mutation/resizing can leave stale values, mismatched negative positions or out-of-bounds slots; no local refresh or rollback.
 
 ### RE22 — _reflected_view
-Global cache by id and exact source identity; allocate view on miss.
+Process-local cache by id and exact source identity; cached pair retains source and view. Allocate view before publishing pair on miss; return exact cached view on hit. No local eviction or freshness check. The clear/release helpers remove registry entries, not external references.
 
 ### RE23 — BearishDetector.__init__
-Base init, bullish reference on original sequences, then replace reference candles/seconds with reflected views and lower index with reflected adapter. Times remain original.
+Base init, then Bullish reference on original sequences, then replace reference candles, seconds and lower index in that order using reflected views and adapter over original lower index. Time arrays remain original. Constructor/registry effects before failure are not locally rolled back.
 
 ### RE24 — red_run_bottom_before
-Reference RE09 then negate value and mirror source back.
+Reference RE09 with unchanged positional argument, then sign-copy returned value and mirror source into a new candle; physical fields preserved, object identity not restored.
 
 ### RE25 — breakdown_analysis
-Mirror inputs, reference RE10, mirror analysis back.
+Mirror candidate and candle, call reference RE10, mirror returned analysis. Nullable mirror helper does not independently validate delegate input.
 
 ### RE26 — invalidation_high_break_before_breakdown
-Mirror candidate/candle, reference RE11.
+Mirror candidate/candle, return reference RE11 result; wrapper does not recheck caller admission.
 
 ### RE27 — confirmed_reset_before_breakdown
-Mirror candidate/candle and negate confirmed top; RE12.
+Mirror candidate/candle and sign-copy confirmed top; return RE12 result; wrapper adds no main breach test.
 
 ### RE28 — post_breakdown_reset
-Mirror analysis/candle, negate top, RE13; mirror non-null result back.
+Mirror analysis, sign-copy top, mirror candle in that order before calling RE13, even if analysis is null; mirror non-null hit into new candle, otherwise return null. No wrapper shortcut or local recovery.
 
 ### RE29 — BearishDetector.detect
-Reference detect first_only; return R with mirrored candidates, reset broken levels sign-reflected, original start/end.
+Reference detect with unchanged first_only; return new R result and ordered new lists with mirrored candidates and replaced resets (only broken_level sign-copied); original start/end retained, no renumbering.
 
 ### RE30 — published_reaction_candidate
-Clone input. Missing Break or invalid First/Break bounds returns clone unchanged. For B only if bottom source==Break, initialize min Low from First then complete main candles strictly before Break; threshold top. For R only if top source==Break, max High and threshold bottom. Unsupported direction raises after bounds check. Scan lower within Break main; update opposite extreme first, then strict confirmation check on same row; if confirmation found freeze price/source (Break main for lower extreme), earliest equal main source. If no confirmation leave clone unchanged. Bounds allow First==Break: initialization then uses the full First/Break main extreme before the lower scan, so the lower scan does not guarantee removal of a later extreme in that case. Do not impose a First<Break guard or reset the initial extreme. Does not mutate detection.
+Read chronology main/lower sequences before shallow cloning input. Missing Break returns clone before integer conversion or direction validation. Convert First then Break; negative First, reversed Break or Break outside full main array returns clone; conversion/access failures propagate. Read Break row and timeframe before exact direction dispatch. For B only if integer bottom source==Break, initialize min Low from full First then complete main candles strictly before Break; threshold top. For R only if integer top source==Break, max High and threshold bottom. Unsupported direction raises after bounds check and chronology attribute reads. Scan full Break lower interval [open, open+timeframe), not intrabar_start, in supplied order; update opposite extreme first, then strict confirmation check on same row. Lower extreme source is Break main, not lower row. Equality retains earlier selected owner. If confirmation found update only opposite price, source stored index and display time on clone; if absent leave clone unchanged even after temporary extrema changes. Bounds allow First==Break: initialization then uses full First/Break main extreme before lower scan, so scan does not guarantee removal of a later extreme in that case. Do not impose a First<Break guard or reset initial extreme. Does not mutate detection; no reclassification of ledger or behavior visibility.
 
 ## Segment indexes
 

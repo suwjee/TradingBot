@@ -1,0 +1,143 @@
+{
+  "checkpoint": 357,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_REFLECTED_PUBLICATION_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "7e5d70db6d6fdd74c7ac2f55ae15c06efe18fda0",
+  "entry_tree": "bdf530e2183401767275e39857eb7b184303d3d9",
+  "scope": "B02 source lines 690–885 RE19–RE30 reflection, Bearish wrappers and public candidate geometry; bounded consumer checks",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP357_W3_Reflected_Publication_Local_Forensic_Register.json",
+      "sha": "739344c482c33867514467f24b449e8cf5c4b6db"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP357_W3_Reflected_Publication_Consumer_Boundaries.json",
+      "sha": "462e5e87c2e52150a4a2c6518d45472b5c2483df"
+    },
+    {
+      "path": "Algorithms/V3/01_Reaction_Engine.md",
+      "sha": "106cb964f3b4bddc6d66d47b6ad50eb7a4e8afba"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/42_W3_Reaction_Reflection_And_Publication_Forensic.md",
+      "sha": "6b94c76a1e2a4026cc7ca71fb7396063f3e02d94"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 4191,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 909,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 3282,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 3855,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 835,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 3020,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        1,
+        234
+      ],
+      [
+        235,
+        327
+      ],
+      [
+        886,
+        1131
+      ],
+      [
+        1132,
+        1369
+      ],
+      [
+        328,
+        689
+      ],
+      [
+        690,
+        885
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 52
+  },
+  "validation": {
+    "new_local_rows": 516,
+    "new_w1_rows": 103,
+    "new_additional_rows": 413,
+    "new_historical_supplemental": 7,
+    "source_contract_groups": 30,
+    "coordinate_join_errors": 0,
+    "prior_b02_rows": 3339,
+    "duplicate_or_prior_overlap": 0
+  },
+  "findings": [
+    {
+      "id": "CP357-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Clarified native cache indexing/lifetime and failure boundaries, eager wrapper evaluation, clone read/validation order, conditional publication geometry and provenance. Historical B02-03-F01/F02 retained.",
+      "prior_document_blobs": {
+        "Algorithms/V3/01_Reaction_Engine.md": "9bb02785cb85febd84af799da7fd0bcbe87a88bc"
+      }
+    },
+    {
+      "id": "CP354-F03",
+      "status": "OPEN_RECORD_AND_CONSUMER_LIFETIME",
+      "meaning": "Publication clone versus original record behavior writes traced locally; full downstream ownership/serialization pending."
+    },
+    {
+      "id": "CP355-F02",
+      "status": "OPEN_CALLER_ADMISSION_AND_MIRROR",
+      "meaning": "Native reflected view and Bearish wrapper contracts reviewed locally; Unified/cross-owner gates remain open."
+    }
+  ],
+  "open_findings": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP358 / W3 B02 independent behavior span, batch containment and LiveBehaviorReactionViews source review, starting from actual published CP357 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Recheck actual refs/tree, AGENTS.md, Operating Protocol, Source Only Scope, active Execution Plan including full next_prompt and relevant CP321–357 evidence. Source before prior conclusions: review reaction_engine.py lines 1370–1553, including span geometry/identity/time/path, batch containment, application of behavior metadata, live cache geometry, dirty frontier, match ownership and failures; then 1554–2908 in complete adaptive partitions. Compare historical partitions by actual range, active contracts, exact canonical W1/additional rows and consumer obligations. Preserve all prior evidence, CP350 W2 registers, W1 CP321 and W2 CP350 PASS_SCOPED, resolved findings and RE01–RE62 corrections. B02 3855/8697 local category rows (835/1877 W1, 3020/6820 additional), 52 historical supplemental, completed range 1–1369; W3 local category 4191/50220 not overall completion. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open; complete B02–B10 local and cross-owner review including chronology, Decimal, event ordering, physical identity, creator/consumer ownership, accepted ledger, conditional dispatch, cache invalidation, dirty frontier, rollback, failure paths, projection and serialization. Never accept overlap alone. Up to 10 substantive checkpoints; each separately verify full candidate recursive tree diff, CAS expected parent force=false and real remote readback; synchronize evidence JSON, docs, completion and execution plan. No RAW payload, project runtime, ZIP, production/main change. RB02 WAIVED_NON_BLOCKING; W3 INCOMPLETE; W4 NOT RUN until independent W3 acceptance; Phase08 BLOCKED. Report measured denominators, open/closed findings, limitations, latest commit/tree and tailored continuation in Persian."
+}
