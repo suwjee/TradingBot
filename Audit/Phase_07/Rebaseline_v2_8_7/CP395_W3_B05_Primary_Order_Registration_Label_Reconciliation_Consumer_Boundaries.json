@@ -1,0 +1,23 @@
+{
+  "checkpoint": 395,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "local consumer boundaries, not independent cross-owner acceptance",
+  "boundaries": [
+    {
+      "source": "engine/pipeline/e_zone_detector.py:420–435; engine/pipeline/core_utils.py:51–66",
+      "contract": "Owner delegates first_less/first_greater on [left,right) when lower_index exists; otherwise ascending scan normalizes low/high and applies strict comparison. OA34 uses exact lower time, unchanged Decimal normalization and only direction-sensitive comparison flag. Indexed path equivalence is not a new runtime assertion. Physical identity is integer First/Break."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:809–918,1202–1248",
+      "contract": "OA19 caches exact tuple or None using threshold in key; OA20 canonical geometry threshold and initial native prefix filter are separate from blocked-First skipping. OA34 requests strict confirmation but does not independently enforce it on returned native candidate. OA31 can independently relabel B anchors even with null stop/direct; removes causeless rows and invalidates caches conditionally."
+    },
+    {
+      "source": "engine/pipeline/order_audit_engine.py:25–37,1100–1132",
+      "contract": "OA01 checks parentType, postBehaviorType, anchorBehaviorType in order against either primary prefix, each source key independent; deep-copy and ordered equality dedup. OA26 indexes published row; OA28 invalidates carried result and creation state only. Registration and reconciliation are not transactions."
+    },
+    {
+      "source": "engine/bridge/trading_pipeline.py:3428–3456",
+      "contract": "Pipeline commit callback picks PL registration for bullish else PH, then prepares OrderAudit. Final resolver and reconciliation wrapper likewise chosen by direction; reconcile receives resolved points through market end index before later audit preparation. These are source-traced call boundaries, not complete cross-owner validation."
+    }
+  ]
+}
