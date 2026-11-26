@@ -122,32 +122,40 @@
       "phase": "07/W1",
       "title": "B09 bridge",
       "status": "IN PROGRESS",
-      "checkpoint": 294,
+      "checkpoint": 295,
       "supplementary_evidence": [
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Context_Review_02.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_01.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Site_Disposition_02.json",
-        "Audit/Phase_07/Rebaseline_v2_8_7/CP293_Completion.json"
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP293_Completion.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Review_01.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP294_B09_Full_Direction_Additional_Sites.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP294_Completion.json"
       ],
-      "completed_scope": "CP293 part 01: 28 source contracts and 137 W1 category rows plus 602 additional access/effect/exit rows, lines 140–364. CP293 part 02: 38 contracts and 202 W1 rows plus 785 additional sites. Current cumulative 339/2317 W1 rows. Part 01 site-specific reconciliation 137/137: historical semantic interpretations linked at exact mapped spans, new constructor reviewed and spanning bodies linked to all relevant contracts. Part 02 site-specific reconciliation 202/202: mapped historical interpretations and current new-site operation/bounds recorded; current group context controls acceptance. CP293 PASS scoped market context review: 339/2317 W1 current rows (269 mapped historical continuity and 70 current new site dispositions), 1387 additional sites, 66 contracts, six resolved documentation clarifications. B09 remains IN PROGRESS.",
-      "remaining_scope": "1978 W1 category rows and other B09 source procedures, including full-direction state, feedback, visibility, projection, serialization, primary/reversal and entry helpers not covered by CP293. No W1 batch PASS yet.",
+      "completed_scope": "CP293 part 01: 28 source contracts and 137 W1 category rows plus 602 additional access/effect/exit rows, lines 140–364. CP293 part 02: 38 contracts and 202 W1 rows plus 785 additional sites. Current cumulative 339/2317 W1 rows. Part 01 site-specific reconciliation 137/137: historical semantic interpretations linked at exact mapped spans, new constructor reviewed and spanning bodies linked to all relevant contracts. Part 02 site-specific reconciliation 202/202: mapped historical interpretations and current new-site operation/bounds recorded; current group context controls acceptance. CP293 PASS scoped market context review: 339/2317 W1 current rows (269 mapped historical continuity and 70 current new site dispositions), 1387 additional sites, 66 contracts, six resolved documentation clarifications. B09 remains IN PROGRESS. CP294 PASS scoped full-direction local owner review of lines 2113–2566: 197 W1 (196 historic + 1 new) and 876 additional sites; 16 contracts, three documentation clarifications, independent remote canonical historical census and mapped/current site readback. Cumulative W1 536/2317, 2263 additional rows, 82 contracts. EngineBundle already counted in CP293.",
+      "remaining_scope": "1781 W1 category rows and other B09 procedures, beginning with Order_B feedback and prepare_pipeline_state, then range/visibility, projection, serialization, primary/reversal and entry helpers. No full B09/W1 acceptance.",
       "current_w1": {
         "denominator": 2317,
-        "reviewed": 339,
+        "reviewed": 536,
         "by_category": {
-          "branches": 88,
-          "comparisons": 54,
-          "arithmetic": 54,
-          "calls": 143
+          "branches": 135,
+          "comparisons": 77,
+          "arithmetic": 62,
+          "calls": 262
         }
       },
-      "last_completed_checkpoint": 293,
+      "last_completed_checkpoint": 294,
       "completed_checkpoints": [
         {
           "id": 293,
           "status": "PASS_SCOPED",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP293_Completion.json"
+        },
+        {
+          "id": 294,
+          "status": "PASS_SCOPED",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP294_Completion.json"
         }
       ]
     },
@@ -194,7 +202,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP294 / RB08 / W1 / B09 — pipeline state composition and shared full-direction stage preparation, beginning with current EngineBundle/PipelineState declarations and create_e_detector/direct_geometry/calculate_full_direction_state. Preserve CP293 ranges; split by complete procedure and validate each site.",
+  "next": "CP295 / RB08 / W1 / B09 — calculate_direction_with_order_b_feedback (2569–2645) and prepare_pipeline_state (2648–2803), complete-procedure partitions, then range/visibility and projection/serialization remaining owners.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives."
 }
