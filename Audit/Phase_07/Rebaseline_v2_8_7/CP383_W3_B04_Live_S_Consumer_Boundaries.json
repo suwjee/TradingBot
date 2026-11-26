@@ -1,0 +1,118 @@
+{
+  "checkpoint": 383,
+  "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+  "scope": "S44–S50 local consumer boundary",
+  "local": [
+    {
+      "id": "S44",
+      "range": [
+        1424,
+        1430
+      ],
+      "interpretation": "Reaction input signature is a tuple of native first_idx, break_idx, mode, optional intrabar_start, box source indexes and str(box_top/bottom), optional anchor_idx and str(optional anchor_value). Representation and hashability are native; str(None) is retained, no as_tuple normalization, no full object identity."
+    },
+    {
+      "id": "S45",
+      "range": [
+        1433,
+        1446
+      ],
+      "interpretation": "LiveS continuation constructor owns an initially None scope, empty dependency set and empty decision dict, independent of detector; class docstring describes intent, not arbitrary-input proof."
+    },
+    {
+      "id": "S46-A",
+      "range": [
+        1448,
+        1456
+      ],
+      "interpretation": "Dependency set comprehends trend then opposite reactions, zero-based enumerate, native break index into candle_times and side, number, S44 signature. Timestamp is Break main open, not confirmation. Native set membership/hash/equality can fail; duplicates collapse."
+    },
+    {
+      "id": "S46-B",
+      "range": [
+        1457,
+        1466
+      ],
+      "interpretation": "Adds reset event and int(from_first_idx), reset-blue event and number from first-reset map, and public-blue event alone. Set update collapses duplicate equal entries; no full Blue or A record coverage is asserted."
+    },
+    {
+      "id": "S47-A",
+      "range": [
+        1468,
+        1483
+      ],
+      "interpretation": "Settlement begins at decision_event_time; Type3/4 return directly, otherwise native assert order_match, confirmation and lower-bound at max(confirmation,range_start); absence of any lower row at or before decision yields None. This is existence only, not a crossing or range_end test."
+    },
+    {
+      "id": "S47-B",
+      "range": [
+        1484,
+        1490
+      ],
+      "interpretation": "Extends through to Order Break main open; calls first trend reaction after Order confirmation even if actual route was Advanced or pre-Order; if aligned extends through to its Break main open and confirmation. No current Reaction identity claim beyond returned tuple."
+    },
+    {
+      "id": "S48-A",
+      "range": [
+        1492,
+        1500
+      ],
+      "interpretation": "Dirty admission inclusive zero to len(candles); no exact-integer check. Scope tuple direction/timeframe/start_index/range_start excludes end_index and input identity. Dirty is current main open at index or range_end at len. Current dependencies computed before scope comparison."
+    },
+    {
+      "id": "S48-B",
+      "range": [
+        1501,
+        1507
+      ],
+      "interpretation": "Same scope computes earliest timestamp from symmetric difference, default=dirty evaluated eagerly, then min with dirty. Reuses prior decisions dict reference; changed scope selects fresh empty dict. Current decisions always fresh."
+    },
+    {
+      "id": "S49-A",
+      "range": [
+        1509,
+        1515
+      ],
+      "interpretation": "Nested resolver builds order key None or (order[0],S44(order[1]),order[2]); A key ordinal,source_index,source_time,str(price),stop,order_key. Previous lookup only; strict previous settlement < dirty reuses exact tuple and S reference and inserts into current. Equality at frontier recomputes."
+    },
+    {
+      "id": "S49-B",
+      "range": [
+        1516,
+        1521
+      ],
+      "interpretation": "Miss resolves current detector candidate; nonnull only obtains settlement; stores pair only for nonnull settlement; returns result regardless of cacheability. None is not cached; no current lookup and no in-place S edit."
+    },
+    {
+      "id": "S48-C",
+      "range": [
+        1523,
+        1525
+      ],
+      "interpretation": "Always invokes detector._detect(resolve), including native audit/ownership clear/rebuild. Only successful return publishes scope/dependencies/current together, then returns output directly. Failure before publication retains old wrapper fields but detector/external aliases may already mutate; no rollback or shallow copy."
+    },
+    {
+      "id": "S50",
+      "range": [
+        1528,
+        1552
+      ],
+      "interpretation": "Public helper creates fresh SZoneDetector with supplied positional args then calls detect; no continuation cache. Native argument evaluation, constructor and detect failures propagate; output direct."
+    }
+  ],
+  "obligations": [
+    "S42 detector audit and ownership mutation before wrapper publication; external aliases not rolled back",
+    "S15 current aligned Reaction lookup and chronology/cache freshness",
+    "Caller first_dirty_main and source/time/index consistency",
+    "Physical first Order creator/consumer and accepted ledger identity",
+    "No runtime arbitrary-edit equivalence proof; cross-owner gates remain open"
+  ],
+  "open_findings": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP372-F02"
+  ]
+}
