@@ -278,3 +278,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 42
 
 [Pre-Order timing, candidate source and Blue qualification](Audit/Phase_07/Semantic_Closure_B04_05.md): 116 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 43
+
+[Order versus candidate race and Type3 publication](Audit/Phase_07/Semantic_Closure_B04_06.md): 98 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 44
+
+[Order-backed Simple and Advanced S ownership](Audit/Phase_07/Semantic_Closure_B04_07.md): 69 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

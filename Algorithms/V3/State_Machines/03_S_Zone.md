@@ -38,9 +38,9 @@ Deadline = first physical Order confirmation else range end. Type3 and Type4 ind
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | SOR01 | ORDER_RACE | Opposite physical Order confirmed | Canonical Order stop; derive candidate timing from Order boundary vs A-stop main extreme; consider nested trend and S31 returned pre-order event time (including native fallback) | BEFORE or AFTER | S12,S29,OA80 |
-| SOR02 | BEFORE | Pre-order source | Clip A-stop main lower interval from exact stop; compare full subsequent mains through Order First; stop-main wins tie; empty lower uses full stop main | PRE_RACE | S30 |
-| SOR03 | PRE_RACE | Both eligible crossings at the same lower position (or same main in fallback), neither hit, or no decision | Null | RETURN | S37,S39 |
-| SOR04 | PRE_RACE | Candidate wins but unqualified fallback | Discard preliminary candidate, use aligned after geometry | AFTER | S37,S39 |
+| SOR02 | BEFORE | Pre-order source | Clip A-stop main lower interval from exact stop; compare full subsequent mains through Order First; stop-main wins tie; empty lower returns original full-main S13 candidate over stop..First | PRE_RACE | S30 |
+| SOR03 | PRE_RACE | Both returned crossings at the same lower position (or both main predicates in fallback), neither hit, or no decision; ambiguity precedes preliminary candidate qualification | Null | RETURN | S37,S39 |
+| SOR04 | PRE_RACE | Candidate wins but unqualified fallback | Clear preliminary decision but retain pre-order candidate reference; use aligned after geometry (Simple may still assign that reference to red_source) | AFTER | S37,S39 |
 | SOR05 | PRE_RACE | Order wins or qualified Blue | Retain pre-order source; build zone and decision | RETURN | S39 |
 | SOR06 | AFTER | Nested trend First strictly later than Order First and before confirmation, Break<=Order Break, exact confirmation<=Order confirmation, inclusive contained box | Advanced candidate using Order outward edge's source; gate nested confirmation | RACE | S16,S24 |
 | SOR07 | AFTER | No eligible nested trend; first trend confirmation strictly after Order | Simple candidate, last-equal extreme Order Break..trend Break | RACE | S15,S17,S24 |

@@ -221,3 +221,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 42 — Pre-Order timing, candidate source and Blue qualification
 
 [Local review](Semantic_Closure_B04_05.md) and [site evidence](Semantic_Closure_B04_05.json): 116 original rows, 9 supplemental items, 4 resolved findings; local PASS. S 576/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 43 — Order versus candidate race and Type3 publication
+
+[Local review](Semantic_Closure_B04_06.md) and [site evidence](Semantic_Closure_B04_06.json): 98 original rows, 7 supplemental items, 3 resolved findings; local PASS. S 674/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 44 — Order-backed Simple and Advanced S ownership
+
+[Local review](Semantic_Closure_B04_07.md) and [site evidence](Semantic_Closure_B04_07.json): 69 original rows, 6 supplemental items, 3 resolved findings; local PASS. S 743/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
