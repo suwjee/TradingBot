@@ -73,3 +73,16 @@ Direction validation precedes empty-input shortcuts. Native default crossing exc
 ## CP386 — W3 OA07–OA10 independent live cache qualification
 
 The dirty-main sentinel equals current main length. Both old coverage and dirty position are computed in the current lower array; neither proves prefix equality. Boundary reuse requires last < dirty main. Crossing keys use native tuple/Decimal numerical equality and hash, not lexical Decimal representation. A current cached None returns immediately; prior membership including None allows suffix resumption. A prior hit is reused only strictly before dirty (or no dirty) and at or before current latest lower time. No local presence check. Normal OA06 return replaces queried-only caches and last lower time; exceptions before return leave prior assignments untouched, but arbitrary external mutations are not rolled back. See [independent cache review](Chronology/CP386_W3_B05_Live_Order_B_Caches.md).
+
+## CP387 — independent W3 local review, OA11–OA12
+
+- **OA11-A:** Accepted A list is an ordered filter of input by exact (source_time,int(source_index)) invalid identity membership; no duplicate suppression or extra lifetime gate.
+- **OA11-B:** Each retained A obtains reaction_number via int then native ordinal-1 indexing; zero can index last item and invalid indexes can raise. Confirmation delegated to chronology with direction; S first_a_stop receives normalized price, uses returned slot 2 or None.
+- **OA11-C:** Traverse supplied S then E, use E parent_stop result slot 1 or None; append StopAll explicit stop_event_time; retain open lifetimes. Dominant post-behavior stops are calculated separately from anchors.
+- **OA11-D:** Collect anchor candidates from accepted A, supplied S, E and StopAll in that order; source time and int index form identity, callback priority and int number/default zero form ranking with behavior type. Repeated priority calls require stable callback semantics.
+- **OA11-E:** Dict key exact source time and int index; replace only for strictly greater lexicographic priority,number,type. Equal rank keeps first; replacing value does not move insertion position. Anchor winner independent of stop dominance.
+- **OA11-F:** Truthy injected finder wins, otherwise native OA06. Supply accepted A trigger_event_time without fallback, ordered anchor tuple, and dominant stops. Return finder result as-is; no local validation of injected result.
+- **OA12-A:** OrderMatch tuple type alias declares shape only; no runtime validation or leg ownership action.
+- **OA12-B:** Sorted tuple of 17-field leg signatures: stop type/index/event, anchor type/index/time/extreme, int reset reaction First/Break, reset source index/level/time, leg boundary/index, strict-break time, int physical First/Break. Retain multiplicity; native tuple sorting/comparison, no string Decimal normalization. Exclude stop source time, reset confirmation, boundary source time, physical number and confirmation; not complete object identity. Malformed or incomparable data may raise.
+
+Consumer feedback: equality of sorted signatures is conditional acceptance of discovered legs, not full record, representation, or state equality. Cross-owner acceptance remains pending. See `Algorithms/V3/Chronology/CP387_W3_B05_Accepted_Order_B_Owners_Identity.md`.

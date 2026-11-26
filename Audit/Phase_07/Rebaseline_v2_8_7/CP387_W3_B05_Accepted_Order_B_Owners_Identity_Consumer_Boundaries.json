@@ -1,0 +1,55 @@
+{
+  "checkpoint": 387,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+  },
+  "status": "LOCAL_CONTRACTS_ONLY_CROSS_OWNER_PENDING",
+  "handoffs": [
+    {
+      "id": "OA11->chronology/S/E",
+      "span": [
+        465,
+        485
+      ],
+      "qualification": "A confirmation and first_a_stop slot 2, S/E parent_stop slot 1, StopAll explicit event. Caller accepted sets, ordinal validity, stop chronology and stable references remain independent."
+    },
+    {
+      "id": "OA11->OA06/injected finder",
+      "span": [
+        487,
+        520
+      ],
+      "qualification": "Separate anchor ranking and dominant stop input. Truthiness dispatch; direct trigger time, insertion-order anchor tuple, no output validator. Callback purity, exact chronology and cache freshness remain independent."
+    },
+    {
+      "id": "OA12->feedback",
+      "span": [
+        530,
+        550
+      ],
+      "consumer": {
+        "path": "engine/bridge/trading_pipeline.py",
+        "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+        "range": [
+          2616,
+          2645
+        ]
+      },
+      "qualification": "Consumer compares old/new signatures, registers discovered on equality, raises on seen signature or eight-pass exhaustion. Signature omits five listed fields; equality does not prove complete state/serialization equivalence. No assertion of convergence, native rollback or runtime bug."
+    }
+  ],
+  "prior_w2": {
+    "transition": [
+      "CP325-S11",
+      "CP325-S12"
+    ],
+    "registry": "e5ea6a6ea1d754fd0ba2001629e810725027cfad"
+  },
+  "limitations": [
+    "Local source review only; validity of accepted S/E/StopAll inputs, A ordinal and chronology, deterministic priority, injected finder equivalence and creator/consumer ownership require independent cross-owner review.",
+    "Feedback signature equality is not full object or Decimal representation equivalence; downstream fixed-point and serialization obligations remain open.",
+    "No RAW payload, runtime, ZIP or production changes."
+  ]
+}
