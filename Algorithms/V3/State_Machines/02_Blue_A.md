@@ -51,8 +51,8 @@ Registers full sorted Blue ordinals (including invalid), filtered valid states w
 | AP11 | MATCH | No aligned Reaction with confirmation>=trigger and First>=both effective stop mains | Break entire ordinary loop (not merely skip pair) | RETURN | A15,A18 |
 | AP12 | MATCH | Aligned Reaction exists but source window invalid | Advance pair | PAIR | A17,A18 |
 | AP13 | MATCH | Valid aligned source | Freeze price/source using A08 from trigger main open through A14 returned confirmation inclusive (including native time and empty-lower main fallback); emit A and provenance; cycle_after=Break | ADVANCE | A17,A18,A21 |
-| AP14 | ADVANCE | First strict A stop from confirmation exists and next Blue formation >= that stop event | Allow current ordinal bridge reuse; advance one | PAIR | A07,A18 |
-| AP15 | ADVANCE | Otherwise | Clear reuse, skip all states through cycle_after | PAIR | A18 |
+| AP14 | ADVANCE | First strict A stop from returned confirmation exists and next-next valid state formation >= that stop event | Allow current ordinal bridge reuse; advance one | PAIR | A07,A18 |
+| AP15 | ADVANCE | Otherwise | Clear reuse, skip while current state's formation index <= cycle_after; no unconditional increment (CP372-F02 open) | PAIR | A18 |
 
 Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty lower interval permits established main search. Pair expiry is exclusive for crossing queries, but stop guard rejects only >expiry; simultaneous AP09 can trigger at equality. Inheritance requires previous formation before current; chained route requires earlier actual stop and noninternal lines, otherwise previous line must not be Scale. Its aligned Reaction First strictly after start, Break strictly before current formation; chained includes full Break, other route ends at Break open. These conditions are gates, not state fields.
 

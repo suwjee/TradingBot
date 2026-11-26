@@ -1,0 +1,7226 @@
+{
+  "checkpoint": 372,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "a6d19fb8cba867375522c3e91fbaa0660efe26c5",
+  "scope": "B03-07 A17–A18 source freeze and ordinary pair lines 592–733",
+  "provenance": "Direct pinned source re-review after prior tool-call exhaustion; no CP372 files in parent tree. Same-assistant separate pass, not human attestation.",
+  "source": {
+    "path": "engine/pipeline/a_zone_detector.py",
+    "blob": "431934d2fb597238d5281a769c29fdb51747868b",
+    "range": [
+      592,
+      733
+    ],
+    "canonical_report": "bbe3d95f2616989e772edba07c5408670cad369e",
+    "prior_partition": "2ce3479e7dd74d4f1894063016627ca42e5e8037",
+    "prior_rebaseline": "94a686734660a7f30ae2a7a49e7eaf3c4e4f572a"
+  },
+  "groups": [
+    {
+      "id": "G1",
+      "range": [
+        592,
+        605
+      ],
+      "procedure": "A17",
+      "interpretation": "Input trigger index and Reaction; intended exact freeze is conditional on lower coverage."
+    },
+    {
+      "id": "G2",
+      "range": [
+        606,
+        609
+      ],
+      "procedure": "A17",
+      "interpretation": "Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08."
+    },
+    {
+      "id": "G3",
+      "range": [
+        610,
+        612
+      ],
+      "procedure": "A17",
+      "interpretation": "A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices."
+    },
+    {
+      "id": "G4",
+      "range": [
+        613,
+        619
+      ],
+      "procedure": "A18",
+      "interpretation": "Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation."
+    },
+    {
+      "id": "G5",
+      "range": [
+        620,
+        626
+      ],
+      "procedure": "A18",
+      "interpretation": "Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity."
+    },
+    {
+      "id": "G6",
+      "range": [
+        627,
+        638
+      ],
+      "procedure": "A18",
+      "interpretation": "Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one."
+    },
+    {
+      "id": "G7",
+      "range": [
+        639,
+        647
+      ],
+      "procedure": "A18",
+      "interpretation": "Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse."
+    },
+    {
+      "id": "G8",
+      "range": [
+        648,
+        658
+      ],
+      "procedure": "A18",
+      "interpretation": "Unpack eight trigger fields including effective stop main times distinct from actual state."
+    },
+    {
+      "id": "G9",
+      "range": [
+        659,
+        665
+      ],
+      "procedure": "A18",
+      "interpretation": "A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained."
+    },
+    {
+      "id": "G10",
+      "range": [
+        666,
+        671
+      ],
+      "procedure": "A18",
+      "interpretation": "Null A17 advances without clearing reuse; success unpacks source then converts Break index."
+    },
+    {
+      "id": "G11",
+      "range": [
+        672,
+        682
+      ],
+      "procedure": "A18",
+      "interpretation": "Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels."
+    },
+    {
+      "id": "G12",
+      "range": [
+        683,
+        699
+      ],
+      "procedure": "A18",
+      "interpretation": "Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append."
+    },
+    {
+      "id": "G13",
+      "range": [
+        700,
+        712
+      ],
+      "procedure": "A18",
+      "interpretation": "Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update."
+    },
+    {
+      "id": "G14",
+      "range": [
+        713,
+        716
+      ],
+      "procedure": "A18",
+      "interpretation": "Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned."
+    },
+    {
+      "id": "G15",
+      "range": [
+        717,
+        725
+      ],
+      "procedure": "A18",
+      "interpretation": "Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one."
+    },
+    {
+      "id": "G16",
+      "range": [
+        726,
+        733
+      ],
+      "procedure": "A18",
+      "interpretation": "Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 90,
+      "node": 2213,
+      "span": [
+        608,
+        8,
+        609,
+        23
+      ],
+      "operation": [
+        25,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G2",
+      "semantic_role": "A14 time earlier than trigger main open returns null.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2213,
+        "disposition": "VERIFIED",
+        "interpretation": "A14 time earlier than trigger main open returns null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 91,
+      "node": 2269,
+      "span": [
+        620,
+        8,
+        731,
+        30
+      ],
+      "operation": [
+        26,
+        "While",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Continue while an adjacent pair exists.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2269,
+        "disposition": "VERIFIED",
+        "interpretation": "Continue while an adjacent pair exists."
+      },
+      "contained_groups": [
+        "G6",
+        "G7",
+        "G8",
+        "G9",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16"
+      ]
+    },
+    {
+      "category": "branches",
+      "current_row": 92,
+      "node": 2291,
+      "span": [
+        624,
+        16,
+        625,
+        60
+      ],
+      "operation": [
+        26,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Nonnull reuse ordinal then previous ordinal equality determines bridge_pair.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2291,
+        "disposition": "VERIFIED",
+        "interpretation": "Nonnull reuse ordinal then previous ordinal equality determines bridge_pair."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 93,
+      "node": 2299,
+      "span": [
+        627,
+        12,
+        637,
+        24
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Skip consumed pair using current condition first, then previous and bridge exception.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2299,
+        "disposition": "VERIFIED",
+        "interpretation": "Skip consumed pair using current condition first, then previous and bridge exception."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 94,
+      "node": 2300,
+      "span": [
+        628,
+        16,
+        632,
+        17
+      ],
+      "operation": [
+        26,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Current formation<=cycle boundary short-circuits previous condition.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2300,
+        "disposition": "VERIFIED",
+        "interpretation": "Current formation<=cycle boundary short-circuits previous condition."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 95,
+      "node": 2305,
+      "span": [
+        630,
+        20,
+        631,
+        39
+      ],
+      "operation": [
+        26,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Previous formation<=cycle boundary and not bridge; latter checked only if former.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2305,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous formation<=cycle boundary and not bridge; latter checked only if former."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 96,
+      "node": 2312,
+      "span": [
+        634,
+        16,
+        635,
+        47
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Clear bridge reuse only if skipped pair was bridge_pair.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2312,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear bridge reuse only if skipped pair was bridge_pair."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 97,
+      "node": 2323,
+      "span": [
+        640,
+        16,
+        642,
+        25
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Following valid state exists selects its formation as expiry, otherwise null.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2323,
+        "disposition": "VERIFIED",
+        "interpretation": "Following valid state exists selects its formation as expiry, otherwise null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 98,
+      "node": 2346,
+      "span": [
+        645,
+        12,
+        647,
+        24
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Null trigger increments index and continues.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2346,
+        "disposition": "VERIFIED",
+        "interpretation": "Null trigger increments index and continues."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 99,
+      "node": 2376,
+      "span": [
+        663,
+        12,
+        664,
+        21
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G9",
+      "semantic_role": "Null aligned Reaction breaks entire ordinary loop.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2376,
+        "disposition": "VERIFIED",
+        "interpretation": "Null aligned Reaction breaks entire ordinary loop."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 100,
+      "node": 2393,
+      "span": [
+        667,
+        12,
+        669,
+        24
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "Null source increments pair index and continues.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2393,
+        "disposition": "VERIFIED",
+        "interpretation": "Null source increments pair index and continues."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 101,
+      "node": 2497,
+      "span": [
+        702,
+        24,
+        704,
+        33
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G13",
+      "semantic_role": "Previous actual stop main time equal effective stop main retains exact event metadata, else null.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2497,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous actual stop main time equal effective stop main retains exact event metadata, else null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 102,
+      "node": 2506,
+      "span": [
+        707,
+        24,
+        709,
+        33
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G13",
+      "semantic_role": "Current actual stop main time equal effective stop main retains exact event metadata, else null.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2506,
+        "disposition": "VERIFIED",
+        "interpretation": "Current actual stop main time equal effective stop main retains exact event metadata, else null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 103,
+      "node": 2533,
+      "span": [
+        718,
+        16,
+        720,
+        69
+      ],
+      "operation": [
+        26,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit",
+          "operand_1_continue",
+          "operand_1_short_circuit"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Reuse iff first stop exists, next-next state exists, next-next formation>=first stop exact time.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2533,
+        "disposition": "VERIFIED",
+        "interpretation": "Reuse iff first stop exists, next-next state exists, next-next formation>=first stop exact time."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 104,
+      "node": 2554,
+      "span": [
+        722,
+        12,
+        731,
+        30
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Reuse sets current ordinal and advances one; else clear reuse and skip consumed states.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2554,
+        "disposition": "VERIFIED",
+        "interpretation": "Reuse sets current ordinal and advances one; else clear reuse and skip consumed states."
+      },
+      "contained_groups": [
+        "G16"
+      ]
+    },
+    {
+      "category": "branches",
+      "current_row": 105,
+      "node": 2566,
+      "span": [
+        727,
+        16,
+        731,
+        30
+      ],
+      "operation": [
+        26,
+        "While",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "Skip while index in range and current formation<=cycle boundary.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2566,
+        "disposition": "VERIFIED",
+        "interpretation": "Skip while index in range and current formation<=cycle boundary."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "branches",
+      "current_row": 106,
+      "node": 2567,
+      "span": [
+        728,
+        20,
+        729,
+        74
+      ],
+      "operation": [
+        26,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "Check bounds before state access and formation comparison.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2567,
+        "disposition": "VERIFIED",
+        "interpretation": "Check bounds before state access and formation comparison."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 66,
+      "node": 2214,
+      "span": [
+        608,
+        11,
+        608,
+        22
+      ],
+      "operation": [
+        25,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G2",
+      "semantic_role": "End strictly earlier than start invalid; equality allowed.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2214,
+        "disposition": "VERIFIED",
+        "interpretation": "End strictly earlier than start invalid; equality allowed."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 67,
+      "node": 2270,
+      "span": [
+        620,
+        14,
+        620,
+        37
+      ],
+      "operation": [
+        26,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Index+1 strictly below number of valid states.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2270,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+1 strictly below number of valid states."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 68,
+      "node": 2292,
+      "span": [
+        624,
+        16,
+        624,
+        48
+      ],
+      "operation": [
+        26,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Bridge reuse ordinal identity nonnull.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2292,
+        "disposition": "VERIFIED",
+        "interpretation": "Bridge reuse ordinal identity nonnull."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 69,
+      "node": 2295,
+      "span": [
+        625,
+        20,
+        625,
+        60
+      ],
+      "operation": [
+        26,
+        [
+          "Eq"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Previous ordinal equal reuse ordinal.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2295,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous ordinal equal reuse ordinal."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 70,
+      "node": 2301,
+      "span": [
+        628,
+        16,
+        628,
+        60
+      ],
+      "operation": [
+        26,
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Current formation index<=cycle boundary consumed.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2301,
+        "disposition": "VERIFIED",
+        "interpretation": "Current formation index<=cycle boundary consumed."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 71,
+      "node": 2306,
+      "span": [
+        630,
+        20,
+        630,
+        65
+      ],
+      "operation": [
+        26,
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "Previous formation index<=cycle boundary consumed absent bridge.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2306,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous formation index<=cycle boundary consumed absent bridge."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 72,
+      "node": 2324,
+      "span": [
+        641,
+        19,
+        641,
+        42
+      ],
+      "operation": [
+        26,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Index+2 strictly below state count.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2324,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 strictly below state count."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 73,
+      "node": 2347,
+      "span": [
+        645,
+        15,
+        645,
+        30
+      ],
+      "operation": [
+        26,
+        [
+          "Is"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Pair trigger identity null.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2347,
+        "disposition": "VERIFIED",
+        "interpretation": "Pair trigger identity null."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 74,
+      "node": 2377,
+      "span": [
+        663,
+        15,
+        663,
+        28
+      ],
+      "operation": [
+        26,
+        [
+          "Is"
+        ]
+      ],
+      "group": "G9",
+      "semantic_role": "Aligned match identity null ends loop.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2377,
+        "disposition": "VERIFIED",
+        "interpretation": "Aligned match identity null ends loop."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 75,
+      "node": 2394,
+      "span": [
+        667,
+        15,
+        667,
+        29
+      ],
+      "operation": [
+        26,
+        [
+          "Is"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "Source identity null skips pair.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2394,
+        "disposition": "VERIFIED",
+        "interpretation": "Source identity null skips pair."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 76,
+      "node": 2498,
+      "span": [
+        703,
+        27,
+        703,
+        65
+      ],
+      "operation": [
+        26,
+        [
+          "Eq"
+        ]
+      ],
+      "group": "G13",
+      "semantic_role": "Previous actual/effective main stop timestamps equality gates exact metadata.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2498,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous actual/effective main stop timestamps equality gates exact metadata."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 77,
+      "node": 2507,
+      "span": [
+        708,
+        27,
+        708,
+        64
+      ],
+      "operation": [
+        26,
+        [
+          "Eq"
+        ]
+      ],
+      "group": "G13",
+      "semantic_role": "Current actual/effective main stop timestamps equality gates exact metadata.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2507,
+        "disposition": "VERIFIED",
+        "interpretation": "Current actual/effective main stop timestamps equality gates exact metadata."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 78,
+      "node": 2534,
+      "span": [
+        718,
+        16,
+        718,
+        38
+      ],
+      "operation": [
+        26,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "First stop identity nonnull required for reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2534,
+        "disposition": "VERIFIED",
+        "interpretation": "First stop identity nonnull required for reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 79,
+      "node": 2537,
+      "span": [
+        719,
+        20,
+        719,
+        43
+      ],
+      "operation": [
+        26,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Index+2 strictly below state count.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2537,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 strictly below state count."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 80,
+      "node": 2544,
+      "span": [
+        720,
+        20,
+        720,
+        69
+      ],
+      "operation": [
+        26,
+        [
+          "GtE"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Following formation>=first stop event, equality permits reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2544,
+        "disposition": "VERIFIED",
+        "interpretation": "Following formation>=first stop event, equality permits reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 81,
+      "node": 2568,
+      "span": [
+        728,
+        20,
+        728,
+        39
+      ],
+      "operation": [
+        26,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "Index strictly below state count before access.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2568,
+        "disposition": "VERIFIED",
+        "interpretation": "Index strictly below state count before access."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "comparisons",
+      "current_row": 82,
+      "node": 2573,
+      "span": [
+        729,
+        24,
+        729,
+        74
+      ],
+      "operation": [
+        26,
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "State formation index<=cycle boundary skipped.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2573,
+        "disposition": "VERIFIED",
+        "interpretation": "State formation index<=cycle boundary skipped."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 37,
+      "node": 2234,
+      "span": [
+        596,
+        9,
+        596,
+        45
+      ],
+      "operation": [
+        3,
+        "BitOr"
+      ],
+      "group": "G1",
+      "semantic_role": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2234,
+        "disposition": "NOT_APPLICABLE",
+        "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 38,
+      "node": 2258,
+      "span": [
+        616,
+        28,
+        616,
+        30
+      ],
+      "operation": [
+        26,
+        "USub"
+      ],
+      "group": "G4",
+      "semantic_role": "Negative one initializes consumed-cycle index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2258,
+        "disposition": "VERIFIED",
+        "interpretation": "Negative one initializes consumed-cycle index."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 39,
+      "node": 2262,
+      "span": [
+        617,
+        30,
+        617,
+        40
+      ],
+      "operation": [
+        26,
+        "BitOr"
+      ],
+      "group": "G4",
+      "semantic_role": "Nullable/type-union annotation, not executable price/time arithmetic.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2262,
+        "disposition": "NOT_APPLICABLE",
+        "interpretation": "Nullable/type-union annotation, not executable price/time arithmetic."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 40,
+      "node": 2271,
+      "span": [
+        620,
+        14,
+        620,
+        23
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G5",
+      "semantic_role": "Index+1 tests existence of adjacent current state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2271,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+1 tests existence of adjacent current state."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 41,
+      "node": 2286,
+      "span": [
+        622,
+        29,
+        622,
+        38
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G5",
+      "semantic_role": "Index+1 addresses adjacent current state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2286,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+1 addresses adjacent current state."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 42,
+      "node": 2310,
+      "span": [
+        631,
+        24,
+        631,
+        39
+      ],
+      "operation": [
+        26,
+        "Not"
+      ],
+      "group": "G6",
+      "semantic_role": "Negate bridge_pair to reject consumed previous when no exception.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2310,
+        "disposition": "VERIFIED",
+        "interpretation": "Negate bridge_pair to reject consumed previous when no exception."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 43,
+      "node": 2317,
+      "span": [
+        636,
+        16,
+        636,
+        26
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G6",
+      "semantic_role": "Increment pair index after consumed-state skip.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2317,
+        "disposition": "VERIFIED",
+        "interpretation": "Increment pair index after consumed-state skip."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 44,
+      "node": 2325,
+      "span": [
+        641,
+        19,
+        641,
+        28
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G7",
+      "semantic_role": "Index+2 in expiry bounds guard.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2325,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 in expiry bounds guard."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 45,
+      "node": 2334,
+      "span": [
+        640,
+        23,
+        640,
+        32
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G7",
+      "semantic_role": "Index+2 accesses expiry state if guard passes.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2334,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 accesses expiry state if guard passes."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 46,
+      "node": 2350,
+      "span": [
+        646,
+        16,
+        646,
+        26
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G7",
+      "semantic_role": "Increment index on missing pair trigger.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2350,
+        "disposition": "VERIFIED",
+        "interpretation": "Increment index on missing pair trigger."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 47,
+      "node": 2397,
+      "span": [
+        668,
+        16,
+        668,
+        26
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G10",
+      "semantic_role": "Increment index on missing A source.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2397,
+        "disposition": "VERIFIED",
+        "interpretation": "Increment index on missing A source."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 48,
+      "node": 2538,
+      "span": [
+        719,
+        20,
+        719,
+        29
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G15",
+      "semantic_role": "Index+2 checks following state existence for bridge reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2538,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 checks following state existence for bridge reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 49,
+      "node": 2548,
+      "span": [
+        720,
+        27,
+        720,
+        36
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G15",
+      "semantic_role": "Index+2 accesses following formation for reuse guard.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2548,
+        "disposition": "VERIFIED",
+        "interpretation": "Index+2 accesses following formation for reuse guard."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 50,
+      "node": 2560,
+      "span": [
+        724,
+        16,
+        724,
+        26
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G15",
+      "semantic_role": "Increment index once on bridge reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2560,
+        "disposition": "VERIFIED",
+        "interpretation": "Increment index once on bridge reuse."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 51,
+      "node": 2579,
+      "span": [
+        731,
+        20,
+        731,
+        30
+      ],
+      "operation": [
+        26,
+        "Add"
+      ],
+      "group": "G16",
+      "semantic_role": "Increment index for each consumed state in no-reuse skip.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2579,
+        "disposition": "VERIFIED",
+        "interpretation": "Increment index for each consumed state in no-reuse skip."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 186,
+      "node": 2200,
+      "span": [
+        606,
+        16,
+        606,
+        65
+      ],
+      "operation": [
+        25,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G2",
+      "semantic_role": "Read trigger main candle timestamp as A source window start.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2200,
+        "disposition": "VERIFIED",
+        "interpretation": "Read trigger main candle timestamp as A source window start."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 187,
+      "node": 2209,
+      "span": [
+        607,
+        14,
+        607,
+        56
+      ],
+      "operation": [
+        25,
+        "self._reaction_confirmation_time",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:497:4:_reaction_confirmation_time"
+        ],
+        1,
+        []
+      ],
+      "group": "G2",
+      "semantic_role": "Invoke A14 on aligned reaction, returning native confirmation or fallback.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2209,
+        "disposition": "VERIFIED",
+        "interpretation": "Invoke A14 on aligned reaction, returning native confirmation or fallback."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 188,
+      "node": 2224,
+      "span": [
+        610,
+        43,
+        610,
+        74
+      ],
+      "operation": [
+        25,
+        "self._range_extreme",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:171:4:_range_extreme"
+        ],
+        2,
+        []
+      ],
+      "group": "G3",
+      "semantic_role": "Compute directional extreme only if end>=start; reorder tuple in caller.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2224,
+        "disposition": "VERIFIED",
+        "interpretation": "Compute directional extreme only if end>=start; reorder tuple in caller."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 189,
+      "node": 2274,
+      "span": [
+        620,
+        26,
+        620,
+        37
+      ],
+      "operation": [
+        26,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G5",
+      "semantic_role": "Read valid state count for adjacent pair condition.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2274,
+        "disposition": "VERIFIED",
+        "interpretation": "Read valid state count for adjacent pair condition."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 190,
+      "node": 2328,
+      "span": [
+        641,
+        31,
+        641,
+        42
+      ],
+      "operation": [
+        26,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G7",
+      "semantic_role": "Read valid state count for expiry guard.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2328,
+        "disposition": "VERIFIED",
+        "interpretation": "Read valid state count for expiry guard."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 191,
+      "node": 2340,
+      "span": [
+        644,
+        22,
+        644,
+        71
+      ],
+      "operation": [
+        26,
+        "self._pair_trigger",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:337:4:_pair_trigger"
+        ],
+        3,
+        []
+      ],
+      "group": "G7",
+      "semantic_role": "Resolve prioritized pair trigger using previous/current/expiry.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2340,
+        "disposition": "VERIFIED",
+        "interpretation": "Resolve prioritized pair trigger using previous/current/expiry."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 192,
+      "node": 2367,
+      "span": [
+        659,
+        20,
+        662,
+        13
+      ],
+      "operation": [
+        26,
+        "self._first_reaction_after",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:502:4:_first_reaction_after"
+        ],
+        1,
+        [
+          "not_before"
+        ]
+      ],
+      "group": "G9",
+      "semantic_role": "Find first aligned reaction from trigger event with effective stop-main gate.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2367,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first aligned reaction from trigger event with effective stop-main gate."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 193,
+      "node": 2372,
+      "span": [
+        661,
+        27,
+        661,
+        66
+      ],
+      "operation": [
+        26,
+        "max",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G9",
+      "semantic_role": "Max effective previous/current stop main timestamps for not_before.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2372,
+        "disposition": "VERIFIED",
+        "interpretation": "Max effective previous/current stop main timestamps for not_before."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 194,
+      "node": 2388,
+      "span": [
+        666,
+        21,
+        666,
+        60
+      ],
+      "operation": [
+        26,
+        "self._a_source",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:592:4:_a_source"
+        ],
+        2,
+        []
+      ],
+      "group": "G10",
+      "semantic_role": "Freeze A source from trigger main and aligned reaction.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2388,
+        "disposition": "VERIFIED",
+        "interpretation": "Freeze A source from trigger main and aligned reaction."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 195,
+      "node": 2409,
+      "span": [
+        671,
+        26,
+        671,
+        61
+      ],
+      "operation": [
+        26,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G10",
+      "semantic_role": "Integer-convert selected Reaction Break after source success.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2409,
+        "disposition": "VERIFIED",
+        "interpretation": "Integer-convert selected Reaction Break after source success."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 196,
+      "node": 2411,
+      "span": [
+        671,
+        30,
+        671,
+        60
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G10",
+      "semantic_role": "Read required aligned Reaction break_idx.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2411,
+        "disposition": "VERIFIED",
+        "interpretation": "Read required aligned Reaction break_idx."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 197,
+      "node": 2416,
+      "span": [
+        672,
+        12,
+        712,
+        13
+      ],
+      "operation": [
+        26,
+        "output.append",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "G11",
+      "semantic_role": "Append constructed ordinary A before updating cycle boundary.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2416,
+        "disposition": "VERIFIED",
+        "interpretation": "Append constructed ordinary A before updating cycle boundary."
+      },
+      "contained_groups": [
+        "G12",
+        "G13"
+      ]
+    },
+    {
+      "category": "calls",
+      "current_row": 198,
+      "node": 2419,
+      "span": [
+        673,
+        16,
+        711,
+        17
+      ],
+      "operation": [
+        26,
+        "self._zone",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:810:4:_zone"
+        ],
+        0,
+        [
+          "direction",
+          "blue_1_ordinal",
+          "blue_2_ordinal",
+          "blue_1_source_time",
+          "blue_2_source_time",
+          "blue_1_stop_time",
+          "blue_2_stop_time",
+          "blue_1_stop_level",
+          "blue_2_stop_level",
+          "continuation_level",
+          "continuation_source_index",
+          "continuation_source_time",
+          "trigger_index",
+          "trigger_time",
+          "trigger_event_time",
+          "reaction_number",
+          "reaction_first_time",
+          "reaction_break_time",
+          "source_index",
+          "source_time",
+          "price",
+          "formation_route",
+          "blue_1_stop_event_time",
+          "blue_2_stop_event_time"
+        ]
+      ],
+      "group": "G11",
+      "semantic_role": "Build zone via A21, supplying effective stops and optional exact metadata.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2419,
+        "disposition": "VERIFIED",
+        "interpretation": "Build zone via A21, supplying effective stops and optional exact metadata."
+      },
+      "contained_groups": [
+        "G12",
+        "G13"
+      ]
+    },
+    {
+      "category": "calls",
+      "current_row": 199,
+      "node": 2432,
+      "span": [
+        677,
+        39,
+        677,
+        76
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G11",
+      "semantic_role": "Read previous Blue source_time for record.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2432,
+        "disposition": "VERIFIED",
+        "interpretation": "Read previous Blue source_time for record."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 200,
+      "node": 2438,
+      "span": [
+        678,
+        39,
+        678,
+        75
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G11",
+      "semantic_role": "Read current Blue source_time for record.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2438,
+        "disposition": "VERIFIED",
+        "interpretation": "Read current Blue source_time for record."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 201,
+      "node": 2468,
+      "span": [
+        690,
+        40,
+        693,
+        21
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G12",
+      "semantic_role": "Read aligned Reaction First main timestamp via integer index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2468,
+        "disposition": "VERIFIED",
+        "interpretation": "Read aligned Reaction First main timestamp via integer index."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 202,
+      "node": 2473,
+      "span": [
+        691,
+        37,
+        691,
+        72
+      ],
+      "operation": [
+        26,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G12",
+      "semantic_role": "Integer-convert aligned Reaction First.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2473,
+        "disposition": "VERIFIED",
+        "interpretation": "Integer-convert aligned Reaction First."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 203,
+      "node": 2475,
+      "span": [
+        691,
+        41,
+        691,
+        71
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G12",
+      "semantic_role": "Read required aligned Reaction first_idx.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2475,
+        "disposition": "VERIFIED",
+        "interpretation": "Read required aligned Reaction first_idx."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 204,
+      "node": 2481,
+      "span": [
+        694,
+        40,
+        696,
+        21
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "G12",
+      "semantic_role": "Read aligned Reaction Break main timestamp.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2481,
+        "disposition": "VERIFIED",
+        "interpretation": "Read aligned Reaction Break main timestamp."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 205,
+      "node": 2519,
+      "span": [
+        715,
+        32,
+        715,
+        74
+      ],
+      "operation": [
+        26,
+        "self._reaction_confirmation_time",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:497:4:_reaction_confirmation_time"
+        ],
+        1,
+        []
+      ],
+      "group": "G14",
+      "semantic_role": "Recompute A14 confirmation after append and cycle boundary update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2519,
+        "disposition": "VERIFIED",
+        "interpretation": "Recompute A14 confirmation after append and cycle boundary update."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 206,
+      "node": 2525,
+      "span": [
+        716,
+        25,
+        716,
+        77
+      ],
+      "operation": [
+        26,
+        "self._first_crossing",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/a_zone_detector.py:129:4:_first_crossing"
+        ],
+        3,
+        []
+      ],
+      "group": "G14",
+      "semantic_role": "Search first strict crossing of A price from returned confirmation, unbounded.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2525,
+        "disposition": "VERIFIED",
+        "interpretation": "Search first strict crossing of A price from returned confirmation, unbounded."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 207,
+      "node": 2541,
+      "span": [
+        719,
+        32,
+        719,
+        43
+      ],
+      "operation": [
+        26,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G15",
+      "semantic_role": "Read valid state count only after first stop exists.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2541,
+        "disposition": "VERIFIED",
+        "interpretation": "Read valid state count only after first stop exists."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "calls",
+      "current_row": 208,
+      "node": 2570,
+      "span": [
+        728,
+        28,
+        728,
+        39
+      ],
+      "operation": [
+        26,
+        "len",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G16",
+      "semantic_role": "Read valid state count before consumed-state access.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": {
+        "original_id": 2570,
+        "disposition": "VERIFIED",
+        "interpretation": "Read valid state count before consumed-state access."
+      },
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1217,
+      "node": 2193,
+      "span": [
+        594,
+        23,
+        594,
+        26
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "int"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"int\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1218,
+      "node": 2195,
+      "span": [
+        595,
+        18,
+        595,
+        24
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "object"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"object\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1219,
+      "node": 2199,
+      "span": [
+        606,
+        8,
+        606,
+        13
+      ],
+      "operation": [
+        25,
+        2198,
+        "Store",
+        "start"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Store\",\"start\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1220,
+      "node": 2201,
+      "span": [
+        606,
+        16,
+        606,
+        23
+      ],
+      "operation": [
+        25,
+        2198,
+        "Load",
+        "getattr"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Load\",\"getattr\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1221,
+      "node": 2202,
+      "span": [
+        606,
+        24,
+        606,
+        51
+      ],
+      "operation": [
+        25,
+        2198,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Load\",\"self.candles[]\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1222,
+      "node": 2203,
+      "span": [
+        606,
+        24,
+        606,
+        36
+      ],
+      "operation": [
+        25,
+        2198,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Load\",\"self.candles\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1223,
+      "node": 2204,
+      "span": [
+        606,
+        24,
+        606,
+        28
+      ],
+      "operation": [
+        25,
+        2198,
+        "Load",
+        "self"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Load\",\"self\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1224,
+      "node": 2205,
+      "span": [
+        606,
+        37,
+        606,
+        50
+      ],
+      "operation": [
+        25,
+        2198,
+        "Load",
+        "trigger_index"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2198,\"Load\",\"trigger_index\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1225,
+      "node": 2208,
+      "span": [
+        607,
+        8,
+        607,
+        11
+      ],
+      "operation": [
+        25,
+        2207,
+        "Store",
+        "end"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2207,\"Store\",\"end\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1226,
+      "node": 2210,
+      "span": [
+        607,
+        14,
+        607,
+        46
+      ],
+      "operation": [
+        25,
+        2207,
+        "Load",
+        "self._reaction_confirmation_time"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2207,\"Load\",\"self._reaction_confirmation_time\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1227,
+      "node": 2211,
+      "span": [
+        607,
+        14,
+        607,
+        18
+      ],
+      "operation": [
+        25,
+        2207,
+        "Load",
+        "self"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2207,\"Load\",\"self\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1228,
+      "node": 2212,
+      "span": [
+        607,
+        47,
+        607,
+        55
+      ],
+      "operation": [
+        25,
+        2207,
+        "Load",
+        "reaction"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2207,\"Load\",\"reaction\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1229,
+      "node": 2215,
+      "span": [
+        608,
+        11,
+        608,
+        14
+      ],
+      "operation": [
+        25,
+        2213,
+        "Load",
+        "end"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2213,\"Load\",\"end\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1230,
+      "node": 2216,
+      "span": [
+        608,
+        17,
+        608,
+        22
+      ],
+      "operation": [
+        25,
+        2213,
+        "Load",
+        "start"
+      ],
+      "group": "G2",
+      "semantic_role": "accesses: [25,2213,\"Load\",\"start\"]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1231,
+      "node": 2221,
+      "span": [
+        610,
+        8,
+        610,
+        13
+      ],
+      "operation": [
+        25,
+        2219,
+        "Store",
+        "value"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Store\",\"value\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1232,
+      "node": 2222,
+      "span": [
+        610,
+        15,
+        610,
+        27
+      ],
+      "operation": [
+        25,
+        2219,
+        "Store",
+        "source_index"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Store\",\"source_index\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1233,
+      "node": 2223,
+      "span": [
+        610,
+        29,
+        610,
+        40
+      ],
+      "operation": [
+        25,
+        2219,
+        "Store",
+        "source_time"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Store\",\"source_time\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1234,
+      "node": 2225,
+      "span": [
+        610,
+        43,
+        610,
+        62
+      ],
+      "operation": [
+        25,
+        2219,
+        "Load",
+        "self._range_extreme"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Load\",\"self._range_extreme\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1235,
+      "node": 2226,
+      "span": [
+        610,
+        43,
+        610,
+        47
+      ],
+      "operation": [
+        25,
+        2219,
+        "Load",
+        "self"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Load\",\"self\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1236,
+      "node": 2227,
+      "span": [
+        610,
+        63,
+        610,
+        68
+      ],
+      "operation": [
+        25,
+        2219,
+        "Load",
+        "start"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Load\",\"start\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1237,
+      "node": 2228,
+      "span": [
+        610,
+        70,
+        610,
+        73
+      ],
+      "operation": [
+        25,
+        2219,
+        "Load",
+        "end"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2219,\"Load\",\"end\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1238,
+      "node": 2231,
+      "span": [
+        611,
+        15,
+        611,
+        27
+      ],
+      "operation": [
+        25,
+        2229,
+        "Load",
+        "source_index"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2229,\"Load\",\"source_index\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1239,
+      "node": 2232,
+      "span": [
+        611,
+        29,
+        611,
+        40
+      ],
+      "operation": [
+        25,
+        2229,
+        "Load",
+        "source_time"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2229,\"Load\",\"source_time\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1240,
+      "node": 2233,
+      "span": [
+        611,
+        42,
+        611,
+        47
+      ],
+      "operation": [
+        25,
+        2229,
+        "Load",
+        "value"
+      ],
+      "group": "G3",
+      "semantic_role": "accesses: [25,2229,\"Load\",\"value\"]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1241,
+      "node": 2235,
+      "span": [
+        596,
+        9,
+        596,
+        38
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "tuple[]"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"tuple[]\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1242,
+      "node": 2236,
+      "span": [
+        596,
+        9,
+        596,
+        14
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "tuple"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"tuple\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1243,
+      "node": 2238,
+      "span": [
+        596,
+        15,
+        596,
+        18
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "int"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"int\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1244,
+      "node": 2239,
+      "span": [
+        596,
+        20,
+        596,
+        28
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "datetime"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"datetime\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1245,
+      "node": 2240,
+      "span": [
+        596,
+        30,
+        596,
+        37
+      ],
+      "operation": [
+        3,
+        2190,
+        "Load",
+        "Decimal"
+      ],
+      "group": "G1",
+      "semantic_role": "accesses: [3,2190,\"Load\",\"Decimal\"]; Input trigger index and Reaction; intended exact freeze is conditional on lower coverage.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1246,
+      "node": 2245,
+      "span": [
+        613,
+        41,
+        613,
+        56
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "list[]"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"list[]\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1247,
+      "node": 2246,
+      "span": [
+        613,
+        41,
+        613,
+        45
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "list"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"list\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1248,
+      "node": 2247,
+      "span": [
+        613,
+        46,
+        613,
+        55
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "BlueState"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"BlueState\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1249,
+      "node": 2251,
+      "span": [
+        615,
+        8,
+        615,
+        14
+      ],
+      "operation": [
+        26,
+        2250,
+        "Store",
+        "output"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2250,\"Store\",\"output\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1250,
+      "node": 2252,
+      "span": [
+        615,
+        16,
+        615,
+        27
+      ],
+      "operation": [
+        26,
+        2250,
+        "Load",
+        "list[]"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2250,\"Load\",\"list[]\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1251,
+      "node": 2253,
+      "span": [
+        615,
+        16,
+        615,
+        20
+      ],
+      "operation": [
+        26,
+        2250,
+        "Load",
+        "list"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2250,\"Load\",\"list\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1252,
+      "node": 2254,
+      "span": [
+        615,
+        21,
+        615,
+        26
+      ],
+      "operation": [
+        26,
+        2250,
+        "Load",
+        "AZone"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2250,\"Load\",\"AZone\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1253,
+      "node": 2257,
+      "span": [
+        616,
+        8,
+        616,
+        25
+      ],
+      "operation": [
+        26,
+        2256,
+        "Store",
+        "cycle_after_index"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2256,\"Store\",\"cycle_after_index\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1254,
+      "node": 2261,
+      "span": [
+        617,
+        8,
+        617,
+        28
+      ],
+      "operation": [
+        26,
+        2260,
+        "Store",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2260,\"Store\",\"bridge_reuse_ordinal\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1255,
+      "node": 2263,
+      "span": [
+        617,
+        30,
+        617,
+        33
+      ],
+      "operation": [
+        26,
+        2260,
+        "Load",
+        "int"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2260,\"Load\",\"int\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1256,
+      "node": 2267,
+      "span": [
+        618,
+        8,
+        618,
+        13
+      ],
+      "operation": [
+        26,
+        2266,
+        "Store",
+        "index"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [26,2266,\"Store\",\"index\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1257,
+      "node": 2272,
+      "span": [
+        620,
+        14,
+        620,
+        19
+      ],
+      "operation": [
+        26,
+        2269,
+        "Load",
+        "index"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2269,\"Load\",\"index\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1258,
+      "node": 2275,
+      "span": [
+        620,
+        26,
+        620,
+        29
+      ],
+      "operation": [
+        26,
+        2269,
+        "Load",
+        "len"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2269,\"Load\",\"len\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1259,
+      "node": 2276,
+      "span": [
+        620,
+        30,
+        620,
+        36
+      ],
+      "operation": [
+        26,
+        2269,
+        "Load",
+        "states"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2269,\"Load\",\"states\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1260,
+      "node": 2278,
+      "span": [
+        621,
+        12,
+        621,
+        20
+      ],
+      "operation": [
+        26,
+        2277,
+        "Store",
+        "previous"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2277,\"Store\",\"previous\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1261,
+      "node": 2279,
+      "span": [
+        621,
+        23,
+        621,
+        36
+      ],
+      "operation": [
+        26,
+        2277,
+        "Load",
+        "states[]"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2277,\"Load\",\"states[]\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1262,
+      "node": 2280,
+      "span": [
+        621,
+        23,
+        621,
+        29
+      ],
+      "operation": [
+        26,
+        2277,
+        "Load",
+        "states"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2277,\"Load\",\"states\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1263,
+      "node": 2281,
+      "span": [
+        621,
+        30,
+        621,
+        35
+      ],
+      "operation": [
+        26,
+        2277,
+        "Load",
+        "index"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2277,\"Load\",\"index\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1264,
+      "node": 2283,
+      "span": [
+        622,
+        12,
+        622,
+        19
+      ],
+      "operation": [
+        26,
+        2282,
+        "Store",
+        "current"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2282,\"Store\",\"current\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1265,
+      "node": 2284,
+      "span": [
+        622,
+        22,
+        622,
+        39
+      ],
+      "operation": [
+        26,
+        2282,
+        "Load",
+        "states[]"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2282,\"Load\",\"states[]\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1266,
+      "node": 2285,
+      "span": [
+        622,
+        22,
+        622,
+        28
+      ],
+      "operation": [
+        26,
+        2282,
+        "Load",
+        "states"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2282,\"Load\",\"states\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1267,
+      "node": 2287,
+      "span": [
+        622,
+        29,
+        622,
+        34
+      ],
+      "operation": [
+        26,
+        2282,
+        "Load",
+        "index"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2282,\"Load\",\"index\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1268,
+      "node": 2290,
+      "span": [
+        623,
+        12,
+        623,
+        23
+      ],
+      "operation": [
+        26,
+        2289,
+        "Store",
+        "bridge_pair"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2289,\"Store\",\"bridge_pair\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1269,
+      "node": 2293,
+      "span": [
+        624,
+        16,
+        624,
+        36
+      ],
+      "operation": [
+        26,
+        2289,
+        "Load",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2289,\"Load\",\"bridge_reuse_ordinal\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1270,
+      "node": 2296,
+      "span": [
+        625,
+        20,
+        625,
+        36
+      ],
+      "operation": [
+        26,
+        2289,
+        "Load",
+        "previous.ordinal"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2289,\"Load\",\"previous.ordinal\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1271,
+      "node": 2297,
+      "span": [
+        625,
+        20,
+        625,
+        28
+      ],
+      "operation": [
+        26,
+        2289,
+        "Load",
+        "previous"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2289,\"Load\",\"previous\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1272,
+      "node": 2298,
+      "span": [
+        625,
+        40,
+        625,
+        60
+      ],
+      "operation": [
+        26,
+        2289,
+        "Load",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G5",
+      "semantic_role": "accesses: [26,2289,\"Load\",\"bridge_reuse_ordinal\"]; Adjacent valid-state pair; bridge iff nonnull retained ordinal equals previous ordinal, not physical identity.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1273,
+      "node": 2302,
+      "span": [
+        628,
+        16,
+        628,
+        39
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "current.formation_index"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"current.formation_index\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1274,
+      "node": 2303,
+      "span": [
+        628,
+        16,
+        628,
+        23
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "current"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"current\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1275,
+      "node": 2304,
+      "span": [
+        628,
+        43,
+        628,
+        60
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "cycle_after_index"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"cycle_after_index\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1276,
+      "node": 2307,
+      "span": [
+        630,
+        20,
+        630,
+        44
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "previous.formation_index"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"previous.formation_index\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1277,
+      "node": 2308,
+      "span": [
+        630,
+        20,
+        630,
+        28
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "previous"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"previous\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1278,
+      "node": 2309,
+      "span": [
+        630,
+        48,
+        630,
+        65
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "cycle_after_index"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"cycle_after_index\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1279,
+      "node": 2311,
+      "span": [
+        631,
+        28,
+        631,
+        39
+      ],
+      "operation": [
+        26,
+        2299,
+        "Load",
+        "bridge_pair"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2299,\"Load\",\"bridge_pair\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1280,
+      "node": 2313,
+      "span": [
+        634,
+        19,
+        634,
+        30
+      ],
+      "operation": [
+        26,
+        2312,
+        "Load",
+        "bridge_pair"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2312,\"Load\",\"bridge_pair\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1281,
+      "node": 2315,
+      "span": [
+        635,
+        20,
+        635,
+        40
+      ],
+      "operation": [
+        26,
+        2314,
+        "Store",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2314,\"Store\",\"bridge_reuse_ordinal\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1282,
+      "node": 2318,
+      "span": [
+        636,
+        16,
+        636,
+        21
+      ],
+      "operation": [
+        26,
+        2317,
+        "Store",
+        "index"
+      ],
+      "group": "G6",
+      "semantic_role": "accesses: [26,2317,\"Store\",\"index\"]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1283,
+      "node": 2322,
+      "span": [
+        639,
+        12,
+        639,
+        22
+      ],
+      "operation": [
+        26,
+        2321,
+        "Store",
+        "expires_at"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Store\",\"expires_at\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1284,
+      "node": 2326,
+      "span": [
+        641,
+        19,
+        641,
+        24
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "index"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"index\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1285,
+      "node": 2329,
+      "span": [
+        641,
+        31,
+        641,
+        34
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "len"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"len\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1286,
+      "node": 2330,
+      "span": [
+        641,
+        35,
+        641,
+        41
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "states"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"states\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1287,
+      "node": 2331,
+      "span": [
+        640,
+        16,
+        640,
+        48
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "states[].formation_time"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"states[].formation_time\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1288,
+      "node": 2332,
+      "span": [
+        640,
+        16,
+        640,
+        33
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "states[]"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"states[]\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1289,
+      "node": 2333,
+      "span": [
+        640,
+        16,
+        640,
+        22
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "states"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"states\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1290,
+      "node": 2335,
+      "span": [
+        640,
+        23,
+        640,
+        28
+      ],
+      "operation": [
+        26,
+        2321,
+        "Load",
+        "index"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2321,\"Load\",\"index\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1291,
+      "node": 2339,
+      "span": [
+        644,
+        12,
+        644,
+        19
+      ],
+      "operation": [
+        26,
+        2338,
+        "Store",
+        "trigger"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Store\",\"trigger\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1292,
+      "node": 2341,
+      "span": [
+        644,
+        22,
+        644,
+        40
+      ],
+      "operation": [
+        26,
+        2338,
+        "Load",
+        "self._pair_trigger"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Load\",\"self._pair_trigger\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1293,
+      "node": 2342,
+      "span": [
+        644,
+        22,
+        644,
+        26
+      ],
+      "operation": [
+        26,
+        2338,
+        "Load",
+        "self"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Load\",\"self\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1294,
+      "node": 2343,
+      "span": [
+        644,
+        41,
+        644,
+        49
+      ],
+      "operation": [
+        26,
+        2338,
+        "Load",
+        "previous"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Load\",\"previous\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1295,
+      "node": 2344,
+      "span": [
+        644,
+        51,
+        644,
+        58
+      ],
+      "operation": [
+        26,
+        2338,
+        "Load",
+        "current"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Load\",\"current\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1296,
+      "node": 2345,
+      "span": [
+        644,
+        60,
+        644,
+        70
+      ],
+      "operation": [
+        26,
+        2338,
+        "Load",
+        "expires_at"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2338,\"Load\",\"expires_at\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1297,
+      "node": 2348,
+      "span": [
+        645,
+        15,
+        645,
+        22
+      ],
+      "operation": [
+        26,
+        2346,
+        "Load",
+        "trigger"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2346,\"Load\",\"trigger\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1298,
+      "node": 2351,
+      "span": [
+        646,
+        16,
+        646,
+        21
+      ],
+      "operation": [
+        26,
+        2350,
+        "Store",
+        "index"
+      ],
+      "group": "G7",
+      "semantic_role": "accesses: [26,2350,\"Store\",\"index\"]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1299,
+      "node": 2356,
+      "span": [
+        650,
+        16,
+        650,
+        34
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "continuation_level"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"continuation_level\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1300,
+      "node": 2357,
+      "span": [
+        651,
+        16,
+        651,
+        41
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "continuation_source_index"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"continuation_source_index\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1301,
+      "node": 2358,
+      "span": [
+        652,
+        16,
+        652,
+        40
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "continuation_source_time"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"continuation_source_time\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1302,
+      "node": 2359,
+      "span": [
+        653,
+        16,
+        653,
+        29
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "trigger_index"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"trigger_index\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1303,
+      "node": 2360,
+      "span": [
+        654,
+        16,
+        654,
+        28
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "trigger_time"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"trigger_time\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1304,
+      "node": 2361,
+      "span": [
+        655,
+        16,
+        655,
+        34
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "trigger_event_time"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"trigger_event_time\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1305,
+      "node": 2362,
+      "span": [
+        656,
+        16,
+        656,
+        32
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "blue_1_stop_time"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"blue_1_stop_time\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1306,
+      "node": 2363,
+      "span": [
+        657,
+        16,
+        657,
+        32
+      ],
+      "operation": [
+        26,
+        2354,
+        "Store",
+        "blue_2_stop_time"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Store\",\"blue_2_stop_time\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1307,
+      "node": 2364,
+      "span": [
+        658,
+        16,
+        658,
+        23
+      ],
+      "operation": [
+        26,
+        2354,
+        "Load",
+        "trigger"
+      ],
+      "group": "G8",
+      "semantic_role": "accesses: [26,2354,\"Load\",\"trigger\"]; Unpack eight trigger fields including effective stop main times distinct from actual state.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1308,
+      "node": 2366,
+      "span": [
+        659,
+        12,
+        659,
+        17
+      ],
+      "operation": [
+        26,
+        2365,
+        "Store",
+        "match"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Store\",\"match\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1309,
+      "node": 2368,
+      "span": [
+        659,
+        20,
+        659,
+        46
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "self._first_reaction_after"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"self._first_reaction_after\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1310,
+      "node": 2369,
+      "span": [
+        659,
+        20,
+        659,
+        24
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "self"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"self\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1311,
+      "node": 2370,
+      "span": [
+        660,
+        16,
+        660,
+        34
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "trigger_event_time"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"trigger_event_time\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1312,
+      "node": 2373,
+      "span": [
+        661,
+        27,
+        661,
+        30
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "max"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"max\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1313,
+      "node": 2374,
+      "span": [
+        661,
+        31,
+        661,
+        47
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "blue_1_stop_time"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"blue_1_stop_time\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1314,
+      "node": 2375,
+      "span": [
+        661,
+        49,
+        661,
+        65
+      ],
+      "operation": [
+        26,
+        2365,
+        "Load",
+        "blue_2_stop_time"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2365,\"Load\",\"blue_2_stop_time\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1315,
+      "node": 2378,
+      "span": [
+        663,
+        15,
+        663,
+        20
+      ],
+      "operation": [
+        26,
+        2376,
+        "Load",
+        "match"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2376,\"Load\",\"match\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1316,
+      "node": 2383,
+      "span": [
+        665,
+        12,
+        665,
+        27
+      ],
+      "operation": [
+        26,
+        2381,
+        "Store",
+        "reaction_number"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2381,\"Store\",\"reaction_number\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1317,
+      "node": 2384,
+      "span": [
+        665,
+        29,
+        665,
+        37
+      ],
+      "operation": [
+        26,
+        2381,
+        "Store",
+        "reaction"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2381,\"Store\",\"reaction\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1318,
+      "node": 2385,
+      "span": [
+        665,
+        40,
+        665,
+        45
+      ],
+      "operation": [
+        26,
+        2381,
+        "Load",
+        "match"
+      ],
+      "group": "G9",
+      "semantic_role": "accesses: [26,2381,\"Load\",\"match\"]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1319,
+      "node": 2387,
+      "span": [
+        666,
+        12,
+        666,
+        18
+      ],
+      "operation": [
+        26,
+        2386,
+        "Store",
+        "source"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2386,\"Store\",\"source\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1320,
+      "node": 2389,
+      "span": [
+        666,
+        21,
+        666,
+        35
+      ],
+      "operation": [
+        26,
+        2386,
+        "Load",
+        "self._a_source"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2386,\"Load\",\"self._a_source\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1321,
+      "node": 2390,
+      "span": [
+        666,
+        21,
+        666,
+        25
+      ],
+      "operation": [
+        26,
+        2386,
+        "Load",
+        "self"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2386,\"Load\",\"self\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1322,
+      "node": 2391,
+      "span": [
+        666,
+        36,
+        666,
+        49
+      ],
+      "operation": [
+        26,
+        2386,
+        "Load",
+        "trigger_index"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2386,\"Load\",\"trigger_index\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1323,
+      "node": 2392,
+      "span": [
+        666,
+        51,
+        666,
+        59
+      ],
+      "operation": [
+        26,
+        2386,
+        "Load",
+        "reaction"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2386,\"Load\",\"reaction\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1324,
+      "node": 2395,
+      "span": [
+        667,
+        15,
+        667,
+        21
+      ],
+      "operation": [
+        26,
+        2393,
+        "Load",
+        "source"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2393,\"Load\",\"source\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1325,
+      "node": 2398,
+      "span": [
+        668,
+        16,
+        668,
+        21
+      ],
+      "operation": [
+        26,
+        2397,
+        "Store",
+        "index"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2397,\"Store\",\"index\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1326,
+      "node": 2403,
+      "span": [
+        670,
+        12,
+        670,
+        24
+      ],
+      "operation": [
+        26,
+        2401,
+        "Store",
+        "source_index"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2401,\"Store\",\"source_index\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1327,
+      "node": 2404,
+      "span": [
+        670,
+        26,
+        670,
+        37
+      ],
+      "operation": [
+        26,
+        2401,
+        "Store",
+        "source_time"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2401,\"Store\",\"source_time\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1328,
+      "node": 2405,
+      "span": [
+        670,
+        39,
+        670,
+        44
+      ],
+      "operation": [
+        26,
+        2401,
+        "Store",
+        "price"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2401,\"Store\",\"price\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1329,
+      "node": 2406,
+      "span": [
+        670,
+        47,
+        670,
+        53
+      ],
+      "operation": [
+        26,
+        2401,
+        "Load",
+        "source"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2401,\"Load\",\"source\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1330,
+      "node": 2408,
+      "span": [
+        671,
+        12,
+        671,
+        23
+      ],
+      "operation": [
+        26,
+        2407,
+        "Store",
+        "break_index"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2407,\"Store\",\"break_index\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1331,
+      "node": 2410,
+      "span": [
+        671,
+        26,
+        671,
+        29
+      ],
+      "operation": [
+        26,
+        2407,
+        "Load",
+        "int"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2407,\"Load\",\"int\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1332,
+      "node": 2412,
+      "span": [
+        671,
+        30,
+        671,
+        37
+      ],
+      "operation": [
+        26,
+        2407,
+        "Load",
+        "getattr"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2407,\"Load\",\"getattr\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1333,
+      "node": 2413,
+      "span": [
+        671,
+        38,
+        671,
+        46
+      ],
+      "operation": [
+        26,
+        2407,
+        "Load",
+        "reaction"
+      ],
+      "group": "G10",
+      "semantic_role": "accesses: [26,2407,\"Load\",\"reaction\"]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1334,
+      "node": 2417,
+      "span": [
+        672,
+        12,
+        672,
+        25
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "output.append"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"output.append\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1335,
+      "node": 2418,
+      "span": [
+        672,
+        12,
+        672,
+        18
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "output"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"output\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1336,
+      "node": 2420,
+      "span": [
+        673,
+        16,
+        673,
+        26
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self._zone"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self._zone\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1337,
+      "node": 2421,
+      "span": [
+        673,
+        16,
+        673,
+        20
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1338,
+      "node": 2423,
+      "span": [
+        674,
+        30,
+        674,
+        44
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self.direction"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self.direction\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1339,
+      "node": 2424,
+      "span": [
+        674,
+        30,
+        674,
+        34
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1340,
+      "node": 2426,
+      "span": [
+        675,
+        35,
+        675,
+        51
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous.ordinal"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous.ordinal\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1341,
+      "node": 2427,
+      "span": [
+        675,
+        35,
+        675,
+        43
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1342,
+      "node": 2429,
+      "span": [
+        676,
+        35,
+        676,
+        50
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current.ordinal"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current.ordinal\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1343,
+      "node": 2430,
+      "span": [
+        676,
+        35,
+        676,
+        42
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1344,
+      "node": 2433,
+      "span": [
+        677,
+        39,
+        677,
+        46
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "getattr"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"getattr\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1345,
+      "node": 2434,
+      "span": [
+        677,
+        47,
+        677,
+        60
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous.line"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous.line\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1346,
+      "node": 2435,
+      "span": [
+        677,
+        47,
+        677,
+        55
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1347,
+      "node": 2439,
+      "span": [
+        678,
+        39,
+        678,
+        46
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "getattr"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"getattr\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1348,
+      "node": 2440,
+      "span": [
+        678,
+        47,
+        678,
+        59
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current.line"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current.line\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1349,
+      "node": 2441,
+      "span": [
+        678,
+        47,
+        678,
+        54
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1350,
+      "node": 2444,
+      "span": [
+        679,
+        37,
+        679,
+        53
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "blue_1_stop_time"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"blue_1_stop_time\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1351,
+      "node": 2446,
+      "span": [
+        680,
+        37,
+        680,
+        53
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "blue_2_stop_time"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"blue_2_stop_time\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1352,
+      "node": 2448,
+      "span": [
+        681,
+        38,
+        681,
+        57
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous.stop_level"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous.stop_level\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1353,
+      "node": 2449,
+      "span": [
+        681,
+        38,
+        681,
+        46
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1354,
+      "node": 2451,
+      "span": [
+        682,
+        38,
+        682,
+        56
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current.stop_level"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current.stop_level\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1355,
+      "node": 2452,
+      "span": [
+        682,
+        38,
+        682,
+        45
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current"
+      ],
+      "group": "G11",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current\"]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1356,
+      "node": 2454,
+      "span": [
+        683,
+        39,
+        683,
+        57
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "continuation_level"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"continuation_level\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1357,
+      "node": 2456,
+      "span": [
+        684,
+        46,
+        684,
+        71
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "continuation_source_index"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"continuation_source_index\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1358,
+      "node": 2458,
+      "span": [
+        685,
+        45,
+        685,
+        69
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "continuation_source_time"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"continuation_source_time\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1359,
+      "node": 2460,
+      "span": [
+        686,
+        34,
+        686,
+        47
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "trigger_index"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"trigger_index\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1360,
+      "node": 2462,
+      "span": [
+        687,
+        33,
+        687,
+        45
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "trigger_time"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"trigger_time\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1361,
+      "node": 2464,
+      "span": [
+        688,
+        39,
+        688,
+        57
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "trigger_event_time"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"trigger_event_time\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1362,
+      "node": 2466,
+      "span": [
+        689,
+        36,
+        689,
+        51
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "reaction_number"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"reaction_number\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1363,
+      "node": 2469,
+      "span": [
+        690,
+        40,
+        690,
+        47
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "getattr"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"getattr\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1364,
+      "node": 2470,
+      "span": [
+        691,
+        24,
+        691,
+        73
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self.candles[]\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1365,
+      "node": 2471,
+      "span": [
+        691,
+        24,
+        691,
+        36
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self.candles\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1366,
+      "node": 2472,
+      "span": [
+        691,
+        24,
+        691,
+        28
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1367,
+      "node": 2474,
+      "span": [
+        691,
+        37,
+        691,
+        40
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "int"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"int\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1368,
+      "node": 2476,
+      "span": [
+        691,
+        41,
+        691,
+        48
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "getattr"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"getattr\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1369,
+      "node": 2477,
+      "span": [
+        691,
+        49,
+        691,
+        57
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "reaction"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"reaction\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1370,
+      "node": 2482,
+      "span": [
+        694,
+        40,
+        694,
+        47
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "getattr"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"getattr\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1371,
+      "node": 2483,
+      "span": [
+        695,
+        24,
+        695,
+        49
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self.candles[]\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1372,
+      "node": 2484,
+      "span": [
+        695,
+        24,
+        695,
+        36
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self.candles\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1373,
+      "node": 2485,
+      "span": [
+        695,
+        24,
+        695,
+        28
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "self"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"self\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1374,
+      "node": 2486,
+      "span": [
+        695,
+        37,
+        695,
+        48
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "break_index"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"break_index\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1375,
+      "node": 2489,
+      "span": [
+        697,
+        33,
+        697,
+        45
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "source_index"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"source_index\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1376,
+      "node": 2491,
+      "span": [
+        698,
+        32,
+        698,
+        43
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "source_time"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"source_time\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1377,
+      "node": 2493,
+      "span": [
+        699,
+        26,
+        699,
+        31
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "price"
+      ],
+      "group": "G12",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"price\"]; Frozen continuation, trigger, matched ordinal; fresh First positional read, Break timestamp using converted Break; source tuple; required reads may fail before append.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1378,
+      "node": 2499,
+      "span": [
+        703,
+        27,
+        703,
+        45
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous.stop_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous.stop_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1379,
+      "node": 2500,
+      "span": [
+        703,
+        27,
+        703,
+        35
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1380,
+      "node": 2501,
+      "span": [
+        703,
+        49,
+        703,
+        65
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "blue_1_stop_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"blue_1_stop_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1381,
+      "node": 2502,
+      "span": [
+        702,
+        24,
+        702,
+        48
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous.stop_event_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous.stop_event_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1382,
+      "node": 2503,
+      "span": [
+        702,
+        24,
+        702,
+        32
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "previous"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"previous\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1383,
+      "node": 2508,
+      "span": [
+        708,
+        27,
+        708,
+        44
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current.stop_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current.stop_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1384,
+      "node": 2509,
+      "span": [
+        708,
+        27,
+        708,
+        34
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1385,
+      "node": 2510,
+      "span": [
+        708,
+        48,
+        708,
+        64
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "blue_2_stop_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"blue_2_stop_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1386,
+      "node": 2511,
+      "span": [
+        707,
+        24,
+        707,
+        47
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current.stop_event_time"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current.stop_event_time\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1387,
+      "node": 2512,
+      "span": [
+        707,
+        24,
+        707,
+        31
+      ],
+      "operation": [
+        26,
+        2415,
+        "Load",
+        "current"
+      ],
+      "group": "G13",
+      "semantic_role": "accesses: [26,2415,\"Load\",\"current\"]; Route ordinary; copy exact stop only on actual/effective main equality, not causal proof. Append before cycle update.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1388,
+      "node": 2515,
+      "span": [
+        713,
+        12,
+        713,
+        29
+      ],
+      "operation": [
+        26,
+        2514,
+        "Store",
+        "cycle_after_index"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2514,\"Store\",\"cycle_after_index\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1389,
+      "node": 2516,
+      "span": [
+        713,
+        32,
+        713,
+        43
+      ],
+      "operation": [
+        26,
+        2514,
+        "Load",
+        "break_index"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2514,\"Load\",\"break_index\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1390,
+      "node": 2518,
+      "span": [
+        715,
+        12,
+        715,
+        29
+      ],
+      "operation": [
+        26,
+        2517,
+        "Store",
+        "confirmation_time"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2517,\"Store\",\"confirmation_time\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1391,
+      "node": 2520,
+      "span": [
+        715,
+        32,
+        715,
+        64
+      ],
+      "operation": [
+        26,
+        2517,
+        "Load",
+        "self._reaction_confirmation_time"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2517,\"Load\",\"self._reaction_confirmation_time\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1392,
+      "node": 2521,
+      "span": [
+        715,
+        32,
+        715,
+        36
+      ],
+      "operation": [
+        26,
+        2517,
+        "Load",
+        "self"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2517,\"Load\",\"self\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1393,
+      "node": 2522,
+      "span": [
+        715,
+        65,
+        715,
+        73
+      ],
+      "operation": [
+        26,
+        2517,
+        "Load",
+        "reaction"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2517,\"Load\",\"reaction\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1394,
+      "node": 2524,
+      "span": [
+        716,
+        12,
+        716,
+        22
+      ],
+      "operation": [
+        26,
+        2523,
+        "Store",
+        "first_stop"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2523,\"Store\",\"first_stop\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1395,
+      "node": 2526,
+      "span": [
+        716,
+        25,
+        716,
+        45
+      ],
+      "operation": [
+        26,
+        2523,
+        "Load",
+        "self._first_crossing"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2523,\"Load\",\"self._first_crossing\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1396,
+      "node": 2527,
+      "span": [
+        716,
+        25,
+        716,
+        29
+      ],
+      "operation": [
+        26,
+        2523,
+        "Load",
+        "self"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2523,\"Load\",\"self\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1397,
+      "node": 2528,
+      "span": [
+        716,
+        46,
+        716,
+        51
+      ],
+      "operation": [
+        26,
+        2523,
+        "Load",
+        "price"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2523,\"Load\",\"price\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1398,
+      "node": 2529,
+      "span": [
+        716,
+        53,
+        716,
+        70
+      ],
+      "operation": [
+        26,
+        2523,
+        "Load",
+        "confirmation_time"
+      ],
+      "group": "G14",
+      "semantic_role": "accesses: [26,2523,\"Load\",\"confirmation_time\"]; Set frontier to matched Break, recompute virtual A14 and A07 strict stop from returned confirmation unbounded. Failure after local append propagates; no partial list returned.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1399,
+      "node": 2532,
+      "span": [
+        717,
+        12,
+        717,
+        32
+      ],
+      "operation": [
+        26,
+        2531,
+        "Store",
+        "allow_adjacent_reuse"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Store\",\"allow_adjacent_reuse\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1400,
+      "node": 2535,
+      "span": [
+        718,
+        16,
+        718,
+        26
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "first_stop"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"first_stop\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1401,
+      "node": 2539,
+      "span": [
+        719,
+        20,
+        719,
+        25
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "index"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"index\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1402,
+      "node": 2542,
+      "span": [
+        719,
+        32,
+        719,
+        35
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "len"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"len\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1403,
+      "node": 2543,
+      "span": [
+        719,
+        36,
+        719,
+        42
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "states"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"states\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1404,
+      "node": 2545,
+      "span": [
+        720,
+        20,
+        720,
+        52
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "states[].formation_time"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"states[].formation_time\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1405,
+      "node": 2546,
+      "span": [
+        720,
+        20,
+        720,
+        37
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "states[]"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"states[]\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1406,
+      "node": 2547,
+      "span": [
+        720,
+        20,
+        720,
+        26
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "states"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"states\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1407,
+      "node": 2549,
+      "span": [
+        720,
+        27,
+        720,
+        32
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "index"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"index\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1408,
+      "node": 2551,
+      "span": [
+        720,
+        56,
+        720,
+        69
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "first_stop[]"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"first_stop[]\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1409,
+      "node": 2552,
+      "span": [
+        720,
+        56,
+        720,
+        66
+      ],
+      "operation": [
+        26,
+        2531,
+        "Load",
+        "first_stop"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2531,\"Load\",\"first_stop\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1410,
+      "node": 2555,
+      "span": [
+        722,
+        15,
+        722,
+        35
+      ],
+      "operation": [
+        26,
+        2554,
+        "Load",
+        "allow_adjacent_reuse"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2554,\"Load\",\"allow_adjacent_reuse\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1411,
+      "node": 2557,
+      "span": [
+        723,
+        16,
+        723,
+        36
+      ],
+      "operation": [
+        26,
+        2556,
+        "Store",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2556,\"Store\",\"bridge_reuse_ordinal\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1412,
+      "node": 2558,
+      "span": [
+        723,
+        39,
+        723,
+        54
+      ],
+      "operation": [
+        26,
+        2556,
+        "Load",
+        "current.ordinal"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2556,\"Load\",\"current.ordinal\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1413,
+      "node": 2559,
+      "span": [
+        723,
+        39,
+        723,
+        46
+      ],
+      "operation": [
+        26,
+        2556,
+        "Load",
+        "current"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2556,\"Load\",\"current\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1414,
+      "node": 2561,
+      "span": [
+        724,
+        16,
+        724,
+        21
+      ],
+      "operation": [
+        26,
+        2560,
+        "Store",
+        "index"
+      ],
+      "group": "G15",
+      "semantic_role": "accesses: [26,2560,\"Store\",\"index\"]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1415,
+      "node": 2564,
+      "span": [
+        726,
+        16,
+        726,
+        36
+      ],
+      "operation": [
+        26,
+        2563,
+        "Store",
+        "bridge_reuse_ordinal"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2563,\"Store\",\"bridge_reuse_ordinal\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1416,
+      "node": 2569,
+      "span": [
+        728,
+        20,
+        728,
+        25
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "index"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"index\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1417,
+      "node": 2571,
+      "span": [
+        728,
+        28,
+        728,
+        31
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "len"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"len\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1418,
+      "node": 2572,
+      "span": [
+        728,
+        32,
+        728,
+        38
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "states"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"states\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1419,
+      "node": 2574,
+      "span": [
+        729,
+        24,
+        729,
+        53
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "states[].formation_index"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"states[].formation_index\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1420,
+      "node": 2575,
+      "span": [
+        729,
+        24,
+        729,
+        37
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "states[]"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"states[]\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1421,
+      "node": 2576,
+      "span": [
+        729,
+        24,
+        729,
+        30
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "states"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"states\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1422,
+      "node": 2577,
+      "span": [
+        729,
+        31,
+        729,
+        36
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "index"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"index\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1423,
+      "node": 2578,
+      "span": [
+        729,
+        57,
+        729,
+        74
+      ],
+      "operation": [
+        26,
+        2566,
+        "Load",
+        "cycle_after_index"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2566,\"Load\",\"cycle_after_index\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1424,
+      "node": 2580,
+      "span": [
+        731,
+        20,
+        731,
+        25
+      ],
+      "operation": [
+        26,
+        2579,
+        "Store",
+        "index"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2579,\"Store\",\"index\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1425,
+      "node": 2583,
+      "span": [
+        732,
+        15,
+        732,
+        21
+      ],
+      "operation": [
+        26,
+        2582,
+        "Load",
+        "output"
+      ],
+      "group": "G16",
+      "semantic_role": "accesses: [26,2582,\"Load\",\"output\"]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1426,
+      "node": 2584,
+      "span": [
+        613,
+        61,
+        613,
+        72
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "list[]"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"list[]\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1427,
+      "node": 2585,
+      "span": [
+        613,
+        61,
+        613,
+        65
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "list"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"list\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "accesses",
+      "current_row": 1428,
+      "node": 2586,
+      "span": [
+        613,
+        66,
+        613,
+        71
+      ],
+      "operation": [
+        3,
+        2242,
+        "Load",
+        "AZone"
+      ],
+      "group": "G4",
+      "semantic_role": "accesses: [3,2242,\"Load\",\"AZone\"]; Fresh local output, cycle=-1, reuse=null, offset=0; no supplied state-list validation.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 28,
+      "node": 2317,
+      "span": [
+        636,
+        16,
+        636,
+        26
+      ],
+      "operation": [
+        26,
+        "index",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G6",
+      "semantic_role": "effects: [26,\"index\",[\"AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE\"]]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 29,
+      "node": 2350,
+      "span": [
+        646,
+        16,
+        646,
+        26
+      ],
+      "operation": [
+        26,
+        "index",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "effects: [26,\"index\",[\"AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE\"]]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 30,
+      "node": 2397,
+      "span": [
+        668,
+        16,
+        668,
+        26
+      ],
+      "operation": [
+        26,
+        "index",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "effects: [26,\"index\",[\"AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE\"]]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 31,
+      "node": 2416,
+      "span": [
+        672,
+        12,
+        712,
+        13
+      ],
+      "operation": [
+        26,
+        "output.append",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G11",
+      "semantic_role": "effects: [26,\"output.append\",[\"POTENTIAL_MUTATION\",\"DYNAMIC_EFFECT_UNKNOWN\"]]; Virtual A21 before append; retain original line source times, full ordinals, effective stop mains and actual state stop levels.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": [
+        "G12",
+        "G13"
+      ]
+    },
+    {
+      "category": "effects",
+      "current_row": 32,
+      "node": 2560,
+      "span": [
+        724,
+        16,
+        724,
+        26
+      ],
+      "operation": [
+        26,
+        "index",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "effects: [26,\"index\",[\"AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE\"]]; Reuse iff stop nonnull, next-next state exists and formation>=exact stop; equality allowed. Retain current ordinal then advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "effects",
+      "current_row": 33,
+      "node": 2579,
+      "span": [
+        731,
+        20,
+        731,
+        30
+      ],
+      "operation": [
+        26,
+        "index",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "effects: [26,\"index\",[\"AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE\"]]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 53,
+      "node": 2217,
+      "span": [
+        609,
+        12,
+        609,
+        23
+      ],
+      "operation": [
+        25,
+        "Return",
+        null
+      ],
+      "group": "G2",
+      "semantic_role": "exits: [25,\"Return\",null]; Read trigger main timestamp by position before virtual A14; returned confirmation may be Break-open fallback; reversed range returns null before A08.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 54,
+      "node": 2229,
+      "span": [
+        611,
+        8,
+        611,
+        47
+      ],
+      "operation": [
+        25,
+        "Return",
+        null
+      ],
+      "group": "G3",
+      "semantic_role": "exits: [25,\"Return\",null]; A08 inclusive extrema, reorder price/index/time to index/time/price; empty lower coarse containing-main fallback may contain later prices.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 55,
+      "node": 2320,
+      "span": [
+        637,
+        16,
+        637,
+        24
+      ],
+      "operation": [
+        26,
+        "Continue",
+        null
+      ],
+      "group": "G6",
+      "semantic_role": "exits: [26,\"Continue\",null]; Current consumed condition first, otherwise previous consumed and not bridge. Clear reuse only on skipped bridge pair; advance one.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 56,
+      "node": 2353,
+      "span": [
+        647,
+        16,
+        647,
+        24
+      ],
+      "operation": [
+        26,
+        "Continue",
+        null
+      ],
+      "group": "G7",
+      "semantic_role": "exits: [26,\"Continue\",null]; Expiry from next-next valid state formation, not full Blue ordinal. Null virtual trigger advances without clearing reuse.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 57,
+      "node": 2380,
+      "span": [
+        664,
+        16,
+        664,
+        21
+      ],
+      "operation": [
+        26,
+        "Break",
+        null
+      ],
+      "group": "G9",
+      "semantic_role": "exits: [26,\"Break\",null]; A15 exact trigger and max effective stop mains inclusive First gate; null match breaks whole loop. Original Reaction retained.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 58,
+      "node": 2400,
+      "span": [
+        669,
+        16,
+        669,
+        24
+      ],
+      "operation": [
+        26,
+        "Continue",
+        null
+      ],
+      "group": "G10",
+      "semantic_role": "exits: [26,\"Continue\",null]; Null A17 advances without clearing reuse; success unpacks source then converts Break index.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    },
+    {
+      "category": "exits",
+      "current_row": 59,
+      "node": 2582,
+      "span": [
+        732,
+        8,
+        732,
+        21
+      ],
+      "operation": [
+        26,
+        "Return",
+        null
+      ],
+      "group": "G16",
+      "semantic_role": "exits: [26,\"Return\",null]; Else clear reuse and skip while offset in bounds and formation<=new Break. No unconditional increment; if previous formation>Break, offset may remain unchanged. Native invariant conditional, arbitrary state termination not proven. Return detection-order list.",
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT",
+      "prior_w1": null,
+      "contained_groups": []
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B03-07-S1",
+      "span": [
+        606,
+        611
+      ],
+      "groups": [
+        "G2",
+        "G3"
+      ],
+      "historical": "Start main open read by trigger_index; end A14 return may be fallback. End<start returns null without range query. A08 lower exact range if available; empty lower fallback may include entire containing main OHLC, so do not claim universally that later Break prices cannot affect output.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B03-07-S2",
+      "span": [
+        615,
+        637
+      ],
+      "groups": [
+        "G4",
+        "G5",
+        "G6"
+      ],
+      "historical": "Initialize output/cycle=-1/reuse=null/index=0. Bridge is nonnull ordinal equal previous. Current consumed always skips even on bridge; previous consumed skips unless bridge. Clear bridge only when skipped bridge_pair, increment one.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B03-07-S3",
+      "span": [
+        639,
+        647
+      ],
+      "groups": [
+        "G7"
+      ],
+      "historical": "Expiry from following valid state, not full Blue list ordinal. Null trigger advances one; no owner acceptance inferred.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B03-07-S4",
+      "span": [
+        649,
+        669
+      ],
+      "groups": [
+        "G8",
+        "G9",
+        "G10"
+      ],
+      "historical": "Unpack trigger tuple; align using exact event and max effective stop main times. No match breaks entire ordinary loop. Null source advances one. Matched reaction is original object, not published clone.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B03-07-S5",
+      "span": [
+        671,
+        712
+      ],
+      "groups": [
+        "G10",
+        "G11",
+        "G12",
+        "G13"
+      ],
+      "historical": "Build ordinary zone with original Blue source times/actual stop levels, effective stop main times and continuation/trigger/Reaction/source tuples. Exact stop metadata uses equality of actual and effective main time, not proof that exact event triggered current route. Append before updating cycle boundary.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B03-07-S6",
+      "span": [
+        713,
+        731
+      ],
+      "groups": [
+        "G14",
+        "G15",
+        "G16"
+      ],
+      "historical": "Cycle boundary matched Break. Recompute A14, first strict crossing of A price unbounded. Reuse if first stop exists and next-next formation>=stop event. Else clear reuse and while current formation<=cycle skip. No unconditional increment on no-reuse branch if current formation already beyond cycle; caller alignment/termination invariant remains to verify, do not repair in docs.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    }
+  ],
+  "validation": {
+    "counts": {
+      "branches": 17,
+      "comparisons": 17,
+      "arithmetic": 15,
+      "calls": 23,
+      "accesses": 212,
+      "effects": 6,
+      "exits": 7
+    },
+    "w1": 72,
+    "additional": 225,
+    "total": 297,
+    "historical_supplemental": 6,
+    "coordinate_join_errors": 0,
+    "duplicate_current_rows": 0,
+    "prior_overlap": 0
+  },
+  "findings": [
+    {
+      "id": "CP372-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Clarify source freeze fallback, next-next valid expiry/reuse, retained bridge on rejected paths, exact stop provenance equality and append-before-reuse failure."
+    },
+    {
+      "id": "CP372-F02",
+      "status": "OPEN_NATIVE_PROGRESS_INVARIANT",
+      "meaning": "No unconditional increment at 726–731. Under coherent ordered main chronology, valid formation mapping, actual stops not earlier than their formations, crossing at/after start, aligned Reaction confirmation within its own Break main and unchanged caches, each successful route has trigger at/after previous formation: inherited/early formation route starts current formation (later than previous under inheritance; early guard plus actual previous stop), early actual-stop starts current stop; remaining route uses later actual stop or crossing from it. Then matched confirmation>=trigger implies Break position>=previous formation. This is a sufficient conditional argument, not proof of all native creator/consumer, duplicate time, gap/position, fallback or live cache invariants. Retain OPEN, not proven runtime defect."
+    }
+  ],
+  "limitations": [
+    "No runtime or all-owner acceptance; canonical category records are not unique semantic rules.",
+    "CP372-F02 remains conditional; both directions share temporal guards, price predicate changes only crossing selection."
+  ],
+  "remaining": "734–1070, B04–B10 and cross-owner duties."
+}
