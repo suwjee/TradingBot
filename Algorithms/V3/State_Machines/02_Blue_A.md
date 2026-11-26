@@ -34,7 +34,7 @@ Registers previous Reaction, previous_count nullable, output (including internal
 
 ## AP — Ordinary A adjacent-Blue pair machine
 
-Registers full sorted Blue ordinals (including invalid), filtered valid states with formation and stop, current pair offset, cycle_after_index=-1, nullable bridge_reuse_ordinal, output. Pair expiry = following valid state's formation or null. Formation gate (Scale A14 confirmation with intrabar disabled and possible Break-open fallback, Reset first strict lower cross else source main) and stop gate are separate; Reset stop starts at next main boundary.
+Registers full sorted Blue ordinals (including invalid), filtered valid states with formation and stop, current pair offset, cycle_after_index=-1, nullable bridge_reuse_ordinal, output. Pair expiry = following valid state's formation or null. Formation gate (Scale A14 confirmation with intrabar disabled and possible Break-open fallback, Reset first strict lower cross else source main) and stop gate are separate; Reset stop starts at nominal source main open + timeframe, not necessarily next actual main open.
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
@@ -63,7 +63,7 @@ Stop/cross helper: lower interval nonempty means no main fallback on miss. Empty
 | AD01 | INIT | Full sorted Blue sequence | Previous valid=null, special empty | SCAN | A12 |
 | AD02 | SCAN | Valid line | Retain as previous valid | SCAN | A12 |
 | AD03 | SCAN | Invalid line and previous valid absent or strict crossing not on invalid source main | Skip invalid; retain previous | SCAN | A12 |
-| AD04 | SCAN | Invalid line with previous valid stop on invalid main | Align first Reaction with confirmation >= exact trigger and First main time >= invalid source time; valid source required | FORM or SCAN | A12,A15,A17 |
+| AD04 | SCAN | Invalid line whose first crossing of retained valid level from stored invalid source_time to mapped source main nominal end has the same source index | Align first Reaction with confirmation >= exact trigger and First main time >= invalid source time; valid source required | FORM or SCAN | A12,A15,A17 |
 | AD05 | FORM | Successful geometry | Emit double-stop A, both effective stop mains invalid main, continuation prior source, no exact Blue stop fields; consume previous | SCAN | A12 |
 | AD06 | SCAN | Horizon | Filter special by ordinary Reaction ordinal collision | RESOLVE | A19,A20 |
 | AD07 | RESOLVE | Latest strictly earlier-source ordinary A has A22 first stop from next source main open, before special First and >= special Blue1 source | Reject special; later recross is not first stop | RESOLVE | A19,A22 |

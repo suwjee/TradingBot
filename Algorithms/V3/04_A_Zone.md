@@ -6,7 +6,7 @@
 
 ## A-M01 — Inputs and canonical candidate list
 
-Accept native same-direction Reactions, all Blue (including invalid/internal), chronology. Sort Blue stably by (reaction ordinal, source time, kind); ordinals count invalid lines. Build ordinary state only for calculation-valid lines. Scale formation is its Reaction confirmation time returned by A14 with intrabar start disabled (RE61 may fall back to Break open); stop scan begins at the returned time. Reset formation first strict break of brokenLevel in source main, otherwise main open; stop scan begins at source main end. Stop threshold is sourceExtreme. For nonempty lower interval use first strict crossing, no coarse fallback if none; only when no lower rows, main crossing scan opens at/after start. Exact stop row extreme is stored separately from its containing main timestamp.
+Accept native same-direction Reactions, all Blue (including invalid/internal), chronology. Sort Blue stably by (reaction ordinal, source time, kind); ordinals count invalid lines. Build ordinary state only for calculation-valid lines. Scale formation is its Reaction confirmation time returned by A14 with intrabar start disabled (RE61 may fall back to Break open); stop scan begins at the returned time. Reset formation first strict break of brokenLevel in source main, otherwise main open; stop scan begins at source main open + timeframe (nominal end, not necessarily the next actual main open). Stop threshold is sourceExtreme. For nonempty lower interval use first strict crossing, no coarse fallback if none; only when no lower rows, main crossing scan opens at/after start. Exact stop row extreme is stored separately from its containing main timestamp.
 
 ## A-M02 — Pair trigger routes in priority order
 
@@ -65,23 +65,23 @@ Reject end<start with ValueError. Convert inclusive end to exclusive by adding o
 
 ### A09 — AZoneDetector._formation
 
-Require 1<=integer reaction_number<=reaction count, otherwise ValueError even for Reset. If string kind is scale: resolve reaction by ordinal, index=integer break_idx; event=A14, stop-scan start=event. Otherwise index=integer line.source_index; main source timestamp, event=A10, stop-scan start=source timestamp+timeframe. Read candles[index] before return (even if unused). Return (index,event,scan start). No special rejection of unknown kind.
+Require 1<=integer reaction_number<=reaction count, otherwise ValueError even for Reset. If string kind is scale: resolve reaction by ordinal, index=integer break_idx; event=A14, stop-scan start=event. Otherwise index=integer line.source_index; main source timestamp, event=A10, stop-scan start=source timestamp+timeframe. Read candles[index] before return (even if unused). Return (index,event,scan start). No special rejection of unknown kind. The final main read occurs after the virtual formation call and stop-start computation and can fail even though its value is unused.
 
 ### A10 — AZoneDetector._reset_formation_time
 
-Input line/source index; read main source timestamp and exclusive end=start+timeframe. Normalize broken_level. Traverse A06 window; first strict crossing directional extreme returns exact lower timestamp. If none, return source main start, even if lower rows exist. No index optimization here.
+Input line/source index; read main source timestamp and exclusive end=start+timeframe. Normalize broken_level. Traverse A06 window; first strict crossing directional extreme returns exact lower timestamp. If none, return source main start, even if lower rows exist. No direct index optimization here. Falling back to source main open does not prove a strict crossing; no main OHLC crossing test is made in this helper.
 
 ### A11 — AZoneDetector._build_blue_states
 
-Enumerate sorted Blue lines starting at 1 (ordinal counts invalid lines too). Skip if bool(calculation_valid default true) false. Obtain formation via A09; normalize source_extreme as stop level; A07 from stop-scan start unbounded end. Return list of BlueState for valid lines in order, with original line reference; on hit set stop index, main timestamp, exact event timestamp, stop event extreme; otherwise those fields null. Internal lines are not filtered here.
+Enumerate sorted Blue lines starting at 1 (ordinal counts invalid lines too). Skip if bool(calculation_valid default true) false. Obtain formation via A09; normalize source_extreme as stop level; A07 from stop-scan start unbounded end. Return list of BlueState for valid lines in order, with original line reference; on hit set stop index, main timestamp, exact event timestamp, stop event extreme; otherwise those fields null. Internal lines are not filtered here. Stop tuple truthiness (not its index truthiness) supplies the optional stop fields; index zero is valid in a nonempty tuple. Main timestamp is read using returned index as a main sequence position, requiring alignment for A07's coarse fallback.
 
 ### A12 — AZoneDetector._double_stop_a_candidates
 
-Traverse sorted Blue lines with ordinal including invalid. On valid line set previous=(ordinal,line) and continue. Invalid without previous => skip. No kind check is made on an invalid line; do not infer only Reset records can enter this route from local source. Otherwise formation index from invalid line.source_index; formation time from invalid line.source_time; source main time from candles[index]. Find A07 crossing of previous source_extreme from formation time to source main time+timeframe exclusive; skip if absent or crossing main index differs. Find A15 first aligned reaction with confirmation >= trigger event and First >= formation time; skip if none. A17 chooses A source; skip if none. Emit via A21 record:
+Traverse sorted Blue lines with ordinal including invalid. On valid line set previous=(ordinal,line) and continue. Invalid without previous => skip. This route does not call A09 or impose its reaction_number gate. No kind or internal check is made on an invalid line; do not infer only Reset records can enter this route from local source. Otherwise formation index from invalid line.source_index; formation time from invalid line.source_time; source main time from candles[index]. Find A07 first crossing of previous source_extreme from the invalid line's stored source_time (formation time) to mapped source main time+timeframe exclusive; no local assertion equates the two times. Skip if absent or crossing main index differs; do not search for a later recross. Find A15 first aligned reaction with confirmation >= trigger event and First >= formation time; skip if none. A17 chooses A source; skip if none. Emit via A21 record:
 - Blue ordinals/times from previous and invalid lines, both stop main times = invalid source main time, stop levels = respective normalized source_extremes.
 - continuation level/source index/time = previous Blue semantic source; trigger index, main timestamp and exact event from crossing.
 - reaction number, First and Break main timestamps; A source index/time/price from A17; direction; route double-stop. Optional exact Blue stop event provenance remains null.
-After successful emission clear previous. Failed attempts retain previous. Return list.
+After successful construction and append clear previous. Guard-rejected attempts retain previous; exceptions propagate rather than return partial candidates. These are provisional candidates, not accepted lifecycle A. Return list.
 
 ### A13 — AZoneDetector._pair_trigger
 
