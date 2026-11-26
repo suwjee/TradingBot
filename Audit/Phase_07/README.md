@@ -71,3 +71,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 15 — B02-01 Reaction foundations and race helpers
 
 [Local review](Semantic_Closure_B02_01.md) and [site evidence](Semantic_Closure_B02_01.json): RE01–RE12, lines 1–327, 171 original rows and 11 supplemental items. Sub-batch PASS; B02 remains INCOMPLETE (1706 original rows pending). Next line 328 / RE13. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 16 — B02-02 standalone Reaction scan, post-break Reset and reflection
+
+[Local review](Semantic_Closure_B02_02.md) and [site evidence](Semantic_Closure_B02_02.json): RE13–RE18, lines 328–689, 179 original rows, 15 supplemental items, one resolved local specification omission (B02-02-F01). Sub-batch PASS; B02 350/1877, 1527 pending. Next line 690 / RE19. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

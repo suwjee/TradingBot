@@ -21,7 +21,7 @@ Extended state: mode, state, candidate, last_confirmed_bottom/first, running_pea
 | RXI11 | SCANNING | Mode A later, previous GREEN and current RED | If invalidation-origin anchor and both Lows below anchor, clear it. Pass if Low >= remaining anchor Low, else Low >= previous Low or leg-open Low. On pass freeze top/source, anchor and leg boundary | WAITING if pass; otherwise SCANNING | RE09,RE15 |
 | RXI12 | SCANNING | Mode A, candidate not formed | RED updates scan anchor; DOJI/NEUTRAL label clears anchor; other tags leave it | SCANNING | RE15 |
 | RXI13 | SCANNING | Mode B, RED | Choose higher of running peak/current High (running wins equality); min Low from after top source through current, or current alone; create candidate | WAITING | RE07,RE15 |
-| RXI14 | SCANNING or WAITING | Mode B scan branch, new strict peak | Update peak/source; advance main cursor. WAITING branch does not execute this scan update | SCANNING or WAITING | RE15 |
+| RXI14 | SCANNING or WAITING | Mode B scan branch, null running peak or strict higher High | Initialize or update peak/source after possible candidate construction; equal existing peak is retained; advance main cursor. WAITING branch does not execute this scan update | SCANNING or WAITING | RE15 |
 | RXI15 | SCANNING or WAITING | Horizon | If retain_initial, store next_index and initial-mode cursor fields; return confirmed lists only | RETURN | RE15 |
 
 Mode A invalidation and confirmed reset race are not the same event. Invalidation rejects an unresolved candidate; confirmed reset records a previously accepted owner. Both helpers test lower outward before confirmation when both predicates occur; see exact distinctions in RE11/RE12. The standalone Break reuse RXI08 is **not** Unified's full-lower-window reuse.
