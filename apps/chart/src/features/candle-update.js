@@ -242,11 +242,37 @@ export function mergeFarazCoverageRanges(existingRanges, incomingRanges, timefra
   const timeframe = Math.trunc(Number(timeframeSeconds));
   if (!Number.isSafeInteger(timeframe) || timeframe < 1) throw new Error("The FARAZ coverage timeframe is invalid.");
   let merged = (existingRanges || []).filter((range) => validCoverageRange(range, timeframe)).map((range) => ({ ...range }));
-  for (const incoming of (incomingRanges || []).filter((range) => validCoverageRange(range, timeframe))) {
-    merged = merged.flatMap((range) => subtractCoverageRange(range, incoming, timeframe));
-    merged.push({ ...incoming });
+  const incoming = (incomingRanges || []).filter((range) => validCoverageRange(range, timeframe));
+  const byBounds = (left, right) => left.from - right.from || left.to - right.to;
+  const ordered = incoming.toSorted(byBounds);
+  const aligned = range => (range.from - ordered[0].from) % timeframe === 0;
+  if (ordered.length > 1 && merged.every(aligned)
+    && ordered.every((range, index) => aligned(range) && (!index || ordered[index - 1].to < range.from))) {
+    // Independent packet ranges have the same precedence in any order. Seek
+    // directly to each old range's first overlap and retain its uncovered parts.
+    const uncovered = [];
+    for (const range of merged) {
+      let left = 0, right = ordered.length;
+      while (left < right) {
+        const middle = Math.floor((left + right) / 2);
+        if (ordered[middle].to < range.from) left = middle + 1;
+        else right = middle;
+      }
+      let from = range.from;
+      for (let index = left; index < ordered.length && ordered[index].from <= range.to; index++) {
+        const cover = ordered[index];
+        if (from < cover.from) uncovered.push({ ...range, from, to: cover.from - timeframe });
+        from = cover.to + timeframe;
+      }
+      if (from <= range.to) uncovered.push({ ...range, from });
+    }
+    return uncovered.concat(ordered.map(range => ({ ...range }))).sort(byBounds);
   }
-  return merged.sort((left, right) => left.from - right.from || left.to - right.to);
+  for (const range of incoming) {
+    merged = merged.flatMap(previous => subtractCoverageRange(previous, range, timeframe));
+    merged.push({ ...range });
+  }
+  return merged.sort(byBounds);
 }
 
 /** Executes independent FARAZ packets at a bounded concurrency in input order. */
@@ -277,21 +303,22 @@ export function buildChartUpdatePackets(ranges, timeframeSeconds, maximumCandles
     .map((range) => ({ ...range }))
     .sort((left, right) => left.from - right.from);
   const packets = [];
+  let index = 0;
 
-  while (pending.length) {
-    const packetFrom = pending[0].from;
+  while (index < pending.length) {
+    const packetFrom = pending[index].from;
     const packetLimit = packetFrom + (maximum - 1) * timeframe;
     const kinds = new Set();
     let packetTo = packetFrom;
     let targetMissingCandles = 0;
 
-    while (pending.length && pending[0].from <= packetLimit) {
-      const range = pending[0];
+    while (index < pending.length && pending[index].from <= packetLimit) {
+      const range = pending[index];
       const overlapTo = Math.min(range.to, packetLimit);
       targetMissingCandles += Math.floor((overlapTo - range.from) / timeframe) + 1;
       packetTo = Math.max(packetTo, overlapTo);
       kinds.add(range.kind);
-      if (range.to <= packetLimit) pending.shift();
+      if (range.to <= packetLimit) index++;
       else {
         range.from = overlapTo + timeframe;
         break;

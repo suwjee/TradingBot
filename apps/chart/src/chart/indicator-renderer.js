@@ -18,8 +18,11 @@ export function drawIndicator(canvasWidth, canvasHeight, {
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
     timeframe = Number(state.indicator.results.timeframe || state.tf),
-    foundationVerdict = trueFalseAppearance(settings, "foundation"),
-    secondaryVerdict = trueFalseAppearance(settings, "secondary");
+    secondaryVerdict = trueFalseAppearance(settings, "secondary"),
+    foundationVerdict = {
+      ...trueFalseAppearance(settings, "foundation"),
+      repeatStarColor: secondaryVerdict.colors["N/A"],
+    };
   const trendTransitions = [];
   for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
     ctx.save();
@@ -94,7 +97,8 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       if (x1 == null || x2 == null) continue;
       const offset = indicatorOffsetPixels(reactionObject);
       const left = Math.min(x1, x2) + offset.x, right = Math.max(x1, x2) + offset.x;
-      const strokeWidth = reactionObject?.customized ? reactionObject.width : width;
+      const appearance = reactionObject?.customized ? reactionObject : null;
+      const strokeWidth = appearance?.width ?? width;
       const label = settings.numberEnabled ? String(count) : "";
       const padding = Math.max(9, strokeWidth, label.length * settings.numberSize || 0);
       if (right < -padding || left > canvasWidth + padding) continue;
@@ -112,17 +116,10 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         reaction,
       });
       ctx.save();
-      ctx.fillStyle = rgba(
-        reactionObject?.customized ? reactionObject.fill : fill,
-        reactionObject?.customized ? reactionObject.opacity : opacity,
-      );
-      ctx.strokeStyle = reactionObject?.customized ? reactionObject.color : border;
+      ctx.fillStyle = rgba(appearance?.fill ?? fill, appearance?.opacity ?? opacity);
+      ctx.strokeStyle = appearance?.color ?? border;
       ctx.lineWidth = strokeWidth;
-      ctx.setLineDash(
-        reactionObject?.customized
-          ? dash(reactionObject.lineStyle)
-          : dash(bullish ? settings.bullLineStyle : settings.bearLineStyle),
-      );
+      ctx.setLineDash(dash(appearance?.lineStyle ?? (bullish ? settings.bullLineStyle : settings.bearLineStyle)));
       ctx.beginPath();
       ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
       ctx.fill();
@@ -153,15 +150,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         if ([x1, x2, y].some((value) => value == null)) continue;
         const shifted = offsetIndicatorRect(blueObject, x1, y, x2, y);
         state.indicator.hitBoxes.push({ objectId: blueObjectId, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
+        const appearance = blueObject?.customized ? blueObject : null;
         ctx.save();
-        ctx.strokeStyle = blueObject?.customized ? rgba(blueObject.color, blueObject.opacity ?? 1) : rgba(settings.blueColor, settings.blueOpacity / 100);
-        ctx.lineWidth = blueObject?.customized ? blueObject.width : settings.blueWidth;
+        ctx.strokeStyle = rgba(appearance?.color ?? settings.blueColor, appearance?.opacity ?? settings.blueOpacity / 100);
+        ctx.lineWidth = appearance?.width ?? settings.blueWidth;
         ctx.lineCap = "round";
-        ctx.setLineDash(
-          blueObject?.customized
-            ? dash(blueObject.lineStyle)
-            : dash(settings.blueLineStyle),
-        );
+        ctx.setLineDash(dash(appearance?.lineStyle ?? settings.blueLineStyle));
         ctx.beginPath();
         ctx.moveTo(shifted.x1, shifted.y1);
         ctx.lineTo(shifted.x2, shifted.y2);
@@ -184,12 +178,11 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       if (x == null || y == null) continue;
       const shifted = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.aGap : y - settings.aGap);
       state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`, shape: "point", x: shifted.x, y: shifted.y, radius: 14 });
+      const appearance = labelObject?.customized ? labelObject : null;
       ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : settings.aColor || "#7c3aed";
+      ctx.fillStyle = appearance?.color ?? (settings.aColor || "#7c3aed");
       ctx.font = `${labelObject?.weight || 500} ${
-        labelObject?.customized ? labelObject.size : settings.aSize ?? INDICATOR_MARKER_DEFAULTS.aSize
+        appearance?.size ?? settings.aSize ?? INDICATOR_MARKER_DEFAULTS.aSize
       }px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
@@ -215,15 +208,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
         state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`, shape: "rect", left, right, top, bottom });
+        const appearance = orderObject?.customized ? orderObject : null;
         ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(
-          orderObject?.customized
-            ? dash(orderObject.lineStyle)
-            : dash(settings.orderLineStyle),
-        );
+        ctx.fillStyle = rgba(appearance?.fill ?? settings.orderFill, appearance?.opacity ?? settings.orderOpacity / 100);
+        ctx.strokeStyle = appearance?.color ?? settings.orderColor;
+        ctx.lineWidth = appearance?.width ?? settings.orderWidth;
+        ctx.setLineDash(dash(appearance?.lineStyle ?? settings.orderLineStyle));
         ctx.beginPath();
         ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
         ctx.fill();
@@ -238,20 +228,20 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       if (eSourceIndices.has(Number(zone.sourceIndex)) || stopAllSourceIndices.has(Number(zone.sourceIndex))) continue;
       if (!settings.sVisible) continue;
       if (labelObject?.hidden) continue;
+      const appearance = labelObject?.customized ? labelObject : null;
+      const defaultColor = zone.color === "red"
+        ? settings.sBearColor || "#f23645"
+        : settings.sBullColor || "#2563eb";
       ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : zone.color === "red"
-          ? settings.sBearColor || "#f23645"
-          : settings.sBullColor || "#2563eb";
-      const labelSize = labelObject?.customized ? labelObject.size : settings.sSize ?? INDICATOR_MARKER_DEFAULTS.sSize;
+      ctx.fillStyle = appearance?.color ?? defaultColor;
+      const labelSize = appearance?.size ?? settings.sSize ?? INDICATOR_MARKER_DEFAULTS.sSize;
       ctx.font = `${labelObject?.weight || 500} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? "S", shiftedLabel.x, shiftedLabel.y);
       drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
         shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
-        undefined, false, 0, foundationVerdict);
+        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
@@ -272,15 +262,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
         state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`, shape: "rect", left, right, top, bottom });
+        const appearance = orderObject?.customized ? orderObject : null;
         ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(
-          orderObject?.customized
-            ? dash(orderObject.lineStyle)
-            : dash(settings.orderLineStyle),
-        );
+        ctx.fillStyle = rgba(appearance?.fill ?? settings.orderFill, appearance?.opacity ?? settings.orderOpacity / 100);
+        ctx.strokeStyle = appearance?.color ?? settings.orderColor;
+        ctx.lineWidth = appearance?.width ?? settings.orderWidth;
+        ctx.setLineDash(dash(appearance?.lineStyle ?? settings.orderLineStyle));
         ctx.beginPath();
         ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
         ctx.fill();
@@ -294,20 +281,20 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
       if (!settings.eVisible) continue;
       if (labelObject?.hidden) continue;
+      const appearance = labelObject?.customized ? labelObject : null;
+      const defaultColor = zone.family === "red"
+        ? settings.eRedColor || "#7f1d1d"
+        : settings.eBlueColor || "#1e3a8a";
       ctx.save();
-      ctx.fillStyle = labelObject?.customized
-        ? labelObject.color
-        : zone.family === "red"
-          ? settings.eRedColor || "#7f1d1d"
-          : settings.eBlueColor || "#1e3a8a";
-      const labelSize = labelObject?.customized ? labelObject.size : settings.eSize ?? INDICATOR_MARKER_DEFAULTS.eSize;
+      ctx.fillStyle = appearance?.color ?? defaultColor;
+      const labelSize = appearance?.size ?? settings.eSize ?? INDICATOR_MARKER_DEFAULTS.eSize;
       ctx.font = `${labelObject?.weight || 500} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = bullish ? "top" : "bottom";
       ctx.fillText(labelObject?.text ?? `E${zone.number}`, shiftedLabel.x, shiftedLabel.y);
       drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
         shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
-        undefined, false, 0, foundationVerdict);
+        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict);
       ctx.restore();
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
@@ -331,11 +318,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
           top = Math.min(shifted.y1, shifted.y2),
           bottom = Math.max(shifted.y1, shifted.y2);
         state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stopall-order:${zoneIndex + objectOffsets.stopAlls}`, shape: "rect", left, right, top, bottom });
+        const appearance = orderObject?.customized ? orderObject : null;
         ctx.save();
-        ctx.fillStyle = rgba(orderObject?.customized ? orderObject.fill : settings.orderFill, orderObject?.customized ? orderObject.opacity : settings.orderOpacity / 100);
-        ctx.strokeStyle = orderObject?.customized ? orderObject.color : settings.orderColor;
-        ctx.lineWidth = orderObject?.customized ? orderObject.width : settings.orderWidth;
-        ctx.setLineDash(orderObject?.customized ? dash(orderObject.lineStyle) : dash(settings.orderLineStyle));
+        ctx.fillStyle = rgba(appearance?.fill ?? settings.orderFill, appearance?.opacity ?? settings.orderOpacity / 100);
+        ctx.strokeStyle = appearance?.color ?? settings.orderColor;
+        ctx.lineWidth = appearance?.width ?? settings.orderWidth;
+        ctx.setLineDash(dash(appearance?.lineStyle ?? settings.orderLineStyle));
         ctx.beginPath();
         ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
         ctx.fill();
@@ -346,16 +334,18 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       const radius = settings.stopAllRadius ?? INDICATOR_MARKER_DEFAULTS.stopAllRadius,
         shifted = offsetIndicatorPoint(object, x, y);
       state.indicator.hitBoxes.push({ objectId, shape: "point", x: shifted.x, y: shifted.y, radius: radius + 2 });
+      const appearance = object?.customized ? object : null;
+      const color = appearance?.color ?? settings.stopAllBorder;
       ctx.save();
       ctx.fillStyle = rgba(settings.stopAllFill, settings.stopAllOpacity / 100);
-      ctx.strokeStyle = object?.customized ? object.color : settings.stopAllBorder;
-      ctx.lineWidth = object?.customized ? object.width : settings.stopAllWidth;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = appearance?.width ?? settings.stopAllWidth;
       ctx.beginPath();
       ctx.arc(shifted.x, shifted.y, radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = object?.customized ? object.color : settings.stopAllBorder;
-      const labelSize = object?.customized ? object.size : settings.stopAllSize ?? INDICATOR_MARKER_DEFAULTS.stopAllSize;
+      ctx.fillStyle = color;
+      const labelSize = appearance?.size ?? settings.stopAllSize ?? INDICATOR_MARKER_DEFAULTS.stopAllSize;
       const labelY = shifted.y + (bullish ? 1 : -1) * (radius + settings.stopAllGap);
       ctx.font = `${object?.weight || 600} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
       ctx.textAlign = "center";
@@ -396,17 +386,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         if ([x1, x2, y].some((value) => value == null)) continue;
         const shifted = offsetIndicatorRect(stopObject, x1, y, x2, y);
         state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:stop:${key}`, shape: "line", x1: shifted.x1, y1: shifted.y1, x2: shifted.x2, y2: shifted.y2 });
+        const appearance = stopObject?.customized ? stopObject : null;
         ctx.save();
-        ctx.strokeStyle = stopObject?.customized ? stopObject.color : settings.orderStopColor;
-        ctx.lineWidth = stopObject?.customized ? stopObject.width : settings.orderStopWidth;
-        ctx.lineCap = (stopObject?.customized ? stopObject.lineStyle : settings.orderStopLineStyle) === "dot"
-          ? "round"
-          : "butt";
-        ctx.setLineDash(
-          stopObject?.customized
-            ? dash(stopObject.lineStyle)
-            : dash(settings.orderStopLineStyle || "dot"),
-        );
+        ctx.strokeStyle = appearance?.color ?? settings.orderStopColor;
+        ctx.lineWidth = appearance?.width ?? settings.orderStopWidth;
+        ctx.lineCap = (appearance?.lineStyle ?? settings.orderStopLineStyle) === "dot" ? "round" : "butt";
+        ctx.setLineDash(dash(appearance?.lineStyle ?? (settings.orderStopLineStyle || "dot")));
         ctx.beginPath();
         ctx.moveTo(shifted.x1, shifted.y1);
         ctx.lineTo(shifted.x2, shifted.y2);
@@ -437,11 +422,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         top = Math.min(shifted.y1, shifted.y2),
         bottom = Math.max(shifted.y1, shifted.y2);
       state.indicator.hitBoxes.push({ objectId, shape: "rect", left, right, top, bottom });
+      const appearance = object?.customized ? object : null;
       ctx.save();
-      ctx.fillStyle = rgba(object?.customized ? object.fill : settings.orderFill, object?.customized ? object.opacity : settings.orderOpacity / 100);
-      ctx.strokeStyle = object?.customized ? object.color : settings.orderColor;
-      ctx.lineWidth = object?.customized ? object.width : settings.orderWidth;
-      ctx.setLineDash(object?.customized ? dash(object.lineStyle) : dash(settings.orderLineStyle));
+      ctx.fillStyle = rgba(appearance?.fill ?? settings.orderFill, appearance?.opacity ?? settings.orderOpacity / 100);
+      ctx.strokeStyle = appearance?.color ?? settings.orderColor;
+      ctx.lineWidth = appearance?.width ?? settings.orderWidth;
+      ctx.setLineDash(dash(appearance?.lineStyle ?? settings.orderLineStyle));
       ctx.beginPath();
       ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
       ctx.fill();
@@ -475,21 +461,12 @@ export function drawIndicator(canvasWidth, canvasHeight, {
           x2: shifted.x2,
           y2: shifted.y2,
         });
+        const appearance = stopObject?.customized ? stopObject : null;
         ctx.save();
-        ctx.strokeStyle = stopObject?.customized
-          ? stopObject.color
-          : settings.eStopColor;
-        ctx.lineWidth = stopObject?.customized
-          ? stopObject.width
-          : settings.eStopWidth;
-        ctx.lineCap = (stopObject?.customized ? stopObject.lineStyle : settings.eStopLineStyle) === "dot"
-          ? "round"
-          : "butt";
-        ctx.setLineDash(
-          stopObject?.customized
-            ? dash(stopObject.lineStyle)
-            : dash(settings.eStopLineStyle || "dot"),
-        );
+        ctx.strokeStyle = appearance?.color ?? settings.eStopColor;
+        ctx.lineWidth = appearance?.width ?? settings.eStopWidth;
+        ctx.lineCap = (appearance?.lineStyle ?? settings.eStopLineStyle) === "dot" ? "round" : "butt";
+        ctx.setLineDash(dash(appearance?.lineStyle ?? (settings.eStopLineStyle || "dot")));
         ctx.beginPath();
         ctx.moveTo(shifted.x1, shifted.y1);
         ctx.lineTo(shifted.x2, shifted.y2);

@@ -30,6 +30,7 @@ const PRIMARY_CONCURRENCY = 6;
 const MAX_COVERAGE_RECOVERY_ROUNDS = 3;
 const CHART_UPDATE_PACKET_SIZE = 1_000;
 const CHART_UPDATE_RATE_LIMIT_MS = 30;
+const VERIFICATION_READ_CONCURRENCY = 4;
 const AUTOMATIC_VERIFICATION_PACKETS = 8;
 const RECENT_VERIFICATION_LOOKBACK = 1_000;
 const SESSION_FILE_VERSION = 3;
@@ -395,6 +396,45 @@ function chunkRange(from, to, timeframeSeconds, packetSize, startIndex = 0) {
   return chunks;
 }
 
+async function* readChartPacketsInOrder(packets, read, signal, concurrency = VERIFICATION_READ_CONCURRENCY) {
+  if (packets.length <= 1 || concurrency === 1) {
+    for (const packet of packets) yield await read(packet, signal);
+    return;
+  }
+
+  const controller = new AbortController();
+  const packetSignal = AbortSignal.any([signal, controller.signal]);
+  const pending = new Map();
+  let next = 0;
+  let failed = false;
+  function prefetch() {
+    const index = next++;
+    pending.set(index, read(packets[index], packetSignal).then(
+      value => ({ value }),
+      error => {
+        failed = true;
+        return { error };
+      },
+    ));
+  }
+
+  try {
+    while (next < Math.min(packets.length, concurrency)) prefetch();
+    for (let index = 0; index < packets.length; index++) {
+      const result = await pending.get(index);
+      pending.delete(index);
+      signal.throwIfAborted();
+      if ("error" in result) throw result.error;
+      if (!failed && next < packets.length) prefetch();
+      // Only the contiguous successful prefix can contribute RAW evidence.
+      yield result.value;
+    }
+  } finally {
+    controller.abort();
+    await Promise.all(pending.values());
+  }
+}
+
 export function buildCandleFilename(symbolName, resolution, firstTime, lastTime) {
   const identity = marketIdentity(symbolName);
   return buildRawFilename({ broker: identity.broker, symbol: identity.symbol, timeframe: resolution, firstTime, lastTime });
@@ -628,7 +668,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       ? historyAuth.endpoint
       : `https://${host}${HISTORY_PATH}`;
 
-    async function requestPacket(packet) {
+    async function requestPacket(packet, packetSignal = signal) {
       const url = new URL(endpoint);
       for (const [key, value] of Object.entries({
         // FARAZ's upper bound is exclusive. Keep the inclusive RAW bound in
@@ -643,10 +683,10 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       for (let attempt = 1; attempt <= attempts; attempt++) {
         try {
           const { response, text } = await startChartHistoryRequest(() => {
-            const requestSignal = realtime ? AbortSignal.any([signal, AbortSignal.timeout(5_000)]) : signal;
+            const requestSignal = realtime ? AbortSignal.any([packetSignal, AbortSignal.timeout(5_000)]) : packetSignal;
             return directRequest(url, { timeoutMs: 30_000, signal: requestSignal, fresh, readResponse: readResponseText });
-          }, signal);
-          signal?.throwIfAborted();
+          }, packetSignal);
+          packetSignal?.throwIfAborted();
           if (response.status !== 200) {
             throw Object.assign(new Error(`FARAZ returned HTTP ${response.status}: ${text}`), { status: response.status });
           }
@@ -659,9 +699,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           }
           return normalized.candles;
         } catch (error) {
-          signal?.throwIfAborted();
+          packetSignal?.throwIfAborted();
           lastError = error;
-          if (attempt < attempts) await delay(RETRY_BASE_DELAY_MS * attempt, undefined, { signal });
+          if (attempt < attempts) await delay(RETRY_BASE_DELAY_MS * attempt, undefined, { signal: packetSignal });
         }
       }
       throw Object.assign(new Error(`FARAZ packet ${tehranDisplayTime(packet.from)}→${tehranDisplayTime(packet.to)} failed after ${attempts} attempt${attempts === 1 ? "" : "s"}: ${lastError?.message || "Unknown error"}`), { status: lastError?.status });
@@ -669,8 +709,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
 
     const collected = [];
     const packets = chunkRange(from, to, timeframeSeconds, CHART_UPDATE_PACKET_SIZE);
-    for (const packet of packets) {
-      collected.push(await requestPacket(packet));
+    const concurrency = realtime ? VERIFICATION_READ_CONCURRENCY : 1;
+    for await (const rows of readChartPacketsInOrder(packets, requestPacket, signal, concurrency)) {
+      collected.push(rows);
       onPacket?.(collected.length, packets.length);
     }
     return mergeCandles(collected, from, to);
@@ -681,9 +722,9 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
   }) {
     const previous = file.metadata.candleVerification;
     const ranges = verifyAll ? [] : (previous?.ranges || []).map(range => [...range]);
-    const readHistory = async (from, to, { fresh = true, onPacket } = {}) => {
+    const readHistory = async (from, to, { fresh = true, onPacket, packetSignal = signal } = {}) => {
       const history = await chartHistory({ symbolName: `${file.broker}:${file.symbol}`, resolution: file.timeframe,
-        timeframeSeconds, from, to, signal, realtime: true, fresh, onPacket });
+        timeframeSeconds, from, to, signal: packetSignal, realtime: true, fresh, onPacket });
       if (history.conflicts || history.candles.some(row => (row.time - file.from) % timeframeSeconds !== 0)) {
         throw new Error("FARAZ returned conflicting candles or candles outside the RAW timeframe grid.");
       }
@@ -764,9 +805,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           }
         }
         const historyStart = verifyAll || phase === "history" || phase === "recent" || from > closedTo ? 0 : 65;
-        for (const [batchIndex, { start, end, from, to }] of batches.entries()) {
+        const references = readChartPacketsInOrder(batches,
+          ({ from, to }, packetSignal) => readHistory(from, to, { packetSignal }), signal);
+        let batchIndex = 0;
+        for await (const reference of references) {
+          const { start, end } = batches[batchIndex++];
           const batch = rows.slice(start, end);
-          const reference = await readHistory(from, to);
           checkedHistory = true;
           const comparison = verifyAll ? recordVerifiedGapBatch(ranges, start + gapCandles.length, batch, reference)
             : recordVerifiedRows(ranges, start, batch, reference);
@@ -774,7 +818,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           checkedCount += comparison.checkedCount;
           for (const row of comparison.corrections) corrections.push(row);
           if (phase !== "recent") cursor = end;
-          reportProgress(historyStart + (95 - historyStart) * (batchIndex + 1) / batches.length);
+          reportProgress(historyStart + (95 - historyStart) * batchIndex / batches.length);
         }
         if (phase !== "recent" && (verifyAll || batches.length < historyPacketLimit)) cursor = 0;
       }
@@ -1796,20 +1840,14 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           const ranges = Array.isArray(params.ranges) ? params.ranges : [];
           if (!fileId) return json(res, 400, { error: "File ID is required." });
           if (!Number.isSafeInteger(timeframeSeconds) || timeframeSeconds < 1) return json(res, 400, { error: "A valid source timeframe is required." });
-          const candles = rawStore.read(fileId);
-          if (!candles) return json(res, 404, { error: "Candle file was not found or its logical ID is invalid." });
-          const first = Number(candles[0]?.time);
-          const last = Number(candles.at(-1)?.time);
           const metadata = rawStore.recordFarazCoverage(fileId, {
             timeframeSeconds,
             retryCount: params.retryCount,
             ranges,
-            candleCount: candles.length,
-            effectiveRange: { from: first, to: last },
             checkedThrough: params.checkedThrough,
             mode: params.mode,
           });
-          if (!metadata) return json(res, 404, { error: "Candle metadata could not be recorded." });
+          if (!metadata) return json(res, 404, { error: "Candle file was not found or its logical ID is invalid." });
           json(res, 200, { ok: true, farazCoverage: metadata.farazCoverage });
         } catch (error) {
           json(res, 400, { error: error.message });

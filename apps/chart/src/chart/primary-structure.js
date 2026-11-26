@@ -308,11 +308,12 @@ export function drawPrimaryStructures(ctx, group, {
       if (x == null || y == null || !Number.isFinite(x) || !Number.isFinite(y)) continue;
       const shifted = offsetPoint(object, x, y);
       const marker = primaryMarkerLayout(kind, direction, shifted.x, shifted.y, settings);
-      const color = object?.customized ? object.color : marker.color;
+      const appearance = object?.customized ? object : null;
+      const color = appearance?.color ?? marker.color;
       ctx.save();
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
-      ctx.globalAlpha = object?.customized ? (object.opacity ?? marker.opacity) : marker.opacity;
+      ctx.globalAlpha = appearance?.opacity ?? marker.opacity;
       ctx.setLineDash([]);
       if (visible) {
         if (marker.shape === "circle") {
@@ -325,7 +326,7 @@ export function drawPrimaryStructures(ctx, group, {
         onHit({ objectId, shape: "point", x: marker.x, y: marker.y, radius: marker.radius + 2 });
       }
       if (labelVisible) {
-        const size = object?.customized ? object.size : marker.fontSize;
+        const size = appearance?.size ?? marker.fontSize;
         const text = object?.text ?? `${kind}-${item.number}`;
         ctx.globalAlpha = 1;
         ctx.font = `${object?.weight || 600} ${size}px ${FONT}`;
@@ -357,10 +358,11 @@ export function drawPrimaryStructures(ctx, group, {
     const y = priceToY(Number(leg.price));
     if ([x1, x2, y].some(value => value == null || !Number.isFinite(value))) continue;
     const line = offsetRect(object, x1, y, x2, y);
-    const color = object?.customized ? object.color : style.mblColor;
-    const lineStyle = object?.customized ? object.lineStyle : style.mblLineStyle;
-    const width = object?.customized ? object.width : style.mblWidth;
-    const fontSize = object?.customized ? object.size : style.mblSize;
+    const appearance = object?.customized ? object : null;
+    const color = appearance?.color ?? style.mblColor;
+    const lineStyle = appearance?.lineStyle ?? style.mblLineStyle;
+    const width = appearance?.width ?? style.mblWidth;
+    const fontSize = appearance?.size ?? style.mblSize;
     const label = object?.text ?? "MBL";
     const middle = (line.x1 + line.x2) / 2;
     ctx.save();

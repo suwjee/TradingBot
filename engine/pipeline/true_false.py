@@ -5,6 +5,7 @@ from __future__ import annotations
 from bisect import bisect_left, bisect_right
 from dataclasses import dataclass
 from decimal import Decimal
+from operator import itemgetter
 
 from direction_policy import policy_for
 from lifecycle_engine import sequence_priority
@@ -34,6 +35,7 @@ class BasicRepeat:
     latest: dict
     repair_count: int
     verdict_count: int
+    base_count: int
 
 
 def _basic_rank(key, row):
@@ -42,10 +44,22 @@ def _basic_rank(key, row):
     return sequence_priority("e", row["family"]), row["number"]
 
 
+def _crossed_verdict(references, rank, price):
+    """Find the latest strictly crossed reference at the largest smaller rank."""
+    for other in sorted(references, reverse=True):
+        if other < rank:
+            history = references[other]
+            position = bisect_left(history, price, key=itemgetter(0))
+            if position:
+                return history[position - 1][1]
+    return None
+
+
 def _basic_verdicts(direction, events, first_crossing):
     repeats = {}
-    known = {}
+    references = {}
     started = False
+    lower_is_further = policy_for(direction).extreme_attr == "low"
 
     def repair(row, start):
         if first_crossing is not None and REPAIR not in row:
@@ -54,6 +68,15 @@ def _basic_verdicts(direction, events, first_crossing):
                 row[REPAIR] = crossed
 
     for key, row in events:
+        if key not in ("sZones", "eZones"):
+            # A published StopAll or directional primary starts new Basic verdict history.
+            references.clear()
+            started = False
+            for repeat in repeats.values():
+                repeat.verdict_count = 0
+                repeat.base_count = 0
+            continue
+
         is_s = key == "sZones"
         if is_s:
             started = True
@@ -62,36 +85,47 @@ def _basic_verdicts(direction, events, first_crossing):
         rank = _basic_rank(key, row)
         time = row["sourceTime"]
         lower = [other for other in repeats if other < rank]
-        parent = known.get(row.get("parentSourceTime"))
-        engulf = any(repeats[other].verdict_count >= 2 for other in lower)
+        price = Decimal(row["price"])
+        if lower_is_further:
+            price = price.copy_negate()
+        engulf = any(repeats[other].base_count >= 2 for other in lower)
+        display_restart = any(repeats[other].verdict_count >= 2 for other in lower)
         if is_s or engulf:
             verdict = "T"
-        elif parent is not None:
-            verdict = "F" if parent == "T" else "T"
         else:
-            # A final E can outlive a parent hidden by another published behavior.
-            verdict = "F" if row["number"] % 2 else "T"
-        row[VERDICT] = known[time] = verdict
+            reference = _crossed_verdict(references, rank, price)
+            if reference is None:
+                verdict = "F" if row["number"] % 2 else "T"
+            else:
+                verdict = "F" if reference == "T" else "T"
+        row[VERDICT] = verdict
+
+        # An equally or more easily crossed newer reference always wins at this rank.
+        history = references.setdefault(rank, [])
+        while history and history[-1][0] >= price:
+            history.pop()
+        history.append((price, verdict))
 
         for other in lower:
             prior = repeats.pop(other)
             if prior.latest[VERDICT] == "F" and prior.repair_count == 1:
                 repair(prior.latest, time)
 
-        if engulf:
-            # Start verdict repetition at this behavior; keep existing F repair history.
-            for repeat in repeats.values():
-                repeat.verdict_count = 0
         previous = repeats.get(rank)
         repair_count = verdict_count = 1
         if previous is not None and previous.latest[VERDICT] == verdict:
             repair_count += previous.repair_count
-            verdict_count += previous.verdict_count
+            if not display_restart:
+                # The star keeps its existing same-verdict restart rule.
+                verdict_count += previous.verdict_count
+                if verdict_count >= 2:
+                    previous.latest[REPEATED] = row[REPEATED] = True
             if verdict == "F":
                 if previous.latest.get(REPAIR, -1) >= time:
                     previous.latest.pop(REPAIR)
                 repair(row, time)
-        repeats[rank] = BasicRepeat(row, repair_count, verdict_count)
+        base_count = previous.base_count + 1 if previous is not None else 1
+        repeats[rank] = BasicRepeat(row, repair_count, verdict_count, base_count)
 
 
 def _stopall_verdicts(rows, confirmation_closed):
@@ -138,9 +172,9 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
             row.pop(REPEATED, None)
             if row.get("calculationValid") is not False:
                 by_source.setdefault(row["sourceTime"], (key, row))
-    basic = []
+    events = sorted(by_source.values(), key=lambda event: event[1]["sourceTime"])
     stops = []
-    for key, row in sorted(by_source.values(), key=lambda event: event[1]["sourceTime"]):
+    for key, row in events:
         # A published candidate with no verdict receives a neutral label.
         row[VERDICT] = None
         if key == primary_key:
@@ -150,7 +184,5 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
                 row[VERDICT] = "T" if row["number"] == 1 else "F"
         elif key == "stopAlls":
             stops.append(row)
-        else:
-            basic.append((key, row))
-    _basic_verdicts(direction, basic, first_crossing)
+    _basic_verdicts(direction, events, first_crossing)
     _stopall_verdicts(stops, stopall_confirmation_closed)

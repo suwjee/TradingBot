@@ -43,8 +43,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.15.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.0"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-21T11:08:13+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.3"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T09:41:40+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -341,6 +341,7 @@ class LiveMarketViews:
         self.candles = []
         self.lower_index = None
         self.main_index = None
+        self.closed_regimes = LiveClosedRegimes()
 
     @staticmethod
     def _update_series(engine, buckets, candles, index, first_dirty):
@@ -1752,8 +1753,78 @@ class MarketContext:
     initial_bearish_trend: bool = False
 
 
+class LiveClosedRegimes:
+    """Retain independent closed-prefix results within one verified append session."""
+
+    def __init__(self):
+        self._published = {}
+
+    @contextmanager
+    def stage(self, first_dirty_main):
+        previous = self._published
+        current = {}
+
+        def resolve(direction, market, boundary, calculate):
+            # This prefix excludes the reversal candle. Reuse it only after
+            # the current calculation finds the same independent range.
+            end = market.index_offset + boundary
+            key = (
+                direction, market.index_offset, end,
+                market.candles[boundary].timestamp, market.start_index,
+                min(market.end_index, boundary - 1),
+                market.initial_bullish_trend, market.initial_bearish_trend,
+            )
+            saved = previous.get(key) if end <= first_dirty_main else None
+            if saved is None:
+                saved = calculate()
+            current[key] = saved
+            return saved
+
+        yield resolve
+        # Retain only prefixes used in the successful current chronology.
+        self._published = current
+
+
+class MarketIndexWindow:
+    """Expose the retained market index in one independent regime's coordinates."""
+
+    def __init__(self, index, candles, start, stop):
+        self.candles = candles
+        self.times = index.times[start:stop]
+        self._length = stop - start
+        if isinstance(index, MarketIndexWindow):
+            self._base, self._start = index._base, index._start + start
+        else:
+            self._base, self._start = index, start
+
+    def _first(self, query, left, right, level):
+        left, right = max(left, 0), min(right, self._length)
+        if left >= right:
+            return None
+        position = query(self._start + left, self._start + right, level)
+        return position - self._start if position is not None else None
+
+    def first_less(self, left, right, level):
+        return self._first(self._base.first_less, left, right, level)
+
+    def first_greater(self, left, right, level):
+        return self._first(self._base.first_greater, left, right, level)
+
+    def _extreme(self, query, left, right):
+        if not 0 <= left < right <= self._length:
+            raise ValueError("Range contains no lower-timeframe candles.")
+        value, position = query(self._start + left, self._start + right)
+        return value, position - self._start
+
+    def range_minimum(self, left, right):
+        return self._extreme(self._base.range_minimum, left, right)
+
+    def range_maximum(self, left, right):
+        return self._extreme(self._base.range_maximum, left, right)
+
+
 def market_segment(market, start, stop, *, initial_bullish_trend=None,
-                   initial_bearish_trend=None):
+                   initial_bearish_trend=None, indexed_reaction=None):
     """Build a physically independent [start, stop) calculation context."""
     if not 0 <= start < stop <= len(market.candles):
         raise ValueError("Market segment must contain existing main candles.")
@@ -1762,10 +1833,21 @@ def market_segment(market, start, stop, *, initial_bullish_trend=None,
                  else market.candles[-1].timestamp + market.chronology.timeframe)
     left = bisect_left(market.chronology.second_times, first_time)
     right = bisect_left(market.chronology.second_times, stop_time)
-    candles = [replace(row,index=index) for index,row in enumerate(market.candles[start:stop])]
-    seconds = [replace(row,index=index) for index,row in enumerate(market.seconds[left:right])]
-    chronology = type(market.chronology)(candles,seconds,
-        int(market.chronology.timeframe.total_seconds()))
+    candles = market.candles[start:stop]
+    seconds = market.seconds[left:right]
+    if indexed_reaction is None or start:
+        candles = [replace(row, index=index) for index, row in enumerate(candles)]
+    if indexed_reaction is None or left:
+        seconds = [replace(row, index=index) for index, row in enumerate(seconds)]
+    indexes = ()
+    if indexed_reaction is not None:
+        lower = MarketIndexWindow(market.lower_index, seconds, left, right)
+        main = MarketIndexWindow(market.chronology.main_range_index, candles, start, stop)
+        register = indexed_reaction.shared_lower_timeframe_index
+        indexes = register(seconds, prepared=lower), register(candles, prepared=main)
+    chronology = type(market.chronology)(
+        candles, seconds, int(market.chronology.timeframe.total_seconds()), *indexes,
+    )
     return MarketContext(seconds,candles,chronology.lower_index,chronology,
         max(0,market.start_index-start),min(stop-start-1,market.end_index-start),
         market.index_offset+start,
@@ -2038,6 +2120,7 @@ class PipelineState:
     initial_order_geometry: dict[str, object]
     internal_reaction_identities: dict[str, set[tuple[int, int]]]
     full_e_zones: dict[str, list[object]]
+    full_stopalls_by_direction: dict[str, list[object]]
     full_e_detectors: dict[str, object]
     full_s_detectors: dict[str, object]
     full_lines_by_direction: dict[str, list[object]]
@@ -2064,6 +2147,7 @@ class FullDirectionState:
     s_zones: list[object]
     s_candidates: list[object]
     initial_s_zones: list[object]
+    stopalls: list[object] = field(default_factory=list)
 
 
 def create_e_detector(
@@ -2509,39 +2593,51 @@ def calculate_direction_with_order_b_feedback(
         )
         if shared_stages is None:
             shared_stages = state
-        # The feedback pass and final visibility must use the SAME optional
-        # StopAll contract. Otherwise the converged Order_B causes can name a
-        # StopAll owner which the final pass intentionally never calculates.
         if stopall_enabled:
+            # An independent E can donate at an omitted physical source.
+            # Keep the accepted E and its provenance at occupied sources.
+            accepted_sources = {(item.source_index, item.source_time) for item in state.e_zones}
+            independent = state.e_detector.restore_independent_s_roots(state.e_zones)
+            donors = [
+                *state.e_zones,
+                *(item for item in independent
+                  if (item.source_index, item.source_time) not in accepted_sources),
+            ]
             e_zones, stopalls = engines.lifecycle.reconcile_stopall_lifecycle(
-                state.e_detector, state.s_zones, state.e_zones,
+                state.e_detector, state.s_zones, donors,
                 market.chronology, direction,
+                lambda label, work: timed(timings, label, work),
                 stopall_finder=live.stopall_finder(("feedback", _pass)) if live is not None else None,
             )
         else:
             e_zones, stopalls = list(state.e_zones), []
         e_zones = state.e_detector.restore_independent_s_roots(e_zones)
         e_zones = state.e_detector.ensure_accepted_order_audit(e_zones)
-        discovered = engines.e_zone.discover_accepted_order_b_reset_legs(
-            direction,
-            market.chronology,
-            full_results[direction].reactions,
-            full_results[direction].resets,
-            full_results[opposite].reactions,
-            state.s_detector.eligible_a_zones,
-            state.invalid_a_identities,
-            state.s_zones,
-            e_zones,
-            stopalls,
-            state.s_detector,
-            state.e_detector,
-            engines.lifecycle.module_priority,
-            reset_leg_finder=live.order_b_finder(("feedback", _pass)) if live is not None else None,
+        discovered = timed(
+            timings,
+            f"Order_B reset legs - {direction.title()}",
+            lambda: engines.e_zone.discover_accepted_order_b_reset_legs(
+                direction,
+                market.chronology,
+                full_results[direction].reactions,
+                full_results[direction].resets,
+                full_results[opposite].reactions,
+                state.s_detector.eligible_a_zones,
+                state.invalid_a_identities,
+                state.s_zones,
+                e_zones,
+                stopalls,
+                state.s_detector,
+                state.e_detector,
+                engines.lifecycle.module_priority,
+                reset_leg_finder=live.order_b_finder(("feedback", _pass)) if live is not None else None,
+            ),
         )
         old_identity = order_b_leg_identity(order_b_legs)
         new_identity = order_b_leg_identity(discovered)
         if new_identity == old_identity:
-            return state
+            state.e_detector.register_order_b_reset_legs(discovered)
+            return replace(state, e_zones=e_zones, stopalls=stopalls)
         if new_identity in seen:
             raise RuntimeError("Order_B lifecycle feedback did not converge.")
         seen.add(new_identity)
@@ -2576,6 +2672,7 @@ def prepare_pipeline_state(
     reusable_full_context = e_engine is not None and args.s_zones == "enabled"
 
     full_e_zones: dict[str, list[object]] = {}
+    full_stopalls_by_direction: dict[str, list[object]] = {}
     full_e_detectors: dict[str, object] = {}
     full_s_detectors: dict[str, object] = {}
     full_lines_by_direction: dict[str, list[object]] = {}
@@ -2648,6 +2745,7 @@ def prepare_pipeline_state(
             if report_stage is not None:
                 report_stage(f"{direction.title()} lifecycle ready")
             full_e_zones[direction] = state.e_zones
+            full_stopalls_by_direction[direction] = state.stopalls
             full_e_detectors[direction] = state.e_detector
             full_s_detectors[direction] = state.s_detector
             full_lines_by_direction[direction] = state.blue_lines
@@ -2691,6 +2789,7 @@ def prepare_pipeline_state(
         initial_order_geometry=initial_order_geometry,
         internal_reaction_identities=internal_reaction_identities,
         full_e_zones=full_e_zones,
+        full_stopalls_by_direction=full_stopalls_by_direction,
         full_e_detectors=full_e_detectors,
         full_s_detectors=full_s_detectors,
         full_lines_by_direction=full_lines_by_direction,
@@ -2839,7 +2938,6 @@ def calculate_direction_range_state(
 
 def finalize_direction_visibility(
     direction: str,
-    args,
     engines: EngineBundle,
     market: MarketContext,
     state: PipelineState,
@@ -2861,82 +2959,18 @@ def finalize_direction_visibility(
         market.candles,
     )
 
+    # Feedback already accepted the same E and StopAll causes used by Order_B.
+    # Visibility only selects from that lifecycle for the requested range.
     e_zones = list(direction_state.e_zones)
-    stopall_e_zones = e_zones
+    stopalls = list(state.full_stopalls_by_direction.get(direction, ()))
     detector = state.full_e_detectors.get(direction)
     if detector is not None:
-        # E reconciliation can omit an otherwise accepted independent S root.
-        # An omitted physical source must still be available as a StopAll donor.
-        # Preserve existing dominant E objects/provenance: restoration may
-        # replace an E at an already-accepted source, but that replacement is
-        # only the final visibility decision, not a new StopAll donor.
-        accepted_sources = {
-            (item.source_index, item.source_time) for item in e_zones
-        }
-        independent = detector.restore_independent_s_roots(e_zones)
-        missing = [
-            item for item in independent
-            if (item.source_index, item.source_time) not in accepted_sources
-        ]
-        if missing:
-            stopall_e_zones = [*e_zones, *missing]
-    stopalls: list[object] = []
-    stopall_enabled = (
-        args.lifecycle_engine is not None
-        and engines.e_zone is not None
-        and args.s_zones == "enabled"
-    )
-    if stopall_enabled and direction in state.full_e_detectors:
-        e_zones, stopalls = lifecycle_engine.reconcile_stopall_lifecycle(
-            state.full_e_detectors[direction],
-            direction_state.accepted_s_zones,
-            stopall_e_zones,
-            market.chronology,
-            direction,
-            lambda label, work: timed(timings, label, work),
-            stopall_finder=state.live_stages.stopall_finder("final") if state.live_stages is not None else None,
-        )
-
-    if direction in state.full_e_detectors:
-        # Preserve the preexisting final independent-root visibility policy.
-        # Only missing physical donor identities were supplemented for StopAll.
-        detector = state.full_e_detectors[direction]
-        e_zones = detector.restore_independent_s_roots(e_zones)
-        # Root restoration occurs after the detector's normal ledger rebuild.
-        # Sync missing audit identities without deleting historical Orders.
-        e_zones = detector.ensure_accepted_order_audit(e_zones)
         visibility_stop = lambda item: detector.parent_stop(
             "S" if hasattr(item, "a_source_time") else "E", item
         )
-
-        reset_legs = timed(
-            timings,
-            f"Order_B reset legs - {direction.title()}",
-            lambda: engines.e_zone.discover_accepted_order_b_reset_legs(
-                direction,
-                market.chronology,
-                state.results[direction].reactions,
-                state.results[direction].resets,
-                state.results[opposite].reactions,
-                direction_state.a_zones,
-                direction_state.invalid_a_identities,
-                direction_state.accepted_s_zones,
-                e_zones,
-                stopalls,
-                state.full_s_detectors[direction],
-                detector,
-                lifecycle_engine.module_priority,
-                reset_leg_finder=state.live_stages.order_b_finder("final") if state.live_stages is not None else None,
-            ),
-        )
-        if order_b_leg_identity(reset_legs) != order_b_leg_identity(detector.order_b_legs):
-            raise RuntimeError(
-                "Final Order_B lifecycle causes differ from converged E feedback."
-            )
-        detector.register_order_b_reset_legs(reset_legs)
     else:
         visibility_stop = lambda item: state.full_s_detectors[direction].first_a_stop(
-            Decimal(str(item.price)), item.decision_event_time
+            Decimal(str(getattr(item, "price"))), item.decision_event_time
         )
 
     # Capture accepted objects before presentation range/internal filtering.
@@ -3377,7 +3411,7 @@ def calculate_primary_structures(args, engines, market, state, visibility, timin
         opposite, args, engines, market, state, timings
     )
     opposite_visibility = finalize_direction_visibility(
-        opposite, args, engines, market, state, opposite_state, timings
+        opposite, engines, market, state, opposite_state, timings
     )
     groups[opposite] = opposite_visibility.primary_groups
     accepted_by_owner = {}
@@ -3438,7 +3472,6 @@ def build_direction_output(
     )
     visibility = finalize_direction_visibility(
         direction,
-        args,
         engines,
         market,
         state,
@@ -3495,13 +3528,16 @@ def merge_regime_outputs(regimes):
     return output
 
 
-def build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None):
+def build_reversed_trend_outputs(args, engines, market, transition, timings, *,
+                                 live=None, closed_regime=None):
     """Alternate fresh directional regimes without carrying prior input/state."""
     from copy import copy
     regimes = []
     current = market
     incoming = None
     current_direction = "bearish" if getattr(transition, "target_direction", "bullish") == "bullish" else "bullish"
+    indexed_reaction = engines.reaction if closed_regime is not None else None
+    resolve_closed = live.closed_regime if live is not None else closed_regime
 
     def calculate(context, direction, continuation=None):
         local_args = copy(args)
@@ -3514,6 +3550,8 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
         return group, local_state
 
     def publish(group, index_offset, first_time, *, stopped=False):
+        # Projection copies even zero-offset rows before adding presentation
+        # metadata or applying horizon-dependent T/F verdicts.
         group = absolute_payload_indexes(group, index_offset)
         if index_offset != market.index_offset:
             group["calculationStartTime"] = epoch(first_time)
@@ -3536,7 +3574,7 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
         if not 0 < boundary < len(current.candles):
             raise RuntimeError("A trend reversal must advance beyond its independent regime start.")
         def calculate_closed(current=current, boundary=boundary, current_direction=current_direction):
-            prefix = market_segment(current, 0, boundary)
+            prefix = market_segment(current, 0, boundary, indexed_reaction=indexed_reaction)
             has_history = prefix.start_index <= prefix.end_index
             if not has_history:
                 prefix = replace(prefix, start_index=0, end_index=len(prefix.candles)-1)
@@ -3554,8 +3592,8 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
                     engines.reaction.LiveReactionContinuation._release_indexes(prefix.candles, prefix.seconds)
 
         index_offset, first_time, has_history, history, confirmed = (
-            calculate_closed() if live is None
-            else live.closed_regime(current_direction, current, boundary, calculate_closed)
+            resolve_closed(current_direction, current, boundary, calculate_closed)
+            if resolve_closed is not None else calculate_closed()
         )
         if not any(point.number == 3 and point.source_time == transition.high.source_time
                    and point.price == transition.level for point in confirmed):
@@ -3572,7 +3610,8 @@ def build_reversed_trend_outputs(args, engines, market, transition, timings, *, 
         target = transition.target_direction
         incoming = serialize_trend_transition(transition, current)
         current = market_segment(current, boundary, len(current.candles),
-            initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish")
+            initial_bullish_trend=target == "bullish", initial_bearish_trend=target == "bearish",
+            indexed_reaction=indexed_reaction)
         current_direction = target
         try:
             continuation = live.active_regime(current, current_direction) if live is not None else None
@@ -3598,6 +3637,8 @@ def build_response_payload(
     state: PipelineState,
     timings: dict[str, float],
     pipeline_started: float,
+    *,
+    closed_regime=None,
 ) -> dict[str, object]:
     """Build the public response envelope around serialized direction outputs."""
     e_enabled = engines.e_zone is not None and args.s_zones == "enabled"
@@ -3639,7 +3680,9 @@ def build_response_payload(
     transition = getattr(state.primary_result,"transition",None)
     if transition is not None and transition.index <= market.end_index:
         payload["directions"] = build_reversed_trend_outputs(
-            args,engines,market,transition,timings,live=state.live_stages)
+            args, engines, market, transition, timings,
+            live=state.live_stages, closed_regime=closed_regime,
+        )
         candidates = [(segment.get("calculationStartIndex", -1), direction)
             for direction, group in payload["directions"].items()
             for segment in group.get("calculationSegments", [group])]
@@ -3697,13 +3740,21 @@ def calculate_live_from_buckets(
     live_views: LiveMarketViews | None = None, bucket_delta: BucketAppend | None = None, report_stage=None,
 ) -> dict[str, object]:
     """Replay every trading stage from freshly validated, normalized RAW input."""
-    return _run_live_calculation(
-        args, engines, _prepare_market_context_from_buckets,
-        (buckets.second_buckets, buckets.main_buckets, live_views, bucket_delta), report_stage,
-    )
+    inputs = buckets.second_buckets, buckets.main_buckets, live_views, bucket_delta
+    if live_views is None:
+        return _run_live_calculation(
+            args, engines, _prepare_market_context_from_buckets, inputs, report_stage,
+        )
+    assert bucket_delta is not None
+    with live_views.closed_regimes.stage(bucket_delta.first_dirty_main) as closed_regime:
+        return _run_live_calculation(
+            args, engines, _prepare_market_context_from_buckets, inputs, report_stage,
+            closed_regime=closed_regime,
+        )
 
 
-def _run_live_calculation(args, engines, prepare_market, market_inputs, report_stage):
+def _run_live_calculation(args, engines, prepare_market, market_inputs, report_stage, *,
+                          closed_regime=None):
     started = perf_counter()
     timings: dict[str, float] = {}
     with _market_calculation_scope(engines.reaction):
@@ -3711,7 +3762,9 @@ def _run_live_calculation(args, engines, prepare_market, market_inputs, report_s
         if report_stage is not None:
             report_stage("Market chronology ready")
         state = prepare_pipeline_state(args, engines, market, timings, report_stage=report_stage)
-        return build_response_payload(args, engines, market, state, timings, started)
+        return build_response_payload(
+            args, engines, market, state, timings, started, closed_regime=closed_regime,
+        )
 
 
 def main() -> int:
