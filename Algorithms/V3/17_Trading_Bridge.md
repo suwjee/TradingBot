@@ -287,3 +287,19 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **Transition output (1882–1894).** ID direction:trend:source epoch; previous direction inverse; source and primary point indexes offset, exact time/level string; ph/pl Number literal 3; icon index/time/high or low string or null if absent; compatibility field high used both directions.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1860-L1896). [CP306 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP306_Completion.json).
+
+## CP307 source-only clarification — CLI and Engine Bundle Loading
+
+**Engine paths (1897–1941).** Required reaction/Blue/A/S Path with aliases, E/lifecycle optional aliases; argparse parsing errors propagate.
+
+**Flags (1942–1956).** Blue/A/S enabled/disabled default enabled; bridge-output store_true default false; pl-ph enabled/disabled default enabled.
+
+**Market args (1957–1971).** Data Path, timeframe/from/to int, direction bullish/bearish/both required; RAW timeframe int default one; both timeframes >=1 else ValueError; no range-order check.
+
+**Required load order (1974–1989).** Reaction, Blue, A, S timed and fixed module names, configured paths; no local recovery.
+
+**E and lifecycle (1990–2004).** E timed if path not None else None; lifecycle always loaded, truthy configured path or fixed default; required loaders not gated by features.
+
+**Primary bundle (2005–2009).** Fixed PL_PH_detector path only pl_ph equals enabled (missing defaults disabled), untimed; bundle positional order reaction/Blue/A/S/E/lifecycle/primary.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1897-L2011). [CP307 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP307_Completion.json).
