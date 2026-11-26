@@ -1,0 +1,528 @@
+{
+  "checkpoint": 292,
+  "subcheck": "CP292_EFFECT_EXIT_GAP_RECONSTRUCTION",
+  "status": "PASS_SCOPED_SOURCE_EFFECT_EXIT_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "9a2a906956071af7663107155c55a66b91158edf",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "method": "Historical canonical inventory retrieved by Git blob identity 0f0ac9496634808eb76847494cdedcf71dc2dae0; reconcile row complement against neighboring old/current anchors and pinned current source. Effect flags follow historical static schema patterns and are inferred, not measured side effects. Explicit mutations distinguished from unknown callback effects and heuristic flags.",
+  "counts": {
+    "effects": 33,
+    "exits": 15
+  },
+  "rows": {
+    "effects": [
+      {
+        "row": 69,
+        "source_line": 344,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:339:4:__init__",
+        "contract": "BD02",
+        "meaning": "Initialize per-session cache owner."
+      },
+      {
+        "row": 151,
+        "source_line": 1760,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1759:4:__init__",
+        "contract": "BD04",
+        "meaning": "Initialize empty published registry."
+      },
+      {
+        "row": 152,
+        "source_line": 1777,
+        "source_anchor_column": 20,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Read exact preceding mapping conditionally; nominal read, not proven external mutation."
+      },
+      {
+        "row": 153,
+        "source_line": 1779,
+        "source_anchor_column": 24,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Supplied calculation callback; effect conditional on callback."
+      },
+      {
+        "row": 154,
+        "source_line": 1780,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Stage resolved entry under exact key."
+      },
+      {
+        "row": 155,
+        "source_line": 1785,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1763:4:stage",
+        "contract": "BD05",
+        "meaning": "Replace published map only after normal stage resumption."
+      },
+      {
+        "row": 156,
+        "source_line": 1792,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Retain local row view."
+      },
+      {
+        "row": 157,
+        "source_line": 1793,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Slice timestamps."
+      },
+      {
+        "row": 158,
+        "source_line": 1794,
+        "source_anchor_column": 8,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Store local length."
+      },
+      {
+        "row": 159,
+        "source_line": 1796,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Flatten nested base."
+      },
+      {
+        "row": 160,
+        "source_line": 1796,
+        "source_anchor_column": 24,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Store flattened start."
+      },
+      {
+        "row": 161,
+        "source_line": 1798,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Retain direct base."
+      },
+      {
+        "row": 162,
+        "source_line": 1798,
+        "source_anchor_column": 24,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1791:4:__init__",
+        "contract": "BD08",
+        "meaning": "Store direct start."
+      },
+      {
+        "row": 163,
+        "source_line": 1804,
+        "source_anchor_column": 19,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Call supplied first-cross method."
+      },
+      {
+        "row": 164,
+        "source_line": 1816,
+        "source_anchor_column": 26,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Call supplied extrema method."
+      },
+      {
+        "row": 165,
+        "source_line": 1839,
+        "source_anchor_column": 19,
+        "historical_schema_inferred_flags": [
+          "POTENTIAL_MUTATION",
+          "POTENTIAL_IO_OR_RUNTIME_BOUNDARY"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Produce copied locally reindexed main records; heuristic effect flag does not prove input mutation."
+      },
+      {
+        "row": 166,
+        "source_line": 1841,
+        "source_anchor_column": 19,
+        "historical_schema_inferred_flags": [
+          "POTENTIAL_MUTATION",
+          "POTENTIAL_IO_OR_RUNTIME_BOUNDARY"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Produce copied locally reindexed lower records; same qualification."
+      },
+      {
+        "row": 167,
+        "source_line": 1847,
+        "source_anchor_column": 18,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Register prepared lower window."
+      },
+      {
+        "row": 168,
+        "source_line": 1847,
+        "source_anchor_column": 53,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Register prepared main window."
+      },
+      {
+        "row": 169,
+        "source_line": 1848,
+        "source_anchor_column": 17,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Dynamic construction of same chronology class."
+      },
+      {
+        "row": 170,
+        "source_line": 1849,
+        "source_anchor_column": 30,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:1826:0:market_segment",
+        "contract": "BD15",
+        "meaning": "Duration method; nominal read."
+      },
+      {
+        "row": 245,
+        "source_line": 2600,
+        "source_anchor_column": 26,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Restore independent roots for donor selection."
+      },
+      {
+        "row": 246,
+        "source_line": 2606,
+        "source_anchor_column": 32,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Configured lifecycle reconciliation."
+      },
+      {
+        "row": 250,
+        "source_line": 2618,
+        "source_anchor_column": 36,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Timing label, not trading change."
+      },
+      {
+        "row": 251,
+        "source_line": 2619,
+        "source_anchor_column": 20,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Discover legs from accepted context through callback."
+      },
+      {
+        "row": 252,
+        "source_line": 2633,
+        "source_anchor_column": 33,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Conditional continuation finder."
+      },
+      {
+        "row": 253,
+        "source_line": 2639,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Register converged reset legs."
+      },
+      {
+        "row": 254,
+        "source_line": 2640,
+        "source_anchor_column": 19,
+        "historical_schema_inferred_flags": [
+          "POTENTIAL_MUTATION",
+          "POTENTIAL_IO_OR_RUNTIME_BOUNDARY"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Create returned converged state; no inferred in-place mutation."
+      },
+      {
+        "row": 269,
+        "source_line": 2748,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "EXPLICIT_OBJECT_MUTATION"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2648:0:prepare_pipeline_state",
+        "contract": "BD19",
+        "meaning": "Store accepted StopAll list by direction."
+      },
+      {
+        "row": 301,
+        "source_line": 2965,
+        "source_anchor_column": 20,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2939:0:finalize_direction_visibility",
+        "contract": "BD20",
+        "meaning": "Read accepted list from retained state."
+      },
+      {
+        "row": 304,
+        "source_line": 2972,
+        "source_anchor_column": 39,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:2939:0:finalize_direction_visibility",
+        "contract": "BD20",
+        "meaning": "Fallback callback invokes stored S detector."
+      },
+      {
+        "row": 394,
+        "source_line": 3595,
+        "source_anchor_column": 12,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3531:0:build_reversed_trend_outputs",
+        "contract": "BD23",
+        "meaning": "Optional retained resolver invocation."
+      },
+      {
+        "row": 416,
+        "source_line": 3749,
+        "source_anchor_column": 9,
+        "historical_schema_inferred_flags": [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ],
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Stage registry under first dirty main index."
+      }
+    ],
+    "exits": [
+      {
+        "row": 108,
+        "source_line": 1781,
+        "source_anchor_column": 12,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1767:8:resolve",
+        "contract": "BD06",
+        "meaning": "Return resolved prefix to caller."
+      },
+      {
+        "row": 109,
+        "source_line": 1783,
+        "source_anchor_column": 8,
+        "kind": "Yield",
+        "owner": "engine/bridge/trading_pipeline.py:1763:4:stage",
+        "contract": "BD05",
+        "meaning": "Suspend stage with resolver; continuation determines publish."
+      },
+      {
+        "row": 110,
+        "source_line": 1803,
+        "source_anchor_column": 12,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "No position for empty first-cross window."
+      },
+      {
+        "row": 111,
+        "source_line": 1805,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1800:4:_first",
+        "contract": "BD09",
+        "meaning": "Local index or null."
+      },
+      {
+        "row": 112,
+        "source_line": 1808,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1807:4:first_less",
+        "contract": "BD10",
+        "meaning": "Delegate strict lower query."
+      },
+      {
+        "row": 113,
+        "source_line": 1811,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1810:4:first_greater",
+        "contract": "BD11",
+        "meaning": "Delegate strict upper query."
+      },
+      {
+        "row": 114,
+        "source_line": 1815,
+        "source_anchor_column": 12,
+        "kind": "Raise",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Reject invalid extrema window."
+      },
+      {
+        "row": 115,
+        "source_line": 1817,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1813:4:_extreme",
+        "contract": "BD12",
+        "meaning": "Return unchanged extrema value and local position."
+      },
+      {
+        "row": 116,
+        "source_line": 1820,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1819:4:range_minimum",
+        "contract": "BD13",
+        "meaning": "Delegate base minimum."
+      },
+      {
+        "row": 117,
+        "source_line": 1823,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:1822:4:range_maximum",
+        "contract": "BD14",
+        "meaning": "Delegate base maximum."
+      },
+      {
+        "row": 138,
+        "source_line": 2640,
+        "source_anchor_column": 12,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:2569:0:calculate_direction_with_order_b_feedback",
+        "contract": "BD18",
+        "meaning": "Convergence return includes accepted E and StopAll."
+      },
+      {
+        "row": 141,
+        "source_line": 2785,
+        "source_anchor_column": 4,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:2648:0:prepare_pipeline_state",
+        "contract": "BD19",
+        "meaning": "Publish retained maps, detector state and validity."
+      },
+      {
+        "row": 177,
+        "source_line": 3745,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Fresh bucket replay path."
+      },
+      {
+        "row": 178,
+        "source_line": 3750,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "contract": "BD26",
+        "meaning": "Staged replay; normal context exit publishes before return."
+      },
+      {
+        "row": 179,
+        "source_line": 3765,
+        "source_anchor_column": 8,
+        "kind": "Return",
+        "owner": "engine/bridge/trading_pipeline.py:3756:0:_run_live_calculation",
+        "contract": "BD27",
+        "meaning": "Propagate staged resolver to final output; calculation scope cleans up."
+      }
+    ]
+  },
+  "limits": [
+    "Canonical row numbering, exact AST span and anonymous scope IDs not independently regenerated.",
+    "Potential mutation/boundary flag is not proof of mutation or IO; conditional dispatch and runtime remain unexecuted.",
+    "Current canonical bridge inventory blob d1c6eba3253651e485cd4c7a26cb3c851bd63abd could not be retrieved (GitHub 404); no archive recovery attempted."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN"
+}
