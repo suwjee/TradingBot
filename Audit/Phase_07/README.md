@@ -1058,3 +1058,128 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 216 — S-eligible A audit and initial E/S reconciliation
 
 [Local review](Semantic_Closure_B09_55.md) and [site evidence](Semantic_Closure_B09_55.json): 25 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1320/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 217 — A visibility and all-eligible dominant-stop validation
+
+[Local review](Semantic_Closure_B09_56.md) and [site evidence](Semantic_Closure_B09_56.json): 16 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1336/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 218 — Invalid A/S identity sets and stage-specific S exclusion
+
+[Local review](Semantic_Closure_B09_57.md) and [site evidence](Semantic_Closure_B09_57.json): 27 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1363/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 219 — Accepted A sources, pending S and exact Order context
+
+[Local review](Semantic_Closure_B09_58.md) and [site evidence](Semantic_Closure_B09_58.json): 25 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1388/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 220 — Final E rebuild with accepted audit and exception scope
+
+[Local review](Semantic_Closure_B09_59.md) and [site evidence](Semantic_Closure_B09_59.json): 3 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1391/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 221 — Shared accepted Order reconciliation and one E rebuild
+
+[Local review](Semantic_Closure_B09_60.md) and [site evidence](Semantic_Closure_B09_60.json): 15 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1406/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 222 — Consumed S evidence and physical E continuation replacement
+
+[Local review](Semantic_Closure_B09_61.md) and [site evidence](Semantic_Closure_B09_61.json): 26 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1432/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 223 — Final accepted audit rebuild and S invalidation
+
+[Local review](Semantic_Closure_B09_62.md) and [site evidence](Semantic_Closure_B09_62.json): 9 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1441/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 224 — Order_B feedback initialization and retained stage reuse
+
+[Local review](Semantic_Closure_B09_63.md) and [site evidence](Semantic_Closure_B09_63.json): 8 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1449/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 225 — Feedback StopAll lifecycle and accepted reset-leg discovery
+
+[Local review](Semantic_Closure_B09_64.md) and [site evidence](Semantic_Closure_B09_64.json): 12 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1461/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 226 — Order_B convergence, oscillation and bounded failure
+
+[Local review](Semantic_Closure_B09_65.md) and [site evidence](Semantic_Closure_B09_65.json): 9 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1470/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 227 — Requested directions, behavior dependencies and reusable context
+
+[Local review](Semantic_Closure_B09_66.md) and [site evidence](Semantic_Closure_B09_66.json): 10 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1480/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 228 — Full geometry detectors, native/live Reaction and ownership
+
+[Local review](Semantic_Closure_B09_67.md) and [site evidence](Semantic_Closure_B09_67.json): 25 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1505/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 229 — Independent post-stop geometry closures and primary direction expansion
+
+[Local review](Semantic_Closure_B09_68.md) and [site evidence](Semantic_Closure_B09_68.json): 8 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1513/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 230 — Directional feedback execution and map publication ordering
+
+[Local review](Semantic_Closure_B09_69.md) and [site evidence](Semantic_Closure_B09_69.json): 7 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1520/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 231 — Nonreusable geometry, required Reaction directions and state return
+
+[Local review](Semantic_Closure_B09_70.md) and [site evidence](Semantic_Closure_B09_70.json): 20 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1540/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 232 — Range and visibility state records
+
+[Local review](Semantic_Closure_B09_71.md) and [site evidence](Semantic_Closure_B09_71.json): 3 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1543/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 233 — Blue dependency and range selection
+
+[Local review](Semantic_Closure_B09_72.md) and [site evidence](Semantic_Closure_B09_72.json): 17 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1560/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 234 — A and S range state, full candidates and detector references
+
+[Local review](Semantic_Closure_B09_73.md) and [site evidence](Semantic_Closure_B09_73.json): 30 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1590/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 235 — Initial visibility and StopAll donor supplementation
+
+[Local review](Semantic_Closure_B09_74.md) and [site evidence](Semantic_Closure_B09_74.json): 25 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1615/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 236 — Final E restoration and Order_B equality invariant
+
+[Local review](Semantic_Closure_B09_75.md) and [site evidence](Semantic_Closure_B09_75.json): 22 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1637/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 237 — Pre-range projection snapshots and full primary groups
+
+[Local review](Semantic_Closure_B09_76.md) and [site evidence](Semantic_Closure_B09_76.json): 14 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1651/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 238 — Inclusive display clipping, invalid roots and internal ownership
+
+[Local review](Semantic_Closure_B09_77.md) and [site evidence](Semantic_Closure_B09_77.json): 50 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1701/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 239 — Required physical Order identities and final visibility record
+
+[Local review](Semantic_Closure_B09_78.md) and [site evidence](Semantic_Closure_B09_78.json): 20 original rows, 1 supplemental item, 1 resolved clarification groups; local PASS. Trading Pipeline 1721/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 240 — Direct legacy direction serialization
+
+[Local review](Semantic_Closure_B09_79.md) and [site evidence](Semantic_Closure_B09_79.json): 21 original rows, 1 supplemental item, 2 resolved clarification groups; local PASS. Trading Pipeline 1742/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 241 — Single selection and additive bridge serialization
+
+[Local review](Semantic_Closure_B09_80.md) and [site evidence](Semantic_Closure_B09_80.json): 29 original rows, 1 supplemental item, 3 resolved clarification groups; local PASS. Trading Pipeline 1771/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

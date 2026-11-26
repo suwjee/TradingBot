@@ -178,13 +178,13 @@ Recursively copy lists/dicts. Exact nonnegative int values under key index or su
 Publish target direction (default bullish) and opposite previous direction, source main/absolute index, event, level string, PH3/PL3 source identity; id direction:trend:source epoch. Icon candle index source+49 if exists, corresponding time and High for bullish target/Low otherwise, else null. Target icon is actual full-history candle at source index+49, not an extrapolated time or a visible-end-clamped candle. Target lookup uses only upper bound. Direction defaults bullish if attribute absent; exact bullish selects ph fields, previous bearish and icon High, all other values select pl/previous bullish/Low. Absolute source and icon indexes add market offset; prices are stringified, not rounded.
 
 ### TB79 — build_legacy_payload
-Return reactions,resets, enabled Blue and A (disabled empty), S,E,StopAll, and serialized audit if E detector otherwise empty. Blue range passed through.
+Return reactions,resets, enabled Blue and A (disabled empty), S,E,StopAll, and serialized audit if E detector otherwise empty. Blue range passed through. Direct legacy Blue receives visible bounds; A is enabled independently, S/E/StopAll are already displayed, and audit is selected by directional E-map membership.
 
 ### TB80 — serialize_reactions_from_one_selection
-TB23 once then TB24 with selection, return reactions,resets,selection triple.
+TB23 once then TB24 with selection, return reactions,resets,selection triple. The native/public selection is constructed once and passed as selected_items to TB24, preventing reselection and reapplication of transform.
 
 ### TB81 — build_payload
-Legacy arrays from selected objects; append bridgeOutput from TB60 with same selections. Return payload.
+Legacy arrays from selected objects; append bridgeOutput from TB60 with same selections. Return payload. Additive output receives the exact selections used by legacy serialization, with selected Blue already range-filtered and audit sorted by native main First/Break key. No separate trading calculation.
 
 ### TB82 — serialize_primary_order
 Preserve ownerDirection distinct from physical direction. reactionNumber/Mode, types in fixed parent-stop->Order_A then reset-leg->Order_B order if causes present; auditCauses values TB83; First/Break index/time, exact confirmation, stopLevel/source/hit index/time/event, causes list, nullable boxTop/Bottom string. Main times from market candle positions.
