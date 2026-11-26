@@ -1,0 +1,13 @@
+# Phase 07 — Checkpoint 242 / W1 B09-81
+
+Baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`; entry algorithm `2a6075ce99860177d1662de27bfd9669fb4783b3`. **Local partition PASS; Phase 07 INCOMPLETE; Phase 08 BLOCKED.** TB82/TB83, lines 3220–3248; 28 original category rows; cumulative B09 1799/2276.
+
+[Site evidence](Semantic_Closure_B09_81.json), [immutable crosswalk](Decision_Site_Crosswalk_01.json), [context ledger](Semantic_Context_Trading_Pipeline.json), [active contract](../../Algorithms/V3/19_Serialization.md#L189). Pinned blob `7b28fa7e93c8980c082cb277fb75556959b1abcf`; 8 branches, 3 comparisons, 17 calls, 0 arithmetic rows; exact ID, span, procedure and operation matching validated.
+
+## Primary Order physical identity, cause ordering and exact serialization
+
+- Owner direction is passed through independently of the physical order direction. Cause type selection traverses the fixed parent-stop then reset-leg pair sequence; unknown causes cannot yield types, duplicates do not duplicate types, while the independent causes list retains native order and duplicates. The audit cause array preserves cause encounter order, keys and mapping iteration order. Each mapping value is converted once. [Source](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3220-L3248) · [Contract](../../Algorithms/V3/19_Serialization.md#L190).
+- The four main timestamps (First, Break, stop source, stop hit) directly index market candles with native indexes; no local bounds, absence, or horizon fallback. Confirmation and stop-hit event timestamps independently convert the native event datetime via epoch. Stop and non-null box values use direct string conversion; null boxes are checked independently by identity, not truthiness. [Source](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3220-L3248) · [Contract](../../Algorithms/V3/19_Serialization.md#L190).
+- Datetime instances are tested before Decimal instances, so the first matching conversion returns immediately. Decimal values are stringified without quantization; other values, including nested containers, are returned unchanged rather than recursively traversed. The delegated epoch helper uses its cached value if non-null, otherwise replaces timezone with TEHRAN, converts timestamp to int and caches it. Invalid required shapes/indexes propagate exceptions; no local repair. [Source](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3220-L3248) · [Contract](../../Algorithms/V3/19_Serialization.md#L193).
+
+W2/W3/W4 open. No RAW payload read, runtime, benchmark or production change.
