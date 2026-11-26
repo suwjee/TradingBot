@@ -1,0 +1,43 @@
+{
+  "checkpoint": 320,
+  "status": "PASS_SCOPED_RB10_DEPENDENCY_REBASELINE",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "B01–B08 unchanged owner continuity and current source dependency interfaces, not W2 cross-owner or W3 forensic acceptance.",
+  "owners": 8,
+  "modules": 13,
+  "w1_revalidated": 8908,
+  "additional_structural_identity": 29652,
+  "dependency_contracts": 33,
+  "category_totals": {
+    "branches": 2485,
+    "comparisons": 1782,
+    "arithmetic": 888,
+    "calls": 3753,
+    "accesses": 27135,
+    "effects": 1538,
+    "exits": 979
+  },
+  "changed_call_complement": 72,
+  "dynamic_selection_descriptions": 25,
+  "other_candidate_rows": 47,
+  "relocated_call_targets": 3,
+  "changed_and_added_scope_declarations": 31,
+  "evidence": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP320_RB10_Reconciliation_01.json": "0d001b4e8af98a6400bb3e726152e16b126a7c4b",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP320_RB10_Reconciliation_02.json": "0b4dce4b0b774e3daebcdd887cbc8f214e5ef987"
+  },
+  "validation": {
+    "complete_unique_w1_owner_partition": true,
+    "all_seven_category_identity": true,
+    "source_blobs_unchanged": true,
+    "dependency_deltas_accounted": true,
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN"
+  },
+  "limitations": [
+    "CP287 selection descriptions cover only 25 dynamic rows; the other 47 candidate rows are accounted through full local owner partitions. Initial comparison incorrectly required all 72 to appear in the dynamic-only subset; rejected before publication and corrected by exact subset and complement checks.",
+    "Static import edges are not a complete dynamic dependency graph. Configured members and runtime callable targets remain conditional. This closes RB10 local dependency rebaseline, not W2 chronology/ownership reconciliation or W3 forensic review. CP287 historical publication waiver remains.",
+    "Additional 29652 rows are structural identity, not newly independent semantic review."
+  ],
+  "next": 321
+}
