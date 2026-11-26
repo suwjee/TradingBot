@@ -1,0 +1,1197 @@
+{
+  "checkpoint": 340,
+  "status": "PASS_SCOPED_W2_PRIMARY_QUEUE_RECONCILIATION",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "c7f5b4d1d7b852a485c4b7afb2f307e26bef6613",
+  "entry_tree": "e4256749b3b82ba7d59811f1f98b4cfeb206be2e",
+  "scope": "Direct source-only rereview of 5 queued Primary records and B08; active Primary/MBL, native Order and lifecycle interfaces. No W2 acceptance.",
+  "source": {
+    "path": "engine/pipeline/PL_PH_detector.py",
+    "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e"
+  },
+  "references": [
+    "CP321",
+    "CP328",
+    "CP331",
+    "CP332",
+    "CP333",
+    "CP334",
+    "CP335",
+    "CP336",
+    "CP337",
+    "CP338",
+    "CP339"
+  ],
+  "specification_blobs": {
+    "Algorithms/V3/12_Primary_Structures.md": "08540a02fe83decb38378953bbc9c45975a7a9ef",
+    "Algorithms/V3/13_Primary_High.md": "5e783235d167da404cfda9f6d396220e5e6a6932",
+    "Algorithms/V3/08_Order_Audit.md": "b349c4a8832b2c0e852b3b0f42abae3e0f24390e",
+    "Algorithms/V3/10_Lifecycle.md": "0acca58662ee6d975da3b53cca8237e9578f9bb5"
+  },
+  "rows": [
+    {
+      "id": "CP328-S13",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        457,
+        487
+      ],
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Replay retains prior steps in order strictly before frontier=min(dirty, first old/new differing activation after equal prefix). No prior returns current list alias. Strict cross key event,string level,above; current hit includes null; prior non-null hit strictly before dirty reused, else prior membership rewinds left to max(original upper bound,dirty lower bound); absent prior key scans entire strict-after-event window.",
+      "handoff": "Dirty evidence caller-owned; string Decimal representation intentionally preserved; no numerical-key normalization or independent runtime equivalence.",
+      "specification": {
+        "procedure": "P18–19",
+        "paths": [
+          "Algorithms/V3/12_Primary_Structures.md",
+          "Algorithms/V3/14_Matching_Behavior_Leg.md",
+          "Algorithms/V3/13_Primary_High.md",
+          "Algorithms/V3/08_Order_Audit.md",
+          "Algorithms/V3/10_Lifecycle.md"
+        ]
+      },
+      "w1": {
+        "batch": "B08",
+        "reconciliation_blobs": [
+          "1546f87978a20da44ff89a8e01ad9a76cf2b598c",
+          "e086f13bd17288a66dfad8998c1789cfc930604c"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            107,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            108,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            109,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            110,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            111,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            112,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            113,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            66,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            67,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            68,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            69,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            70,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            30,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            132,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            133,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            134,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            135,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            136,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            137,
+            "B08-15",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            114,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            115,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            116,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            117,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            118,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            71,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            72,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            73,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            74,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            75,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            138,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            139,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            140,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            141,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            142,
+            "B08-16",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP328-S14",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        490,
+        515
+      ],
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Refresh MBL own stop by supplied strict later crossing from original trigger/floor; falsy hit maps null pair, unchanged pair returns original checkpoint; otherwise shallow replacement only of stop fields and nested result. Activation cycle id uses donor raw formatting; reference main High, min Low second index through gate inclusive earliest tie, own stop after activation, phase PH.",
+      "handoff": "Frozen source and activation event not rewritten by stop refresh; bullish reflection swaps price geometry but not chronology or donor identity.",
+      "specification": {
+        "procedure": "P20–21",
+        "paths": [
+          "Algorithms/V3/12_Primary_Structures.md",
+          "Algorithms/V3/14_Matching_Behavior_Leg.md",
+          "Algorithms/V3/13_Primary_High.md",
+          "Algorithms/V3/08_Order_Audit.md",
+          "Algorithms/V3/10_Lifecycle.md"
+        ]
+      },
+      "w1": {
+        "batch": "B08",
+        "reconciliation_blobs": [
+          "1546f87978a20da44ff89a8e01ad9a76cf2b598c",
+          "e086f13bd17288a66dfad8998c1789cfc930604c"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            119,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            120,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            121,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            122,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            76,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            144,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            145,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            146,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            147,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            148,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            149,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            150,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            151,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            152,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            153,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            154,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            155,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            156,
+            "B08-16",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            157,
+            "B08-16",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP328-S15",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        518,
+        553
+      ],
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Prospect replaces result with fresh highs/lows/post-PL3 lists only, other references retained; phase/number registers local. Seek strict above/below after cursor; both absent wait, equal exact events ambiguous, earliest picks phase and gate. before_event gate rejects cursor>=boundary. PH resets to1 on reset/no highs; PL increments.",
+      "handoff": "No commit on null proposal; native scheduler separately arbitrates decision vs reversal; no inferred intrarow order.",
+      "specification": {
+        "procedure": "P22 steps 1–3",
+        "paths": [
+          "Algorithms/V3/12_Primary_Structures.md",
+          "Algorithms/V3/14_Matching_Behavior_Leg.md",
+          "Algorithms/V3/13_Primary_High.md",
+          "Algorithms/V3/08_Order_Audit.md",
+          "Algorithms/V3/10_Lifecycle.md"
+        ]
+      },
+      "w1": {
+        "batch": "B08",
+        "reconciliation_blobs": [
+          "1546f87978a20da44ff89a8e01ad9a76cf2b598c",
+          "e086f13bd17288a66dfad8998c1789cfc930604c"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            123,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            124,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            125,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            126,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            127,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            128,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            129,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            130,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            131,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            132,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            133,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            134,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            135,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            136,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            137,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            138,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            139,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            77,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            78,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            79,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            80,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            81,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            82,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            83,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            84,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            85,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            31,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            32,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            33,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            34,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            35,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            36,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            37,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            158,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            159,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            160,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            161,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            162,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            163,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            164,
+            "B08-17",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP328-S16",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        554,
+        574
+      ],
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Invoke Orders callback with role/number/gate/cursor; P11 PH confirmation>=gate, PL First>=gate main and confirmation>gate. Continuing PH requires parent-stop OR reset-leg with non-null boxTop strictly > high level; all stop>confirmation. Min exact stop,-First,Break. Cancellation PH floor below, PL high-level above; cancel_is_next if PL>3 or absent winner or earlier cancellation. Callback result not independently checked stop>gate here; P25 native service does.",
+      "handoff": "Candidate creation causes differ from use route and Reaction mode; speculative Order race not ledger commit. Same event ambiguity handled in following P22 branches.",
+      "specification": {
+        "procedure": "P22 steps 4–5",
+        "paths": [
+          "Algorithms/V3/12_Primary_Structures.md",
+          "Algorithms/V3/14_Matching_Behavior_Leg.md",
+          "Algorithms/V3/13_Primary_High.md",
+          "Algorithms/V3/08_Order_Audit.md",
+          "Algorithms/V3/10_Lifecycle.md"
+        ]
+      },
+      "w1": {
+        "batch": "B08",
+        "reconciliation_blobs": [
+          "1546f87978a20da44ff89a8e01ad9a76cf2b598c",
+          "e086f13bd17288a66dfad8998c1789cfc930604c"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            123,
+            "B08-17",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            140,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            141,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            142,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            143,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            144,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            145,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            146,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            147,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            148,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            149,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            150,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            86,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            87,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            88,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            89,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            90,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            91,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            92,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            93,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            94,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            95,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            96,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            97,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            98,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            99,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            38,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "arithmetic",
+            39,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            165,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            166,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            167,
+            "B08-18",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            168,
+            "B08-18",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP328-S24",
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "range": [
+        743,
+        768
+      ],
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP328_W2_Primary_Reversal_Reconciliation.json",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "review": "Point projection uses id local cache, prior pair reuse only old original is same object. Otherwise swap PH/PL, Decimal.copy_negate price, reflect Order direction/stop and exchanged box edges, replace first cycle-id occurrence (not prefix-only), recursively project truthy identity_source. Save original/projected pair current run when non-null. No recursion cycle guard.",
+      "handoff": "Native callbacks receive actual projected point with untouched physical indexes, time and causes. P43 adapter present even if native callback absent; pending invalidation conditional on adapter presence, not native side effect.",
+      "specification": {
+        "procedure": "P36–39",
+        "paths": [
+          "Algorithms/V3/12_Primary_Structures.md",
+          "Algorithms/V3/14_Matching_Behavior_Leg.md",
+          "Algorithms/V3/13_Primary_High.md",
+          "Algorithms/V3/08_Order_Audit.md",
+          "Algorithms/V3/10_Lifecycle.md"
+        ]
+      },
+      "w1": {
+        "batch": "B08",
+        "reconciliation_blobs": [
+          "1546f87978a20da44ff89a8e01ad9a76cf2b598c",
+          "e086f13bd17288a66dfad8998c1789cfc930604c"
+        ],
+        "overlapping_row_links": [
+          [
+            "branches",
+            189,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            190,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            191,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            192,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            193,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            194,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            195,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            196,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "branches",
+            197,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            129,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            130,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            131,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            132,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "comparisons",
+            133,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            220,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            221,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            222,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            223,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            224,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            225,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            226,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            227,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            228,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            229,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            230,
+            "B08-22",
+            "VERIFIED"
+          ],
+          [
+            "calls",
+            231,
+            "B08-22",
+            "VERIFIED"
+          ]
+        ]
+      },
+      "cp332_group_ids": []
+    }
+  ],
+  "accessors": [],
+  "additional_source_anchors": [
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        200,
+        255
+      ],
+      "contract": "P11 role-specific gate and strict_cross upper-bound event, required lower index, clamped main mapping; full inclusive main extreme with earliest tie."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        290,
+        414
+      ],
+      "contract": "Activation schedule and earliest global decision/reversal ordering, retained PH callback replay, pending proposals cleared when commit_high present, physical post-PL3 dedup."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        575,
+        634
+      ],
+      "contract": "Cancellation and post-PL3 branches distinguish equal events, actual prior low penetration, no PL4, no proposal mutation of committed ledger."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        641,
+        689
+      ],
+      "contract": "Native Order service reads prepared audit, physical direction, role gate, canonical positive secondary number, first direct or reset-leg, actual stop>max(confirmation,event), copied audit causes."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "range": [
+        770,
+        850
+      ],
+      "contract": "Projection retains identity via point cache, original native callback, live dirty rewinds containing old/new main open; external callback effects not transactional."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP340-F01",
+      "status": "REVIEWED_NO_ACTIVE_SPEC_CHANGE_REQUIRED",
+      "detail": "Detailed P18–22 and P36–39 agree with pinned implementation, including null cache membership, prospective local registers, role-specific gating and object-identity reflection. Historical CP328 procedure reference supplemented, not replaced."
+    },
+    {
+      "id": "CP340-F02",
+      "status": "OPEN_CROSS_OWNER",
+      "detail": "Bridge owner commits, relabeling, serialization, live prefix, F05 and CP333-R01/R02 remain to reconcile."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "prior_accessors": 20,
+    "prior_cp332_sites": 125,
+    "prior_cp333_contracts": 37,
+    "queue_entry": 185,
+    "previous_reviewed": 133,
+    "new_reviewed": 5,
+    "unique_new_review_ids": 5,
+    "cumulative_reviewed": 138,
+    "queue_remaining": 47,
+    "accessor_entry": 9,
+    "previous_accessor_reviewed": 6,
+    "new_accessor_reviewed": 0,
+    "cumulative_accessor_reviewed": 6,
+    "remaining_accessor_sites": 3,
+    "remaining_accessor_ids": [
+      "CP322-E02",
+      "CP322-E03",
+      "CP322-E04"
+    ],
+    "remaining_queue_by_path": {
+      "engine/bridge/trading_pipeline.py": 45,
+      "engine/bridge/live_pipeline.py": 2
+    },
+    "w1_b08_rows": 670,
+    "w1_overlapping_link_occurrences": 151,
+    "source_modules": 1,
+    "runtime": "NOT_RUN",
+    "raw": "NOT_RUN"
+  },
+  "remaining": "CP341 / W2 Trading Pipeline queue semantic reconciliation: rereview all 45 queued Trading Pipeline records (split by functional ownership if needed) and remaining CP322-E02/E03/E04, pinned Bridge source, W1/B09, active serialization/chronology/lifecycle/Order/Primary contracts. Follow with 2 Live records and complete semantic resolution of CP331-F05, CP333-R01/R02 before W2 acceptance; W3/W4 gated."
+}
