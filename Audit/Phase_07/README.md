@@ -1208,3 +1208,23 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 246 — Post-primary orders and strict qualification status horizon
 
 [Local review](Semantic_Closure_B09_85.md) and [site evidence](Semantic_Closure_B09_85.json): 21 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1969/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 247 — Primary dual-owner groups and callback audit refresh
+
+[Local review](Semantic_Closure_B09_86.md) and [site evidence](Semantic_Closure_B09_86.json): 17 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 1986/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 248 — Native Primary dispatch, label reconciliation and retained audit identities
+
+[Local review](Semantic_Closure_B09_87.md) and [site evidence](Semantic_Closure_B09_87.json): 16 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 2002/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 249 — Direction output primary activation and StopAll ownership gate
+
+[Local review](Semantic_Closure_B09_88.md) and [site evidence](Semantic_Closure_B09_88.json): 21 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 2023/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 250 — Independent regime aggregation and array ordering
+
+[Local review](Semantic_Closure_B09_89.md) and [site evidence](Semantic_Closure_B09_89.json): 31 original rows, 1 supplemental item, 1 resolved clarification group; local PASS. Trading Pipeline 2054/2276. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

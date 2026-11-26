@@ -1,0 +1,697 @@
+{
+  "checkpoint": 249,
+  "batch": "B09",
+  "sub_batch": "B09-88",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "22f1df1a1df592fb1b4911d5057f6cf80940b7f4",
+  "path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "7b28fa7e93c8980c082cb277fb75556959b1abcf",
+  "source_range": [
+    3427,
+    3468
+  ],
+  "procedures": "TB89",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 21,
+    "by_category": {
+      "branches": 4,
+      "comparisons": 6,
+      "arithmetic": 0,
+      "calls": 11
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "5c49e3c793bfc22301109ace5105b7fcddf1b8e2",
+    "crosswalk_blob": "a6ba394ffa669c027d61784a894eccfc7996cd6f",
+    "exact_site_id_span_procedure_operation_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "source_range": [
+        198,
+        209
+      ],
+      "reason": "Primary ownership helper; native detector dispatch boundaries reviewed locally."
+    }
+  ],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 12189,
+      "source_span": [
+        3449,
+        24,
+        3449,
+        101
+      ],
+      "procedure": "TB89",
+      "original_operation": "IfExp",
+      "original_context": "TB-SC102",
+      "interpretation": "Exact both requests bearish primary owner; otherwise use args.direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3449-L3449",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12200,
+      "source_span": [
+        3450,
+        4,
+        3461,
+        9
+      ],
+      "procedure": "TB89",
+      "original_operation": "If",
+      "original_context": "TB-SC102",
+      "interpretation": "Enter primary computation only when all four ordered gate operands succeed.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3450-L3461",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12201,
+      "source_span": [
+        3450,
+        8,
+        3451,
+        89
+      ],
+      "procedure": "TB89",
+      "original_operation": "BoolOp",
+      "original_context": "TB-SC102",
+      "interpretation": "Short circuit direction equality, module non-null, detector membership and lifecycle non-null.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3450-L3451",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 12277,
+      "source_span": [
+        3465,
+        4,
+        3466,
+        69
+      ],
+      "procedure": "TB89",
+      "original_operation": "If",
+      "original_context": "TB-SC102",
+      "interpretation": "Append primary fields only for non-null computed primary.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3465-L3466",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12190,
+      "source_span": [
+        3449,
+        37,
+        3449,
+        81
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Compare args.direction with exact both (default both only if absent).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3449-L3449",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12202,
+      "source_span": [
+        3450,
+        8,
+        3450,
+        38
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "Eq"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Requested direction equals selected primary owner.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3450-L3450",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12205,
+      "source_span": [
+        3450,
+        43,
+        3450,
+        70
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Primary module is not None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3450-L3450",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12209,
+      "source_span": [
+        3451,
+        16,
+        3451,
+        51
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "In"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Requested direction present in full E detector map.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3451-L3451",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12213,
+      "source_span": [
+        3451,
+        56,
+        3451,
+        89
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Explicit lifecycle_engine is not None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3451-L3451",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 12278,
+      "source_span": [
+        3465,
+        7,
+        3465,
+        26
+      ],
+      "procedure": "TB89",
+      "original_operation": [
+        "IsNot"
+      ],
+      "original_context": "TB-SC102",
+      "interpretation": "Computed primary is not None.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3465-L3465",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12165,
+      "source_span": [
+        3436,
+        22,
+        3438,
+        5
+      ],
+      "procedure": "TB89",
+      "original_operation": "calculate_direction_range_state",
+      "original_context": "TB-SC102",
+      "interpretation": "Calculate directional range state before visibility.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3436-L3438",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2738-L2839"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12175,
+      "source_span": [
+        3439,
+        17,
+        3447,
+        5
+      ],
+      "procedure": "TB89",
+      "original_operation": "finalize_direction_visibility",
+      "original_context": "TB-SC102",
+      "interpretation": "Finalize directional visibility with range state.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3439-L3447",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L2840-L3078"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12191,
+      "source_span": [
+        3449,
+        37,
+        3449,
+        71
+      ],
+      "procedure": "TB89",
+      "original_operation": "getattr",
+      "original_context": "TB-SC102",
+      "interpretation": "Read optional args.direction defaulting to both.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3449-L3449",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12219,
+      "source_span": [
+        3452,
+        18,
+        3453,
+        74
+      ],
+      "procedure": "TB89",
+      "original_operation": "timed",
+      "original_context": "TB-SC102",
+      "interpretation": "Time primary computation only inside gate.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3452-L3453",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12225,
+      "source_span": [
+        3452,
+        44,
+        3452,
+        61
+      ],
+      "procedure": "TB89",
+      "original_operation": "direction.title",
+      "original_context": "TB-SC102",
+      "interpretation": "Generate timed label from title-cased direction.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3452-L3452",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12229,
+      "source_span": [
+        3452,
+        73,
+        3453,
+        73
+      ],
+      "procedure": "TB89",
+      "original_operation": "calculate_primary_structures",
+      "original_context": "TB-SC102",
+      "interpretation": "Invoke calculate_primary_structures via timed callback.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3452-L3453",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3371-L3424"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12245,
+      "source_span": [
+        3455,
+        30,
+        3457,
+        9
+      ],
+      "procedure": "TB89",
+      "original_operation": "engines.primary.resolve_stopall_ownership",
+      "original_context": "TB-SC102",
+      "interpretation": "Resolve visible StopAll ownership through visible end.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3455-L3457",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L198-L209"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12256,
+      "source_span": [
+        3458,
+        8,
+        3461,
+        9
+      ],
+      "procedure": "TB89",
+      "original_operation": "validate_order_audit_bridge",
+      "original_context": "TB-SC102",
+      "interpretation": "Validate prepared Order audit against visible S/E/StopAll after ownership filtering.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3458-L3461",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L1610-L1610"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12268,
+      "source_span": [
+        3462,
+        14,
+        3464,
+        5
+      ],
+      "procedure": "TB89",
+      "original_operation": "serialize_direction_payload",
+      "original_context": "TB-SC102",
+      "interpretation": "Serialize directional payload after optional primary path.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3462-L3464",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12282,
+      "source_span": [
+        3466,
+        8,
+        3466,
+        69
+      ],
+      "procedure": "TB89",
+      "original_operation": "payload.update",
+      "original_context": "TB-SC102",
+      "interpretation": "Update serialized payload with primary fields for non-null result.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3466-L3466",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 12285,
+      "source_span": [
+        3466,
+        23,
+        3466,
+        68
+      ],
+      "procedure": "TB89",
+      "original_operation": "serialize_primary_structures",
+      "original_context": "TB-SC102",
+      "interpretation": "Serialize primary structures after directional payload.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local orchestration, identity, state ownership, chronology or output selection.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Delegated service internals and runtime inputs remain W2/W3; local source contract only.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3466-L3466",
+      "dependency_anchors": [
+        "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3249-L3368"
+      ],
+      "contract_ref": {
+        "path": "Algorithms/V3/17_Trading_Bridge.md",
+        "line": 101,
+        "heading": "TB89"
+      },
+      "transition_refs": [],
+      "chronology_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B09-88-S01",
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_span": [
+        3427,
+        3468
+      ],
+      "interpretation": "Always calculate direction range then finalize visibility before primary gating. Start local primary at None. Missing args.direction defaults to both for equality test; exact both chooses bearish primary owner, otherwise read args.direction. Gate short-circuits left to right: requested direction equals primary owner, primary engine non-null, requested E detector key present, explicit lifecycle_engine non-null. Only then timed PH/PL computation, assign state.primary_result, replace visible StopAll list via primary ownership resolution through visible end, then validate prepared audit against visible S/E/StopAll. Serialize direction payload regardless of primary gate; only non-null primary adds primary serialization via update, with no independent rerun. StopAll ownership helper removes matching physical source identity only for primary points decided by requested horizon; historical collection not mutated by helper. No local exception suppression.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3427-L3468",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "W2/W3 cross-owner reconciliation pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B09-88-F01",
+      "span": [
+        3427,
+        3468
+      ],
+      "description": "Always calculate direction range then finalize visibility before primary gating. Start local primary at None. Missing args.direction defaults to both for equality test; exact both chooses bearish primary owner, otherwise read args.direction. Gate short-circuits left to right: requested direction equals primary owner, primary engine non-null, requested E detector key present, explicit lifecycle_engine non-null. Only then timed PH/PL computation, assign state.primary_result, replace visible StopAll list via primary ownership resolution through visible end, then validate prepared audit against visible S/E/StopAll. Serialize direction payload regardless of primary gate; only non-null primary adds primary serialization via update, with no independent rerun. StopAll ownership helper removes matching physical source identity only for primary points decided by requested horizon; historical collection not mutated by helper. No local exception suppression.",
+      "document": "Algorithms/V3/17_Trading_Bridge.md",
+      "line": 101,
+      "prior_blob": "e852d935422c3973f0eeee82bf29b682324f0586",
+      "resolution": "Clarify actual local source-derived contract; no production change.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L3427-L3468",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: native services, callback ownership, live dispatch and cross-owner state reconciliation; W3/W4 pending."
+  ]
+}
