@@ -105,7 +105,7 @@ From first through length, normalized low/high and position at leaf size+positio
 Descending nodes last..before_first exclusive. Null left=>right, null right or left min<=right/max>=right=>left, otherwise right; copy corresponding position. Earliest tie.
 
 ### RE34 — refresh_suffix
-Require 0<=first<=old length<=new length<=size; if first==new length no-op. Clear history if present and dirty first<old length-1. Replace timestamp suffix in place, update length/leaves, recompute affected ancestor ranges bottom-up; this helper has no internal rollback.
+Require 0<=first<=old length<=new length<=size; if first==new length no-op. Clear history if present and dirty first<old length-1. Replace timestamp suffix in place, publish length, update leaves, recompute affected ancestor ranges bottom-up; this helper has no internal rollback. A timestamp-build failure can occur after history clearing, and a leaf/parent failure can leave changed length and partially updated arrays. Caller-owned rollback/discard and accurate first-dirty admission are separate conditions.
 
 ### RE35 — first_less
 RE40 minimum tree, exclude nodes with value>=level.
@@ -126,16 +126,16 @@ Require left>=0,right<=length,left<right. Standard half-open segment decompositi
 Clamp left>=0/right<=length; empty null. Dispatch history or direct RE43.
 
 ### RE41 — _first_with_history
-Key (left,level,excludes function). Cached crossing returned only if <right; examined>=right =>null. Search from examined. Settled excludes last candle (length-1); remember hit only if <settled, otherwise record no-hit coverage min(right,settled) when advanced. Return actual found crossing even latest unsettled.
+Key (clamped left, supplied level, excludes function), with native tuple equality/hash rather than a Decimal string/exponent key. Right bound and source generation are not in the key; reuse depends on the index's owned-source and invalidation contract. Cached crossing returned only if <right; examined>=right =>null. Search from examined. Settled excludes last candle (length-1); remember hit only if <settled, otherwise record no-hit coverage min(right,settled) when advanced. Return actual found crossing even latest unsettled.
 
 ### RE42 — _remember_crossing
-Assign history key; evict oldest FIFO when size>16384.
+Assign history key; evict oldest insertion FIFO when size>16384. Updating an existing OrderedDict key does not move it to the end and reading a key does not promote it; this is not LRU.
 
 ### RE43 — _search_first
-Root null or excluded =>null. Decompose interval; inspect left segments immediately, defer right segments and inspect reversed; first qualifying node descend RE44. Null none.
+Root null or excluded =>null. Decompose interval; inspect left segments immediately, defer right segments and inspect reversed; first qualifying node descend RE44. This is sequence-position order, not a timestamp sort. Only the root has an explicit null guard; valid populated internal nodes and native exclusion predicates are required. No hit returns null.
 
 ### RE44 — _descend_first
-Descend left child unless excluded then right; return leaf position.
+Descend left child unless excluded then right; the right child is not separately tested. The valid-tree/qualifying-parent premise makes this positional descent meaningful. Return leaf position with no further clipping.
 
 ### RE45 — shared_lower_timeframe_index
 If prepared supplied require its candles is source else ValueError; register and return. Otherwise reuse id+identity cached or construct/store.

@@ -1,0 +1,107 @@
+{
+  "checkpoint": 353,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_LOWER_INDEX_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "ad2a15e82ab3515f9bfd12b55b088664aeacefa3",
+  "entry_tree": "bcebe90492d611b7b1a64e104cf435aad2c8a67a",
+  "scope": "B02 source lines 886–1131, local semantic review plus bounded consumer boundary checks",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP353_W3_Lower_Index_Local_Forensic_Register.json",
+      "sha": "b226cd0c7cc34c2c9131bef02eeb04fd250787aa"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP353_W3_Index_Consumer_Boundaries.json",
+      "sha": "595b85b7686883be7bcb174c040072e1d75613e7"
+    },
+    {
+      "path": "Algorithms/V3/20_Indexes_And_Caching.md",
+      "sha": "85d67e2fa72187118287dfcc516fbdd2bf07989e"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/38_W3_Lower_Index_Forensic.md",
+      "sha": "191408141f95867de57f1f8df324f1c438a3223c"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 1958,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 456,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 1502,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 1622,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 382,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 1240,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        886,
+        1131
+      ],
+      [
+        1132,
+        1369
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 19
+  },
+  "findings": [
+    {
+      "id": "CP353-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "Make RE41/RE42 distinguish native cache key equality (including numeric equality of Decimal representations) from string geometry keys in RE59, and insertion FIFO from LRU. Latest row is returned but never cached as settled crossing."
+    },
+    {
+      "id": "CP353-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "RE43/44 ordering is positional; internal node predicates lack null guard and right child not separately tested. State native tree assumptions; no arbitrary callback or timestamps-sorted guarantee."
+    },
+    {
+      "id": "CP353-F03",
+      "status": "OPEN_CROSS_OWNER_LIFETIME",
+      "meaning": "Direct refresh helper has nontransactional mutations. Verify all dirty frontiers, prepared windows, global registry lifetimes and outer rollback boundaries during B02 and B09/B10; no guarantee of external alias rollback."
+    }
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP354 / W3 B02 independent Reaction record/DetectorBase source review, starting from actual published CP353 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Verify CP351–353 artifacts, read AGENTS.md, Operating Protocol, active Execution Plan and relevant CP321–350 evidence. Independently review reaction_engine.py lines 1–234 (declarations, Candle/Candidate/Reset, cursor state, classify/opposite, DetectorBase identity caches, timeframe and main mapping, range extrema), then 235–885 and 1370–2908 in complete adaptive partitions. Source before prior conclusions; map exact canonical W1 and additional category rows to reviewed source contracts, inspect historical B02-01 and related procedures, compare active docs and CP352/353 lifetime and caller findings. Preserve every prior record; B02 1622/8697 category rows (382/1877 W1, 1240/6820 additional), reviewed ranges 886–1369, 19 historical supplemental. CP351-F03, CP352-F03, CP353-F03 remain open for complete consumer/lifetime/dirty frontier and failure/rollback review. All remaining B02, B03–B10 and cross-owner W3 obligations must be independently reviewed. No overlap-based acceptance. Up to 10 substantive checkpoints; no RAW, runtime, ZIP, production or main change; RB02 WAIVED_NON_BLOCKING. Full candidate recursive tree diff, CAS force=false expected parent and remote readback per checkpoint. W4 only after independent W3 acceptance. Report exact denominators, limitations, commit/tree and tailored continuation in Persian."
+}

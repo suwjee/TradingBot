@@ -1,0 +1,72 @@
+{
+  "checkpoint": 353,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Seven bounded direct source handoffs; no cross-owner acceptance",
+  "consumers": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        229,
+        303
+      ],
+      "meaning": "Bucket dirty start decrements for equal prior lower timestamp or same main bucket, independently except TF1 alias. _delta reports exclusive settled counts max(0,len-1). New price keys, suffixes and last time published before inner try; only exceptions inside protected yield restore prior suffixes/time and remove new keys. Not blanket rollback of early assignments."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        347,
+        364
+      ],
+      "meaning": "Native live view mutates candle suffix before choosing new index or refreshing retained index. Missing index starts at zero; capacity overflow rebuilds with history enabled. TF1 aliases main/lower, otherwise independent main update. No internal rollback in _update_series."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "range": [
+        35,
+        70
+      ],
+      "meaning": "Outer protected append wraps stage_append and calculation/notification; exception discards retained market view object and reraises. Admission and initial progress outside protected try; no guarantee externally held old references restored."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        1788,
+        1823
+      ],
+      "meaning": "Window slices times and aliases flattened base offset. First query clamps local range and translates hit position; extrema rejects invalid half-open local bounds. No local validation of base bounds or returned position beyond native contract."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "range": [
+        1826,
+        1857
+      ],
+      "meaning": "Segment validates main interval, derives lower slice by first and stop main time, conditionally reindexes row objects; prepared windows registered with exact segment sequence references. Constructor receives indexes only on indexed route. Window snapshot of times and live base lifetime not interchangeable with native full index."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        690,
+        747
+      ],
+      "meaning": "Reflected candle view holds source and fixed-size lazy mirror cache; global identity lookup retains object references. Bearish reference replaces candle/seconds views and lower index wrapper after constructing BullishDetector with original data. Reflected index delegates without rebuild; cache cleanup not external-reference rollback."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "range": [
+        27,
+        32
+      ],
+      "meaning": "Actual live crossing capacity constant 16384; module sequence-time registry is separate from index and reflected-view registries."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F02",
+    "CP352-F03",
+    "CP313",
+    "CP350"
+  ],
+  "status": "PARTIAL_CROSS_OWNER_TRACE",
+  "remaining": "Verify all direct and conditional consumers, retained regimes, lifetime and cleanup, dirty frontiers and errors in B02 remaining sections and B09/B10; no runtime."
+}
