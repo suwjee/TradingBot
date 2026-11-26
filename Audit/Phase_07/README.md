@@ -442,3 +442,17 @@ W1 cumulative 6374/11504. Next B06 E30, line 608; W2/W3/W4 open.
 [Local review](Semantic_Closure_B06_14.md) and [site evidence](Semantic_Closure_B06_14.json): 52 original rows, 3 supplemental items, 2 resolved local clarifications; local PASS. E 603/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 6553/11504. Next B06 E40, line 915; W2/W3/W4 open.
+
+## Checkpoint 87 — Independent S root restoration and heap ownership
+
+[Local review](Semantic_Closure_B06_15.md) and [site evidence](Semantic_Closure_B06_15.json): 75 original rows, 4 supplemental items, 2 resolved local clarifications; local PASS. E 678/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 88 — Invalid S and independent physical Order cause gate
+
+[Local review](Semantic_Closure_B06_16.md) and [site evidence](Semantic_Closure_B06_16.json): 22 original rows, 2 supplemental items, 1 resolved local clarifications; local PASS. E 700/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 89 — Two-pass provisional discovery, root-chain pruning and reconciliation dispatch
+
+[Local review](Semantic_Closure_B06_17.md) and [site evidence](Semantic_Closure_B06_17.json): 67 original rows, 5 supplemental items, 3 resolved local clarifications; local PASS. E 767/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 6717/11504. Next B06 E44, line 1132; W2/W3/W4 open.

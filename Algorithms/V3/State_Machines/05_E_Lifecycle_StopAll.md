@@ -22,13 +22,13 @@ Gate-owned initial query is evaluated in ER02 even though the resulting local is
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| EC01 | INIT | All supplied S | Pre-register each stopped S's permitted parent-stop cause before any chain discovery | ROOT | E42 |
+| EC01 | INIT | All supplied S | Invoke registration for every stopped S before any chain discovery; retain stopped parent even when owner rejects registration | ROOT | E42 |
 | EC02 | ROOT | Next stopped S | Family=S color, number=1,parent=S, empty chain source set and chain; start owned source set from accepted identities | RACE | E42 |
 | EC03 | RACE | No child or child source index already in current chain | End current chain; retain existing candidates | ROOT | E42 |
 | EC04 | RACE | New child | Append provisional record and mark source in chain and owned sets; parent=child E | STOP | E42 |
 | EC05 | STOP | No strict child stop | End chain | ROOT | E42 |
 | EC06 | STOP | Child strictly stopped | Advance exact stop, number+1, run same race | RACE | E26,E42 |
-| EC07 | ROOT | All chains found, invalid S roots and opposite-family native E continuation occupy same root physical source | Drop entire affected provisional chains | RETURN | E42 |
+| EC07 | ROOT | All chains found, invalid S roots and any differing-family E-parent provisional continuation occupy same root physical source | Drop entire affected original root chains; no local ledger rollback | RETURN | E42 |
 | EC08 | ROOT | All chains found, no such root conflict | Return candidates | RETURN | E42 |
 
 There is no fixed recursion-count cap in EC. Candidate source deduplication per chain is explicit; it is not a claim of arbitrary input termination.
@@ -69,7 +69,7 @@ Family promotion is based on stopped active lineage and actual accepted parent, 
 | EF02 | COMPARE | Nonempty continuation and no existing direct child, or first supplied continuation decision strictly earlier than earliest direct child's decision | Remove exact ancestry matches (normal acyclic owner retained); no per-descendant decision gate; merge kept then supplied continuation, update accepted identities after conflict resolve | CONFLICT | E36,E37 |
 | EF03 | COMPARE | No earlier valid continuation | Preserve current chain | CONFLICT | E36 |
 | EF04 | CONFLICT | Multiple E at exact physical source | Higher injected e priority, then higher number only for same family and equal priority; otherwise incumbent; stable sort source,raw index,decision | RESTORE | E38,E39 |
-| EF05 | RESTORE | Independent S root still eligible and not occupied by accepted E | Process root heap; rerace if only-disowned cause, respect direct earliest lineage and conflict checks | RESTORE | E40 |
+| EF05 | RESTORE | Independent S root still eligible and not occupied by accepted E | Process heap(time,raw index,ordinal); only-disowned rerace always continues; replace earliest existing same-parent object unconditionally (no new decision test), otherwise five-field duplicate guard; monotone dominant source set, then final conflicts | RESTORE | E40 |
 | EF06 | RESTORE | Final accepted E list | Rebuild/ensure physical ledger with accepted S and historical valid causes; no creation from display geometry alone | RETURN | E53,OA62,OA64,OA65 |
 
 ## LC — Cross-stage acceptance, invalidity and visibility (not a single Boolean)
