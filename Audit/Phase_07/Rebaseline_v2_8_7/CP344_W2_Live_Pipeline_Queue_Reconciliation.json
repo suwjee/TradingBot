@@ -1,0 +1,706 @@
+{
+  "checkpoint": 344,
+  "status": "PASS_SCOPED_W2_LIVE_PIPELINE_QUEUE_RECONCILIATION",
+  "w2_acceptance": "NOT_ACCEPTED",
+  "entry_algorithm": "c82e52507936f1be143f9f0711780366a601fc41",
+  "entry_tree": "8e11e42a4de0689d26d6b27824e9300528baec23",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Direct source review of remaining two queued Live Pipeline transition IDs; no runtime or RAW.",
+  "source": {
+    "path": "engine/bridge/live_pipeline.py",
+    "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+  },
+  "specification_blobs": [
+    {
+      "path": "Algorithms/V3/18_Live_Bridge.md",
+      "blob": "08d94f96b520199bda362c5c88470b10d1804dcc"
+    },
+    {
+      "path": "Algorithms/V3/23_Live_Transport_Contract.md",
+      "blob": "f8f7c201b0c97cb7fa0c95f8e0dfc1f9e14d15d2"
+    },
+    {
+      "path": "Algorithms/V3/21_RAW_Aggregation_Contract.md",
+      "blob": "1344786aac8bde8b309c13a5e40cef8e3e519c7e"
+    }
+  ],
+  "rows": [
+    {
+      "id": "CP323-S42",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        22,
+        70
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP323_W2_Reaction_Blue_A_Reconciliation.json",
+      "review": "Constructor checks E non-null and S enabled before exact-type positive integer timeframe; shallow-copies args, retains engines, creates buckets and views. append converts row time to int, requires numeric equality and positive value, compares nondecreasing against last raw time, allows equal. Empty initial history errors. Copies args and updates to_time; direction_count 2 if primary present OR both, otherwise 1. Captured progress counter increments before emit; initial progress is outside try. Within stage_append context passes retained views, delta and report_stage to calculate_live_from_buckets, emits validation-ready before context exit. Any BaseException within protected block replaces views and reraises; returns payload only after normal exit.",
+      "handoff": "Bucket owner TB14 rollback applies to staged suffix/key/time changes after publication, not arbitrary pre-yield commit or external callback effects. Initial progress and prevalidation outside protection. Closed-prefix cache discarded with views on error; active runner supplies no live trading-stage continuation. L10/L11 strict lineage time check is separate from L02 nondecreasing numeric gate. Direction count not proof of actual engine count.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "L01–L03; TB14–TB21; LV-M04",
+        "paths": [
+          "Algorithms/V3/18_Live_Bridge.md",
+          "Algorithms/V3/23_Live_Transport_Contract.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md"
+        ]
+      },
+      "w1": {
+        "batch": "B10",
+        "owner_w1_rows": 193,
+        "overlapping_row_links": [
+          [
+            "branches",
+            0,
+            "LV02",
+            [
+              26,
+              8,
+              27,
+              87
+            ]
+          ],
+          [
+            "branches",
+            1,
+            "LV02",
+            [
+              26,
+              11,
+              26,
+              62
+            ]
+          ],
+          [
+            "branches",
+            2,
+            "LV02",
+            [
+              28,
+              8,
+              29,
+              92
+            ]
+          ],
+          [
+            "branches",
+            3,
+            "LV02",
+            [
+              28,
+              11,
+              28,
+              64
+            ]
+          ],
+          [
+            "branches",
+            4,
+            "LV03",
+            [
+              37,
+              8,
+              43,
+              38
+            ]
+          ],
+          [
+            "branches",
+            5,
+            "LV03",
+            [
+              39,
+              12,
+              40,
+              77
+            ]
+          ],
+          [
+            "branches",
+            6,
+            "LV03",
+            [
+              39,
+              15,
+              39,
+              59
+            ]
+          ],
+          [
+            "branches",
+            7,
+            "LV03",
+            [
+              41,
+              12,
+              42,
+              85
+            ]
+          ],
+          [
+            "branches",
+            8,
+            "LV03",
+            [
+              41,
+              15,
+              41,
+              71
+            ]
+          ],
+          [
+            "branches",
+            9,
+            "LV03",
+            [
+              44,
+              8,
+              45,
+              81
+            ]
+          ],
+          [
+            "branches",
+            10,
+            "LV04",
+            [
+              49,
+              26,
+              49,
+              98
+            ]
+          ],
+          [
+            "branches",
+            11,
+            "LV04",
+            [
+              49,
+              31,
+              49,
+              91
+            ]
+          ],
+          [
+            "branches",
+            12,
+            "LV05",
+            [
+              59,
+              8,
+              69,
+              17
+            ]
+          ],
+          [
+            "branches",
+            13,
+            "LV05",
+            [
+              60,
+              12,
+              65,
+              70
+            ]
+          ],
+          [
+            "branches",
+            14,
+            "LV05",
+            [
+              66,
+              8,
+              69,
+              17
+            ]
+          ],
+          [
+            "comparisons",
+            0,
+            "LV02",
+            [
+              26,
+              11,
+              26,
+              33
+            ]
+          ],
+          [
+            "comparisons",
+            1,
+            "LV02",
+            [
+              26,
+              37,
+              26,
+              62
+            ]
+          ],
+          [
+            "comparisons",
+            2,
+            "LV02",
+            [
+              28,
+              11,
+              28,
+              42
+            ]
+          ],
+          [
+            "comparisons",
+            3,
+            "LV02",
+            [
+              28,
+              46,
+              28,
+              64
+            ]
+          ],
+          [
+            "comparisons",
+            4,
+            "LV03",
+            [
+              39,
+              15,
+              39,
+              40
+            ]
+          ],
+          [
+            "comparisons",
+            5,
+            "LV03",
+            [
+              39,
+              44,
+              39,
+              59
+            ]
+          ],
+          [
+            "comparisons",
+            6,
+            "LV03",
+            [
+              41,
+              15,
+              41,
+              40
+            ]
+          ],
+          [
+            "comparisons",
+            7,
+            "LV03",
+            [
+              41,
+              45,
+              41,
+              71
+            ]
+          ],
+          [
+            "comparisons",
+            8,
+            "LV03",
+            [
+              44,
+              11,
+              44,
+              32
+            ]
+          ],
+          [
+            "comparisons",
+            9,
+            "LV04",
+            [
+              49,
+              31,
+              49,
+              63
+            ]
+          ],
+          [
+            "comparisons",
+            10,
+            "LV04",
+            [
+              49,
+              67,
+              49,
+              91
+            ]
+          ],
+          [
+            "arithmetic",
+            0,
+            "LV04",
+            [
+              54,
+              12,
+              54,
+              33
+            ]
+          ],
+          [
+            "arithmetic",
+            1,
+            "LV04",
+            [
+              56,
+              38,
+              56,
+              57
+            ]
+          ],
+          [
+            "calls",
+            0,
+            "LV02",
+            [
+              27,
+              18,
+              27,
+              87
+            ]
+          ],
+          [
+            "calls",
+            1,
+            "LV02",
+            [
+              28,
+              11,
+              28,
+              31
+            ]
+          ],
+          [
+            "calls",
+            2,
+            "LV02",
+            [
+              29,
+              18,
+              29,
+              92
+            ]
+          ],
+          [
+            "calls",
+            3,
+            "LV02",
+            [
+              30,
+              20,
+              30,
+              30
+            ]
+          ],
+          [
+            "calls",
+            4,
+            "LV02",
+            [
+              32,
+              24,
+              32,
+              57
+            ]
+          ],
+          [
+            "calls",
+            5,
+            "LV02",
+            [
+              33,
+              29,
+              33,
+              46
+            ]
+          ],
+          [
+            "calls",
+            6,
+            "LV03",
+            [
+              38,
+              25,
+              38,
+              41
+            ]
+          ],
+          [
+            "calls",
+            7,
+            "LV03",
+            [
+              40,
+              22,
+              40,
+              77
+            ]
+          ],
+          [
+            "calls",
+            8,
+            "LV03",
+            [
+              42,
+              22,
+              42,
+              85
+            ]
+          ],
+          [
+            "calls",
+            9,
+            "LV03",
+            [
+              45,
+              18,
+              45,
+              81
+            ]
+          ],
+          [
+            "calls",
+            10,
+            "LV04",
+            [
+              47,
+              15,
+              47,
+              30
+            ]
+          ],
+          [
+            "calls",
+            11,
+            "LV04",
+            [
+              55,
+              12,
+              56,
+              58
+            ]
+          ],
+          [
+            "calls",
+            12,
+            "LV04",
+            [
+              58,
+              8,
+              58,
+              83
+            ]
+          ],
+          [
+            "calls",
+            13,
+            "LV05",
+            [
+              60,
+              17,
+              60,
+              49
+            ]
+          ],
+          [
+            "calls",
+            14,
+            "LV05",
+            [
+              61,
+              26,
+              64,
+              17
+            ]
+          ],
+          [
+            "calls",
+            15,
+            "LV05",
+            [
+              65,
+              16,
+              65,
+              70
+            ]
+          ],
+          [
+            "calls",
+            16,
+            "LV05",
+            [
+              68,
+              33,
+              68,
+              50
+            ]
+          ]
+        ],
+        "source_evidence": {
+          "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP310_Live_Row_Review.json",
+          "blob": "d891e9944e79bae774fefe63e25483ca764b5d12"
+        }
+      },
+      "cp332_group_ids": []
+    },
+    {
+      "id": "CP330-S24",
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        73,
+        85
+      ],
+      "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP330_W2_Live_Market_Entry_Transport_Reconciliation.json",
+      "review": "Two distinct ValueError subclasses carry changed-lineage versus failed byte-continuity meaning. _decode_raw invokes native json.loads(data,parse_float=Decimal) before list/nonempty check; empty or non-list raises LiveRawChanged with exact message. Native parser errors propagate; no row validation, sorting, integer-time coercion, or price normalization performed here.",
+      "handoff": "Main worker distinguishes delta mismatch retry from changed lineage exit; native JSON failures reach generic Exception handler. Decimal parsing is not byte-lexeme identity; lineage hash preserves original byte prefix separately and advances only after successful pipeline append. Batch loader BOM handling and bucket normalization are distinct; no synthetic RAW execution.",
+      "disposition": "REVIEWED_SOURCE_MATCH_WITH_QUALIFICATIONS",
+      "specification": {
+        "procedure": "L04; LT-M01–M03",
+        "paths": [
+          "Algorithms/V3/23_Live_Transport_Contract.md",
+          "Algorithms/V3/21_RAW_Aggregation_Contract.md"
+        ]
+      },
+      "w1": {
+        "batch": "B10",
+        "owner_w1_rows": 193,
+        "overlapping_row_links": [
+          [
+            "branches",
+            15,
+            "LV06",
+            [
+              83,
+              4,
+              84,
+              73
+            ]
+          ],
+          [
+            "branches",
+            16,
+            "LV06",
+            [
+              83,
+              7,
+              83,
+              45
+            ]
+          ],
+          [
+            "arithmetic",
+            2,
+            "LV06",
+            [
+              83,
+              7,
+              83,
+              33
+            ]
+          ],
+          [
+            "arithmetic",
+            3,
+            "LV06",
+            [
+              83,
+              37,
+              83,
+              45
+            ]
+          ],
+          [
+            "calls",
+            17,
+            "LV06",
+            [
+              82,
+              11,
+              82,
+              48
+            ]
+          ],
+          [
+            "calls",
+            18,
+            "LV06",
+            [
+              83,
+              11,
+              83,
+              33
+            ]
+          ],
+          [
+            "calls",
+            19,
+            "LV06",
+            [
+              84,
+              14,
+              84,
+              73
+            ]
+          ]
+        ],
+        "source_evidence": {
+          "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP310_Live_Row_Review.json",
+          "blob": "d891e9944e79bae774fefe63e25483ca764b5d12"
+        }
+      },
+      "cp332_group_ids": []
+    }
+  ],
+  "accessors": [],
+  "additional_source_anchors": [
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3738,
+        3767
+      ],
+      "meaning": "Active native runner and conditional closed-prefix resolver; no live trading-stage continuation passed."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP344-F01",
+      "status": "REVIEWED_NO_SPEC_CHANGE_REQUIRED",
+      "detail": "L01–04 already distinguish prevalidation, callback ordering, protected view discard, native parser exceptions and Decimal normalization; no contradiction requiring edit."
+    }
+  ],
+  "validation": {
+    "prior_transition_count": 316,
+    "prior_accessors": 20,
+    "prior_cp332_sites": 125,
+    "prior_cp333_contracts": 37,
+    "queue_entry": 185,
+    "previous_reviewed": 183,
+    "new_reviewed": 2,
+    "unique_new_review_ids": 2,
+    "cumulative_reviewed": 185,
+    "queue_remaining": 0,
+    "accessor_entry": 9,
+    "previous_accessor_reviewed": 9,
+    "new_accessor_reviewed": 0,
+    "cumulative_accessor_reviewed": 9,
+    "accessor_remaining": 0,
+    "w1_live_owner_rows": 193,
+    "w1_overlap_occurrences": 52,
+    "raw": "NOT_RUN",
+    "runtime": "NOT_RUN",
+    "w2": "NOT_ACCEPTED"
+  },
+  "remaining": "CP345 / W2 independent semantic closure assessment: reconcile CP331-F05 / CP333-R01/R02, distinguish all 185 directly reviewed queue records from the 131 historically intersecting transitions; verify actual handoffs, active/historical specification consistency, conditional consumers, owner ledger and failure/replay. Do not equate exact ID union with semantic acceptance. W3/W4 remain NOT RUN."
+}
