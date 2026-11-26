@@ -22,7 +22,7 @@ Carried creation event from earliest parent-stop cause (when multiple) plus ever
 
 ## OL-M03 — Rebuild and primary reparenting
 
-Rebuild from actual accepted E plus accepted S roots, retained initial A causes and reset legs; filter S parent cause when invalid or occupied by E. Preserve valid historical physical entries even if unused by current E; retain independently valid causes, do not synthesize an Order without cause. Reconstructed E-consumed geometry may use recorded Order fields if canonical identity missing; only create ledger row if valid recovered/explicit parent causes exist. Ensure audit preserves prior independently valid B/history entries. Register primary PH on bearish owner / PL on bullish owner only. Find first strict stop strictly after decision; require direct physical Order confirmation > stop. Reparent same-source obsolete StopAll cause only when exact stop matches and after primary decision; transfer to direct identity, revoke other matching cause, remove identity only if no parent/reset cause left. Relabel B stop and anchor provenance with exact source/stop and anchor First gates; reconcile finalized primary labels without changing identity or prices.
+Rebuild from actual accepted E plus accepted S roots, retained initial A causes and reset legs; filter S parent cause when invalid or occupied by E. Preserve valid historical physical entries even if unused by current E; retain independently valid causes, do not synthesize an Order without cause. Reconstructed E-consumed geometry may use recorded Order fields if canonical identity missing; only create ledger row if valid recovered/explicit parent causes exist. Ensure audit preserves prior independently valid B/history entries. Register primary PH on bearish owner / PL on bullish owner only. Find first strict stop strictly after decision; request direct physical Order with confirmation_after=stop (OA34; no independent final recheck and OA20 sequential-skip caveat). Reparent same-source obsolete StopAll cause only when exact stop matches and after primary decision; transfer to direct identity, revoke other matching cause, remove identity only if no parent/reset cause left. Relabel B stop and anchor provenance with exact source/stop and anchor First gates; reconcile finalized primary labels without changing identity or prices.
 
 ## OL-M04 — Public audit preparation and invariants
 
@@ -37,46 +37,46 @@ Deep-copy each input cause; for parentType/postBehaviorType/anchorBehaviorType p
 Initialize empty cross/canonical stop, candidate/carried/post-stop/direct caches, empty ledger and confirmation index, pending list, lazy initial records/indexes null or empty. Materialize trend/opposite First times and confirmations via owner callbacks. Stable trend confirmation sort, times list. Group opposite reset times by int from First in input order; opposite-by-First dictionary last wins. Physical identity-to-canonical position first wins with setdefault. Fresh containers replace prior named values: initial record cache, initial First/confirmation times and by-First index are null; initial confirmation records empty tuple; ledger confirmation index and pending empty lists, sorted audit null, trend-leg positions empty dict. Four separate callback passes preserve input order, First times from main index and exact confirmations from chronology using trend/Order directions respectively. Only trend triples are stable-sorted by confirmation alone after ordinary zip (shortest-input termination); opposite arrays are not sorted locally. Reset grouping retains all returned times in supplied order; E owner sorts opposite resets beforehand. Physical identity is int First/Break, first duplicate wins; by-First last duplicate wins. No local validation of alignment/sortedness, no Order creation.
 
 ### OA25 — _has_sequence_reset_between
-Upper bound start in sorted reset times; true next exists and <=end, interval (start,end].
+Upper bound start in sorted reset times; true next exists and <=end, interval (start,end]. Upper bound excludes all equal starts; bounds test short-circuits before array access, end inclusive. Owner setter copies reset mapping and sorts keys; query assumes synchronized sorted comparable timestamps, does not normalize interval.
 
 ### OA26 — _index_order_audit_identity
-Insert (confirmation,First,Break) right of equal into confirmation index. If sorted audit is dict append pending; otherwise reset sorted audit null.
+Insert (confirmation,First,Break) right of equal into confirmation index. If sorted audit is dict append pending; otherwise reset sorted audit null. No duplicate suppression; isinstance(dict) includes subclass, append same tuple to pending; non-dict sets sorted audit null without clearing pending. Index assumed sorted.
 
 ### OA27 — _clear_order_audit
-Clear authoritative ledger and confirmation index; invalidate carried and post-stop caches.
+Clear authoritative ledger and confirmation index; invalidate carried and post-stop caches. Clear existing ledger/index containers in place in that order, then carried then post-stop invalidation; unrelated geometry/direct/candidate caches not reset here; no rollback.
 
 ### OA28 — _invalidate_carried_order_caches
-Clear carried results; set creation index and pending append null. Does not invalidate post-stop results.
+Clear carried results; set creation index and pending append null. Does not invalidate post-stop results. Clear carried dictionary in place; assign creation index and append state None. Leave post-stop state untouched.
 
 ### OA29 — _invalidate_post_stop_order_cache
-Clear post-stop result cache, null sorted audit and clear pending.
+Clear post-stop result cache, null sorted audit and clear pending. Clear result dictionary in place, assign sorted audit None, then clear pending list in place; does not clear carried state.
 
 ### OA31 — _reparent_primary_high_causes
-Label kind+number and source identity. For each ledger parent-stop cause replacing StopAll role, require same parent source time, non-null equal stop and stop>primary decision. Keep replacement only on direct physical identity, family empty; other matching roles revoked. B causes: relabel postBehavior StopAll when exact source and stop match and stop>decision; relabel anchor StopAll on exact source when reset identity exists and its First main time>=decision. Delete entries with neither parent nor B causes; remove indexes of revoked identities and invalidate post-stop. Invalidate carried if changes/revocations. Historical sequence reset map not removed.
+Label kind+number and source identity. For each ledger parent-stop cause replacing StopAll role, require same parent source time, non-null equal stop and stop>primary decision. Keep replacement only on direct physical identity, family empty; other matching roles revoked. B causes: relabel postBehavior StopAll when exact source and stop match and stop>decision; relabel anchor StopAll on exact source when reset identity exists and its First main time>=decision. Delete entries with neither parent nor B causes; remove indexes of revoked identities and invalidate post-stop. Invalidate carried if changes/revocations. Historical sequence reset map not removed. Parent-stop tuple matching uses only parent source time (not source index); ordered short-circuit requires StopAll prefix, non-null equal stop and strict event>decision. Nonmatching cause retained unchanged, matching cause only retained as replacement on direct identity (null direct revokes matches). B post-stop uses exact source pair, stop equality and strict bound without direct-identity gate; anchor independently uses exact pair, truthy reset identity and inclusive First main>=decision, no stop/direct gate. In-place B dictionary changes are not sorted/deduped here. Any causeless entry including already causeless marked for deferred removal; filter every matching confirmation tuple via slice, preserve list identity. Post-stop invalidation only on revoked, carried if changed or revoked; no rollback.
 
 ### OA32 — register_primary_high
-Only bearish owner and parent.kind PH; otherwise ValueError. OA36.
+Only bearish owner and parent.kind PH; otherwise ValueError. OA36. Direction mismatch short-circuits kind lookup (default None); invalid raises before OA36, valid returns its result.
 
 ### OA33 — register_primary_low
-Only bullish owner and kind PL; otherwise ValueError. OA36.
+Only bullish owner and kind PL; otherwise ValueError. OA36. Direction mismatch short-circuits kind lookup (default None); invalid raises before OA36, valid returns its result.
 
 ### OA34 — _primary_parent_order
-Search lower (decision,range_end) using first_cross_position, less iff bullish owner. If stop found call OA19 with stop,null,false, confirmation_after=stop; return stop,direct (null possible).
+Search lower (decision,range_end) using first_cross_position, less iff bullish owner. If stop found call OA19 with stop,null,false, confirmation_after=stop; return stop,direct (null possible). No local range_start clamp or returned-position validation; indexed/scan strict crossing service owns proof. Request OA19 with deadline null, bounded false, E flag default false, confirmation_after=stop; OA34 does not recheck returned confirmation. OA20 initial threshold loop is not re-run after blocked-First skips, so do not claim unconditional strict confirmation on arbitrary streams.
 
 ### OA35 — primary_order_dependency
-OA34; no direct => stop,null. Else stop,repr(direct),str(level),source index/time,cross of confirmation and stop level.
+OA34; no direct => stop,null. Else stop,repr(direct),str(level),source index/time,cross of confirmation and stop level. Two-element tuple on null direct, six-element otherwise; native repr and str evaluated before crossing; no direct registration, delegated calls may populate caches.
 
 ### OA36 — _register_primary_point
-OA34 then OA31 even when no direct (direct identity null). Null direct => null. Else ensure physical ledger row with stop/cross and empty cause set/index if new. Add cause (parent-stop,kind+number,empty family,exact stop,source time) if absent; invalidate carried; return identity.
+OA34 then OA31 even when no direct (direct identity null). Null direct => null. Else ensure physical ledger row with stop/cross and empty cause set/index if new. Add cause (parent-stop,kind+number,empty family,exact stop,source time) if absent; invalidate carried; return identity. Use OA31 before null-direct return and lookup (which sees possible revocation); same helper for both primary kinds. Existing row geometry retained; new row published then indexed. Cause tuple dedup exact; carried invalidation on addition, besides OA31 effects. No rollback.
 
 ### OA37 — reconcile_primary_high_labels
-OA39 with PH.
+OA39 with PH. Fixed PH prefix; no direction/kind gate, implicit None.
 
 ### OA38 — reconcile_primary_low_labels
-OA39 with PL.
+OA39 with PL. Fixed PL prefix; no direction/kind gate, implicit None.
 
 ### OA39 — _reconcile_primary_labels
-Map source to prefix+number (last duplicate wins). For each ledger cause tuple relabel only prefix-matching label at known source; B causes OA01; update only changed collections, invalidate carried if changed.
+Map source to prefix+number (last duplicate wins). For each ledger cause tuple relabel only prefix-matching label at known source; B causes OA01; update only changed collections, invalidate carried if changed. Parent tuples rebuilt as set (may dedup after relabel), prefix test via str, original label fallback. OA01 B relabel independently matches either PH/PL prefix with supplied source map, not only wrapper prefix; deep-copy/equality dedup. Compare set/list by equality, preserve original collections when equal. Carried invalidation only on change, no post-stop invalidation or index/geometry mutation.
 
 ### OA44 — _unconsumed_s_orders
 Require S color exact blue, non-null order confirmation/stop level. Crossing exists and >=parent_stop. Construct SimpleNamespace from parent's Order mode/First/Break/box top/bottom and their source indexes; return singleton match with parent Order number/source/confirmation/level/cross, carried-live label and null parent creation time. Otherwise empty.

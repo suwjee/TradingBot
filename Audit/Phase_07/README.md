@@ -286,3 +286,23 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 54 — Physical Candidate Merge, Single Parent Ownership and Decision Deadline
 
 [Local review](Semantic_Closure_B05_08.md) and [site evidence](Semantic_Closure_B05_08.json): 93 original rows, 7 supplemental items, 4 resolved findings; local PASS. Order Audit 653/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 55 — Sequence Reset Intervals and Ledger Index Invalidation
+
+[Local review](Semantic_Closure_B05_09.md) and [site evidence](Semantic_Closure_B05_09.json): 17 original rows, 5 supplemental items, 3 resolved findings; local PASS. Order Audit 670/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 56 — Order_B Reset-Leg Ledger Registration and Exact Provenance
+
+[Local review](Semantic_Closure_B05_10.md) and [site evidence](Semantic_Closure_B05_10.json): 26 original rows, 5 supplemental items, 3 resolved findings; local PASS. Order Audit 696/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 57 — Primary Reparenting, StopAll Revocation and Independent B Causes
+
+[Local review](Semantic_Closure_B05_11.md) and [site evidence](Semantic_Closure_B05_11.json): 64 original rows, 5 supplemental items, 3 resolved findings; local PASS. Order Audit 760/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 58 — Primary PH/PL Registration, Dependency Signature and Final Labels
+
+[Local review](Semantic_Closure_B05_12.md) and [site evidence](Semantic_Closure_B05_12.json): 70 original rows, 6 supplemental items, 5 resolved findings; local PASS. Order Audit 830/1892. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
