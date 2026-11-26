@@ -56,3 +56,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 13 — Trading Pipeline and complete direct context coverage
 
 [Review and cumulative handoff](Semantic_Context_Review_13.md), [final progress](Semantic_Context_Progress_13.json), and [all-ledger validation](Semantic_Context_Coverage_Validation.json): 16/16 source modules, 744 contexts, 3,133 branch sites, 2,177 comparisons, 1,074 arithmetic sites, 5,120 calls; zero unmapped inventoried sites. **Direct source-context review COMPLETE. Broader independent semantic closure NOT CERTIFIED; Phase 08 not started.** Prior evidence remains historical.
+
+
+## Semantic closure execution plan
+
+[Execution plan](Semantic_Closure_Execution_Plan.md) and [machine-readable register](Semantic_Closure_Plan.json) define the remaining source-only audit, ten owner batches, cross-owner reconciliation, separate forensic review and acceptance gates. Planning COMPLETE; no new semantic site certified by this plan. **Phase 07 INCOMPLETE; Phase 08 BLOCKED.** Next: B01, shared primitives and initialization.
