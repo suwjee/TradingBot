@@ -29,7 +29,7 @@ Registers previous Reaction, previous_count nullable, output (including internal
 | BLQ06 | RESET_SCAN | Matching Reset but output and counter<1 | Skip | RESET_SCAN | BL09 |
 | BLQ07 | RESET_SCAN | All matching Resets handled | Store original previous Reaction/count; optional checkpoint takes shallow Reaction copy and count/counter/output length after Reset scan | NEXT | BL09 |
 | BLQ08 | NEXT | Input exhausted | Return calculation evidence, not public filter | RETURN | BL09,BL10 |
-| BLQ09 | RETURN | Internal owner or both prices strictly inside same protecting Reaction with First < source <= confirmation | Mark internal; keep calculation flag and ordinal | RETURN | BL15,BL16,BL17,BL18 |
+| BLQ09 | RETURN | Internal owner or both prices strictly inside same protecting Reaction with First < source <= confirmation | Mark original record internal=true (sticky, in-place; shallow aliases share mutation); keep calculation flag and ordinal | RETURN | BL15,BL16,BL17,BL18 |
 | BLQ10 | RETURN | Public projection | Select calculation_valid and not behavior_internal; invalid Reset remains accessible to A | RETURN | BL14 |
 
 ## AP — Ordinary A adjacent-Blue pair machine

@@ -1,0 +1,121 @@
+{
+  "checkpoint": 368,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded native provider and consumer handoffs; no cross-owner closure",
+  "consumers": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "range": [
+        18,
+        39
+      ],
+      "meaning": "Containment runs split when start or end decreases, bisect_left starts excludes equality, ends lower bound includes equality, yields payload refs in original run order. No normalization/freshness or price test."
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "range": [
+        333,
+        459
+      ],
+      "meaning": "Tail uses caller lists, checkpoint shallow copies, original output refs; prior local CP367 failure contracts retained."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        2211,
+        2280
+      ],
+      "meaning": "Optional live.blue_lines callback only if live supplied; native batch receives full reactions, chronology, resets. Shared feedback reuses Blue/A, not a local incremental equivalence proof."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3738,
+        3768
+      ],
+      "meaning": "Native run builds market scope, calls prepare_pipeline_state without passing live continuation here; do not identify optional callback as observed native Blue replay. Closed-regime handling separate."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "range": [
+        21,
+        68
+      ],
+      "meaning": "Append transaction stages bucket updates; exception replaces market views before reraising. This is separate transport rollback boundary, no assertion about external object aliases."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        3052,
+        3110
+      ],
+      "meaning": "Collect all result reactions from state.results.values then mark original Blue lines before public filter and lifecycle output filtering. No explicit healthy filter in collection shown; internal marking does not establish lifecycle ownership."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1134,
+        1181
+      ],
+      "meaning": "Bridge project formation, semantic/rendered prices string conversion, deliberately null standalone stop timestamps; full line ordinal sort by reaction number, source time, kind."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        1528,
+        1558
+      ],
+      "meaning": "Projection uses state.full_lines_by_direction with visibility.blue_lines fallback, then full ordinal map; local filter does not reassign ordinals."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "range": [
+        441,
+        459
+      ],
+      "meaning": "Legacy serialization selects source index bounds and stringifies prices independently; receives supplied items, no validity or internal predicate in serializer itself."
+    }
+  ],
+  "prior": [
+    {
+      "checkpoint": 314,
+      "blob": "94a686734660a7f30ae2a7a49e7eaf3c4e4f572a",
+      "disposition": "Native Blue/Bridge/A owner boundary preserved; caller dirty responsibility remains open."
+    },
+    {
+      "checkpoint": 350,
+      "transition_ids": [
+        "CP323-P15",
+        "CP323-S19"
+      ],
+      "contracts": [
+        "CP333-M02",
+        "CP333-M09",
+        "CP333-M10"
+      ],
+      "group": "CP332-G29",
+      "selected_sites": [
+        "CP332-E041",
+        "CP332-E042"
+      ],
+      "disposition": "Source semantics agree in bounded review; callback conditional and alias/freshness not globally closed."
+    }
+  ],
+  "status": "REVIEWED_BOUNDED_CONSUMERS",
+  "remaining": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02"
+  ]
+}
