@@ -1,0 +1,223 @@
+{
+  "checkpoint": 287,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "status": "PASS_SCOPED_STATIC_SELECTION_REVIEW",
+  "scope": "Current unmatched call rows from CP287_Row_Crosswalk_v5; source-derived nominal selection only, not exact all-input dispatch or Phase 04 semantic closure.",
+  "counts": {
+    "unmatched_current_calls": 72,
+    "bridge": 54,
+    "true_false": 18,
+    "dynamic_rows_reviewed": 25,
+    "other_existing_candidate_categories": 47
+  },
+  "category_counts": {
+    "bridge": {
+      "UNRESOLVED_DYNAMIC": 18,
+      "LEXICAL_CANDIDATE": 15,
+      "BUILTIN_CANDIDATE": 12,
+      "IMPORTED_EXTERNAL_OR_DYNAMIC": 5,
+      "SELF_CLASS_CANDIDATE": 4
+    },
+    "true_false": {
+      "UNRESOLVED_DYNAMIC": 7,
+      "BUILTIN_CANDIDATE": 4,
+      "IMPORTED_EXTERNAL_OR_DYNAMIC": 3,
+      "LEXICAL_CANDIDATE": 3,
+      "IMPORTED_INTERNAL_CANDIDATE": 1
+    }
+  },
+  "columns": [
+    "current_call_row_zero_based",
+    "source_line",
+    "callee_shape",
+    "selection_category",
+    "source_based_description"
+  ],
+  "modules": {
+    "engine/bridge/trading_pipeline.py": [
+      [
+        614,
+        1777,
+        "previous.get",
+        "native mapping protocol",
+        "previous is the preceding published closed-prefix mapping; the call is conditional on the dirty-boundary comparison."
+      ],
+      [
+        615,
+        1779,
+        "calculate",
+        "supplied callable",
+        "resolve receives the calculation callback; invoked only on a missing or unusable saved prefix."
+      ],
+      [
+        619,
+        1804,
+        "query",
+        "supplied callable",
+        "_first receives a bound index search method from first_less or first_greater; selected by the public wrapper."
+      ],
+      [
+        623,
+        1816,
+        "query",
+        "supplied callable",
+        "_extreme receives range_minimum or range_maximum bound to the base index; range validation precedes dispatch."
+      ],
+      [
+        637,
+        1847,
+        "register",
+        "lexical binding to configured member",
+        "Bound to indexed_reaction.shared_lower_timeframe_index; only reached when indexed_reaction is present; first registration uses lower candles and prepared lower index."
+      ],
+      [
+        638,
+        1847,
+        "register",
+        "lexical binding to configured member",
+        "Same selected configured member; second registration uses main candles and prepared main index."
+      ],
+      [
+        639,
+        1848,
+        "type()",
+        "runtime type construction",
+        "Construct the runtime class of market.chronology using the segment inputs; no assumption about replacement implementation."
+      ],
+      [
+        642,
+        1849,
+        "market.chronology.timeframe.total_seconds",
+        "instance protocol",
+        "Method on the chronology timeframe object; its result is converted to int for construction."
+      ],
+      [
+        851,
+        2600,
+        "state.e_detector.restore_independent_s_roots",
+        "stored detector member",
+        "Conditional on stopall_enabled; candidate owner E detector from full direction state."
+      ],
+      [
+        852,
+        2606,
+        "engines.lifecycle.reconcile_stopall_lifecycle",
+        "configured module member",
+        "Lifecycle member selected via the engine bundle, conditional on stopall_enabled."
+      ],
+      [
+        859,
+        2618,
+        "direction.title",
+        "native string protocol",
+        "Direction is annotated str; format a timing label."
+      ],
+      [
+        860,
+        2619,
+        "engines.e_zone.discover_accepted_order_b_reset_legs",
+        "configured module member",
+        "Callable invoked in the timed lambda with current reactions, reset, donor and lifecycle context."
+      ],
+      [
+        861,
+        2633,
+        "live.order_b_finder",
+        "optional continuation member",
+        "Selected only if live continuation is not None; otherwise reset_leg_finder is None."
+      ],
+      [
+        864,
+        2639,
+        "state.e_detector.register_order_b_reset_legs",
+        "stored detector member",
+        "Reached when newly discovered and old Order_B identities agree."
+      ],
+      [
+        928,
+        2965,
+        "state.full_stopalls_by_direction.get",
+        "native mapping protocol",
+        "PipelineState declares a direction-keyed mapping of accepted StopAlls; default is empty tuple."
+      ],
+      [
+        932,
+        2972,
+        "state.full_s_detectors[].first_a_stop",
+        "stored detector member",
+        "Fallback visibility callback only when E detector lookup returns None; selected by direction key."
+      ],
+      [
+        1160,
+        3595,
+        "resolve_closed",
+        "conditional callable selection",
+        "Assigned live.closed_regime if live is present, else closed_regime parameter; invoked only when selected callable is not None, otherwise local calculate_closed executes."
+      ],
+      [
+        1213,
+        3749,
+        "live_views.closed_regimes.stage",
+        "stored context manager member",
+        "LiveMarketViews initializes a LiveClosedRegimes object; only reached with live_views and non-None bucket_delta; stage yields the closed-prefix resolver."
+      ]
+    ],
+    "engine/pipeline/true_false.py": [
+      [
+        15,
+        73,
+        "references.clear",
+        "native mapping protocol",
+        "Clear locally created reference dictionary on a non-S/E event."
+      ],
+      [
+        16,
+        75,
+        "repeats.values",
+        "native mapping protocol",
+        "Iterate values of locally created repeat dictionary when resetting counters."
+      ],
+      [
+        19,
+        90,
+        "price.copy_negate",
+        "Decimal instance protocol",
+        "Price constructed from row price via Decimal; sign inversion conditional on direction policy."
+      ],
+      [
+        23,
+        104,
+        "references.setdefault",
+        "native mapping protocol",
+        "Select or create the rank-specific local history list."
+      ],
+      [
+        24,
+        106,
+        "history.pop",
+        "native list protocol",
+        "Remove tail entries while the price-dominance condition holds."
+      ],
+      [
+        25,
+        107,
+        "history.append",
+        "native list protocol",
+        "Append current price/verdict pair to rank history."
+      ],
+      [
+        44,
+        175,
+        "by_source.values",
+        "native mapping protocol",
+        "Iterate values of the local source-time ownership map, then sort by source time."
+      ]
+    ]
+  },
+  "limits": [
+    "Unmatched means conservative crosswalk complement, not necessarily newly introduced behavior.",
+    "The other 47 rows retain their canonical candidate classifications; no exact alias or runtime edge claim.",
+    "Configured module paths, callbacks, object protocols and actual path feasibility remain conditional.",
+    "Historic dynamic review for matched rows is not silently upgraded to exact current semantics; downstream RB03–RB11 must review owner interactions."
+  ]
+}
