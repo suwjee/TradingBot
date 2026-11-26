@@ -1,0 +1,70 @@
+{
+  "checkpoint": 388,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "source": {
+    "path": "engine/pipeline/order_audit_engine.py",
+    "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+  },
+  "status": "LOCAL_CONTRACTS_ONLY_CROSS_OWNER_PENDING",
+  "handoffs": [
+    {
+      "id": "E constructor->OA13",
+      "span": [
+        557,
+        651
+      ],
+      "consumer": {
+        "path": "engine/pipeline/e_zone_detector.py",
+        "blob": "240369edf3352006082efe094eb68ac027d6689f",
+        "ranges": [
+          [
+            346,
+            365
+          ],
+          [
+            389,
+            389
+          ],
+          [
+            413,
+            414
+          ],
+          [
+            559,
+            566
+          ]
+        ]
+      },
+      "qualification": "Owner copies reaction lists, sorts opposite resets by delegated Reset time, establishes chronology and indexes, calls initializer. First time uses int index; confirmation and Reset delegate to chronology. Shallow list copies do not prove immutability, stable order or aligned indexes."
+    },
+    {
+      "id": "OA13->reaction_identity",
+      "span": [
+        647,
+        651
+      ],
+      "provider": {
+        "path": "engine/pipeline/core_utils.py",
+        "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+        "range": [
+          64,
+          66
+        ]
+      },
+      "qualification": "Physical pair int First/Break; first-win map distinct from last-win First-index map."
+    },
+    {
+      "id": "OA14/OA15->chronology",
+      "span": [
+        653,
+        686
+      ],
+      "qualification": "Canonical identity guard; number-only cache under immutable run premise, unchanged delegate result. Noncanonical bypass; context discarded. Native chronology geometry, Decimal provenance and cache invalidation remain independent."
+    }
+  ],
+  "limitations": [
+    "Local source review only; run immutability, chronology/index alignment, callback stability, cache lifetime, failure rollback and ledger creator/consumer acceptance remain independent.",
+    "Constructor lists are shallow; no runtime immutability or exception-path equivalence established.",
+    "No RAW payload, runtime, ZIP or production changes."
+  ]
+}

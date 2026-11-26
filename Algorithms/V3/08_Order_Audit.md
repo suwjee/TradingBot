@@ -180,3 +180,20 @@ Both order First/Break required; check normalized identity in internal identitie
 ## CP384 — W3 OA01 independent local qualification
 
 Full-record equality after relabeling is not physical Order identity. A missing source key defaults to None, which can match a supplied None mapping key. Native copy, string, membership and mapping failures propagate. See [independent foundations review](Chronology/CP384_W3_B05_Order_Audit_Foundations.md). This is not caller or ledger acceptance.
+
+## CP388 — independent W3 local review, OA13–OA15
+
+- **OA13-A:** Initialize new empty cross-order and canonical-stop dictionaries, not clear old aliases. Number-only canonical cache presumes same run, exact canonical object and unchanged geometry/chronology. Annotation does not enforce shape.
+- **OA13-B:** Initial record cache, First-time list, confirmation-time list and by-First index start None; confirmation records start empty tuple. No materialization or publication of initial A records occurs here.
+- **OA13-C:** Fresh candidate, carried, post-stop and direct-parent-stop dictionaries. Distinct key shapes and null result annotations; no data validation, invalidation of external aliases, or eager calculations.
+- **OA13-D:** New authoritative order_audit keyed by physical pair; empty separate confirmation index, sorted audit None, pending list empty. No Order creation or initial A import. Derived indexes do not own ledger provenance.
+- **OA13-E:** Four separate ordered callback traversals: trend First, trend confirmations with direction, opposite First, opposite confirmation via owner callback. No local sort, bounds check or immutable snapshot of objects. Alignment depends on stable sequences and callbacks.
+- **OA13-F:** Zip trend confirmation, First and reaction with shortest-input semantics, stable sorted by confirmation alone. Equal confirmation order preserved. Extract aligned confirmation times; fresh empty trend-leg position cache. Opposite confirmation order not sorted here.
+- **OA13-G:** Group opposite Reset events by int from-First key, append delegated Reset times in supplied order including duplicates. Opposite-by-First dict comprehension last duplicate First wins; no local validation.
+- **OA13-H:** Separate physical reaction identity position map uses enumerate then setdefault; first occurrence of int First/Break pair wins. Not same policy as opposite-by-First. Identity helper normalizes only indexes. Sequential initialization can fail after partial writes, no local rollback.
+- **OA14-A:** Discard context_start. Inclusive ordinal range short-circuits before number-1 indexing; only exact object identity of canonical opposite Reaction admits cache lookup by number. Cached non-None returned directly; None treated as miss. Native invalid type/index failures not caught.
+- **OA14-B:** Canonical cache miss delegates chronology.canonical_order_stop with order_direction, number, same reaction object, opposite list and start_index. Store result unchanged only after successful return; no Decimal conversion or manufactured context stop.
+- **OA14-C:** Noncanonical path delegates same method with same argument shapes, bypasses all canonical cache reads and writes. Caller must ensure admissible number/geometry; no local validation of delegated return.
+- **OA15-A:** Public order_stop forwards reaction_number and reaction to private _order_stop, no explicit context. Return result directly without copying, extra calculation or validation.
+
+Cross-owner run lifetime, chronology alignment, cache invalidation and accepted ledger obligations remain pending. See `Algorithms/V3/Chronology/CP388_W3_B05_Order_Audit_Initialization_Canonical_Stop.md`.
