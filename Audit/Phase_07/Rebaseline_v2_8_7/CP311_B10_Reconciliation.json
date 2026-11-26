@@ -1,0 +1,68 @@
+{
+  "checkpoint": 311,
+  "status": "PASS_SCOPED",
+  "scope": "RB09/W1/B10 local owner closure; cross-owner and independent forensic acceptance not claimed.",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "modules": [
+    {
+      "path": "engine/pipeline/true_false.py",
+      "blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "review": "Audit/Phase_07/Rebaseline_v2_8_7/CP309_TrueFalse_Row_Review.json",
+      "w1": 157,
+      "additional": 431,
+      "groups": 14,
+      "qualification": "Canonical row projection reconstructed and validated against historical crosswalk; full v5 bytes not regenerated."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "review": "Audit/Phase_07/Rebaseline_v2_8_7/CP310_Live_Row_Review.json",
+      "w1": 193,
+      "additional": 532,
+      "groups": 16,
+      "qualification": "Published canonical current report, unchanged source and exact identity partition."
+    }
+  ],
+  "counts": {
+    "branches": 106,
+    "comparisons": 69,
+    "arithmetic": 28,
+    "calls": 147,
+    "accesses": 833,
+    "effects": 95,
+    "exits": 35
+  },
+  "validation": {
+    "w1_rows": 350,
+    "additional_rows": 963,
+    "total_rows": 1313,
+    "unique_module_category_row_ids": 1313,
+    "duplicate_or_missing": 0,
+    "contract_groups": 30,
+    "group_anchors_valid": true,
+    "dependency_target_declarations": [
+      {
+        "row": 14,
+        "target": "engine/bridge/trading_pipeline.py:3738:0:calculate_live_from_buckets",
+        "verified": true
+      },
+      {
+        "row": 57,
+        "target": "engine/bridge/trading_pipeline.py:1897:0:parse_arguments",
+        "verified": true
+      },
+      {
+        "row": 65,
+        "target": "engine/bridge/trading_pipeline.py:1974:0:load_engines",
+        "verified": true
+      }
+    ],
+    "raw_or_runtime": "NOT RUN",
+    "W2_W3_W4": "NOT RUN"
+  },
+  "remaining_local_rows": 0,
+  "limitations": [
+    "CP287 original complete static inventory publication waiver remains; TF current row reconstruction is not a claim of exact canonical full report bytes.",
+    "B01–B08 rebaseline dependency review RB10 and overall W1 gate RB11 remain open."
+  ]
+}
