@@ -251,3 +251,27 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **StopAll current Order (1480–1493).** Exact StopAll+number, None family, own proven event; own stop view; required attr failures propagate.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1182-L1495). [CP304 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP304_Completion.json).
+
+## CP305 source-only clarification — Bridge Output Assembly and Order Audit Invariants
+
+**Audit key (1496–1503).** Native First/Break int indexes into detector candles, epoch pair; no local bounds.
+
+**Projection setup (1506–1536).** Final E/S detector lookup; E order direction else opposite exact bullish branch; selected audit, full Blue mapping with visible fallback and stable ordinal.
+
+**Parent maps (1537–1557).** Projection lists if attribute present else selected; S full only, E/StopAll selected appended to full; later same exact identity overwrites, skip null pair.
+
+**Aligned arrays (1558–1608).** Raw reactions for ordinal linkage; per selected item projection preserving order, raw/public pairs, exact detectors/maps and selected audit order.
+
+**Audit set (1611–1628).** Physical First/Break identity set; structural invariant, not owner discovery.
+
+**Reference invariant (1630–1650).** Iterate S/E/StopAll, skip either missing index; require canonical identity, collect missing, RuntimeError before next invariant.
+
+**Parent-stop uniqueness (1652–1676).** Exact tuple parentType/family/event/source time; setdefault first owner, duplicates same owner allowed, differing owner collected then RuntimeError; ignore other causes; no family normalization.
+
+**Legacy audit causes (1679–1701).** Entry/reaction/crossed required; parent-stop direct keys and epoch times; reset-leg datetime-only epoch conversion, unknown causes omitted.
+
+**Legacy audit fields (1702–1728).** Order direction, truthy public number else entry then int, mode string; native first/break epochs, box source indexes/display epochs/prices; stop fields and optional hit triple, causes.
+
+**Stable sort (1729–1729).** Sort output firstTime then breakTime; stable ties, no business filtering.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1496-L1729). [CP305 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP305_Completion.json).
