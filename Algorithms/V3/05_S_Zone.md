@@ -200,3 +200,11 @@ Key=(A ordinal,source index,source time,string price,stop tuple,Order key). Orde
 
 ### S50 — detect_s_zones
 Construct SZoneDetector forwarding all arguments in signature order/defaults S01, call detect, return. No persistent wrapper state.
+
+### W3 CP375 — constructor and preprocessing forensic qualifications (S01)
+
+The declared frozen/slotted S record separates parent A identity, optional Order/Reset provenance, source Decimal and exact versus main decision time; nullable annotations do not supply defaults or enforce normalization. Constructor copies input lists shallowly and sorts a new A list by Break main time then integer source index with stable ties, without eligibility filtering. Chronology arrays/index and initial geometry callback remain references; callback is not invoked by S01. Native integer conversion precedes the inclusive analysis-range gate; range end is nominal selected last open plus timeframe. No local timeframe positivity or array-coherence check is added.
+
+Fresh A-window, audit and Reset Blue structures precede native mixin stopped-A initializer. That initializer creates its own opposite integer-First owner map, sorted Order tuples, confirmation projection and fresh canonical cache before S Blue/trend preprocessing. S01 builds a separate opposite confirmation map later, with later duplicate integer First overwriting; neither map is a complete physical identity proof. Provider confirmation may be queried more than once. Trend confirmation and First optimization gates are independent; empty all-tests are vacuously true, and sorted tuples preserve one-based original ordinal as a tie discriminator before object comparison.
+
+First valid Reset Blue per integer ordinal is taken in input order without internal filtering. The separate public list filters validity then internal, accepts any kind and retains duplicate returned formation timestamps. S33 and S06/S04 may return explicit or fallback timestamps rather than observed exact crossings. Reset owner time lists use sorted returned events with stable equal-time order; native setdefault default allocation precedes append. No transactional rollback of external aliases is supplied by constructor failure. Full provider/creator/consumer and cache freshness proof remains independent W3 work.

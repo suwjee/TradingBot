@@ -1,0 +1,35 @@
+# CP375 — W3 S constructor and preprocessing
+
+Pinned main `c99b4c957e932d9ee70c492ca03ce80711447fc1`; S source blob `53460e68538ac790ab969084c1c7101e5ca833d7`, lines 1–177, S01. Independent source-only local review.
+
+- **G1 / 1–8:** Module describes S ownership of A-to-S, Red/Blue decisions and accepted Order stop reconciliation, not physical Order creation or global E/StopAll arbitration. Docstring does not execute geometry.
+- **G2 / 9–20:** Imports and annotation support are declarations/dependency boundaries, not trading events. S inherits Order audit mixin; policy, Decimal, index and time helpers are delegated authorities.
+- **G3 / 21–26:** Semantic version, implementation version and modified timestamp are metadata only; independent version fields are preserved.
+- **G4 / 27–38:** SZone is frozen/slotted record; parent direction, color, route, A ordinal/source, Decimal price and stop index/main/exact event are distinct declared fields. Annotation is not coercion or validation.
+- **G5 / 39–55:** Nullable Order provenance includes direction, ordinal, mode, First/Break main indexes/times, returned confirmation, box top/bottom and distinct source geometry, stop level/source. Nullable type annotations do not create constructor defaults.
+- **G6 / 56–65:** Nullable Reset provenance distinct from source index/time/Decimal price and decision index/main/exact event. No geometry computed by field declarations; frozen does not deep-copy arbitrary nested values.
+- **G7 / 66–79:** SZoneDetector extends mixin. Signature retains optional bounded indices, empty opposite reset tuple, optional initial geometry callback. No callback invocation or input filtering at declaration.
+- **G8 / 80–84:** Reject unsupported direction before storing direction and policy; derive opposite through chronology rather than hardcoding an alternate owner. Native membership, provider and policy failures propagate.
+- **G9 / 85–89:** Shallow copy trend and opposite Reaction sequences, opposite resets and Blue lines in caller order; retain original objects and callback reference. No invocation of initial geometry here.
+- **G10 / 90–96:** Allocate sorted A list by Reaction Break main timestamp then integer source index; stable tie order, no eligibility filter or physical deduplication. Key getters/conversion may fail natively.
+- **G11 / 97–103:** Store chronology and alias its candles, seconds, timeframe, main/lower time arrays and lower index without local copying or validation. Later caches depend on this run's coherent chronology.
+- **G12 / 104–107:** Default start zero and end candle count minus one only if arguments null; otherwise native int conversion. No separate exact integer input validator; conversion occurs before range comparison.
+- **G13 / 108–111:** Require inclusive position bounds 0<=start<=end<candle count; empty candle context fails. Range starts at selected actual open and ends at nominal last open plus timeframe. No local positive-timeframe or cross-array alignment proof.
+- **G14 / 112–118:** Allocate fresh order audit dictionary, A ownership interval list and Reset Blue formation map. Comment distinguishes predecision A-stop handoff from postdecision live S ownership; no actual ownership interval opened yet.
+- **G15 / 119–120:** Call mixin stopped-A lookup initializer before Blue/trend precomputation. Native mixin builds opposite First map (last duplicate wins), sorted confirmation/First/Break/ordinal/object tuples, sorted confirmation times and fresh canonical Order cache; it virtually calls S04.
+- **G16 / 121–123:** Iterate copied Blue list in original input order. Filter calculation_valid by bool with missing attribute default true; invalid skips before kind or number reads.
+- **G17 / 124–126:** Require native string conversion of kind exactly reset, case sensitive; skip all other kinds. Convert reaction_number to int only after preceding gates.
+- **G18 / 127–131:** For each integer reaction number, first eligible Reset line alone calls S33 and stores returned formation time. Internal flag is not consulted here. Later duplicate does not overwrite; returned time may be explicit, lower crossing, or source-open fallback.
+- **G19 / 132–143:** Build trend tuples in original Reaction order using one-based enumeration: first evaluate S04 returned confirmation, then int First, int Break, ordinal and original Reaction object. Returned confirmation is provider time, not necessarily observed exact lower hit. No original list reordering.
+- **G20 / 144–145:** Project confirmation column; retain original-order confirmation list only when ordered_naive_datetimes qualifies, otherwise null. This optimization gate is separate from the sorted tuple index.
+- **G21 / 146–152:** Project First index column. Require all tuples satisfy chained 0<=First<=Break<candle count, then all adjacent Firsts nondecreasing; short-circuit and vacuous true for empty rows. Store list or null independently of confirmation gate.
+- **G22 / 153–154:** Sort complete trend tuples lexicographically in confirmation/First/Break/one-based ordinal/object order; unique ordinal distinguishes otherwise equal tuples before object comparison. Project confirmation times in sorted order; original list stays unchanged.
+- **G23 / 155–160:** Build separate opposite confirmation map by integer First index. Key evaluated before value S04 with stored order direction; later duplicate key overwrites even if geometry differs. Mixin owner map and this time map are distinct; repeated provider calls do not by themselves prove identity/freshness.
+- **G24 / 161–165:** Resolve each opposite Reset via S06 and preserve object in tuple. Stable sort by returned time only, no deduplication. Provider fallback/exception semantics are delegated. Project event times in sorted order.
+- **G25 / 166–170:** Fresh owner-to-list dictionary; iterate sorted Reset tuples, convert from_first_idx to int; setdefault creates candidate empty list eagerly and append time to selected owner list. Same-time events retain stable order; no full physical identity check.
+- **G26 / 171–176:** Public Blue formation times include any kind with truthy calculation_valid (default true), then false-valued behavior_internal (default false). Call S33 only for admitted lines, sort returned times, retain duplicates. May invoke S33 again for Reset already present in separate map. Do not equate every returned timestamp with an exact market event.
+- **G27 / 177–177:** End of bounded constructor source; no explicit return, no local catch or transactional restoration of shared chronology/provider/input aliases.
+
+## Reconciliation
+
+553 local category rows (117 W1,436 additional); 8 historical supplements. All 962 B04 W1 coordinate links checked against historical crosswalk. B04 denominator 4,248 (962 W1,3,286 additional). No overlap with earlier B04 W3 local partitions (none accepted). S04/S06/S33 and native stopped-A initializer reviewed as bounded handoffs, not owner closure. CP375-F01 documentation clarified; earlier open cross-owner findings remain OPEN. No RAW payload or runtime.
