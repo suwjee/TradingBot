@@ -18,7 +18,7 @@
     "calls": 5120
   },
   "original_site_category_rows": 11504,
-  "verified_independent_site_rows_in_this_plan": 74,
+  "verified_independent_site_rows_in_this_plan": 245,
   "scope_note": "No new semantic verification is claimed. Prior context review remains valid for its original scope. Counts are category rows, not necessarily distinct AST nodes.",
   "batches": [
     {
@@ -89,7 +89,7 @@
     {
       "id": "B02",
       "title": "Reaction",
-      "status": "NOT RUN",
+      "status": "INCOMPLETE",
       "modules": [
         {
           "path": "engine/pipeline/reaction_engine.py",
@@ -102,7 +102,28 @@
           "calls": 590
         }
       ],
-      "site_category_rows": 1877
+      "site_category_rows": 1877,
+      "review_scope": "W1 partial local review, W2 and W3 open",
+      "reviewed_original_rows": 171,
+      "supplemental_items": 11,
+      "sub_batches": [
+        {
+          "id": "B02-01",
+          "status": "PASS",
+          "source_range": [
+            1,
+            327
+          ],
+          "procedures": "RE01–RE12",
+          "original_rows": 171,
+          "supplemental_items": 11,
+          "evidence": [
+            "Audit/Phase_07/Semantic_Closure_B02_01.json",
+            "Audit/Phase_07/Semantic_Closure_B02_01.md"
+          ]
+        }
+      ],
+      "next_source_line": 328
     },
     {
       "id": "B03",
@@ -342,5 +363,5 @@
       "evidence": []
     }
   ],
-  "next_action": "B02 Reaction; split by complete procedures into source-first evidence batches. W2 and W3 remain open."
+  "next_action": "B02-02 Reaction, beginning at line 328 / RE13; remaining 1706 original Reaction rows. W2 and W3 open."
 }
