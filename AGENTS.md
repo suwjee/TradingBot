@@ -30,3 +30,7 @@ At the end of each completed work session, provide a very brief user-facing prog
 ## Checkpoint cadence and verification (2026-11-26)
 
 Target ten consecutive evidence-complete checkpoints per work session when feasible; never split or label incomplete work PASS merely to meet the count. End-of-session report must name each checkpoint number/title and its actual verification status, explicitly confirming PASS for completed scoped checkpoints only after evidence validation and publication. Disclose any incomplete checkpoint and next exact resume location. Phase, owner and runtime acceptance remain separate.
+
+## Permanent visual progress reporting (2026-11-26)
+
+The user prefers visual-first, compact Persian reports after every session, with minimal explanatory prose. Show the status of ALL earlier, current and later phases (phase completion only within its actual documented scope); separate overall current-phase acceptance status from measured W1 site-category coverage, and show W1/W2/W3/W4 and all batch statuses. Show previous/current percentages and change, actual completed checkpoint numbers/titles and verified PASS/INCOMPLETE status, preferably using horizontal progress bars, charts and tables. Do not invent an overall phase percentage when no weighted metric exists or a total checkpoint count when not defined. Include the short summary of documented additions/corrections, next exact resume point, commit and any limitations. Ten checkpoints per session remains the target; no forced PASS or runtime claims.

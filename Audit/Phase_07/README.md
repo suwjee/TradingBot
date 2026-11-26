@@ -666,3 +666,45 @@ W1 cumulative 8077/11504. Next B07 LC40, line 1377; W2/W3/W4 open.
 ## B07 local completion
 
 [Completion evidence](Semantic_Closure_B07_Completion.json): 1179/1179 original rows; W1 cumulative 8238/11504. B07 W1 PASS; W2/W3/W4 open. Next B08 engine/pipeline/PL_PH_detector.py line 1. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 138 — Primary record contracts and immutable identity
+
+[Local review](Semantic_Closure_B08_01.md) and [site evidence](Semantic_Closure_B08_01.json): 22 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 22/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 139 — Confirmed PH3/PL3 exact trend reversal
+
+[Local review](Semantic_Closure_B08_02.md) and [site evidence](Semantic_Closure_B08_02.json): 27 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 49/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 140 — Physical primary ownership and horizon filtering
+
+[Local review](Semantic_Closure_B08_03.md) and [site evidence](Semantic_Closure_B08_03.json): 15 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 64/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 141 — Final PH/PL number and earliest role identity
+
+[Local review](Semantic_Closure_B08_04.md) and [site evidence](Semantic_Closure_B08_04.json): 21 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 85/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 142 — Relabel frozen native Order cause snapshots
+
+[Local review](Semantic_Closure_B08_05.md) and [site evidence](Semantic_Closure_B08_05.json): 4 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 89/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 143 — Public MBL formation and confirmation horizon
+
+[Local review](Semantic_Closure_B08_06.md) and [site evidence](Semantic_Closure_B08_06.json): 17 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 106/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 144 — StopAll ownership after primary confirmation
+
+[Local review](Semantic_Closure_B08_07.md) and [site evidence](Semantic_Closure_B08_07.json): 10 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 116/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 145 — Asymmetric PH/PL Order gate and strictly later RAW crossing
+
+[Local review](Semantic_Closure_B08_08.md) and [site evidence](Semantic_Closure_B08_08.json): 14 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 130/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 146 — Full main candle directional extreme and earliest tie
+
+[Local review](Semantic_Closure_B08_09.md) and [site evidence](Semantic_Closure_B08_09.json): 9 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 139/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 147 — Matching Behavior Leg seed, StopAll and dominant qualification
+
+[Local review](Semantic_Closure_B08_10.md) and [site evidence](Semantic_Closure_B08_10.json): 45 original rows, 3 supplemental items, 1 resolved local clarification groups; local partition PASS. Primary 184/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.

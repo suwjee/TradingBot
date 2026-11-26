@@ -8,10 +8,10 @@ Reference core is bearish: primary PH, secondary PL. Bullish is reflected, prima
 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
-| MB01 | INIT | Accepted S/E/StopAll | Exclude S/E at StopAll occupied source and explicit calculation-invalid; sort source, StopAll/S/E rank,index; dedup(kind,index,time) | EVENT | P15 |
+| MB01 | INIT | Accepted S/E/StopAll | Exclude S/E at StopAll occupied source and exact Boolean False validity; sort source, StopAll/S/E rank,raw index; dedup(kind,int index,time) before later skips | EVENT | P15 |
 | MB02 | EVENT | StopAll encountered | Reference=record only if number>=3; owner=null, confirmations empty, qualified=false | EVENT | P15 |
 | MB03 | EVENT | No reference or already qualified | Skip non-StopAll event | EVENT | P15 |
-| MB04 | EVENT | Accepted S/E | Advance exact owner via LC05; unchanged owner skipped; new count1 clears confirmation list; append actual decision | EVENT | P15,LC05 |
+| MB04 | EVENT | Accepted S/E | Advance exact owner via LC05; same owner object skipped; previous absent or new count1 clears confirmation list; append actual decision | EVENT | P15,LC05 |
 | MB05 | EVENT | Owner armed | qualified=true; yield reference,decisive second, max(reference decision,matching decisions) | EVENT | P15 |
 | MB06 | INIT | Qualified seeds enumerated | Dedup reference/second source indexes; preserve earliest qualification even without crossing | BREAK | P16 |
 | MB07 | BREAK | No strict crossing of reference main High after qualification (B reflected Low) | No activation; if no other activated seed status waiting-for-stopall-break | RETURN or BREAK | P12,P16 |
@@ -69,8 +69,8 @@ Neither local cancellation nor pending proposal commits a primary point. Global 
 | ID | From | Guard / input | Mutation / emitted evidence | To | Procedures |
 |---|---|---|---|---|---|
 | PO01 | LOGICAL | Through horizon supplied | Keep points whose decision main <= horizon, group physical source index/time, order by first decision/source | PHYSICAL | P04,P05,P06 |
-| PO02 | PHYSICAL | Group multiple logical points | Choose greatest logical number, then role-order tie; earliest role identity may be retained independently of winner geometry; strict progressive price can advance final number, equality cannot | PHYSICAL | P06,P07 |
-| PO03 | PHYSICAL | Primary point source matches StopAll | Remove StopAll from public ownership; keep historical donor/native evidence | PHYSICAL | P10 |
+| PO02 | PHYSICAL | Group multiple logical points | Choose greatest logical number, then role-order tie; earliest role identity_source if truthy else earliest role, independently of winner geometry; strict progressive price can advance final number, equality cannot | PHYSICAL | P06,P07 |
+| PO03 | PHYSICAL | Confirmed primary raw index/time matches StopAll (int index,time) at horizon | Remove StopAll from public ownership; keep historical donor/native evidence | PHYSICAL | P10 |
 | PO04 | PHYSICAL | Primary label changed | Reconcile exact ledger parent/reset-leg provenance, preserve identity and prices | RETURN | P08,OA37,OA38,OA39 |
 | PO05 | PHYSICAL | MBL presentation | Only formed leg with confirmed primary within horizon; own stop hidden beyond horizon; drawing extension source+400 actual candle or extrapolation, clip at regime end | RETURN | P09,TB84 |
 

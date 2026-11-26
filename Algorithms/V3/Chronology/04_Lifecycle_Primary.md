@@ -28,13 +28,13 @@ StopAll final strict-stop starts at decision or max(decision, optional after); a
 
 ## CH33
 
-Reversal uses confirmed physical number-three points; first strictly later crossing wins by (event time, source index, cycle ID or empty); bullish target PH3 upward, bearish target PL3 downward.
+Reversal uses confirmed physical number-three points; first strictly later crossing wins by (event time, source index, cycle ID or empty); bullish target PH3 upward, bearish target PL3 downward. PH3 optional cross is chosen by truthiness; PL3 always uses native P12. Only non-null hits enter transition selection.
 
 [Source engine/pipeline/PL_PH_detector.py:101–125](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L101-L125)
 
 ## CH34
 
-PH gate confirmation >= event irrespective of First; PL requires First >= gate main and confirmation > event. Primary strict cross excludes equal timestamp via upper bound; extreme main endpoints inclusive, earliest equal.
+PH gate confirmation >= event irrespective of First; PL requires First >= gate main and confirmation > event. Primary strict cross excludes equal timestamp via upper bound; extreme main endpoints inclusive, earliest equal. Exact PH is the special case; all other kinds short-circuit First before strict confirmation. RAW exclusive right=len(seconds), position zero valid, clamp main mapping. Extreme selects complete inclusive main window and re-reads normalized value.
 
 [Source engine/pipeline/PL_PH_detector.py:211–245](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L211-L245)
 

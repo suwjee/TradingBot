@@ -29,63 +29,63 @@ Retain run steps strictly before dirty exact event, rewound to first changed act
 
 ### P01 — TrendTransition.point
 
-Property returns high field, unchanged, including original reference. Direction-neutral alias, not a second point.
+Property returns high field, unchanged, including original reference. Direction-neutral alias, not a second point. StructureOrder, PrimaryPoint, MatchingBehaviorLeg and TrendTransition are frozen/slotted, not recursive deep freezes; PrimaryResult is slotted but mutable. List default factories create independent lists per field and instance. PrimaryPoint cycle_id and identity_source are keyword-only optional fields defaulting to None. MatchingBehaviorLeg stop_index and stop_event_time are required nullable fields, not omitted defaults. Type union declarations are not runtime numerical operations.
 
 ### P02 — first_bullish_transition
 
-Resolve physical PHs with P04 through last main position len(candles)−1. For each point number exactly 3, invoke supplied truthy cross or P12 with chronology, point decision event, price, above=true. For non-null crossing (index,time) create TrendTransition with point price and original point, default target bullish. Return minimum by (event_time, high.source_index, high.cycle_id or empty string), first tie, default null.
+Resolve physical PHs with P04 through last main position len(candles)−1. For each point number exactly 3, invoke supplied truthy cross or P12 with chronology, point decision event, price, above=true. For non-null crossing (index,time) create TrendTransition with point price and original point, default target bullish. Return minimum by (event_time, high.source_index, high.cycle_id or empty string), first tie, default null. The callback selection is truthiness-based for PH3 only; an explicit non-null hit is expanded directly without independent local timestamp or index validation. The full-history resolver uses len(main candles)-1 even if empty. Cycle ID fallback uses truthiness and key source index is raw.
 
 ### P03 — first_bearish_transition
 
-Resolve physical PLs with P05 through last main position. For every number 3 call P12 below price strictly after decision, no custom callback. Create transition target bearish for non-null hit. Same sort/min tie key as P02, null absent.
+Resolve physical PLs with P05 through last main position. For every number 3 call P12 below price strictly after decision, no custom callback. Create transition target bearish for non-null hit. Same sort/min tie key as P02, null absent. The lower transition always uses the native search, and expands the non-null hit without an additional local gate; full horizon is len(main candles)-1.
 
 ### P04 — resolve_primary_highs
 
-Delegate P06 with primary.highs, cycles attribute default empty tuple, through_index, above=true. No in-place edits.
+Delegate P06 with primary.highs, cycles attribute default empty tuple, through_index, above=true. No in-place edits. The default applies only to an absent cycles attribute; explicit None is passed through and would fail enumeration in P06.
 
 ### P05 — resolve_primary_lows
 
-Same delegation on lows, above=false.
+Same delegation on lows, above=false. Same absent-only default and no local repair.
 
 ### P06 — _resolve_primary_points
 
-Inputs points, cycles, inclusive decision-index horizon, keyword above. Map cycle_id to enumeration position (later duplicates overwrite). Traverse original points, retain decision_index<=horizon, group by (source_index,source_time) preserving encounter order. Sort group lists by (minimum decision_event_time across group, first row source time,index). Per group, identity=min by P07; winner=min by (negative number, expanded P07 tuple). Start number=winner.number. If prior reconciled result exists and winner.price strictly exceeds prior price when above or strictly below otherwise, number=max(winner number, prior final number+1); equality does not extend. Append new replaced winner with final number and identity_source=identity.identity_source if truthy else identity. Never mutate local cycle points or original identities; final point's geometry/order from winner but identity from earliest role.
+Inputs points, cycles, inclusive decision-index horizon, keyword above. Map cycle_id to enumeration position (later duplicates overwrite). Traverse original points, retain decision_index<=horizon, group by (source_index,source_time) preserving encounter order. Sort group lists by (minimum decision_event_time across group, first row source time,index). Per group, identity=min by P07; winner=min by (negative number, expanded P07 tuple). Start number=winner.number. If prior reconciled result exists and winner.price strictly exceeds prior price when above or strictly below otherwise, number=max(winner number, prior final number+1); equality does not extend. Append new replaced winner with final number and identity_source=identity.identity_source if truthy else identity. Never mutate local cycle points or original identities; final point's geometry/order from winner but identity from earliest role. The horizon compares decision_index only, with no source-time filter. Physical keys are raw index/time. Stable group sorting precedes role selection. Both identity and winner minima retain first exact ties; number progression consults only the immediately preceding reconciled result and raw prices. The replacement takes the earliest role's existing identity_source when truthy, otherwise the role itself, without recursive traversal.
 
 ### P07 — _resolve_primary_points.role_order
 
-Captured cycle order. Return tuple (decision exact event, cycle position or map length if missing, cycle_id or empty string, trigger_index,number). Called in both identity and winner selection; no mutation.
+Captured cycle order. Return tuple (decision exact event, cycle position or map length if missing, cycle_id or empty string, trigger_index,number). Called in both identity and winner selection; no mutation. The default len(cycle_order) is evaluated eagerly even when key exists. Cycle ID fallback is truthiness-based.
 
 ### P08 — relabel_primary_order
 
-Build mapping source_time -> concatenated kind and number from supplied highs/points (later entries overwrite). Call order-audit relabel_primary_causes on original audit causes and labels; replace order.audit_causes with tuple of returned entries. Other fields unchanged. Delegate actual relabel logic to order owner, do not alter native identity.
+Build mapping source_time -> concatenated kind and number from supplied highs/points (later entries overwrite). Call order-audit relabel_primary_causes on original audit causes and labels; replace order.audit_causes with tuple of returned entries. Other fields unchanged. Delegate actual relabel logic to order owner, do not alter native identity. Source time alone is the label key; tuple materialization precedes replacement, and the helper does not directly mutate the native ledger.
 
 ### P09 — formed_matching_legs
 
-Lazy generator. Iterate primary.cycles if truthy, otherwise singleton primary. Skip cycle with null mbl or trigger_index>through_index. Select cycle.lows for parent primary.direction exactly bullish (attribute default bearish), else highs. Choose earliest decision_event_time among points decision_index<=horizon; first tie retained, null absent. Yield (cycle,confirmation) only with non-null confirmation. Activation alone not enough; does not mutate hidden candidate.
+Lazy generator. Iterate primary.cycles if truthy, otherwise singleton primary. Skip cycle with null mbl or trigger_index>through_index. Select cycle.lows for parent primary.direction exactly bullish (attribute default bearish), else highs. Choose earliest decision_event_time among points decision_index<=horizon; first tie retained, null absent. Yield (cycle,confirmation) only with non-null confirmation. Activation alone not enough; does not mutate hidden candidate. The direction belongs to aggregate primary, not each cycle; missing direction alone defaults to bearish. Any falsy cycles value uses singleton primary. The generator yields original references only when confirmation is not None.
 
 ### P10 — resolve_stopall_ownership
 
-Select primary lows if direction bullish else highs (default bearish). Build set (point.source_index,point.source_time) confirmed by horizon inclusive. Return original StopAll records in input order except matching (integer item.source_index,item.source_time). No change to historical collection or physical points.
+Select primary lows if direction bullish else highs (default bearish). Build set (point.source_index,point.source_time) confirmed by horizon inclusive. Return original StopAll records in input order except matching (integer item.source_index,item.source_time). No change to historical collection or physical points. Primary point key is raw; only StopAll index is int-converted before comparison. No number, price or family condition; retained objects and input order preserved.
 
 ### P11 — order_meets_structure_gate
 
-If kind exactly PH, confirmation>=event (First position irrelevant). Other kind: first_index>=gate_index AND confirmation>event. Exact PH same-event allowance versus secondary PL strict confirmation is source behavior, not symmetrical comparisons within reflected coordinate system.
+If kind exactly PH, confirmation>=event (First position irrelevant). Other kind: first_index>=gate_index AND confirmation>event. Exact PH same-event allowance versus secondary PL strict confirmation is source behavior, not symmetrical comparisons within reflected coordinate system. Other-kind gate uses left-to-right short circuit; confirmation is not compared when First fails.
 
 ### P12 — strict_cross
 
-Find upper bound (first timestamp strictly after event) in second_times. Delegate P13 with left,level,above; no same-event recross or main fallback.
+Find upper bound (first timestamp strictly after event) in second_times. Delegate P13 with left,level,above; no same-event recross or main fallback. Upper bound excludes every lower timestamp equal to event; level is passed unchanged.
 
 ### P13 — _cross_from
 
-Select lower_index.first_greater if above truthy, else first_less. Search [left,len(seconds)), strict by index contract. Null if no position, else obtain timestamp at position and map to main index with clamp=true; return (index,instant). No sorting or fallback if lower index absent.
+Select lower_index.first_greater if above truthy, else first_less. Search [left,len(seconds)), strict by index contract. Null if no position, else obtain timestamp at position and map to main index with clamp=true; return (index,instant). No sorting or fallback if lower index absent. The exclusive upper bound is len(seconds), not len(second_times). Non-null zero is a valid position. The returned exact instant is from second_times, with clamp=True on mapping.
 
 ### P14 — _extreme
 
-Use main candles across inclusive integer positions [left,right]. Attribute High and max when high truthy; else Low and min. Key normalized Decimal; native first candidate on ties. Re-read normalized selected extreme and return (position,value). Empty range raises native min/max exception; full main candle included, not clipped lower event.
+Use main candles across inclusive integer positions [left,right]. Attribute High and max when high truthy; else Low and min. Key normalized Decimal; native first candidate on ties. Re-read normalized selected extreme and return (position,value). Empty range raises native min/max exception; full main candle included, not clipped lower event. Attribute choice and chooser choice are separate truthiness tests. No local clipping, negative-index repair or bounds validation. Normalize selected attribute once again after min/max selection.
 
 ### P15 — _matching_seeds
 
-Lazy generator. Occupied set of integer StopAll source indexes (ignores time for this filter). Create event tuples (source_time,priority,kind,item): StopAll 0 always, S 1 and E 2 only if integer index not occupied and calculation_valid is NOT exact false. Sort stably by (source_time,priority,item.source_index). Dedup on (kind,integer source index,source_time) before processing. StopAll sets reference=item if integer number>=3 else null, clears dominant owner and confirmation list, sets qualified=false. Other events ignored until reference exists and current segment not already qualified. Family = lowercased string color for S, family for E; number null for S else integer E number. Update owner via advance_dominant_behavior(previous,kind,family,number,item). If same object as previous skip; otherwise if previous null or new count=1 clear confirmations; append item.decision_event_time. If new owner armed, set qualified=true, yield reference, current behavior, maximum of reference decision and collected confirmations. No MBL activation until later strict break. Dominance dependency is lifecycle owner and must preserve object identity signaling.
+Lazy generator. Occupied set of integer StopAll source indexes (ignores time for this filter). Create event tuples (source_time,priority,kind,item): StopAll 0 always, S 1 and E 2 only if integer index not occupied and calculation_valid is NOT exact false. Sort stably by (source_time,priority,item.source_index). Dedup on (kind,integer source index,source_time) before processing. StopAll sets reference=item if integer number>=3 else null, clears dominant owner and confirmation list, sets qualified=false. Other events ignored until reference exists and current segment not already qualified. Family = lowercased string color for S, family for E; number null for S else integer E number. Update owner via advance_dominant_behavior(previous,kind,family,number,item). If same object as previous skip; otherwise if previous null or new count=1 clear confirmations; append item.decision_event_time. If new owner armed, set qualified=true, yield reference, current behavior, maximum of reference decision and collected confirmations. No MBL activation until later strict break. Dominance dependency is lifecycle owner and must preserve object identity signaling. StopAll events are materialized first, then extend S then E; occupied-index exclusion short-circuits the validity getter. Exact False identity does not exclude None or numeric zero. Sort uses raw source_index but dedup int-converts it. Mark seen before later skips, including ignored events. Every StopAll clears the registers even when number<3. Owner identity comparison is not equality; previous None short-circuits count read. Set qualified before computing max/yield; no local rollback if max fails.
 
 ### P16 — detect_bearish
 
