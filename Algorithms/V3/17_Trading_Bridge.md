@@ -275,3 +275,15 @@ Projection horizon equals the last visible main candle timestamp plus its chrono
 **Stable sort (1729–1729).** Sort output firstTime then breakTime; stable ties, no business filtering.
 
 [Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1496-L1729). [CP305 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP305_Completion.json).
+
+## CP306 source-only clarification — Absolute Payload Indexes and Trend Transition
+
+**Recursive list (1860–1863).** New list preserving order; ordinary tuples not recursively visited except special identity fields.
+
+**Dict translation (1864–1871).** index or suffix Index: add offset only exact nonnegative int (not bool/subclass); special physicalOrderIdentity/resetReactionIdentity list/tuple converts to list and offsets each nonnegative exact int; else recurse; scalars unchanged.
+
+**Transition source/target (1874–1881).** Native index into main candles, target index+49; only upper bound check, default direction bullish, exact bullish selects ph otherwise pl.
+
+**Transition output (1882–1894).** ID direction:trend:source epoch; previous direction inverse; source and primary point indexes offset, exact time/level string; ph/pl Number literal 3; icon index/time/high or low string or null if absent; compatibility field high used both directions.
+
+[Pinned source](https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L1860-L1896). [CP306 evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP306_Completion.json).

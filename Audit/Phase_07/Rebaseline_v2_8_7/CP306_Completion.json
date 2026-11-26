@@ -1,0 +1,101 @@
+{
+  "checkpoint": 306,
+  "status": "PASS_SCOPED_ABSOLUTE_INDEX_TREND_TRANSITION_LOCAL_SEMANTIC_REVIEW",
+  "batch": "RB08/W1/B09",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "06f94f459781b668f90ec1b5921f2d7cc4d06175",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_range": [
+    1860,
+    1896
+  ],
+  "counts": {
+    "w1_previous": 2215,
+    "w1_this_checkpoint": 55,
+    "w1_reviewed": 2270,
+    "w1_denominator": 2317,
+    "w1_remaining": 47,
+    "by_category": {
+      "branches": {
+        "reviewed": 557,
+        "total": 562,
+        "remaining": 5
+      },
+      "comparisons": {
+        "reviewed": 333,
+        "total": 337,
+        "remaining": 4
+      },
+      "arithmetic": {
+        "reviewed": 171,
+        "total": 173,
+        "remaining": 2
+      },
+      "calls": {
+        "reviewed": 1209,
+        "total": 1245,
+        "remaining": 36
+      }
+    },
+    "additional_this_checkpoint": {
+      "accesses": 115,
+      "effects": 2,
+      "exits": 4,
+      "total": 121
+    },
+    "additional_cumulative": 7890,
+    "all_sites_this_checkpoint": 176,
+    "all_sites_cumulative": 10160,
+    "contracts_this_checkpoint": 4,
+    "contracts_cumulative": 273,
+    "exact_mapped_spans": 176,
+    "duplicate_or_prior_overlap": 0,
+    "remaining_owner_intervals": 2
+  },
+  "evidence_blobs": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_B09_Absolute_Index_Trend_Transition_Review.json": "355dd2c8538b4afd3cd0152964d90050e4fbaac0",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_Prior_Overlap_Validation.json": "92261398558829ff8f2d4f9db11da207cebd4717",
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_Remaining_Bridge_Owners.json": "5d1de390f6c2072a31f3fbde6afad6437770d405"
+  },
+  "evidence_integrity": {
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_B09_Absolute_Index_Trend_Transition_Review.json": {
+      "blob": "355dd2c8538b4afd3cd0152964d90050e4fbaac0",
+      "bytes": 33193,
+      "sha256": "7bc4c328b5b55cd694f3b3bb29bb498680fe6927e3f59948089adf3fa5bd74a7"
+    },
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_Prior_Overlap_Validation.json": {
+      "blob": "92261398558829ff8f2d4f9db11da207cebd4717",
+      "bytes": 48159,
+      "sha256": "db9cb6639399581e5783c743f99cf62518cb0d004dee24768ce10bd7d80fb478"
+    },
+    "Audit/Phase_07/Rebaseline_v2_8_7/CP306_Remaining_Bridge_Owners.json": {
+      "blob": "5d1de390f6c2072a31f3fbde6afad6437770d405",
+      "bytes": 2219,
+      "sha256": "5efd85c957a25723f637cb1b8286c4d9656e856b68b0f05d196be55c7a2778b7"
+    }
+  },
+  "validation": {
+    "source_blob_match": true,
+    "full_excerpt_relocation": true,
+    "exact_mapped_span_comparison": true,
+    "CP292_complement_checked": true,
+    "exact_previous_remaining_ID_match": true,
+    "independent_prior_overlap_zero": true,
+    "seven_category_partition": true,
+    "remote_review_blob_readback": true,
+    "publication_gate": "Compare full recursive non-tree entry diff and expected Git blob IDs/sizes before CAS; recheck branch after CAS."
+  },
+  "dependency_interface_review": [
+    "PL_PH_detector.py:73–84",
+    "CP298 bridge callers"
+  ],
+  "limitations": [
+    "Six source reviews staged together due to connector call limit; acceptance separately gated and committed.",
+    "No independent full current AST replay; mapped source continuity and explicit CP292 complement.",
+    "No runtime, RAW, differential, benchmark or W2/W3/W4 acceptance."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN",
+  "next": "CP307 / RB08 / W1 / B09 — CLI arguments and dynamic engine bundle (1897–2011)."
+}
