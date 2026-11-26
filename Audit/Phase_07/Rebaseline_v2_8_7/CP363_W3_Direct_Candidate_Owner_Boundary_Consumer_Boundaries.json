@@ -1,0 +1,54 @@
+{
+  "checkpoint": 363,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Native direct candidate and owner-boundary callers; bounded contracts only",
+  "boundaries": [
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        1976,
+        1988
+      ],
+      "meaning": "Direct initial/reset candidate search calls RE92 then RE93, confirmed tuple yields candidate; separate positional invalidation versus null/null determines future First search."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2017,
+        2048
+      ],
+      "meaning": "Permissive geometry uses RE92 but not RE94; no assumption that common builder implies identical acceptance."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2238,
+        2290
+      ],
+      "meaning": "Concurrent path uses RE92 and RE94 directly, then stored Break index and min First among same-main confirmations. RE93 instead positional Break; do not merge."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "range": [
+        2420,
+        2432
+      ],
+      "meaning": "Result aliases direction lists and public wrapper chooses no cursor retention. Consumer mutation, projection and rollback remain separate."
+    }
+  ],
+  "prior": [
+    "CP351-F03",
+    "CP352-F03",
+    "CP353-F03",
+    "CP354-F03",
+    "CP355-F02",
+    "CP361",
+    "CP362"
+  ],
+  "status": "PARTIAL_CONSUMER_TRACE",
+  "remaining": "Normal/live continuation, full consumer ownership and serialization."
+}

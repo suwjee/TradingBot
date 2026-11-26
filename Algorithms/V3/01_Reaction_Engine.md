@@ -228,19 +228,19 @@ Convert Break to int. Earlier Break or exact gate time null => Break<=gate; rema
 Exact bullish tags RED First/GREEN context else GREEN/RED; bound limit, reset=max(detector start,start-1). Scan main positions inclusive. On ordered scan>reset, current First tag, prior context tag, build RE92 and append nonnull candidate before active scan. Each main traverses active in insertion order, retain scan<=First unchanged; drop RE94 invalidation before writes. Strict opposite edge update then strict confirmation sets stored Candle.index/display Break, refines (ignore analysis return), collects confirmed; others survive. After full current-main candidate loop, first main with confirmations returns minimum First, first encountered for equal key; no cross-candidate exact lower confirmation sort. Null on exhaustion, no canonical ledger append.
 
 ### RE92 — _build_direct_candidate
-Require First>reset, correct tag and prior context. Find contiguous context run backward inclusive reset, then contiguous preceding First-color run also bounded reset. B local floor min Low local_start..First-1; reject First Low<floor. Top max High context_start..First, bottom First Low. Outer leg floor/source min Low reset..First-1. R mirror local ceiling/max, bottom min Low, top First High, outer max High. Return mode A with anchor and leg boundary equal outer extreme.
+Exact bullish context GREEN/First RED, else reversed. Read First candle before ordered rejection First<=reset, current tag, predecessor tag; no local clamping. Extend contiguous context run backward inclusive reset, then immediately preceding contiguous First-color run bounded reset. B local floor min Low local_start..First-1, reject First Low<floor (equality allowed); top max High context_start..First, bottom First Low; outer leg floor/source min Low reset..First-1. Nonbullish mirror ceiling/max, bottom min Low, top First High, outer max High. Mode A First and initial opposite edge source are positional First; confirmation edge and anchor use stored Candle.index/display. Anchor and leg boundary equal independent outer extreme.
 
 ### RE93 — _scan_direct_candidate
 For each later main through stop inclusive calculate strict confirmation before calling RE94; invalidation result true returns null,scan before mutation. Separate exact bullish and exact bearish guards update the opposite edge strictly. On saved confirmation set Break to loop scan (source updates use Candle.index), refine, return candidate,null. End null,null.
 
 ### RE94 — _owner_boundary_before_confirmation
-Missing leg boundary false. Main no strict outer breach false; breach without confirmation true. Both: scan lower main window, outward check first each row (wins same-row tie), then strict confirm; return accordingly. No resolution =>true. Equality preserves structure.
+Read leg boundary; null false before price comparisons. Compute both main strict outward and confirmation predicates (exact bullish else bearish); no outward false, outward without confirmation true. Both: scan full main lower window without intrabar-start clamp; outward checked first each physical row, wins same-row tie, then strict confirmation. No resolving row including empty window => true. Equality alone does not satisfy strict predicates.
 
 ### RE95 — _result
-Return DetectionResult with output direction, actual direction reaction/reset lists, window.
+Construct DetectionResult for output_direction with actual existing direction reaction/reset list references and start/end window; no clone, sort, or validation.
 
 ### RE96 — UnifiedReactionDetector.detect
-RE97 retain_cursor false.
+Public keyword-only optional stop_after_first_at_or_after forwarded to RE97 with retain_cursor=False.
 
 ### RE97 — _detect
 Initial RE80 with optional retained cursor; absent return empty result. Append RE76; if requested First gate satisfied return. Initialize previous initial, next=Break+1, running peak/trough from Break, source Break, candidate null. Analyze Break; exact analysis extreme or opposite box as reset level. Post-confirmation reset RE13/28 => append exact event and pending Break index; otherwise seed RE79. RE98 with cursor and requested stop flag.
