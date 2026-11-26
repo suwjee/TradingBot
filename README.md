@@ -153,3 +153,13 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 20
 
 [Reaction span ownership and internal containment](Audit/Phase_07/Semantic_Closure_B02_06.md): 71 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 21
+
+[Live containment and bounded A-stop Order finder](Audit/Phase_07/Semantic_Closure_B02_07.md): 111 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 22
+
+[Unified initialization, canonical append, refinement and Break reuse](Audit/Phase_07/Semantic_Closure_B02_08.md): 114 original rows, local PASS; B02 INCOMPLETE. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

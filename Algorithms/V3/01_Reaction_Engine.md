@@ -160,13 +160,13 @@ Build spans both directions. Containment index only if all First/confirmation ex
 Empty entries/matches per direction, update dirty0.
 
 ### RE70 — LiveBehaviorReactionViews.update
-Validate dirty main index. Geometry key First/Break/intrabar,str top and source,str bottom and source. At same ordinal reuse old entry when key equal and Break<dirty; else compute span/extremes and mark position changed only if new entry differs. Retain successful old inner/outer pairs when in bounds and neither changed. For changed inner compare all opposite; unchanged inner compare changed opposite only. Add pairs meeting RE64/66; blocked identities from all pairs. RE67, replace entries/matches, return.
+Validate dirty main index. Geometry key First/Break/intrabar,str top and source,str bottom and source. At same ordinal reuse old entry when key equal and Break<dirty; else compute span/extremes and mark position changed only if new entry differs. Retain successful old inner/outer pairs when in bounds and neither changed. For changed inner compare all opposite; unchanged inner compare changed opposite only. Add pairs meeting RE64/66; blocked identities from all pairs. RE67 mutates full native Candidate metadata, then replace entries/matches and return; no local rollback or clone of full results. Dirty bound is inclusive 0..len(main); retain all successful position pairs, not a single selected owner.
 
 ### RE71 — directional_a_stop_order_finder
 Validate direction; choose opposite Order direction and tags, create gate and detection caches; return RE72 closure.
 
 ### RE72 — directional_a_stop_order_finder.find
-Key gate index,end (gate_event unused). First opposite First tag with preceding context tag from max(1,gate) through end. None cache null. Extend context run backward to0. Lookup cached detection tuple by context,end; first reaction First>=gate. If absent run Unified from context to end in opposite direction stopping first at/after gate, cache tuple and select. Cache order (including null).
+Key gate index,end (gate_event unused). First opposite First tag with preceding context tag from max(1,gate) through end. None cache null. Extend context run backward to0. Lookup cached detection tuple by context,end; first reaction First>=gate. If absent run Unified from context to end in opposite direction stopping first at/after gate, cache tuple and select. Cache and return order (including null) by reference, not a clone; no automatic cache invalidation or exact gate-event acceptance inside this closure.
 
 ## Unified Reaction ownership
 
@@ -180,16 +180,16 @@ Lazy bullish detector same window/sequences.
 Lazy bearish detector same window/sequences.
 
 ### RE76 — _append_reaction
-If Break, adjacent anchor (anchor+1==First) and prior Reset exists, run opposite reference from last reset through First; detect whether opposite reaction Break==anchor. If so bearish and anchor High<=First High: replace bottom with anchor Low/source; bullish and anchor Low>=First Low: replace top with anchor High/source. If Break exists canonical opposite edge recalculated inclusive First..Break by minimum Low B/max High R; if Break owns extreme and exact analysis available refine to pre-confirmation geometry. Append replace(candidate) to direction list, return true. Mutates supplied candidate before copy.
+If Break, adjacent anchor (anchor+1==First) and prior Reset exists, run opposite reference from last reset through First; detect whether opposite reaction Break==anchor. If so bearish and anchor High<=First High: replace bottom with anchor Low/source; bullish and anchor Low>=First Low: replace top with anchor High/source. If Break exists canonical opposite edge recalculated inclusive First..Break by minimum Low B/max High R; if Break owns extreme and exact analysis available refine through the confirming lower row inclusive, otherwise keep full-main extreme. A null Break skips canonical recomputation but does not prevent append. Append replace(candidate) to direction list, return true. Mutates supplied candidate before copy; caller owns confirmation validity.
 
 ### RE77 — _append_reset
 Append ResetEvent main index/display, optional exact second display, level and prior First.
 
 ### RE78 — _refine
-Directional analysis RE10/25. Null =>null. Refine opposite edge only if candidate source index equals current candle.index; return analysis.
+Directional analysis RE10/25 (exact bullish selects breakout, otherwise breakdown). Null =>null. Separate exact bullish/bearish guards refine the corresponding opposite edge only if its source equals current candle.index; nonbullish/nonbearish input can dispatch breakdown without mutating either edge. Return nonnull analysis even if no refinement.
 
 ### RE79 — _candidate_from_confirmation_remainder
-Require Break correct First color (RED B/GREEN R) and analysis. Reject if exact lower after confirmation through Break end strictly crosses analysis.extreme outward. Collect entire Break lower interval; absent=>null. Choose max High earliest timestamp (key high,-epoch), min Low earliest timestamp. Return mode B candidate with First and both sources current main, levels from lower, intrabar_start main open. No partial-remainder-only levels. confirmed argument unused.
+Require Break correct First color (RED B/GREEN R) and analysis. Reject if exact lower after confirmation through Break end strictly crosses analysis.extreme outward. Collect entire Break lower interval; absent=>null. Choose max key (High, negative native timestamp.timestamp() epoch float) and min key (Low, datetime); equal full keys retain first encountered row. Bullish evaluates top then bottom, otherwise bottom then top. Native epoch conversion and precision govern top tie behavior, not an additional exact datetime comparison. Return mode B candidate with First and both sources current main, levels from lower, intrabar_start main open. No partial-remainder-only levels. confirmed argument unused.
 
 ### RE80 — _first_initial
 With retain_initial, trend flag routes RE82 and asserts cursor type; otherwise reference B or reflected R _scan first_only with initial cursor, retain its cursor, return first clone or mirror or null. Without retain flag use trend bootstrap if relevant else directional detect first_only, clone first or null.

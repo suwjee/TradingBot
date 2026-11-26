@@ -96,3 +96,13 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 20 — Reaction span ownership and internal containment
 
 [Local review](Semantic_Closure_B02_06.md) and [site evidence](Semantic_Closure_B02_06.json): 71 original rows, 5 supplemental items, 3 resolved local documentation omissions/clarifications; sub-batch PASS. B02 906/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 21 — Live containment and bounded A-stop Order finder
+
+[Local review](Semantic_Closure_B02_07.md) and [site evidence](Semantic_Closure_B02_07.json): 111 original rows, 7 supplemental items, 3 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1017/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 22 — Unified initialization, canonical append, refinement and Break reuse
+
+[Local review](Semantic_Closure_B02_08.md) and [site evidence](Semantic_Closure_B02_08.json): 114 original rows, 9 supplemental items, 4 resolved local documentation omissions/clarifications; sub-batch PASS. B02 1131/1877; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
