@@ -1,0 +1,360 @@
+{
+  "checkpoint": 287,
+  "batch": "RB02",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "489bf50cee6e8227674e0f203e97dffb61a3e498",
+  "status": "INCOMPLETE",
+  "scope": "Independent current-session recheck of pinned source and existing static evidence. Not a fresh AST/bytecode generation or runtime test.",
+  "gates": {
+    "main_identity": "PASS",
+    "source_content_sha256": "PASS 16/16",
+    "published_report_full_content_sha256": "PASS 14/14",
+    "recovered_module_report_sha256_and_git_blob": "PASS 2/2 local",
+    "function_inventory_reconciliation": "PASS 674/674 across 16 modules, complete record digest match for remote and direct record equality for local reports",
+    "row_crosswalk_structure": "PASS 272/272 module-category groups; 152970 one-to-one mapped index pairs; zero count/range/duplicate errors",
+    "row_crosswalk_sha256": "PASS",
+    "recovered_module_row_reference_integrity": "PASS 2/2; numeric AST, scope, CFG, def-use, reaching-write references",
+    "original_archive_crc": "PASS",
+    "publication": "INCOMPLETE 14/16 module reports; ZIP and function inventory absent",
+    "runtime": "NOT RUN",
+    "raw": "NOT RUN"
+  },
+  "method": {
+    "remote_source": "Read complete UTF-8 Git blobs for all 16 source modules and compute SHA-256 and byte length; compare pinned main tree identity and index.",
+    "remote_reports": "Read complete 14 published Git blobs, compute SHA-256 and byte length, compare selected section counts, source path, baseline and scope ID uniqueness.",
+    "local_reports": "Python 3.13.5 ZIP read, CRC, bytes, SHA-256, Git blob SHA-1, JSON parse, all aggregate counts and listed reference checks. No engine import.",
+    "declarations": "Filter ClassDef, FunctionDef, AsyncFunctionDef; sort by id; compact UTF-8 JSON array with existing canonical object-key order; SHA-256 computed independently in connector JavaScript and local Python. Two local reports compared as full ID-to-record mappings.",
+    "crosswalk": "Read all 16 prior full reports; validate old category sizes against report contents and new sizes against current index; expand runs and check integer bounds, uniqueness and counts. Not a proof of semantic correspondence."
+  },
+  "modules": {
+    "engine/__init__.py": {
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_check": "PASS",
+      "report_blob": "046dab7223326216ebed1e45e6d3a74847291073",
+      "report_bytes": 2116,
+      "report_sha256": "d693bcb1064d7e0c90d63ac3cc4c53beb6b8da3caac6fefa47c7299b12e59e43",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 0,
+      "declaration_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "inventory_match": "PASS"
+    },
+    "engine/bridge/__init__.py": {
+      "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "source_bytes": 64,
+      "source_sha256": "2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8",
+      "source_check": "PASS",
+      "report_blob": "7a6e59aedcec49efa6c9ea8df5901f8dedb8917b",
+      "report_bytes": 2281,
+      "report_sha256": "c5cbbec949a7801f0b04c449c64a5e1fdea7f9f80daaadbb6c322bdf75cc69b8",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 0,
+      "declaration_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "inventory_match": "PASS"
+    },
+    "engine/bridge/live_pipeline.py": {
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "source_bytes": 9694,
+      "source_sha256": "5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d",
+      "source_check": "PASS",
+      "report_blob": "f90777f7218aeb7f6a63d1b6abc4a16306b397a8",
+      "report_bytes": 144618,
+      "report_sha256": "3773d23c4471dfe5688f2198b0c3f6ddf5f172913b92a01149f1fc5cf0fb23ea",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 17,
+      "declaration_digest": "1f3dbbd70a43a6e9653d7b1e8857a1e817556af8269945e60a12926486abcff7",
+      "inventory_match": "PASS"
+    },
+    "engine/bridge/trading_pipeline.py": {
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "source_bytes": 152299,
+      "source_sha256": "9f61e63b775a018e49a5f38b69d2a89672f7d6ef0d45c7e76b5b1c8748cb6d19",
+      "source_check": "PASS",
+      "report_blob": "d1c6eba3253651e485cd4c7a26cb3c851bd63abd",
+      "report_bytes": 1948569,
+      "report_sha256": "c4ab6f09b6df75e1354e7929b30aebf291c0f584226152574d9a210112ae7f09",
+      "report_check": "PASS_LOCAL_ONLY",
+      "declaration_count": 124,
+      "declaration_digest": "79d005e845ad32ccfb6f398b209beb7d5e1238b09bdc52afd1dffe12d31d569d",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/PL_PH_detector.py": {
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "source_bytes": 37487,
+      "source_sha256": "4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f",
+      "source_check": "PASS",
+      "report_blob": "091b5c2a23f9583cd4f6369ac5d3ea36d0537cc1",
+      "report_bytes": 581936,
+      "report_sha256": "4f1d6b341b66e668d650386def8a507d46566a3fb7d5d82d2d52f2895b15ee40",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 61,
+      "declaration_digest": "875fd879b2fe4108084f4e8dc2918e56ef0ddd76f7a16a20755431bb50532203",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/__init__.py": {
+      "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "source_bytes": 653,
+      "source_sha256": "d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460",
+      "source_check": "PASS",
+      "report_blob": "08d186d1929f7372c007cbffc6ec0722ddc5277b",
+      "report_bytes": 6786,
+      "report_sha256": "f023dabfabdb8b5ca23f8da7946e2ba87854d471412cc866bc7b95a2a71abd1a",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 0,
+      "declaration_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/a_zone_detector.py": {
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "source_bytes": 43435,
+      "source_sha256": "a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593",
+      "source_check": "PASS",
+      "report_blob": "bbe3d95f2616989e772edba07c5408670cad369e",
+      "report_bytes": 557985,
+      "report_sha256": "348247b43175669846c2a9209a5df5d235fccf8a5d6b27e4d1843ac50f4ba251",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 45,
+      "declaration_digest": "5c0fa63fd980237df602ecf158ab49d50bb6fa946753f885757d4a1e062dfe90",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/blue_line_detector.py": {
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "source_bytes": 21498,
+      "source_sha256": "0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5",
+      "source_check": "PASS",
+      "report_blob": "f011a0c02eeb9223fe1321e404abeb66fe69bbcf",
+      "report_bytes": 275513,
+      "report_sha256": "92bd08df6a76a05d415813a8ca6d1d4c3bf2325dd9e05d8f89f6d5bf9969ab88",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 22,
+      "declaration_digest": "f8b2f2e188e3ef917af12d09c101626c5fa1444c8cc733762919d612a07a5119",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/core_utils.py": {
+      "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "source_bytes": 2532,
+      "source_sha256": "f0764f52943ed3a9b02e90183196f4cabcbcc99217480e063a271cb56c1d4fd0",
+      "source_check": "PASS",
+      "report_blob": "abf63fc9afe037f5ba4c50ad5a154a1575db97d3",
+      "report_bytes": 43364,
+      "report_sha256": "25c51833c8eee345897ff5fa5753e291f010b613c250d8fc31ba5c977c4ad30d",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 7,
+      "declaration_digest": "825175a7bde792575854b7aefd633441970a608341ab312afc23d5d1ed148068",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/direction_policy.py": {
+      "source_blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "source_bytes": 2282,
+      "source_sha256": "a27ac63c2f066311c9381e2ead6fb44f0789f423a37b465da65c80e6329397ea",
+      "source_check": "PASS",
+      "report_blob": "ffeef0f1ff91ca1909050d39bf7cac8ad162c67b",
+      "report_bytes": 29459,
+      "report_sha256": "c87b9321ec027aeae8ad92473230d38e9450cb1f1e7607c3fd11efdee1c0f0f8",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 7,
+      "declaration_digest": "4cd86e8b44520ee2cbeb71a52e0de10f9a5cedb92766a9464a4be1478252addf",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/e_zone_detector.py": {
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "source_bytes": 70071,
+      "source_sha256": "e05301a5812657f599c58e24525486e14e92910203004a1193c411d8a90d9f96",
+      "source_check": "PASS",
+      "report_blob": "f535795a7a247f3fa37307be6f426270ef9e0fbf",
+      "report_bytes": 946433,
+      "report_sha256": "d83868e52b3e06bc9f4ac18b37047d7477c3996dbd97e93cf08a4a00ae62d58d",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 61,
+      "declaration_digest": "b8e779e760e56cc24c0261bffcedc2da4e611b9614dac71841921d6ea1f8996f",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/lifecycle_engine.py": {
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "source_bytes": 67191,
+      "source_sha256": "304848d425630ac4bce8f8e6e976d36312e1b16dac148a226efec4cf84f4f3f2",
+      "source_check": "PASS",
+      "report_blob": "5c868870029bcf1db2c5ea6050eeac84823a9f55",
+      "report_bytes": 782217,
+      "report_sha256": "e3290aa12c5bc2745051a121db26b17fb40047c2e89c067b3bab05fd73c83c51",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 51,
+      "declaration_digest": "a6554e5e0ca9f827db825a0d28da3d5ca0d9b44ec6483b8c41fa276e4c9de796",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/order_audit_engine.py": {
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "source_bytes": 118217,
+      "source_sha256": "a7912855fb8ee9bf9447cc5304cf805752bbb1d939015457fea868faaf5d3b8d",
+      "source_check": "PASS",
+      "report_blob": "8e8de138a2e4d165994792923d427ee6d1ac9c09",
+      "report_bytes": 1550246,
+      "report_sha256": "ef16ebc8703b0a074e436148cf61a87a4e4a623428f6a1f1a0ba75abb536dc1a",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 88,
+      "declaration_digest": "654684ea0e94583107a074b52aead2f339c2fe989f40e1c4b2eb25e54054e290",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/reaction_engine.py": {
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "source_bytes": 127156,
+      "source_sha256": "0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066",
+      "source_check": "PASS",
+      "report_blob": "3bfa193e718fdf31b62d51f9a690b66a024d8403",
+      "report_bytes": 1596092,
+      "report_sha256": "19a64bebe675297c28a9b7879e6b615a341f973e3e9f3e5a1184c1ab36f47e4c",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 129,
+      "declaration_digest": "3a7668e78502516f6ffa04b3a28aaf1094e8814ea6f4acaa5105e39cb651b078",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/s_zone_detector.py": {
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "source_bytes": 66301,
+      "source_sha256": "3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78",
+      "source_check": "PASS",
+      "report_blob": "073719406d52ab9ea8eeb9b53fb55b3f2938af83",
+      "report_bytes": 755399,
+      "report_sha256": "36469c525f02b2edd4176ab84be926d5dfc6280ce58fde3a629ddd2e3eb4b1b1",
+      "report_check": "PASS_REMOTE",
+      "declaration_count": 53,
+      "declaration_digest": "3b9ec2dd9dc7839fa22d1fb583c6d9fa4d187723e50d0ad9307c9796d45b9e30",
+      "inventory_match": "PASS"
+    },
+    "engine/pipeline/true_false.py": {
+      "source_blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "source_bytes": 7412,
+      "source_sha256": "473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39",
+      "source_check": "PASS",
+      "report_blob": "35c3604eab453b64313522f9e7f642f0fe754e5f",
+      "report_bytes": 112908,
+      "report_sha256": "94b9411e84c3e5630242d55d9af3ce5b128f034e1096786b2e747c858fe5689f",
+      "report_check": "PASS_LOCAL_ONLY",
+      "declaration_count": 9,
+      "declaration_digest": "8165440820fe7f0c4af8a715e4ec9168d6e17fdcb589db9386730189e90ae291",
+      "inventory_match": "PASS"
+    }
+  },
+  "inventory": {
+    "functions": 587,
+    "classes": 87,
+    "unique_ids": 674,
+    "bytes": 361655,
+    "sha256": "9d5610d4d157c2bd452e4e2caf55a119f707ba0b2a4115fbca61e9d85b343a05",
+    "git_blob": "0e97a842a30f2a8ccb878fdc91c65612cca992b9"
+  },
+  "crosswalk": {
+    "sha256": "853d85035d96133d026019c137d4fada5e9939df935ff7167c82a34d78060ffc",
+    "modules": 16,
+    "categories": 272,
+    "mapped_pairs": 152970,
+    "errors": 0,
+    "category_counts": {
+      "accesses": [
+        35161,
+        35384,
+        34830
+      ],
+      "arithmetic": [
+        1074,
+        1089,
+        1072
+      ],
+      "branch_outcomes": [
+        6608,
+        6649,
+        6533
+      ],
+      "branches": [
+        3133,
+        3153,
+        3097
+      ],
+      "calls": [
+        5120,
+        5145,
+        5073
+      ],
+      "cfg": [
+        677,
+        690,
+        677
+      ],
+      "comparisons": [
+        2177,
+        2188,
+        2161
+      ],
+      "compiled_cfg": [
+        902,
+        917,
+        898
+      ],
+      "conservative_reaching_writes": [
+        12743,
+        12861,
+        12619
+      ],
+      "def_use": [
+        14957,
+        15080,
+        14853
+      ],
+      "effects": [
+        2045,
+        2064,
+        2017
+      ],
+      "exits": [
+        1184,
+        1197,
+        1179
+      ],
+      "fields": [
+        438,
+        441,
+        438
+      ],
+      "imports": [
+        203,
+        204,
+        203
+      ],
+      "nodes": [
+        65842,
+        66308,
+        65262
+      ],
+      "scope_records": [
+        1168,
+        1182,
+        1160
+      ],
+      "symbol_table": [
+        902,
+        917,
+        898
+      ]
+    },
+    "columns": [
+      "historical_count",
+      "current_count",
+      "mapped_count"
+    ]
+  },
+  "archive": {
+    "bytes": 376691,
+    "sha256": "ddebb6e68d6ec532161ba3cecb74e73fcd0fe66096f8225af9e814ca06ad827f",
+    "members": 4,
+    "crc": "PASS",
+    "remote": "PENDING"
+  },
+  "limitations": [
+    "Original independently generated v5 AST/CFG and bytecode validation remains historical local evidence; not regenerated in this session.",
+    "Exact runtime dispatch, path feasibility, heap aliasing and trading equivalence not established; out of scope.",
+    "Git transport from sandbox failed DNS; GitHub connector has no sandbox-file byte upload action. No external storage used.",
+    "No PASS for RB02 before original archive and three files are committed and read back."
+  ],
+  "next": "Publish exact recovery ZIP and all three original payloads; verify remote blob/byte identities and final acceptance; RB03 NOT RUN."
+}
