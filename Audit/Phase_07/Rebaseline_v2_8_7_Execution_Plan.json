@@ -122,7 +122,7 @@
       "phase": "07/W1",
       "title": "B09 bridge",
       "status": "IN PROGRESS",
-      "checkpoint": 296,
+      "checkpoint": 297,
       "supplementary_evidence": [
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Context_Review_02.json",
@@ -134,21 +134,24 @@
         "Audit/Phase_07/Rebaseline_v2_8_7/CP294_Completion.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Review.json",
         "Audit/Phase_07/Rebaseline_v2_8_7/CP295_B09_Feedback_Pipeline_Additional_Sites.json",
-        "Audit/Phase_07/Rebaseline_v2_8_7/CP295_Completion.json"
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP295_Completion.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP296_B09_Range_Visibility_Review.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP296_B09_Range_Visibility_Additional_Sites.json",
+        "Audit/Phase_07/Rebaseline_v2_8_7/CP296_Completion.json"
       ],
-      "completed_scope": "CP293 part 01: 28 source contracts and 137 W1 category rows plus 602 additional access/effect/exit rows, lines 140–364. CP293 part 02: 38 contracts and 202 W1 rows plus 785 additional sites. Current cumulative 339/2317 W1 rows. Part 01 site-specific reconciliation 137/137: historical semantic interpretations linked at exact mapped spans, new constructor reviewed and spanning bodies linked to all relevant contracts. Part 02 site-specific reconciliation 202/202: mapped historical interpretations and current new-site operation/bounds recorded; current group context controls acceptance. CP293 PASS scoped market context review: 339/2317 W1 current rows (269 mapped historical continuity and 70 current new site dispositions), 1387 additional sites, 66 contracts, six resolved documentation clarifications. B09 remains IN PROGRESS. CP294 PASS scoped full-direction local owner review of lines 2113–2566: 197 W1 (196 historic + 1 new) and 876 additional sites; 16 contracts, three documentation clarifications, independent remote canonical historical census and mapped/current site readback. Cumulative W1 536/2317, 2263 additional rows, 82 contracts. EngineBundle already counted in CP293. CP295 PASS scoped Order_B feedback and prepare_pipeline_state, lines 2569–2645 and 2648–2802: 109 W1 rows (88 mapped, 21 new), 555 additional sites; 16 contracts, four documentation clarifications; independent canonical historical census/readback of all mapped, retired and CP292 new site links. No overlap with CP293/294. Cumulative W1 645/2317, 2818 additional sites, 98 contracts.",
-      "remaining_scope": "1672 W1 rows in remaining B09 procedures: range/visibility, projection, serialization, primary/reversal and entry helpers. B09 and W1 remain IN PROGRESS.",
+      "completed_scope": "CP293 part 01: 28 source contracts and 137 W1 category rows plus 602 additional access/effect/exit rows, lines 140–364. CP293 part 02: 38 contracts and 202 W1 rows plus 785 additional sites. Current cumulative 339/2317 W1 rows. Part 01 site-specific reconciliation 137/137: historical semantic interpretations linked at exact mapped spans, new constructor reviewed and spanning bodies linked to all relevant contracts. Part 02 site-specific reconciliation 202/202: mapped historical interpretations and current new-site operation/bounds recorded; current group context controls acceptance. CP293 PASS scoped market context review: 339/2317 W1 current rows (269 mapped historical continuity and 70 current new site dispositions), 1387 additional sites, 66 contracts, six resolved documentation clarifications. B09 remains IN PROGRESS. CP294 PASS scoped full-direction local owner review of lines 2113–2566: 197 W1 (196 historic + 1 new) and 876 additional sites; 16 contracts, three documentation clarifications, independent remote canonical historical census and mapped/current site readback. Cumulative W1 536/2317, 2263 additional rows, 82 contracts. EngineBundle already counted in CP293. CP295 PASS scoped Order_B feedback and prepare_pipeline_state, lines 2569–2645 and 2648–2802: 109 W1 rows (88 mapped, 21 new), 555 additional sites; 16 contracts, four documentation clarifications; independent canonical historical census/readback of all mapped, retired and CP292 new site links. No overlap with CP293/294. Cumulative W1 645/2317, 2818 additional sites, 98 contracts. CP296 PASS scoped DirectionRangeState, DirectionVisibilityState, calculate_direction_range_state and finalize_direction_visibility, lines 2805–3112: 150 W1 (143 mapped historical, 7 new), 615 additional, 20 contracts, six documentation clarifications; canonical historical census and remote readback of mapped, retired and CP292 complement; zero overlap with CP293–295. Cumulative W1 795/2317, 3433 additional sites, 118 contracts.",
+      "remaining_scope": "1522 W1 rows remain in B09, including serialization, projection-related helpers, primary/reversal/response/entry helpers and other unreviewed bridge owners. B09 and W1 remain IN PROGRESS.",
       "current_w1": {
         "denominator": 2317,
-        "reviewed": 645,
+        "reviewed": 795,
         "by_category": {
-          "branches": 167,
-          "comparisons": 100,
-          "arithmetic": 65,
-          "calls": 313
+          "branches": 213,
+          "comparisons": 121,
+          "arithmetic": 66,
+          "calls": 395
         }
       },
-      "last_completed_checkpoint": 295,
+      "last_completed_checkpoint": 296,
       "completed_checkpoints": [
         {
           "id": 293,
@@ -164,6 +167,11 @@
           "id": 295,
           "status": "PASS_SCOPED",
           "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP295_Completion.json"
+        },
+        {
+          "id": 296,
+          "status": "PASS_SCOPED",
+          "evidence": "Audit/Phase_07/Rebaseline_v2_8_7/CP296_Completion.json"
         }
       ]
     },
@@ -210,7 +218,7 @@
       "status": "BLOCKED"
     }
   ],
-  "next": "CP296 / RB08 / W1 / B09 — DirectionRangeState and DirectionVisibilityState declarations (2805–2836), calculate_direction_range_state (2837–2938); then finalize_direction_visibility (2939–3112) if complete-procedure scope and validation capacity permit. Preserve all prior evidence.",
+  "next": "CP297 / RB08 / W1 / B09 — serialize_direction_payload (3113–3253), serialize_primary_order (3254–3282); serialize_primary_structures (3283–3404) if complete-procedure validation capacity permits. Preserve all prior evidence.",
   "scope": "Source-only; checkpoint count not fixed; target 25 when feasible; preserve historical evidence.",
   "artifact_policy": "GitHub individual files only; never create or send ZIP archives.",
   "reporting_contract": {
@@ -222,6 +230,6 @@
       "A complete ready-to-copy prompt for the next chat, including next checkpoint, pinned baseline, source ranges, validation and publication rules"
     ],
     "checkpoint_count_policy": "Do not invent a fixed remaining checkpoint count or overall percent. Checkpoint partitions are adaptive; the existing target is indicative only.",
-    "next_prompt": "Continue TradingBot reverse engineering from the latest verified algorithm head. Read Audit/Phase_07/Rebaseline_v2_8_7_Execution_Plan.json and CP295_Completion.json. Execute CP296 / RB08 / W1 / B09 against main baseline c99b4c957e932d9ee70c492ca03ce80711447fc1, bridge blob e1e65ba960c5f726f9a05e2ab89e4457b65e5735: declarations 2805–2836 and calculate_direction_range_state 2837–2938; finalize_direction_visibility 2939–3112 only if complete procedure validation is possible. Preserve CP293–295 coverage and historical evidence; reconcile every W1 and additional site with canonical inventory/crosswalk/CP292, review native owners, update active documentation only, validate exact counts and no overlap, publish separate evidence and completion on algorithm only, read back and verify main/source/RAW unchanged. No ZIP, no production edits, no runtime claims unless executed. Do not mark B09/W1 PASS prematurely. Report completed and remaining checkpoints, exact denominator-based percentages, limitations and next-chat prompt."
+    "next_prompt": "Continue TradingBot from the latest verified algorithm head. Read AGENTS.md, TradingBot_AI_Operating_Protocol.md, Audit/Phase_07/Rebaseline_v2_8_7_Execution_Plan.json and CP296_Completion.json. Execute CP297 / RB08 / W1 / B09 against pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1, bridge blob e1e65ba960c5f726f9a05e2ab89e4457b65e5735: serialize_direction_payload 3113–3253, serialize_primary_order 3254–3282, serialize_primary_structures 3283–3404 if complete-procedure review is feasible. Reconcile every W1 and additional site with canonical inventory/crosswalk/CP292, inspect native owners and projection/serialization gates, distinguish stable legacy and additive paths, preserve Decimal, identity, ordering and exact chronology, validate no prior overlap CP293–296. Update only documentation/audit on algorithm; publish separate evidence and completion, verify remote and main/source/RAW unchanged. No ZIP, production changes, fabricated runtime claims, or premature W1 acceptance. Report completed and remaining checkpoints, denominator-based percentages, limitations, GitHub evidence and next-chat prompt."
   }
 }
