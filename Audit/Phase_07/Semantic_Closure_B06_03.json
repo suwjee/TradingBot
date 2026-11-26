@@ -1,0 +1,564 @@
+{
+  "checkpoint": 75,
+  "batch": "B06",
+  "sub_batch": "B06-03",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "b0739ea55223699dbc6f8213f908206cfd17ff08",
+  "path": "engine/pipeline/e_zone_detector.py",
+  "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+  "source_range": [
+    196,
+    219
+  ],
+  "procedures": "E06",
+  "review_pass": "W1 source-first local owner",
+  "status": "PASS",
+  "scope": "Local source contract only; cross-owner, separate review and runtime not proven.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 18,
+    "by_category": {
+      "branches": 4,
+      "comparisons": 4,
+      "arithmetic": 0,
+      "calls": 10
+    },
+    "supplemental_items": 2,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "70b51e1569cc64afe90e95851393dea9a1c989a4",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 849,
+      "source_span": [
+        203,
+        8,
+        203,
+        34
+      ],
+      "procedure": "E06",
+      "original_operation": "Assert",
+      "original_context": "E-SC08",
+      "interpretation": "Assert crossing tuple is not None; no alternate selection (assertion execution mode matters).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L203-L203",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 916,
+      "source_span": [
+        213,
+        8,
+        214,
+        48
+      ],
+      "procedure": "E06",
+      "original_operation": "If",
+      "original_context": "E-SC08",
+      "interpretation": "Only current miss and maximum of parent stop, exact crossing, confirmation strictly before dirty allow previous lookup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L213-L214",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 917,
+      "source_span": [
+        213,
+        11,
+        213,
+        77
+      ],
+      "procedure": "E06",
+      "original_operation": "BoolOp",
+      "original_context": "E-SC08",
+      "interpretation": "Only current miss and maximum of parent stop, exact crossing, confirmation strictly before dirty allow previous lookup.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L213-L213",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "branches",
+      "original_id": 937,
+      "source_span": [
+        215,
+        8,
+        216,
+        103
+      ],
+      "procedure": "E06",
+      "original_operation": "If",
+      "original_context": "E-SC08",
+      "interpretation": "Remaining miss delegates builder with original family, number, parent, stop, full match, source; store returned zone.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L215-L216",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 850,
+      "source_span": [
+        203,
+        15,
+        203,
+        34
+      ],
+      "procedure": "E06",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Assert crossing tuple is not None; no alternate selection (assertion execution mode matters).",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L203-L203",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 918,
+      "source_span": [
+        213,
+        11,
+        213,
+        23
+      ],
+      "procedure": "E06",
+      "original_operation": [
+        "Is"
+      ],
+      "interpretation": "None identity distinguishes cache miss.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L213-L213",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 921,
+      "source_span": [
+        213,
+        28,
+        213,
+        77
+      ],
+      "procedure": "E06",
+      "original_operation": [
+        "Lt"
+      ],
+      "interpretation": "Maximum of three event instants must be strictly before dirty; equality invalidates previous reuse.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L213-L213",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 938,
+      "source_span": [
+        215,
+        11,
+        215,
+        23
+      ],
+      "procedure": "E06",
+      "original_operation": [
+        "Is"
+      ],
+      "interpretation": "None identity distinguishes cache miss.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L215-L215",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 833,
+      "source_span": [
+        201,
+        16,
+        201,
+        42
+      ],
+      "procedure": "E06",
+      "original_operation": "self._dirty_time",
+      "interpretation": "Validate chronology identity and dirty instant before cache work.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L201-L201",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 865,
+      "source_span": [
+        206,
+        32,
+        206,
+        49
+      ],
+      "procedure": "E06",
+      "original_operation": "str",
+      "interpretation": "Stringify parent price in key, no price mutation.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L206-L206",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 879,
+      "source_span": [
+        208,
+        12,
+        208,
+        30
+      ],
+      "procedure": "E06",
+      "original_operation": "str",
+      "interpretation": "Stringify box top for key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L208-L208",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 885,
+      "source_span": [
+        208,
+        61,
+        208,
+        82
+      ],
+      "procedure": "E06",
+      "original_operation": "str",
+      "interpretation": "Stringify box bottom for key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L208-L208",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 890,
+      "source_span": [
+        209,
+        26,
+        209,
+        36
+      ],
+      "procedure": "E06",
+      "original_operation": "str",
+      "interpretation": "Stringify stop level for key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L209-L209",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 904,
+      "source_span": [
+        210,
+        34,
+        210,
+        48
+      ],
+      "procedure": "E06",
+      "original_operation": "str",
+      "interpretation": "Stringify E source price for key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L210-L210",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 911,
+      "source_span": [
+        212,
+        15,
+        212,
+        35
+      ],
+      "procedure": "E06",
+      "original_operation": "self._zones.get",
+      "interpretation": "Lookup exact current zone key before dirty cutoff.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L212-L212",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 922,
+      "source_span": [
+        213,
+        28,
+        213,
+        69
+      ],
+      "procedure": "E06",
+      "original_operation": "max",
+      "interpretation": "Maximum of three event instants must be strictly before dirty; equality invalidates previous reuse.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L213-L213",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 932,
+      "source_span": [
+        214,
+        19,
+        214,
+        48
+      ],
+      "procedure": "E06",
+      "original_operation": "self._previous_zones.get",
+      "interpretation": "Previous lookup by same key.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L214-L214",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    },
+    {
+      "kind": "calls",
+      "original_id": 943,
+      "source_span": [
+        216,
+        19,
+        216,
+        103
+      ],
+      "procedure": "E06",
+      "original_operation": "detector._build_zone",
+      "interpretation": "Remaining miss delegates builder with original family, number, parent, stop, full match, source; store returned zone.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local evaluation, identity, boundary or state contract; external effects deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source contract only; owner and runtime dependencies open.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L216-L216",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/09_E_Zone.md",
+        "line": 55,
+        "heading": "E06"
+      },
+      "transition_refs": []
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B06-03-S1",
+      "source_span": [
+        202,
+        211
+      ],
+      "interpretation": "Key omits separate Order direction and First/Break/box-source time fields; owner consistency required.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L202-L211",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-03-S2",
+      "source_span": [
+        212,
+        218
+      ],
+      "interpretation": "Current hit bypasses dirty cutoff; returned zone object reused; assertion not fallback.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L212-L218",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B06-03-F1",
+      "span": [
+        202,
+        211
+      ],
+      "description": "Clarify exact key omissions and identity consistency.",
+      "document": "Algorithms/V3/09_E_Zone.md",
+      "line": 56,
+      "prior_blob": "bab27db27a1185a50d3a9cb40ee38181469b1d2c",
+      "resolution": "Clarified active procedure paragraph; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/e_zone_detector.py#L202-L211",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2 chronology and index ties/mapping, audit and priority callbacks, dirty notification and native reconciliation step order/ownership.",
+    "W3 separate review and W4 acceptance pending; no RAW or runtime."
+  ]
+}

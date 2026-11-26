@@ -380,3 +380,25 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## B05 completion — W1 local Order Audit
 
 [Completion report](Semantic_Closure_B05_Completion.md) and [completion evidence](Semantic_Closure_B05_Completion.json): 26 contiguous checkpoints, 1,892/1,892 original rows, 159 supplemental items, 108 resolved local findings. W1 cumulative 5950/11504. Next B06; W2/W3/W4 remain open. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 73 — E records, live scope and dirty chronology
+
+[Local review](Semantic_Closure_B06_01.md) and [site evidence](Semantic_Closure_B06_01.json): 34 original rows, 3 supplemental items, 0 resolved local clarifications; local PASS. E 34/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 74 — Parent stop progress and main extreme reuse
+
+[Local review](Semantic_Closure_B06_02.md) and [site evidence](Semantic_Closure_B06_02.json): 44 original rows, 3 supplemental items, 1 resolved local clarifications; local PASS. E 78/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 75 — E Zone exact selected Order cache
+
+[Local review](Semantic_Closure_B06_03.md) and [site evidence](Semantic_Closure_B06_03.json): 18 original rows, 2 supplemental items, 1 resolved local clarifications; local PASS. E 96/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 76 — Live reconciliation dependency signature, rewind and restart
+
+[Local review](Semantic_Closure_B06_04.md) and [site evidence](Semantic_Closure_B06_04.json): 102 original rows, 4 supplemental items, 2 resolved local clarifications; local PASS. E 198/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 77 — E detector initialization and main extreme ownership
+
+[Local review](Semantic_Closure_B06_05.md) and [site evidence](Semantic_Closure_B06_05.json): 62 original rows, 4 supplemental items, 1 resolved local clarifications; local PASS. E 260/1109. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 6210/11504. Next B06 E09, line 394; W2/W3/W4 open.
