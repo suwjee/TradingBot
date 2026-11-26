@@ -118,3 +118,9 @@ Delegate to TB110 with bound base.range_minimum and unchanged local bounds. Pres
 ### TB112 — MarketIndexWindow.range_maximum
 
 Delegate to TB110 with bound base.range_maximum and unchanged local bounds. Preserve base extreme/tie semantics.
+
+## CP293 source-first verification — input state and retained indexes
+
+The current Bridge capacity gate is not the complete validity condition for retained index refresh: the native Reaction index requires 0 <= dirty <= old length <= new length <= capacity; it rejects shrinking even where the Bridge capacity check permits a refresh call. An unchanged terminal boundary is a no-op; historical crossing evidence is cleared only when dirty precedes the previous final candle. Rebuilding the index starts an empty crossing-history cache. The candle-list suffix is replaced before either index action, and the lower view is updated before the main view. These are not local transactions.
+
+The bucket rollback try starts only after persistent price keys, lower/main suffixes and last raw time are assigned; it covers delta construction and consumer execution, not arbitrary failures in the earlier commit operations. The outer Live wrapper discards retained views on protected BaseException; external callbacks are not rollback-owned. Native Candle and color behavior are conditional on the configured engine: frozen slotted fields, exact OHLC references, GREEN on Open <= Close. These clarifications supplement TB14/TB18/TB20/TB21 and LX09/IX02–IX04. [Evidence](../../Audit/Phase_07/Rebaseline_v2_8_7/CP293_B09_Market_Input_Review_01.json).
