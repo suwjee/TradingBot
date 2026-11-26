@@ -92,10 +92,10 @@ State dimensions: detected native geometry, calculation eligibility, consumed ph
 | LCX12 | E_REBUILD | Consumed S candidate after larger E strict stop, earlier E source, stop before A source, E priority higher, strict source Close beyond stopped-main Close | Preserve earliest evidence per owner, choose max stopped-main position then rank/number/source/index; latest prior from all E, older eligible only by strict rank and decision chronology per LC34 | E_REBUILD | LC34 |
 | LCX13 | E_REBUILD | Reconciled S changes | Rebuild E and accepted ledger; remove stage-invalid S at stage-specific gate; retain other geometry only as permitted evidence | FINAL | S43,TB73,OA62 |
 | LCX14 | FINAL | Initial A visibility relative to S | Suppress A on S source or S decision-containing main | FINAL | LC26 |
-| LCX15 | FINAL | StopAll and E share source | Remove E from visible E; use StopAll donor geometry and history | FINAL | LC40,LC45 |
+| LCX15 | FINAL | StopAll and E share integer source index | Remove E from visible E by index only; use StopAll donor geometry and history | FINAL | LC40,LC45 |
 | LCX16 | FINAL | S after stopped external modules/prior accepted S | Respect latest prior external cutoff (including consumed external) and exact source event; lower-priority S source Close beyond external stop-main Close suppresses without consumption; otherwise choose latest exact stop (not stop-main index) then rank, apply strict boundary and consume no-higher owners or retain higher S | FINAL | LC38,LC39 |
-| LCX17 | FINAL | Accepted E references historical S | Restore required S by source time, then apply occupied-source and invalid-S filtering | FINAL | LC45 |
-| LCX18 | FINAL | A provenance starts before dominant prior module stop boundary | Suppress A; restore historical A referenced by S; remove A on E/StopAll occupied source | FINAL | LC41,LC45 |
+| LCX17 | FINAL | Accepted E references historical S | Restore required S by source time using static initial identity snapshot; A lineage sees restored S before final occupied-index and invalid-S filtering | FINAL | LC45 |
+| LCX18 | FINAL | A provenance starts before dominant prior module stop boundary | Suppress A by strict provenance boundary; restore historical A referenced by pre-final S using static initial A identity snapshot; remove A on E/StopAll occupied integer index | FINAL | LC41,LC45 |
 | LCX19 | FINAL | Internal behavior output helper | Copy A/S/E/StopAll lists, no additional removal in current implementation | FINAL | LC44 |
 | LCX20 | FINAL | Final public range and invalidity gates | Clip source range inclusive, filter invalid A/S; primary can replace public StopAll source; do not delete independently valid physical causes | RETURN | TB77,P10,OA71 |
 
@@ -120,6 +120,6 @@ Native checkpoint fields owner, pending_stop, active tuple, output count. Owner 
 | SA13 | E_GATE | None | Ordinary owner acceptance SA02–05 | EVENT | LC19 |
 | SA14 | EVENT | After each event | Optional checkpoint owner,pending,active,output length | EVENT | LC15 |
 | SA15 | EVENT | Exhausted | Compute each emitted StopAll own first strict stop from decision; nullable fields if none; donor stop/gate remain separate | RETURN | LC07,LC20 |
-| SA16 | RETURN | Apply lifecycle | Build source->StopAll number sequence reset map (later duplicate wins); no E recomputation in this helper; suppress same-source E view | RETURN | LC40,E10 |
+| SA16 | RETURN | Apply lifecycle | Measure S visibility then StopAll once; assign source-time->StopAll number map (later duplicate wins); return E shallow copy and original StopAll result; no E recomputation here | RETURN | LC40,E10 |
 
 S Red direct armed-Blue promotion does NOT require price stop or Mode B. Mode B applies only to the subsequent completed-stop route. A completed pending stop does not re-arm a displaced owner. Native StopAll own stop is not the gate event; donor provenance remains separate. Primary ownership is later and conditional. See [Primary](06_Primary_Reversal.md).

@@ -1,0 +1,726 @@
+{
+  "checkpoint": 129,
+  "batch": "B07",
+  "sub_batch": "B07-32",
+  "baseline": "466eb875070f02cd0dbfb105033422bbe2fd8c70",
+  "entry_algorithm": "627de34b8f3203958ef73d66f351054f30644a9d",
+  "path": "engine/pipeline/lifecycle_engine.py",
+  "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+  "source_range": [
+    1412,
+    1444
+  ],
+  "procedures": "LC41 prior stop inventory",
+  "review_pass": "W1 source-first local owner review",
+  "status": "PASS",
+  "scope": "Local source partition only; LC41/LC45 divided at logical boundaries; cross-owner and runtime equivalence not certified.",
+  "runtime": "NOT RUN (source-only)",
+  "counts": {
+    "original_rows": 20,
+    "by_category": {
+      "branches": 5,
+      "comparisons": 3,
+      "arithmetic": 0,
+      "calls": 12
+    },
+    "supplemental_items": 1,
+    "resolved_findings": 1
+  },
+  "inventory_validation": {
+    "context_ledger_blob": "02093e925abea0ed526c6e0164166e3928d5de53",
+    "crosswalk_blob": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "exact_site_id_span_procedure_match": true,
+    "source_blob_match": true,
+    "all_partition_rows_disposed": true,
+    "duplicate_category_ids": false
+  },
+  "dependency_sources": [],
+  "site_rows": [
+    {
+      "kind": "branches",
+      "original_id": 5001,
+      "source_span": [
+        1430,
+        4,
+        1456,
+        28
+      ],
+      "procedure": "LC41",
+      "original_operation": "For",
+      "original_context": "LC-SC62",
+      "interpretation": "Stable sort A by same required key, traverse in order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1430-L1456",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5024,
+      "source_span": [
+        1438,
+        23,
+        1438,
+        29
+      ],
+      "procedure": "LC41",
+      "original_operation": "comprehension",
+      "original_context": "LC-SC62",
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1438-L1438",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": "engine/pipeline/lifecycle_engine.py:1439:15:BoolOp:filter",
+      "source_span": [
+        1439,
+        15,
+        1443,
+        60
+      ],
+      "procedure": "LC41",
+      "original_operation": "ComprehensionFilter",
+      "original_context": "LC-SC62",
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1439-L1443",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5027,
+      "source_span": [
+        1439,
+        15,
+        1443,
+        60
+      ],
+      "procedure": "LC41",
+      "original_operation": "BoolOp",
+      "original_context": "LC-SC62",
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1439-L1443",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "branches",
+      "original_id": 5038,
+      "source_span": [
+        1441,
+        16,
+        1441,
+        74
+      ],
+      "procedure": "LC41",
+      "original_operation": "NamedExpr",
+      "original_context": "LC-SC62",
+      "interpretation": "Call LC29 only after source gate, assign stop_event and require non-None; no cache across A.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1441-L1441",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5028,
+      "source_span": [
+        1439,
+        15,
+        1439,
+        79
+      ],
+      "procedure": "LC41",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1439-L1439",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5037,
+      "source_span": [
+        1440,
+        16,
+        1442,
+        25
+      ],
+      "procedure": "LC41",
+      "original_operation": [
+        "IsNot"
+      ],
+      "interpretation": "Call LC29 only after source gate, assign stop_event and require non-None; no cache across A.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1440-L1442",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "comparisons",
+      "original_id": 5045,
+      "source_span": [
+        1443,
+        16,
+        1443,
+        60
+      ],
+      "procedure": "LC41",
+      "original_operation": [
+        "LtE"
+      ],
+      "interpretation": "Require exact stop<=A source after non-null gate; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1443-L1443",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4977,
+      "source_span": [
+        1422,
+        14,
+        1428,
+        5
+      ],
+      "procedure": "LC41",
+      "original_operation": "sorted",
+      "interpretation": "Concatenate S then E in fresh list and stable sort by required source_time then int(required source_index), no default; supplied E may contain StopAll.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1422-L1428",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4988,
+      "source_span": [
+        1425,
+        12,
+        1425,
+        40
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Concatenate S then E in fresh list and stable sort by required source_time then int(required source_index), no default; supplied E may contain StopAll.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1425-L1425",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4992,
+      "source_span": [
+        1426,
+        12,
+        1426,
+        46
+      ],
+      "procedure": "LC41",
+      "original_operation": "int",
+      "interpretation": "Concatenate S then E in fresh list and stable sort by required source_time then int(required source_index), no default; supplied E may contain StopAll.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1426-L1426",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 4994,
+      "source_span": [
+        1426,
+        16,
+        1426,
+        45
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Concatenate S then E in fresh list and stable sort by required source_time then int(required source_index), no default; supplied E may contain StopAll.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1426-L1426",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5003,
+      "source_span": [
+        1430,
+        18,
+        1436,
+        5
+      ],
+      "procedure": "LC41",
+      "original_operation": "sorted",
+      "interpretation": "Stable sort A by same required key, traverse in order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1430-L1436",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5010,
+      "source_span": [
+        1433,
+        12,
+        1433,
+        40
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Stable sort A by same required key, traverse in order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1433-L1433",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5014,
+      "source_span": [
+        1434,
+        12,
+        1434,
+        46
+      ],
+      "procedure": "LC41",
+      "original_operation": "int",
+      "interpretation": "Stable sort A by same required key, traverse in order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1434-L1434",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5016,
+      "source_span": [
+        1434,
+        16,
+        1434,
+        45
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Stable sort A by same required key, traverse in order.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1434-L1434",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5029,
+      "source_span": [
+        1439,
+        15,
+        1439,
+        45
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1439-L1439",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5033,
+      "source_span": [
+        1439,
+        49,
+        1439,
+        79
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Visit sorted modules, test module source<=A source before stop lookup; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1439-L1439",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5040,
+      "source_span": [
+        1441,
+        30,
+        1441,
+        74
+      ],
+      "procedure": "LC41",
+      "original_operation": "module_stop_event",
+      "interpretation": "Call LC29 only after source gate, assign stop_event and require non-None; no cache across A.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1441-L1441",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    },
+    {
+      "kind": "calls",
+      "original_id": 5047,
+      "source_span": [
+        1443,
+        30,
+        1443,
+        60
+      ],
+      "procedure": "LC41",
+      "original_operation": "getattr",
+      "interpretation": "Require exact stop<=A source after non-null gate; equality eligible.",
+      "temporal_relevance": "DIRECT_OR_INDIRECT",
+      "relevance_reason": "Local exact boundary, source identity, control flow or state/visibility contract; cross-owner proof deferred.",
+      "verification": "VERIFIED_LOCAL_SOURCE_CONTRACT",
+      "disposition": "VERIFIED",
+      "conditional_boundary": "Local source behavior; caller and delegated owner invariants remain W2/W3.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1443-L1443",
+      "dependency_anchors": [],
+      "contract_ref": {
+        "path": "Algorithms/V3/10_Lifecycle.md",
+        "line": 110,
+        "heading": "LC41"
+      },
+      "transition_refs": [
+        {
+          "path": "Algorithms/V3/State_Machines/05_E_Lifecycle_StopAll.md",
+          "line": 98,
+          "transition": "LCX18"
+        }
+      ]
+    }
+  ],
+  "supplemental_items": [
+    {
+      "id": "B07-32-S01",
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_span": [
+        1421,
+        1444
+      ],
+      "interpretation": "Direction deleted, S/E concatenation and stable sort by required source/index. Per A visit modules in order, source<=A then LC29 non-null then exact stop<=A; no stop cache.",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1421-L1444",
+      "disposition": "VERIFIED",
+      "verification": "LOCAL_SOURCE_CONTRACT",
+      "conditional_boundary": "External owner/caller invariants W2 pending."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B07-32-F01",
+      "span": [
+        1421,
+        1444
+      ],
+      "description": "Specify required attributes, equality and stop lookup ordering.",
+      "document": "Algorithms/V3/10_Lifecycle.md",
+      "line": 111,
+      "prior_blob": "c9ec4c8d99b0636b374ccc4b50bf0b787480aed6",
+      "resolution": "Clarified active procedure and related state transitions; rechecked pinned source.",
+      "status": "RESOLVED",
+      "source_anchor": "https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/lifecycle_engine.py#L1421-L1444",
+      "recheck": "W2/W3 pending."
+    }
+  ],
+  "open_dependencies": [
+    "W2: E sequence-reset setter and owner aliasing; callback contracts, Order identity, exact provenance, caller stage order and output visibility ownership. W3 separate review and W4 acceptance pending. No RAW/runtime."
+  ]
+}

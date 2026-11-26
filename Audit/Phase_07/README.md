@@ -622,3 +622,47 @@ W1 cumulative 7754/11504. Next B07 LC34, line 996; W2/W3/W4 open.
 [Local review](Semantic_Closure_B07_30.md) and [site evidence](Semantic_Closure_B07_30.json): 36 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1018/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 8077/11504. Next B07 LC40, line 1377; W2/W3/W4 open.
+
+## Checkpoint 128 — Hard StopAll reset publication without E rebuild
+
+[Local review](Semantic_Closure_B07_31.md) and [site evidence](Semantic_Closure_B07_31.json): 11 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1029/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 129 — A chronological prior-owner inventory
+
+[Local review](Semantic_Closure_B07_32.md) and [site evidence](Semantic_Closure_B07_32.json): 20 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1049/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 130 — Dominant module and A provenance gate
+
+[Local review](Semantic_Closure_B07_33.md) and [site evidence](Semantic_Closure_B07_33.json): 11 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1060/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 131 — Reaction one-based identity protection
+
+[Local review](Semantic_Closure_B07_34.md) and [site evidence](Semantic_Closure_B07_34.json): 13 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1073/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 132 — Strict protected Reaction interior
+
+[Local review](Semantic_Closure_B07_35.md) and [site evidence](Semantic_Closure_B07_35.json): 23 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1096/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 133 — Calculation-valid output copies
+
+[Local review](Semantic_Closure_B07_36.md) and [site evidence](Semantic_Closure_B07_36.json): 4 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1100/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 134 — StopAll index ownership and initial S evaluation
+
+[Local review](Semantic_Closure_B07_37.md) and [site evidence](Semantic_Closure_B07_37.json): 11 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1111/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 135 — Restoring historical S referenced by E
+
+[Local review](Semantic_Closure_B07_38.md) and [site evidence](Semantic_Closure_B07_38.json): 21 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1132/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 136 — A lineage restoration and final A/S eligibility
+
+[Local review](Semantic_Closure_B07_39.md) and [site evidence](Semantic_Closure_B07_39.json): 39 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1171/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 137 — Final S index exclusion for A visibility
+
+[Local review](Semantic_Closure_B07_40.md) and [site evidence](Semantic_Closure_B07_40.json): 8 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1179/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## B07 local completion
+
+[Completion evidence](Semantic_Closure_B07_Completion.json): 1179/1179 original rows; W1 cumulative 8238/11504. B07 W1 PASS; W2/W3/W4 open. Next B08 engine/pipeline/PL_PH_detector.py line 1. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
