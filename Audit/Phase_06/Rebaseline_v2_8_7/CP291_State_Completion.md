@@ -1,0 +1,8 @@
+# CP291 / RB06 — State-model rebaseline acceptance
+
+Baseline: c99b4c957e932d9ee70c492ca03ce80711447fc1. Status: PASS for state-model delta and structural state registry only. Runtime and RAW NOT RUN. No formal reachability or per-site semantic completeness claim.
+
+- Nine documents, 51 analytical extended-state models, 505 unique guarded transitions; 13 new transitions (CR01–07, IW01–06) compared with current pre-session 492, two additional models. 1051 procedure reference occurrences; 561 direct, 26 explicit supporting, total 587/587. 44 relative link targets verified, zero missing. Sequential IDs checked by series (historical LCX is a subseries of LC). All guards/effects/states nonempty.
+- Source-based delta reviewed: feedback donor list and converged storage (trading_pipeline.py:2569–2645,2648–2802), no visibility recalculation (2939 onward); independent segment/caching and projection (1756–1857,3531–3630,3738–3767); current T/F counters, frontier and resets (true_false.py:47–128,162–188). Revised TR04/TR06, OF02/OF04, TFB register description and TFB07/08/10. Added CR/IW models for explicit cache-stage publication/failure, base-window flattening, strict crossing and range guards.
+- Historical state models and support roles for unchanged local source remain retained; no independent proof of every helper or every branch. CP289 exact unmatched Bridge anonymous/site linkage and CP287 waived publication remain explicit; further dependency-context and owner-level review in RB07–RB11 mandatory before W1 acceptance.
+- [Registry validation](CP291_State_Registry_Validation.json) includes all current transition rows and procedure associations. All work is committed as individual GitHub files; no archives, source changes or execution.

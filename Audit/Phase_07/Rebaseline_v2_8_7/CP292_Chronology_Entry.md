@@ -1,0 +1,3 @@
+# CP292 / RB07 — Chronology and current context entry
+
+Baseline: c99b4c957e932d9ee70c492ca03ce80711447fc1. Status: INCOMPLETE. CP290 and CP291 scoped acceptance verified. Start current chronology and event-order crosswalk review, including cache exclusive-end guards, T/F strict price frontier, converged lifecycle source ownership, Primary3 reversal boundary, full-history vs visible range and source-time/decision-time distinctions. CP289 unresolved exact Bridge site ownership must be reconstructed from source or otherwise substantiated before owner/W1 acceptance; no archive requirement. Review current candidate bindings and dependency contexts, preserve original historical evidence. No RAW or runtime execution.

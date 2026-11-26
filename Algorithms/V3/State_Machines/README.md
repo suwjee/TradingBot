@@ -12,10 +12,10 @@ This is the active Phase 06 companion to the [module algorithm registry](../READ
 | [Order ledger and creation](04_Order_Ledger.md) | OAS, OAP, OB, OLR, OLC | 52 |
 | [E, Lifecycle and StopAll](05_E_Lifecycle_StopAll.md) | ER, EC, EQ, EF, LC, SA | 76 |
 | [Primary and reversal](06_Primary_Reversal.md) | MB, PP, PG, PO, TR | 49 |
-| [Continuation and transport](07_Continuation.md) | LX, LT, IX, RC, CV, EV, LV | 75 |
+| [Continuation and transport](07_Continuation.md) | LX, LT, IX, RC, CV, EV, LV, CR, IW | 88 |
 | [Pipeline, projection and T/F](08_Pipeline_Projection_TF.md) | BF, OF, PJ, TFC, TFB, TFS | 61 |
 | [Shared services and adapters](09_Shared_Services.md) | CI, MC, RD, PR, ES, LS, IO | 57 |
-| Total | 49 models | 492 |
+| Total | 51 models | 505 |
 
 ## Interpretation and acceptance
 
@@ -36,7 +36,7 @@ Interpret rows within the specific operation/decision stage. Some rows perform s
 | Sequence owner vs active StopAll | Exact S/E key, count and latest versus separate active StopAll tuple and frozen pending stop |
 | Logical vs physical primary | Independent cycle checkpoint/proposal versus globally committed point, physical projection and numbering |
 | Regime | Exact confirmed Primary3 break, independent prefix validation and fresh advancing suffix |
-| Live | Active input transaction and full replay; optional per-stage checkpoints are separate interfaces |
+| Live | Active input transaction and fresh trading-stage replay; eligible independent closed prefixes can be reused, optional per-stage checkpoints are separate interfaces |
 | T/F | Final row annotation only, no geometric or lifecycle mutation |
 
 ## Critical precedence cross-check
@@ -60,6 +60,6 @@ This is a compact index of the source-checked race rules, not a complete Phase 0
 
 ## Scope boundary
 
-All 576 prior named procedures have a role: 550 directly referenced by guarded transition rows, 26 explicitly classified as supporting operations. This is structural traceability of the state-model deliverables, not source-branch equivalence, a formal proof of reachability, mutual exclusion, totality or path feasibility. The full original site inventories, 491 anonymous scopes, exact temporal windows, and conditional bindings still require the later chronology, decision-table, direction, integration and forensic audits. The state models do not authorize RAW reads, engine execution, runtime testing, executable reconstruction or benchmark.
+All 587 current named procedures have a role: 561 directly referenced by guarded transition rows, 26 explicitly classified as supporting operations. This is structural traceability of the state-model deliverables, not source-branch equivalence, a formal proof of reachability, mutual exclusion, totality or path feasibility. The full original site inventories, 491 anonymous scopes, exact temporal windows, and conditional bindings still require the later chronology, decision-table, direction, integration and forensic audits. The state models do not authorize RAW reads, engine execution, runtime testing, executable reconstruction or benchmark.
 
-The counts above describe the current tables, not a re-certified v2.8.7 transition inventory. See [active rebaseline](../../../Audit/Phase_07/Rebaseline_v2_8_7.json).
+The counts above were structurally verified against the v2.8.7 procedure registry in [CP291](../../../Audit/Phase_06/Rebaseline_v2_8_7/CP291_State_Registry_Validation.json); they do not establish full semantic site coverage. See [active rebaseline](../../../Audit/Phase_07/Rebaseline_v2_8_7.json).
