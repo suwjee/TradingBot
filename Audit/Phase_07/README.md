@@ -516,3 +516,25 @@ W1 cumulative 6861/11504. Next B06 E44 heap loop, line 1294; W2/W3/W4 open.
 [Local review](Semantic_Closure_B07_05.md) and [site evidence](Semantic_Closure_B07_05.json): 9 original rows, 2 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 175/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 7234/11504. Next B07 LC15, line 361; W2/W3/W4 open.
+
+## Checkpoint 103 — Armed stop evidence and exact E donor eligibility
+
+[Local review](Semantic_Closure_B07_06.md) and [site evidence](Semantic_Closure_B07_06.json): 54 original rows, 3 supplemental items, 3 resolved local clarifications; local partition PASS. Lifecycle 229/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 104 — S Red promotion, frozen completed stop and ordinary acceptance
+
+[Local review](Semantic_Closure_B07_07.md) and [site evidence](Semantic_Closure_B07_07.json): 38 original rows, 3 supplemental items, 1 resolved local clarifications; local partition PASS. Lifecycle 267/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 105 — Repeated StopAll, E promotion and checkpoint capture
+
+[Local review](Semantic_Closure_B07_08.md) and [site evidence](Semantic_Closure_B07_08.json): 49 original rows, 3 supplemental items, 3 resolved local clarifications; local partition PASS. Lifecycle 316/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 106 — Own-stop resolution and Live initialization
+
+[Local review](Semantic_Closure_B07_09.md) and [site evidence](Semantic_Closure_B07_09.json): 12 original rows, 2 supplemental items, 2 resolved local clarifications; local partition PASS. Lifecycle 328/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 107 — Live dirty prefix replay and public StopAll wrapper
+
+[Local review](Semantic_Closure_B07_10.md) and [site evidence](Semantic_Closure_B07_10.json): 52 original rows, 3 supplemental items, 3 resolved local clarifications; local partition PASS. Lifecycle 380/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 7439/11504. Next B07 LC25, line 606; W2/W3/W4 open.

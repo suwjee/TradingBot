@@ -111,11 +111,11 @@ Native checkpoint fields owner, pending_stop, active tuple, output count. Owner 
 | SA04 | EVENT | Ordinary acceptance, higher sequence priority or re-evaluated equal priority and exact E kinds with LC08 dominance | Replace with count1 | EVENT | LC05,LC08 |
 | SA05 | EVENT | Ordinary acceptance, other incoming | Retain same owner unchanged | EVENT | LC05 |
 | SA06 | EVENT | S Red, current Blue owner armed, owner latest decision<S decision | Emit StopAll1 from S, gate=S exact decision, active singleton, clear owner/pending | EVENT | LC12,LC18 |
-| SA07 | EVENT | S otherwise | Find armed stop before source; completed=pending or current valid stop | S_GATE | LC16,LC18 |
+| SA07 | EVENT | S otherwise | Query armed stop before source even with pending; completed=truthy pending or current valid stop | S_GATE | LC16,LC18 |
 | SA08 | S_GATE | Red S, completed Blue owner, Order mode upper B | Emit StopAll1 from S with completed exact stop gate; active singleton; clear owner/pending | EVENT | LC12,LC18 |
 | SA09 | S_GATE | No promotion | Freeze completed stop if pending absent; apply ordinary acceptance SA02–05 | EVENT | LC18 |
-| SA10 | EVENT | E donor, any active StopAll first strict stop<=E exact decision | Emit number=max stopped+1, gate=min exact stops, type stopall-stop; remove stopped active by object identity, append new; clear owner/pending | EVENT | LC09,LC19 |
-| SA11 | EVENT | E donor, no stopped active | Resolve completed=pending or armed stop; ordinary strict stop<donor source OR same donor main with source<=stop<source+TF and donor price strict beyond owner, stop<=decision, OR exact parent type/index/time/price/stop match | E_GATE | LC16,LC19 |
+| SA10 | EVENT | E donor, any active StopAll first strict stop<=E exact decision | Emit number=max stopped+1, gate=min exact stops, type stopall-stop; remove stopped active by object id (not value), append new; clear owner/pending | EVENT | LC09,LC19 |
+| SA11 | EVENT | E donor, no stopped active | Query armed stop even with pending; completed=truthy pending or current stop; ordinary strict stop<donor source OR same donor main with source<=stop<source+TF and donor price strict beyond owner, stop<=decision, OR exact parent type/index/time/price/stop match | E_GATE | LC16,LC19 |
 | SA12 | E_GATE | Completed exists | Emit StopAll1, sequence-group-stop; append active; clear owner/pending | EVENT | LC09,LC19 |
 | SA13 | E_GATE | None | Ordinary owner acceptance SA02–05 | EVENT | LC19 |
 | SA14 | EVENT | After each event | Optional checkpoint owner,pending,active,output length | EVENT | LC15 |
