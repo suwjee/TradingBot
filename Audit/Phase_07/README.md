@@ -1382,3 +1382,7 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 285 — Worker recoverable mismatch, fatal errors and exit
 
 [Local review](Semantic_Closure_B10_25.md) · [Site evidence](Semantic_Closure_B10_25.json): 23 original rows, local PASS; B10 320/320.
+
+## B10 and W1 owner closure — CP285 completion
+
+[B10 completion](Semantic_Closure_B10_Completion.json): all 25 partitions, both source modules, 320 original rows reopened and structurally revalidated. [W1 completion](Semantic_Closure_W1_Completion.json): 10/10 local owners PASS, 11,504/11,504 original category rows. W2 cross-owner reconciliation next. W3/W4 and acceptance gates open; Phase 07 INCOMPLETE, Phase 08 BLOCKED. No runtime equivalence asserted.
