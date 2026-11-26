@@ -69,4 +69,19 @@ A nullable declared field can still be required at record construction. A field 
 | Primary continuation | timeframe mismatch ValueError; changed event not datetime TypeError |
 | Reversal regime | invalid segment boundaries or unsupported independent Primary3 evidence raises |
 
+### B05 — Additional v2.8.7 boundaries
+
+| Primitive | Exact guard / result |
+|---|---|
+| MarketIndexWindow crossing | clamp local bounds; empty returns null; base position translated only when non-null |
+| MarketIndexWindow extreme | require 0 <= left < right <= window length; otherwise ValueError |
+| Closed prefix reuse | absolute exclusive end <= first_dirty_main, matching complete key, and non-null saved result; otherwise calculate |
+| Closed prefix transaction | publish current used map only on normal exit; exception through yield retains prior map |
+| Live buckets with live_views | bucket_delta must not be null (assertion); no such assertion in no-view route |
+| StopAll donor choice | retain accepted E on occupied physical pair; independent root is additional donor only at absent pair |
+| Basic reference crossing | strict comparison price below current in normalized space; equal history tail removed when inserting newer pair |
+| Repair crossing | first lower position in inclusive horizon, from lower_bound(start), using strict native directional predicate |
+
+Source: trading_pipeline.py:1756–1857, 2596–2640, 3737–3753; true_false.py:18–29, 47–128.
+
 Do not infer an exception is reachable merely from a conservative CFG edge. Do not suppress native parse, conversion, key, arithmetic, callback or comparison errors where source does not catch them. Detailed exception types, exact messages, branches and cleanup obligations remain attached to every owning function in the Phase 04 inventory. No runtime tests.

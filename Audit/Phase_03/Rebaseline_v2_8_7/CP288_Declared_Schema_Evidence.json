@@ -1,0 +1,4955 @@
+{
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "checkpoint": 288,
+  "scope": "Complete declared class/record interface evidence. Reused 14 identical source blobs; reviewed current declaration spans for 2 changed modules; compared all catalog rows.",
+  "status": "PASS",
+  "counts": {
+    "modules": 16,
+    "classes": 87,
+    "records": 46,
+    "fields": 441,
+    "required": 360,
+    "defaulted": 81,
+    "nullable": 117,
+    "factories": 18,
+    "keyword_only": 14
+  },
+  "modules": [
+    {
+      "path": "engine/__init__.py",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": []
+    },
+    {
+      "path": "engine/bridge/__init__.py",
+      "source_blob": "7cce7308316bd9e00f1a3687a6a84e0f1adb22d4",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": []
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "source_blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "LivePipelineContinuation",
+          "id": "engine/bridge/live_pipeline.py:22:0:LivePipelineContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveRawChanged",
+          "id": "engine/bridge/live_pipeline.py:73:0:LiveRawChanged",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveRawDeltaMismatch",
+          "id": "engine/bridge/live_pipeline.py:77:0:LiveRawDeltaMismatch",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveRawSource",
+          "id": "engine/bridge/live_pipeline.py:88:0:LiveRawSource",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "method": "current source declaration review",
+      "classes": [
+        {
+          "name": "BucketAppend",
+          "id": "engine/bridge/trading_pipeline.py:206:0:BucketAppend",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "first_dirty_second",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 207
+            },
+            {
+              "field": "first_dirty_main",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 208
+            },
+            {
+              "field": "settled_seconds",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 209
+            },
+            {
+              "field": "settled_main",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 210
+            }
+          ]
+        },
+        {
+          "name": "LiveMarketBuckets",
+          "id": "engine/bridge/trading_pipeline.py:213:0:LiveMarketBuckets",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveMarketViews",
+          "id": "engine/bridge/trading_pipeline.py:336:0:LiveMarketViews",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "BridgeProjection",
+          "id": "engine/bridge/trading_pipeline.py:794:0:BridgeProjection",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "EngineBundle",
+          "id": "engine/bridge/trading_pipeline.py:1733:0:EngineBundle",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "reaction",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1734
+            },
+            {
+              "field": "blue_line",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1735
+            },
+            {
+              "field": "a_zone",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1736
+            },
+            {
+              "field": "s_zone",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1737
+            },
+            {
+              "field": "e_zone",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1738
+            },
+            {
+              "field": "lifecycle",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1739
+            },
+            {
+              "field": "primary",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 1740
+            }
+          ]
+        },
+        {
+          "name": "MarketContext",
+          "id": "engine/bridge/trading_pipeline.py:1744:0:MarketContext",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "seconds",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1745
+            },
+            {
+              "field": "candles",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1746
+            },
+            {
+              "field": "lower_index",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1747
+            },
+            {
+              "field": "chronology",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1748
+            },
+            {
+              "field": "start_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1749
+            },
+            {
+              "field": "end_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1750
+            },
+            {
+              "field": "index_offset",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "0"
+              },
+              "line": 1751
+            },
+            {
+              "field": "initial_bullish_trend",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 1752
+            },
+            {
+              "field": "initial_bearish_trend",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 1753
+            }
+          ]
+        },
+        {
+          "name": "LiveClosedRegimes",
+          "id": "engine/bridge/trading_pipeline.py:1756:0:LiveClosedRegimes",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "MarketIndexWindow",
+          "id": "engine/bridge/trading_pipeline.py:1788:0:MarketIndexWindow",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "PipelineState",
+          "id": "engine/bridge/trading_pipeline.py:2114:0:PipelineState",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "directions",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2117
+            },
+            {
+              "field": "results",
+              "type": "dict[str, object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2118
+            },
+            {
+              "field": "reusable_full_context",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2119
+            },
+            {
+              "field": "initial_order_geometry",
+              "type": "dict[str, object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2120
+            },
+            {
+              "field": "internal_reaction_identities",
+              "type": "dict[str, set[tuple[int, int]]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2121
+            },
+            {
+              "field": "full_e_zones",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2122
+            },
+            {
+              "field": "full_stopalls_by_direction",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2123
+            },
+            {
+              "field": "full_e_detectors",
+              "type": "dict[str, object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2124
+            },
+            {
+              "field": "full_s_detectors",
+              "type": "dict[str, object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2125
+            },
+            {
+              "field": "full_lines_by_direction",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2126
+            },
+            {
+              "field": "full_a_by_direction",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2127
+            },
+            {
+              "field": "invalid_a_identities_by_direction",
+              "type": "dict[str, set[tuple[datetime, int]]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2128
+            },
+            {
+              "field": "invalid_s_identities_by_direction",
+              "type": "dict[str, set[tuple[datetime, int]]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2129
+            },
+            {
+              "field": "full_s_by_direction",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2130
+            },
+            {
+              "field": "full_s_candidates_by_direction",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2131
+            },
+            {
+              "field": "primary_result",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 2132
+            },
+            {
+              "field": "live_stages",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 2133
+            }
+          ]
+        },
+        {
+          "name": "FullDirectionState",
+          "id": "engine/bridge/trading_pipeline.py:2137:0:FullDirectionState",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "e_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2140
+            },
+            {
+              "field": "e_detector",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2141
+            },
+            {
+              "field": "s_detector",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2142
+            },
+            {
+              "field": "blue_lines",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2143
+            },
+            {
+              "field": "a_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2144
+            },
+            {
+              "field": "invalid_a_identities",
+              "type": "set[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2145
+            },
+            {
+              "field": "invalid_s_identities",
+              "type": "set[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2146
+            },
+            {
+              "field": "s_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2147
+            },
+            {
+              "field": "s_candidates",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2148
+            },
+            {
+              "field": "initial_s_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2149
+            },
+            {
+              "field": "stopalls",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 2150
+            }
+          ]
+        },
+        {
+          "name": "DirectionRangeState",
+          "id": "engine/bridge/trading_pipeline.py:2806:0:DirectionRangeState",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "blue_lines",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2809
+            },
+            {
+              "field": "a_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2810
+            },
+            {
+              "field": "s_candidates",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2811
+            },
+            {
+              "field": "accepted_s_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2812
+            },
+            {
+              "field": "e_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2813
+            },
+            {
+              "field": "invalid_a_identities",
+              "type": "set[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2814
+            },
+            {
+              "field": "invalid_s_identities",
+              "type": "set[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2815
+            }
+          ]
+        },
+        {
+          "name": "DirectionVisibilityState",
+          "id": "engine/bridge/trading_pipeline.py:2819:0:DirectionVisibilityState",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "blue_lines",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2822
+            },
+            {
+              "field": "a_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2823
+            },
+            {
+              "field": "s_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2824
+            },
+            {
+              "field": "e_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2825
+            },
+            {
+              "field": "stopalls",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2826
+            },
+            {
+              "field": "prepared_order_audit",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2827
+            },
+            {
+              "field": "projection_s_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2831
+            },
+            {
+              "field": "projection_e_zones",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2832
+            },
+            {
+              "field": "projection_stopalls",
+              "type": "list[object]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 2833
+            },
+            {
+              "field": "primary_groups",
+              "type": "dict[str, list[object]]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": true
+              },
+              "line": 2834
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "source_blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "StructureOrder",
+          "id": "engine/pipeline/PL_PH_detector.py:26:0:StructureOrder",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 27
+            },
+            {
+              "field": "reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 28
+            },
+            {
+              "field": "first_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 29
+            },
+            {
+              "field": "break_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 30
+            },
+            {
+              "field": "confirmation_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 31
+            },
+            {
+              "field": "stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 32
+            },
+            {
+              "field": "stop_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 33
+            },
+            {
+              "field": "stop_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "stop_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "causes",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 37
+            },
+            {
+              "field": "box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 38
+            },
+            {
+              "field": "reaction_mode",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 39
+            },
+            {
+              "field": "audit_causes",
+              "type": "tuple[dict[str, object], ...]",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "()"
+              },
+              "line": 40
+            }
+          ]
+        },
+        {
+          "name": "PrimaryPoint",
+          "id": "engine/pipeline/PL_PH_detector.py:44:0:PrimaryPoint",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "kind",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "trigger_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "trigger_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "order",
+              "type": "StructureOrder",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "cycle_id",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 55
+            },
+            {
+              "field": "identity_source",
+              "type": "PrimaryPoint | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 56
+            }
+          ]
+        },
+        {
+          "name": "MatchingBehaviorLeg",
+          "id": "engine/pipeline/PL_PH_detector.py:60:0:MatchingBehaviorLeg",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "reference_stopall_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "second_behavior_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "trigger_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "trigger_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "stop_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            }
+          ]
+        },
+        {
+          "name": "TrendTransition",
+          "id": "engine/pipeline/PL_PH_detector.py:73:0:TrendTransition",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 75
+            },
+            {
+              "field": "event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            },
+            {
+              "field": "high",
+              "type": "PrimaryPoint",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 78
+            },
+            {
+              "field": "target_direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "\"bullish\""
+              },
+              "line": 79
+            }
+          ]
+        },
+        {
+          "name": "PrimaryResult",
+          "id": "engine/pipeline/PL_PH_detector.py:88:0:PrimaryResult",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "highs",
+              "type": "list[PrimaryPoint]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 89
+            },
+            {
+              "field": "lows",
+              "type": "list[PrimaryPoint]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 90
+            },
+            {
+              "field": "mbl",
+              "type": "MatchingBehaviorLeg | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 91
+            },
+            {
+              "field": "status",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "\"waiting-for-matching-behaviors\""
+              },
+              "line": 92
+            },
+            {
+              "field": "post_pl3_orders",
+              "type": "list[StructureOrder]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 93
+            },
+            {
+              "field": "cycle_id",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 94
+            },
+            {
+              "field": "cycles",
+              "type": "list[PrimaryResult]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 95
+            },
+            {
+              "field": "qualification_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 96
+            },
+            {
+              "field": "transition",
+              "type": "TrendTransition | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 97
+            },
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "\"bearish\""
+              },
+              "line": 98
+            }
+          ]
+        },
+        {
+          "name": "_CycleCheckpoint",
+          "id": "engine/pipeline/PL_PH_detector.py:422:0:_CycleCheckpoint",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "result",
+              "type": "PrimaryResult",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 423
+            },
+            {
+              "field": "reference_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 424
+            },
+            {
+              "field": "gate_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 425
+            },
+            {
+              "field": "cursor",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 426
+            },
+            {
+              "field": "phase",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "\"PH\""
+              },
+              "line": 427
+            },
+            {
+              "field": "reset_high",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 428
+            }
+          ]
+        },
+        {
+          "name": "_PrimaryStep",
+          "id": "engine/pipeline/PL_PH_detector.py:440:0:_PrimaryStep",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 441
+            },
+            {
+              "field": "activations",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 442
+            },
+            {
+              "field": "cycle_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 443
+            },
+            {
+              "field": "checkpoint",
+              "type": "_CycleCheckpoint | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 444
+            },
+            {
+              "field": "point",
+              "type": "PrimaryPoint | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 445
+            }
+          ]
+        },
+        {
+          "name": "_PrimaryRun",
+          "id": "engine/pipeline/PL_PH_detector.py:449:0:_PrimaryRun",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "previous",
+              "type": "_PrimaryRun | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 450
+            },
+            {
+              "field": "dirty_event",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 451
+            },
+            {
+              "field": "schedule",
+              "type": "tuple",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "()"
+              },
+              "line": 452
+            },
+            {
+              "field": "steps",
+              "type": "list[_PrimaryStep]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "list",
+                "keyword_only": false
+              },
+              "line": 453
+            },
+            {
+              "field": "crossings",
+              "type": "dict[tuple, tuple[int, datetime] | None]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 454
+            },
+            {
+              "field": "projected_points",
+              "type": "dict[int, tuple[PrimaryPoint, PrimaryPoint]]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 455
+            }
+          ]
+        },
+        {
+          "name": "NativePrimaryOrders",
+          "id": "engine/pipeline/PL_PH_detector.py:624:0:NativePrimaryOrders",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReflectedRow",
+          "id": "engine/pipeline/PL_PH_detector.py:689:0:_ReflectedRow",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "original",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 690
+            }
+          ]
+        },
+        {
+          "name": "_ReflectedRows",
+          "id": "engine/pipeline/PL_PH_detector.py:701:0:_ReflectedRows",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReflectedPriceIndex",
+          "id": "engine/pipeline/PL_PH_detector.py:714:0:_ReflectedPriceIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReflectedChronology",
+          "id": "engine/pipeline/PL_PH_detector.py:726:0:_ReflectedChronology",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "ReflectedOrders",
+          "id": "engine/pipeline/PL_PH_detector.py:786:4:ReflectedOrders",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LivePrimaryContinuation",
+          "id": "engine/pipeline/PL_PH_detector.py:800:0:LivePrimaryContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/__init__.py",
+      "source_blob": "656ba15cfbd7edab34a66cd5bc907171940af38c",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": []
+    },
+    {
+      "path": "engine/pipeline/a_zone_detector.py",
+      "source_blob": "431934d2fb597238d5281a769c29fdb51747868b",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "BlueState",
+          "id": "engine/pipeline/a_zone_detector.py:26:0:BlueState",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "ordinal",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 27
+            },
+            {
+              "field": "line",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 28
+            },
+            {
+              "field": "formation_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 29
+            },
+            {
+              "field": "formation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 30
+            },
+            {
+              "field": "stop_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 31
+            },
+            {
+              "field": "stop_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 32
+            },
+            {
+              "field": "stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 33
+            },
+            {
+              "field": "stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "stop_event_extreme",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            }
+          ]
+        },
+        {
+          "name": "AZone",
+          "id": "engine/pipeline/a_zone_detector.py:39:0:AZone",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "blue_1_ordinal",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "blue_2_ordinal",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "blue_1_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "blue_2_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "blue_1_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "blue_2_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "blue_1_stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "blue_2_stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "continuation_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "continuation_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "continuation_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "trigger_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "trigger_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "trigger_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "reaction_first_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "reaction_break_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "formation_route",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 63
+            },
+            {
+              "field": "blue_1_stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 64
+            },
+            {
+              "field": "blue_2_stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 65
+            }
+          ]
+        },
+        {
+          "name": "AZoneDetector",
+          "id": "engine/pipeline/a_zone_detector.py:68:0:AZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_AHistory",
+          "id": "engine/pipeline/a_zone_detector.py:853:0:_AHistory",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "confirmations",
+              "type": "dict[_EventKey, datetime]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 854
+            },
+            {
+              "field": "reset_formations",
+              "type": "dict[_EventKey, datetime]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 855
+            },
+            {
+              "field": "crossings",
+              "type": "dict[_EventKey, tuple[_MarketEvent | None, bool]]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 856
+            },
+            {
+              "field": "extremes",
+              "type": "dict[_EventKey, tuple[Decimal, int, datetime]]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 857
+            },
+            {
+              "field": "matches",
+              "type": "dict[_EventKey, int | None]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 858
+            },
+            {
+              "field": "inherited_stops",
+              "type": "dict[_EventKey, tuple | None]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 859
+            },
+            {
+              "field": "triggers",
+              "type": "dict[_EventKey, tuple | None]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 860
+            },
+            {
+              "field": "sources",
+              "type": "dict[_EventKey, _MarketEvent | None]",
+              "nullable": true,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 861
+            },
+            {
+              "field": "zones",
+              "type": "dict[_EventKey, AZone]",
+              "nullable": false,
+              "default": {
+                "kind": "factory",
+                "value": "dict",
+                "keyword_only": false
+              },
+              "line": 862
+            }
+          ]
+        },
+        {
+          "name": "_LiveAZoneDetector",
+          "id": "engine/pipeline/a_zone_detector.py:865:0:_LiveAZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveAZoneContinuation",
+          "id": "engine/pipeline/a_zone_detector.py:1039:0:LiveAZoneContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/blue_line_detector.py",
+      "source_blob": "f25efc55bbc387c6a3a592ffe3ff87ee12cf6891",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "ScaleStrike",
+          "id": "engine/pipeline/blue_line_detector.py:26:0:ScaleStrike",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 27
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 28
+            },
+            {
+              "field": "extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 29
+            }
+          ]
+        },
+        {
+          "name": "BlueLine",
+          "id": "engine/pipeline/blue_line_detector.py:33:0:BlueLine",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "kind",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "previous_strike_count",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "strike_count",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "fibonacci_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "source_extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "broken_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "line_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "start_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "end_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "calculation_valid",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "True"
+              },
+              "line": 47
+            },
+            {
+              "field": "behavior_internal",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 48
+            }
+          ]
+        },
+        {
+          "name": "_BlueCheckpoint",
+          "id": "engine/pipeline/blue_line_detector.py:326:0:_BlueCheckpoint",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "previous_reaction",
+              "type": "object | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 327
+            },
+            {
+              "field": "previous_count",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 328
+            },
+            {
+              "field": "healthy_since_blue",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "0"
+              },
+              "line": 329
+            },
+            {
+              "field": "line_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "0"
+              },
+              "line": 330
+            }
+          ]
+        },
+        {
+          "name": "LiveBlueLineContinuation",
+          "id": "engine/pipeline/blue_line_detector.py:462:0:LiveBlueLineContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "source_blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "ChronologicalContainmentIndex",
+          "id": "engine/pipeline/core_utils.py:17:0:ChronologicalContainmentIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "source_blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "DirectionPolicy",
+          "id": "engine/pipeline/direction_policy.py:21:0:DirectionPolicy",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "Direction",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 22
+            },
+            {
+              "field": "extreme_attr",
+              "type": "Literal[\"low\", \"high\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 23
+            },
+            {
+              "field": "opposite_extreme_attr",
+              "type": "Literal[\"high\", \"low\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 24
+            },
+            {
+              "field": "first_reaction_tag",
+              "type": "Literal[\"RED\", \"GREEN\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 25
+            },
+            {
+              "field": "context_tag",
+              "type": "Literal[\"GREEN\", \"RED\"]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "source_blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "EZone",
+          "id": "engine/pipeline/e_zone_detector.py:36:0:EZone",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "family",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "parent_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "parent_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "parent_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "parent_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "parent_stop_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "parent_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "parent_stop_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "order_direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "order_mode",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "order_causes",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "order_parent_stop_cause_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "order_first_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "order_break_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            }
+          ]
+        },
+        {
+          "name": "_ParentStopProgress",
+          "id": "engine/pipeline/e_zone_detector.py:75:0:_ParentStopProgress",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "scanned_until",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "event",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            }
+          ]
+        },
+        {
+          "name": "_EReconciliationStep",
+          "id": "engine/pipeline/e_zone_detector.py:81:0:_EReconciliationStep",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "source",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 82
+            },
+            {
+              "field": "count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 83
+            },
+            {
+              "field": "active",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 84
+            },
+            {
+              "field": "sequence_start",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 85
+            }
+          ]
+        },
+        {
+          "name": "_ReopenedERace",
+          "id": "engine/pipeline/e_zone_detector.py:88:0:_ReopenedERace",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReconciledE",
+          "id": "engine/pipeline/e_zone_detector.py:93:0:_ReconciledE",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "candidates",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 94
+            },
+            {
+              "field": "numbered",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 95
+            },
+            {
+              "field": "accepted",
+              "type": "frozenset[tuple[datetime, int]]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 96
+            },
+            {
+              "field": "lifecycle_starts",
+              "type": "frozenset[datetime]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 97
+            },
+            {
+              "field": "evidence",
+              "type": "tuple",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 98
+            },
+            {
+              "field": "steps",
+              "type": "tuple[_EReconciliationStep, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 99
+            },
+            {
+              "field": "native_numbered",
+              "type": "tuple[EZone, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 100
+            }
+          ]
+        },
+        {
+          "name": "LiveEContinuation",
+          "id": "engine/pipeline/e_zone_detector.py:103:0:LiveEContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "EZoneDetector",
+          "id": "engine/pipeline/e_zone_detector.py:312:0:EZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "source_blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "StopAll",
+          "id": "engine/pipeline/lifecycle_engine.py:43:0:StopAll",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "gate_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "gate_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "stopped_behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "stopped_behavior_key",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "stopped_behavior_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "underlying_e_family",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "underlying_e_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "order_direction",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "order_mode",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "order_causes",
+              "type": "tuple[str, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "order_parent_stop_cause_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "order_first_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "order_break_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 72
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 73
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 74
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 75
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            },
+            {
+              "field": "stop_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 78
+            },
+            {
+              "field": "stop_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 79
+            },
+            {
+              "field": "stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 80
+            },
+            {
+              "field": "donor_type",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 85
+            },
+            {
+              "field": "donor_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 86
+            },
+            {
+              "field": "donor_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 87
+            },
+            {
+              "field": "donor_color",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 88
+            },
+            {
+              "field": "donor_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 89
+            },
+            {
+              "field": "donor_price",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 90
+            },
+            {
+              "field": "donor_stop_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 91
+            },
+            {
+              "field": "donor_stop_event_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "declared_default",
+                "value": "None",
+                "keyword_only": true
+              },
+              "line": 92
+            }
+          ]
+        },
+        {
+          "name": "_DominantBehavior",
+          "id": "engine/pipeline/lifecycle_engine.py:96:0:_DominantBehavior",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "kind",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 99
+            },
+            {
+              "field": "family",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 100
+            },
+            {
+              "field": "number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 101
+            },
+            {
+              "field": "count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 102
+            },
+            {
+              "field": "latest",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 103
+            }
+          ]
+        },
+        {
+          "name": "_StopAllCheckpoint",
+          "id": "engine/pipeline/lifecycle_engine.py:143:0:_StopAllCheckpoint",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "owner",
+              "type": "_DominantBehavior | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 144
+            },
+            {
+              "field": "pending_stop",
+              "type": "tuple[_DominantBehavior, datetime] | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 145
+            },
+            {
+              "field": "active",
+              "type": "tuple[StopAll, ...]",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "()"
+              },
+              "line": 146
+            },
+            {
+              "field": "output_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "0"
+              },
+              "line": 147
+            }
+          ]
+        },
+        {
+          "name": "StopAllDetector",
+          "id": "engine/pipeline/lifecycle_engine.py:150:0:StopAllDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveStopAllContinuation",
+          "id": "engine/pipeline/lifecycle_engine.py:534:0:LiveStopAllContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "source_blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "PostBehaviorStop",
+          "id": "engine/pipeline/order_audit_engine.py:40:0:PostBehaviorStop",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            }
+          ]
+        },
+        {
+          "name": "OrderBBehaviorAnchor",
+          "id": "engine/pipeline/order_audit_engine.py:48:0:OrderBBehaviorAnchor",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "priority",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            }
+          ]
+        },
+        {
+          "name": "OrderBResetLeg",
+          "id": "engine/pipeline/order_audit_engine.py:57:0:OrderBResetLeg",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "post_stop",
+              "type": "PostBehaviorStop",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "anchor_behavior_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "anchor_behavior_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "anchor_behavior_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "anchor_behavior_extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "reset_reaction",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            },
+            {
+              "field": "reset_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 64
+            },
+            {
+              "field": "reset_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 65
+            },
+            {
+              "field": "reset_broken_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 66
+            },
+            {
+              "field": "reset_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 67
+            },
+            {
+              "field": "leg_boundary",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 68
+            },
+            {
+              "field": "leg_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 69
+            },
+            {
+              "field": "leg_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 70
+            },
+            {
+              "field": "strict_break_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 71
+            },
+            {
+              "field": "reaction_number",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 72
+            },
+            {
+              "field": "physical_reaction",
+              "type": "object",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 73
+            },
+            {
+              "field": "physical_confirmation_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 74
+            }
+          ]
+        },
+        {
+          "name": "LiveOrderBResetLegs",
+          "id": "engine/pipeline/order_audit_engine.py:378:0:LiveOrderBResetLegs",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "OrderAuditEngineMixin",
+          "id": "engine/pipeline/order_audit_engine.py:554:0:OrderAuditEngineMixin",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "SOrderAuditMixin",
+          "id": "engine/pipeline/order_audit_engine.py:2517:0:SOrderAuditMixin",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "source_blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "Candle",
+          "id": "engine/pipeline/reaction_engine.py:35:0:Candle",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "timestamp",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "display_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "tag",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "open",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "high",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "low",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "close",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            }
+          ]
+        },
+        {
+          "name": "Candidate",
+          "id": "engine/pipeline/reaction_engine.py:47:0:Candidate",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "first_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "first_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "box_top_source_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "box_top_source_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "box_top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "box_bottom_source_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "box_bottom_source_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "box_bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "mode",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "anchor_idx",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 57
+            },
+            {
+              "field": "anchor_value",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 58
+            },
+            {
+              "field": "leg_boundary_value",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 59
+            },
+            {
+              "field": "break_idx",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 60
+            },
+            {
+              "field": "break_time",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 61
+            },
+            {
+              "field": "intrabar_start",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 62
+            },
+            {
+              "field": "cross_direction_origin",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 63
+            },
+            {
+              "field": "cross_direction_chain_owner",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 64
+            },
+            {
+              "field": "order_gate_decision",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 65
+            },
+            {
+              "field": "behavior_public_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 66
+            },
+            {
+              "field": "behavior_public_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 67
+            },
+            {
+              "field": "behavior_public_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 68
+            },
+            {
+              "field": "behavior_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 69
+            },
+            {
+              "field": "behavior_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "None"
+              },
+              "line": 70
+            },
+            {
+              "field": "behavior_internal",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "literal_or_expression",
+                "value": "False"
+              },
+              "line": 71
+            }
+          ]
+        },
+        {
+          "name": "ResetEvent",
+          "id": "engine/pipeline/reaction_engine.py:75:0:ResetEvent",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 76
+            },
+            {
+              "field": "display_time",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 77
+            },
+            {
+              "field": "second_time",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 78
+            },
+            {
+              "field": "broken_level",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 79
+            },
+            {
+              "field": "from_first_idx",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 80
+            }
+          ]
+        },
+        {
+          "name": "IntrabarAnalysis",
+          "id": "engine/pipeline/reaction_engine.py:84:0:IntrabarAnalysis",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "event_second",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 85
+            },
+            {
+              "field": "extreme",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 86
+            },
+            {
+              "field": "extreme_source",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 87
+            }
+          ]
+        },
+        {
+          "name": "DetectionResult",
+          "id": "engine/pipeline/reaction_engine.py:91:0:DetectionResult",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 92
+            },
+            {
+              "field": "reactions",
+              "type": "list[Candidate]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 93
+            },
+            {
+              "field": "resets",
+              "type": "list[ResetEvent]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 94
+            },
+            {
+              "field": "start_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 95
+            },
+            {
+              "field": "end_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 96
+            }
+          ]
+        },
+        {
+          "name": "_NormalReactionCursor",
+          "id": "engine/pipeline/reaction_engine.py:100:0:_NormalReactionCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 101
+            },
+            {
+              "field": "previous",
+              "type": "Candidate",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 102
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 103
+            },
+            {
+              "field": "running_value",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 104
+            },
+            {
+              "field": "running_source",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 105
+            },
+            {
+              "field": "pending_reset_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 106
+            }
+          ]
+        },
+        {
+          "name": "_ReactionCheckpoint",
+          "id": "engine/pipeline/reaction_engine.py:110:0:_ReactionCheckpoint",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "cursor",
+              "type": "_NormalReactionCursor",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 111
+            },
+            {
+              "field": "reaction_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 112
+            },
+            {
+              "field": "reset_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 113
+            }
+          ]
+        },
+        {
+          "name": "_InitialLegCursor",
+          "id": "engine/pipeline/reaction_engine.py:117:0:_InitialLegCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 118
+            },
+            {
+              "field": "state",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 119
+            },
+            {
+              "field": "leg_open_low",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 120
+            },
+            {
+              "field": "leg_just_started",
+              "type": "bool",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 121
+            },
+            {
+              "field": "anchor",
+              "type": "Candle | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 122
+            },
+            {
+              "field": "anchor_origin",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 123
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 124
+            }
+          ]
+        },
+        {
+          "name": "_TrendLegCursor",
+          "id": "engine/pipeline/reaction_engine.py:128:0:_TrendLegCursor",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "next_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 129
+            },
+            {
+              "field": "fixed_source",
+              "type": "Candle",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 130
+            },
+            {
+              "field": "candidate",
+              "type": "Candidate | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 131
+            }
+          ]
+        },
+        {
+          "name": "LiveReactionUnavailable",
+          "id": "engine/pipeline/reaction_engine.py:134:0:LiveReactionUnavailable",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "DetectorBase",
+          "id": "engine/pipeline/reaction_engine.py:148:0:DetectorBase",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "BullishDetector",
+          "id": "engine/pipeline/reaction_engine.py:235:0:BullishDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_ReflectedCandles",
+          "id": "engine/pipeline/reaction_engine.py:690:0:_ReflectedCandles",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "BearishDetector",
+          "id": "engine/pipeline/reaction_engine.py:728:0:BearishDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LowerTimeframeIndex",
+          "id": "engine/pipeline/reaction_engine.py:886:0:LowerTimeframeIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "ReflectedLowerTimeframeIndex",
+          "id": "engine/pipeline/reaction_engine.py:1095:0:ReflectedLowerTimeframeIndex",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "MarketChronology",
+          "id": "engine/pipeline/reaction_engine.py:1132:0:MarketChronology",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "_BehaviorReactionSpan",
+          "id": "engine/pipeline/reaction_engine.py:1371:0:_BehaviorReactionSpan",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "identity",
+              "type": "tuple[int, int]",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1372
+            },
+            {
+              "field": "first_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1373
+            },
+            {
+              "field": "confirmed_at",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1374
+            },
+            {
+              "field": "top",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1375
+            },
+            {
+              "field": "bottom",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1376
+            }
+          ]
+        },
+        {
+          "name": "_LiveBehaviorReactionEntry",
+          "id": "engine/pipeline/reaction_engine.py:1482:0:_LiveBehaviorReactionEntry",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "geometry",
+              "type": "tuple",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1483
+            },
+            {
+              "field": "span",
+              "type": "_BehaviorReactionSpan",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1484
+            },
+            {
+              "field": "extremes",
+              "type": "tuple[Decimal, Decimal] | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 1485
+            }
+          ]
+        },
+        {
+          "name": "LiveBehaviorReactionViews",
+          "id": "engine/pipeline/reaction_engine.py:1488:0:LiveBehaviorReactionViews",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "UnifiedReactionDetector",
+          "id": "engine/pipeline/reaction_engine.py:1617:0:UnifiedReactionDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveReactionContinuation",
+          "id": "engine/pipeline/reaction_engine.py:2784:0:LiveReactionContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "source_blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "method": "identical blob; preserve original class and field metadata",
+      "classes": [
+        {
+          "name": "SZone",
+          "id": "engine/pipeline/s_zone_detector.py:28:0:SZone",
+          "kind": "record",
+          "frozen": true,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "direction",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 29
+            },
+            {
+              "field": "color",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 30
+            },
+            {
+              "field": "formation_type",
+              "type": "str",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 31
+            },
+            {
+              "field": "a_ordinal",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 32
+            },
+            {
+              "field": "a_source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 33
+            },
+            {
+              "field": "a_source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 34
+            },
+            {
+              "field": "a_price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "a_stop_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "a_stop_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "a_stop_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            },
+            {
+              "field": "order_direction",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 39
+            },
+            {
+              "field": "order_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 40
+            },
+            {
+              "field": "order_mode",
+              "type": "str | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 41
+            },
+            {
+              "field": "order_first_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 42
+            },
+            {
+              "field": "order_first_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 43
+            },
+            {
+              "field": "order_break_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 44
+            },
+            {
+              "field": "order_break_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 45
+            },
+            {
+              "field": "order_confirmation_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 46
+            },
+            {
+              "field": "order_box_top",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 47
+            },
+            {
+              "field": "order_box_top_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 48
+            },
+            {
+              "field": "order_box_top_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 49
+            },
+            {
+              "field": "order_box_bottom",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 50
+            },
+            {
+              "field": "order_box_bottom_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 51
+            },
+            {
+              "field": "order_box_bottom_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 52
+            },
+            {
+              "field": "order_stop_level",
+              "type": "Decimal | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 53
+            },
+            {
+              "field": "order_stop_source_index",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 54
+            },
+            {
+              "field": "order_stop_source_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 55
+            },
+            {
+              "field": "reset_reaction_number",
+              "type": "int | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 56
+            },
+            {
+              "field": "reset_time",
+              "type": "datetime | None",
+              "nullable": true,
+              "default": {
+                "kind": "required"
+              },
+              "line": 57
+            },
+            {
+              "field": "source_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 58
+            },
+            {
+              "field": "source_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 59
+            },
+            {
+              "field": "price",
+              "type": "Decimal",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 60
+            },
+            {
+              "field": "decision_index",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 61
+            },
+            {
+              "field": "decision_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 62
+            },
+            {
+              "field": "decision_event_time",
+              "type": "datetime",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 63
+            }
+          ]
+        },
+        {
+          "name": "SZoneDetector",
+          "id": "engine/pipeline/s_zone_detector.py:66:0:SZoneDetector",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        },
+        {
+          "name": "LiveSZoneContinuation",
+          "id": "engine/pipeline/s_zone_detector.py:1433:0:LiveSZoneContinuation",
+          "kind": "class",
+          "frozen": null,
+          "slotted_record": null,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "path": "engine/pipeline/true_false.py",
+      "source_blob": "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e",
+      "method": "current source declaration review",
+      "classes": [
+        {
+          "name": "BasicRepeat",
+          "id": "engine/pipeline/true_false.py:34:0:BasicRepeat",
+          "kind": "record",
+          "frozen": false,
+          "slotted_record": true,
+          "fields": [
+            {
+              "field": "latest",
+              "type": "dict",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 35
+            },
+            {
+              "field": "repair_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 36
+            },
+            {
+              "field": "verdict_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 37
+            },
+            {
+              "field": "base_count",
+              "type": "int",
+              "nullable": false,
+              "default": {
+                "kind": "required"
+              },
+              "line": 38
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Class fields only; not constructor-assigned state or dictionary schemas.",
+    "Historical audit locations remain pinned to their original baseline; changed-module declaration locations in this file refer to current source."
+  ]
+}

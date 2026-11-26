@@ -45,6 +45,10 @@ Order Audit uses a local copy of the current Decimal context in three optimized 
 
 Native serializers project price fields as native Decimal strings (e.g. Reaction box bounds, Reset broken level, A price and Order stop level), retaining selected representation and any scientific notation produced by the native string operation. Null handling and specific field presence are defined per serializer. Do not impose a fixed number of decimals or coerce strings to JSON numeric values. The bridge rounds duration diagnostics to two decimals; that is telemetry, not a price-rounding rule. Full field-by-field serialization mapping belongs to later function/module phases.
 
+## N07 — T/F comparison coordinate (v2.8.7)
+
+For Basic verdict reference selection, construct Decimal directly from the row's price. Negate using copy_negate only when the direction policy's extreme attribute is low. This coordinate is internal to comparison, not a new serialized price. Per-rank history removes its tail while tail price >= current comparison price, then appends the current pair. The reference search chooses smaller rank in descending rank order and finds the last position strictly below current comparison price via lower bound. Equality does not qualify as a crossed reference. Repair crossing instead uses Decimal(level) in the native reference direction; no sign normalization of the supplied level. The visibility fallback for parent stop converts through Decimal(str(price)); do not conflate this with the T/F direct conversion. Source: engine/pipeline/true_false.py:18–29, 47–128 and engine/bridge/trading_pipeline.py:2966–2974, pinned main v2.8.7.
+
 ## Constraints
 
 No RAW dataset was read and no numeric engine operation was executed to produce this contract. The examples are source-derived illustrations. Full enumeration of module-specific arithmetic, special values, failure propagation and contextual price selection is not yet closed. See [direction policy](06_Direction_Policy.md) and [range index contract](08_Range_Indexes_And_Caches.md).

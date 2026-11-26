@@ -52,7 +52,7 @@ Internal reflection produces a new candle with unchanged index/timestamp/display
 
 ## C04 — MarketContext and BucketAppend
 
-MarketContext carries seconds, candles, lower_index, chronology, inclusive start_index/end_index, index_offset=0 and initial_bullish_trend=false, initial_bearish_trend=false. Seconds and candles can reference the same list at timeframe 1. Do not clone by default or assume independence. Segments instead create their own locally reindexed sequences. See [time contract](03_Chronology_And_Time_Model.md).
+MarketContext carries seconds, candles, lower_index, chronology, inclusive start_index/end_index, index_offset=0 and initial_bullish_trend=false, initial_bearish_trend=false. Seconds and candles can reference the same list at timeframe 1. Do not clone by default or assume independence. Segments have their own list slices and local index coordinate system; indexed zero-origin slices may preserve existing candle record identity. Nonzero starts (or absence of indexed support) reindex the relevant records, and indexed mode supplies prepared parent windows. See T05/I06 for exact guards. See [time contract](03_Chronology_And_Time_Model.md).
 
 BucketAppend carries first_dirty_second, first_dirty_main, settled_seconds, settled_main; all integer positional boundaries. Settled count is max(0, length-1), excluding the final mutable bucket even if a chronological gap exists. Dirty index identifies the suffix to rebuild.
 

@@ -1,0 +1,3 @@
+# CP289 / RB04 — Function extraction entry
+
+Baseline c99b4c957e932d9ee70c492ca03ce80711447fc1. Status: INCOMPLETE. Entry is authorized by CP288 foundational acceptance and CP287 non-blocking publication waiver. Use current main source and CP287 published scope delta, not historical line numbers as current authority. Reconcile 15 changed and 12 added Bridge scopes and 3 changed and 1 added T/F scopes from the structural delta inventory; class scopes may include changed descendants. Review unchanged scope dependencies, especially Live dispatch into the changed bridge. Full semantic extraction and traceability remain open. No runtime tests.
