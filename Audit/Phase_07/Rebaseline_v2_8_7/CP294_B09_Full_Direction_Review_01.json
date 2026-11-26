@@ -1,0 +1,5561 @@
+{
+  "checkpoint": 294,
+  "batch": "RB08/W1/B09",
+  "status": "INCOMPLETE_PENDING_ADDITIONAL_SITE_AND_DEPENDENCY_REVIEW",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "d180d8e75a2841a2920ec688f35bfe090107c7cb",
+  "source_path": "engine/bridge/trading_pipeline.py",
+  "source_blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+  "source_ranges": [
+    [
+      2113,
+      2566
+    ]
+  ],
+  "engine_bundle": "1732–1742 reviewed in CP293; not counted again.",
+  "method": "Complete current procedure source-first group review; exact full-line comparison against pinned old source, historical decision ledger row-order crosswalk and original historical interpretations; exact overlap check against CP293. Current new field call from CP292 anchor. No claim of independent current canonical inventory or cross-owner equivalence.",
+  "exact_unchanged_source_ranges": [
+    [
+      2113,
+      2122,
+      82
+    ],
+    [
+      2124,
+      2149,
+      83
+    ],
+    [
+      2153,
+      2566,
+      84
+    ]
+  ],
+  "changed_declarations": [
+    {
+      "line": 2123,
+      "meaning": "Required full_stopalls_by_direction directional map"
+    },
+    {
+      "line": 2150,
+      "meaning": "Fresh default stopalls list per instance"
+    }
+  ],
+  "counts": {
+    "by_category": {
+      "branches": 47,
+      "comparisons": 23,
+      "arithmetic": 8,
+      "calls": 119
+    },
+    "w1_rows": 197,
+    "prior_continuity": 196,
+    "current_new": 1,
+    "duplicate_or_cp293_overlap": 0,
+    "groups": 16
+  },
+  "groups": [
+    {
+      "id": "CP294-G01",
+      "start": 2113,
+      "end": 2133,
+      "title": "PipelineState mutable slotted state",
+      "meaning": "Stores direction tuple and native result/geometry/identity/detector/zone maps by reference; required full_stopalls_by_direction is a new directional list map. primary_result and live_stages default None. No deep copy or validation at construction.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2113-L2133"
+    },
+    {
+      "id": "CP294-G02",
+      "start": 2136,
+      "end": 2150,
+      "title": "FullDirectionState mutable record",
+      "meaning": "Authoritative full-range E/S and Blue/A references; invalid identities, candidates and initial S remain distinct. stopalls uses field(default_factory=list): a fresh list when omitted, not a shared default.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2136-L2150"
+    },
+    {
+      "id": "CP294-G03",
+      "start": 2153,
+      "end": 2174,
+      "title": "E construction bounds",
+      "meaning": "Determine opposite through chronology and last index len(candles)-1; no local empty-input guard. Default immutable exceptions and nullable blocked/invalid sets; order_b_legs and live_scope default empty tuples.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2153-L2174"
+    },
+    {
+      "id": "CP294-G04",
+      "start": 2175,
+      "end": 2189,
+      "title": "Geometry dispatch",
+      "meaning": "Closure uses supplied geometry_detectors keyed by geometry_direction. If order_geometry is not None, forwards detector plus direction/start/end/gate to callback; otherwise invokes native first_order_reaction_after_gate on selected detector. No local fallback on callback error.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2175-L2189"
+    },
+    {
+      "id": "CP294-G05",
+      "start": 2190,
+      "end": 2208,
+      "title": "E input forwarding",
+      "meaning": "Pass own/opposite reactions, S list, opposite resets, chronology, inclusive 0..end_index, geometry closure, blocked Firsts, exceptions, accepted initial audit, sequence_priority, invalid S roots and B legs. Only non-null live_continuation adds both live kwargs.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2190-L2208"
+    },
+    {
+      "id": "CP294-G06",
+      "start": 2211,
+      "end": 2234,
+      "title": "Direction preparation",
+      "meaning": "Resolve module references from bundle, assert E engine non-null, use market candles and chronology; opposite from reaction module. Lifecycle is dereferenced later; no separate null guard here.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2211-L2234"
+    },
+    {
+      "id": "CP294-G07",
+      "start": 2235,
+      "end": 2273,
+      "title": "Fresh Blue/A/S sequence",
+      "meaning": "When shared_stages is None, time Blue then A then S. Live optional dispatch for Blue/A/S; otherwise native detector calls. S receives both reactions, opposite resets, Blue/A, full inclusive range and direction-specific initial geometry. initial_s_zones is shallow list copy.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2235-L2273"
+    },
+    {
+      "id": "CP294-G08",
+      "start": 2274,
+      "end": 2292,
+      "title": "Shared stage reuse and accepted audit",
+      "meaning": "Reuse Blue/A/S detector and original initial S list reference, but copy initial S into active S and copy active S to candidates. Live hooks selected only if live exists. S-eligible A source times filter initial order audit via accepted_audit_entries; no presentation-only A acceptance.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2274-L2292"
+    },
+    {
+      "id": "CP294-G09",
+      "start": 2293,
+      "end": 2344,
+      "title": "Initial E and S reconciliation",
+      "meaning": "Initial E with current B legs and live scope (feedback_index,initial). Compare lengths only. If length differs, compute removed source times with set membership; on TypeError retry with list membership. Rebuild E using valid S and blocked sources, then replace active S. Same length does not trigger replacement.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2293-L2344"
+    },
+    {
+      "id": "CP294-G10",
+      "start": 2345,
+      "end": 2377,
+      "title": "A visibility versus dominant-stop validation",
+      "meaning": "Run both visibility helpers but candidate_a is not passed to split. Validate all S-eligible A against original S candidates, E, empty StopAll and candles. Parent-stop callback classifies by a_source_time attribute. A-stop confirmation uses Decimal(str(price)), trend_reactions[int(reaction_number)-1] without local index guard and direction. Stage-invalid identity set is mutable output argument.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2345-L2377"
+    },
+    {
+      "id": "CP294-G11",
+      "start": 2378,
+      "end": 2406,
+      "title": "Invalid descendants",
+      "meaning": "Build exact invalid A (source_time,int source_index), project source times, select invalid S from original candidates by a_source_time; similarly stage-invalid A descendants. Only stage-invalid S removed from active S at this point, not all invalid S.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2378-L2406"
+    },
+    {
+      "id": "CP294-G12",
+      "start": 2408,
+      "end": 2438,
+      "title": "Resolve accepted physical Order context",
+      "meaning": "Accepted A source times exclude invalid identities; pending A times from all candidates. Pass S audit, copied blocked First set, invalid A, pending S, opposite reactions, candles and direction; A-stop callback uses source_time not earlier confirmation. E stop event set uses tuple index 1 only for non-null parent_stop, one call per E; opposite confirmation callback and mutable exception output set.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2408-L2438"
+    },
+    {
+      "id": "CP294-G13",
+      "start": 2439,
+      "end": 2458,
+      "title": "Final E audit",
+      "meaning": "Recreate detector from accepted_orders, resolved blocked Firsts, E parent exceptions, invalid S identities, B legs and live hooks; scope (feedback_index,final). Timed detection replaces E.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2439-L2458"
+    },
+    {
+      "id": "CP294-G14",
+      "start": 2460,
+      "end": 2506,
+      "title": "Shared Order stop reconciliation",
+      "meaning": "Concatenate accepted_orders.values before E audit.values without local dedup. Native S reconcile; list inequality triggers exactly one rebuild, candidate identity map keyed (a_source_time,source_time), last duplicate wins and unmatched original kept. Rebuild E with same resolved inputs and shared-order scope; no loop.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2460-L2506"
+    },
+    {
+      "id": "CP294-G15",
+      "start": 2508,
+      "end": 2540,
+      "title": "Consumed S continuation",
+      "meaning": "Exclude stage-invalid candidates for consumed evidence lookup. Freeze accepted A order keys. For each evidence pair, select first current E owner by int source_index and source_time equality; missing owner skips. Build continuation and replace E in sequence, so subsequent lookup uses updated list.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2508-L2540"
+    },
+    {
+      "id": "CP294-G16",
+      "start": 2542,
+      "end": 2566,
+      "title": "Rebuild authoritative ledger and return",
+      "meaning": "Rebuild E audit from actual final E list and all supplemental consumed S rows in iteration order; then remove ALL invalid S identities from active S. Return E list and detector, original Blue/A, S detector, both invalid sets, filtered S, candidates and original initial S. No StopAll passed here; new field defaults fresh empty list. No local blanket exception catch.",
+      "source": "https://github.com/suwjee/TradingBot/blob/c99b4c957e932d9ee70c492ca03ce80711447fc1/engine/bridge/trading_pipeline.py#L2542-L2566"
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "row": 276,
+      "prior_row": 263,
+      "prior_id": 7475,
+      "span": [
+        2178,
+        8,
+        2182,
+        13
+      ],
+      "operation": "If",
+      "contracts": [
+        "CP294-G04"
+      ],
+      "interpretation": "Exact non-null order_geometry callback selects live/custom geometry path.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2094,
+        8,
+        2098,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 277,
+      "prior_row": 264,
+      "prior_id": 7535,
+      "span": [
+        2206,
+        11,
+        2207,
+        51
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G05"
+      ],
+      "interpretation": "Only non-null live_continuation adds live_continuation and live_scope keyword arguments.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2122,
+        11,
+        2123,
+        51
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 278,
+      "prior_row": 265,
+      "prior_id": 7613,
+      "span": [
+        2230,
+        4,
+        2230,
+        31
+      ],
+      "operation": "Assert",
+      "contracts": [
+        "CP294-G06"
+      ],
+      "interpretation": "Assert E engine non-null before stage work.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2146,
+        4,
+        2146,
+        31
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 279,
+      "prior_row": 266,
+      "prior_id": 7632,
+      "span": [
+        2235,
+        4,
+        2279,
+        55
+      ],
+      "operation": "If",
+      "contracts": [
+        "CP294-G07",
+        "CP294-G08"
+      ],
+      "interpretation": "Exact null shared stages selects fresh initial calculation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2151,
+        4,
+        2195,
+        55
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 280,
+      "prior_row": 267,
+      "prior_id": 7648,
+      "span": [
+        2239,
+        20,
+        2244,
+        13
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live Blue stage with native result; otherwise native Blue detector with direction, full reactions, chronology and resets.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2155,
+        20,
+        2160,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 281,
+      "prior_row": 268,
+      "prior_id": 7684,
+      "span": [
+        2249,
+        20,
+        2254,
+        13
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live A with full reactions and Blue; otherwise native A detector with same plus chronology.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2165,
+        20,
+        2170,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 282,
+      "prior_row": 269,
+      "prior_id": 7749,
+      "span": [
+        2270,
+        12,
+        2270,
+        94
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live exact null use bound native detect, otherwise invoke live S callback.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2186,
+        12,
+        2186,
+        94
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 283,
+      "prior_row": 270,
+      "prior_id": 7795,
+      "span": [
+        2281,
+        13,
+        2281,
+        62
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Read live E continuation only if live non-null, else null.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2197,
+        13,
+        2197,
+        62
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 284,
+      "prior_row": 271,
+      "prior_id": 7804,
+      "span": [
+        2282,
+        21,
+        2282,
+        70
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Read live order geometry only if live non-null, else null.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2198,
+        21,
+        2198,
+        70
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 285,
+      "prior_row": 272,
+      "prior_id": 7822,
+      "span": [
+        2288,
+        61,
+        2288,
+        65
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Build set of source times for all S-eligible A objects; required attribute.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2204,
+        61,
+        2204,
+        65
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 286,
+      "prior_row": 273,
+      "prior_id": 7876,
+      "span": [
+        2313,
+        4,
+        2343,
+        31
+      ],
+      "operation": "If",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Only differing list lengths trigger S reconciliation, not equality of contents.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2229,
+        4,
+        2259,
+        31
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 287,
+      "prior_row": 274,
+      "prior_id": 7884,
+      "span": [
+        2314,
+        8,
+        2322,
+        13
+      ],
+      "operation": "Try",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Try set conversion and blocked-source derivation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2230,
+        8,
+        2238,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 288,
+      "prior_row": 275,
+      "prior_id": 7897,
+      "span": [
+        2317,
+        49,
+        2317,
+        53
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Collect required source times for original S absent from valid set; preserve membership semantics.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2233,
+        49,
+        2233,
+        53
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 289,
+      "prior_row": 276,
+      "prior_id": "engine/bridge/trading_pipeline.py:2233:68:Compare:filter",
+      "span": [
+        2317,
+        68,
+        2317,
+        98
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Collect required source times for original S absent from valid set; preserve membership semantics.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2233,
+        68,
+        2233,
+        98
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 290,
+      "prior_row": 277,
+      "prior_id": 7903,
+      "span": [
+        2319,
+        8,
+        2322,
+        13
+      ],
+      "operation": "ExceptHandler",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Catch TypeError from enclosed set/derivation and retry list membership.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2235,
+        8,
+        2238,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 291,
+      "prior_row": 278,
+      "prior_id": 7912,
+      "span": [
+        2321,
+        49,
+        2321,
+        53
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Fallback collect blocked S source times using valid list membership.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2237,
+        49,
+        2237,
+        53
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 292,
+      "prior_row": 279,
+      "prior_id": "engine/bridge/trading_pipeline.py:2237:68:Compare:filter",
+      "span": [
+        2321,
+        68,
+        2321,
+        93
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Fallback collect blocked S source times using valid list membership.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2237,
+        68,
+        2237,
+        93
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 293,
+      "prior_row": 280,
+      "prior_id": 8008,
+      "span": [
+        2365,
+        12,
+        2365,
+        58
+      ],
+      "operation": "IfExp",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Presence of a_source_time selects S label, otherwise E; not a type test.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2281,
+        12,
+        2281,
+        58
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 294,
+      "prior_row": 281,
+      "prior_id": 8067,
+      "span": [
+        2380,
+        12,
+        2380,
+        16
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Iterate returned invalid A into set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2296,
+        12,
+        2296,
+        16
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 295,
+      "prior_row": 282,
+      "prior_id": 8074,
+      "span": [
+        2382,
+        46,
+        2382,
+        60
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Project invalid A identities onto source times only.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2298,
+        46,
+        2298,
+        60
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 296,
+      "prior_row": 283,
+      "prior_id": 8083,
+      "span": [
+        2384,
+        17,
+        2384,
+        21
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Visit original S candidates.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2300,
+        17,
+        2300,
+        21
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 297,
+      "prior_row": 284,
+      "prior_id": "engine/bridge/trading_pipeline.py:2301:11:Compare:filter",
+      "span": [
+        2385,
+        11,
+        2385,
+        67
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select S when recorded a_source_time belongs to invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2301,
+        11,
+        2301,
+        67
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 298,
+      "prior_row": 285,
+      "prior_id": 8106,
+      "span": [
+        2389,
+        12,
+        2389,
+        16
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Iterate invalid S into set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2305,
+        12,
+        2305,
+        16
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 299,
+      "prior_row": 286,
+      "prior_id": 8113,
+      "span": [
+        2392,
+        24,
+        2392,
+        38
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Project stage-invalid A identities onto source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2308,
+        24,
+        2308,
+        38
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 300,
+      "prior_row": 287,
+      "prior_id": 8132,
+      "span": [
+        2396,
+        12,
+        2396,
+        16
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Iterate original S candidates.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2312,
+        12,
+        2312,
+        16
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 301,
+      "prior_row": 288,
+      "prior_id": "engine/bridge/trading_pipeline.py:2313:11:Compare:filter",
+      "span": [
+        2397,
+        11,
+        2397,
+        73
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select candidates whose a_source_time is in stage-invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2313,
+        11,
+        2313,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 302,
+      "prior_row": 289,
+      "prior_id": 8145,
+      "span": [
+        2403,
+        17,
+        2403,
+        21
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Iterate current active S in input order.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2319,
+        17,
+        2319,
+        21
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 303,
+      "prior_row": 290,
+      "prior_id": "engine/bridge/trading_pipeline.py:2320:11:Compare:filter",
+      "span": [
+        2404,
+        11,
+        2405,
+        41
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Keep S only if physical source identity not in stage-invalid set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2320,
+        11,
+        2321,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 304,
+      "prior_row": 291,
+      "prior_id": 8168,
+      "span": [
+        2410,
+        12,
+        2410,
+        16
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Iterate all eligible A.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2326,
+        12,
+        2326,
+        16
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 305,
+      "prior_row": 292,
+      "prior_id": "engine/bridge/trading_pipeline.py:2327:11:Compare:filter",
+      "span": [
+        2411,
+        11,
+        2412,
+        35
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Exclude full source identity in invalid A set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2327,
+        11,
+        2328,
+        35
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 306,
+      "prior_row": 293,
+      "prior_id": 8191,
+      "span": [
+        2414,
+        62,
+        2414,
+        66
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Collect a_source_time from every original S candidate into set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2330,
+        62,
+        2330,
+        66
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 307,
+      "prior_row": 294,
+      "prior_id": 8253,
+      "span": [
+        2431,
+        16,
+        2431,
+        22
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Iterate current E zones for accepted stop events.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2347,
+        16,
+        2347,
+        22
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 308,
+      "prior_row": 295,
+      "prior_id": "engine/bridge/trading_pipeline.py:2348:15:Compare:filter",
+      "span": [
+        2432,
+        15,
+        2432,
+        75
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Assign parent_stop result once per E, include only exact non-null; extract tuple element 1.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2348,
+        15,
+        2348,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 309,
+      "prior_row": 296,
+      "prior_id": 8257,
+      "span": [
+        2432,
+        16,
+        2432,
+        62
+      ],
+      "operation": "NamedExpr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Assign parent_stop result once per E, include only exact non-null; extract tuple element 1.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2348,
+        16,
+        2348,
+        62
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 310,
+      "prior_row": 297,
+      "prior_id": 8336,
+      "span": [
+        2472,
+        4,
+        2506,
+        9
+      ],
+      "operation": "If",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Rebuild only if returned S list differs by native equality.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2388,
+        4,
+        2422,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 311,
+      "prior_row": 298,
+      "prior_id": 8356,
+      "span": [
+        2476,
+        16,
+        2476,
+        20
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Iterate reconciled S in order.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2392,
+        16,
+        2392,
+        20
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 312,
+      "prior_row": 299,
+      "prior_id": 8375,
+      "span": [
+        2483,
+        16,
+        2483,
+        20
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Traverse original candidate sequence, retaining order.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2399,
+        16,
+        2399,
+        20
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 313,
+      "prior_row": 300,
+      "prior_id": 8424,
+      "span": [
+        2509,
+        17,
+        2509,
+        21
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Iterate S candidates.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2425,
+        17,
+        2425,
+        21
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 314,
+      "prior_row": 301,
+      "prior_id": "engine/bridge/trading_pipeline.py:2426:11:Compare:filter",
+      "span": [
+        2510,
+        11,
+        2511,
+        41
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Exclude only stage-invalid (source_time,int source_index) pairs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2426,
+        11,
+        2427,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 315,
+      "prior_row": 302,
+      "prior_id": 8462,
+      "span": [
+        2524,
+        4,
+        2540,
+        9
+      ],
+      "operation": "For",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Traverse returned evidence/owner pairs in supplied order.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2440,
+        4,
+        2456,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 316,
+      "prior_row": 303,
+      "prior_id": 8473,
+      "span": [
+        2527,
+        25,
+        2527,
+        29
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Iterate current E list for each evidence pair.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2443,
+        25,
+        2443,
+        29
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 317,
+      "prior_row": 304,
+      "prior_id": "engine/bridge/trading_pipeline.py:2444:19:BoolOp:filter",
+      "span": [
+        2528,
+        19,
+        2529,
+        90
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        19,
+        2445,
+        90
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 318,
+      "prior_row": 305,
+      "prior_id": 8476,
+      "span": [
+        2528,
+        19,
+        2529,
+        90
+      ],
+      "operation": "BoolOp",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        19,
+        2445,
+        90
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 319,
+      "prior_row": 306,
+      "prior_id": 8500,
+      "span": [
+        2533,
+        8,
+        2534,
+        20
+      ],
+      "operation": "If",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Skip evidence if no current owner.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2449,
+        8,
+        2450,
+        20
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 320,
+      "prior_row": 307,
+      "prior_id": 8530,
+      "span": [
+        2546,
+        48,
+        2546,
+        55
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Collect evidence item from each consumed pair, preserve order and duplicates.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2462,
+        48,
+        2462,
+        55
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 321,
+      "prior_row": 308,
+      "prior_id": 8539,
+      "span": [
+        2550,
+        17,
+        2550,
+        21
+      ],
+      "operation": "comprehension",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Traverse current S list.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2466,
+        17,
+        2466,
+        21
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "branches",
+      "row": 322,
+      "prior_row": 309,
+      "prior_id": "engine/bridge/trading_pipeline.py:2467:11:Compare:filter",
+      "span": [
+        2551,
+        11,
+        2552,
+        35
+      ],
+      "operation": "ComprehensionFilter",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Remove any full invalid S identity, not merely stage-invalid.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2467,
+        11,
+        2468,
+        35
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 175,
+      "prior_row": 167,
+      "prior_id": 7476,
+      "span": [
+        2178,
+        11,
+        2178,
+        37
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G04"
+      ],
+      "interpretation": "Exact non-null order_geometry callback selects live/custom geometry path.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2094,
+        11,
+        2094,
+        37
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 176,
+      "prior_row": 168,
+      "prior_id": 7536,
+      "span": [
+        2207,
+        14,
+        2207,
+        43
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G05"
+      ],
+      "interpretation": "Only non-null live_continuation adds live_continuation and live_scope keyword arguments.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2123,
+        14,
+        2123,
+        43
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 177,
+      "prior_row": 169,
+      "prior_id": 7614,
+      "span": [
+        2230,
+        11,
+        2230,
+        31
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G06"
+      ],
+      "interpretation": "Assert E engine non-null before stage work.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2146,
+        11,
+        2146,
+        31
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 178,
+      "prior_row": 170,
+      "prior_id": 7633,
+      "span": [
+        2235,
+        7,
+        2235,
+        28
+      ],
+      "operation": [
+        "Is"
+      ],
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Exact null shared stages selects fresh initial calculation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2151,
+        7,
+        2151,
+        28
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 179,
+      "prior_row": 171,
+      "prior_id": 7649,
+      "span": [
+        2239,
+        75,
+        2239,
+        91
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live Blue stage with native result; otherwise native Blue detector with direction, full reactions, chronology and resets.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2155,
+        75,
+        2155,
+        91
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 180,
+      "prior_row": 172,
+      "prior_id": 7685,
+      "span": [
+        2249,
+        94,
+        2249,
+        110
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live A with full reactions and Blue; otherwise native A detector with same plus chronology.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2165,
+        94,
+        2165,
+        110
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 181,
+      "prior_row": 173,
+      "prior_id": 7750,
+      "span": [
+        2270,
+        33,
+        2270,
+        45
+      ],
+      "operation": [
+        "Is"
+      ],
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live exact null use bound native detect, otherwise invoke live S callback.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2186,
+        33,
+        2186,
+        45
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 182,
+      "prior_row": 174,
+      "prior_id": 7796,
+      "span": [
+        2281,
+        36,
+        2281,
+        52
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Read live E continuation only if live non-null, else null.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2197,
+        36,
+        2197,
+        52
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 183,
+      "prior_row": 175,
+      "prior_id": 7805,
+      "span": [
+        2282,
+        44,
+        2282,
+        60
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Read live order geometry only if live non-null, else null.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2198,
+        44,
+        2198,
+        60
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 184,
+      "prior_row": 176,
+      "prior_id": 7877,
+      "span": [
+        2313,
+        7,
+        2313,
+        41
+      ],
+      "operation": [
+        "NotEq"
+      ],
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Only differing list lengths trigger S reconciliation, not equality of contents.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2229,
+        7,
+        2229,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 185,
+      "prior_row": 177,
+      "prior_id": 7900,
+      "span": [
+        2317,
+        68,
+        2317,
+        98
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Collect required source times for original S absent from valid set; preserve membership semantics.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2233,
+        68,
+        2233,
+        98
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 186,
+      "prior_row": 178,
+      "prior_id": 7915,
+      "span": [
+        2321,
+        68,
+        2321,
+        93
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Fallback collect blocked S source times using valid list membership.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2237,
+        68,
+        2237,
+        93
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 187,
+      "prior_row": 179,
+      "prior_id": 8086,
+      "span": [
+        2385,
+        11,
+        2385,
+        67
+      ],
+      "operation": [
+        "In"
+      ],
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select S when recorded a_source_time belongs to invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2301,
+        11,
+        2301,
+        67
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 188,
+      "prior_row": 180,
+      "prior_id": 8135,
+      "span": [
+        2397,
+        11,
+        2397,
+        73
+      ],
+      "operation": [
+        "In"
+      ],
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select candidates whose a_source_time is in stage-invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2313,
+        11,
+        2313,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 189,
+      "prior_row": 181,
+      "prior_id": 8148,
+      "span": [
+        2404,
+        11,
+        2405,
+        41
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Keep S only if physical source identity not in stage-invalid set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2320,
+        11,
+        2321,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 190,
+      "prior_row": 182,
+      "prior_id": 8171,
+      "span": [
+        2411,
+        11,
+        2412,
+        35
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Exclude full source identity in invalid A set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2327,
+        11,
+        2328,
+        35
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 191,
+      "prior_row": 183,
+      "prior_id": 8256,
+      "span": [
+        2432,
+        15,
+        2432,
+        75
+      ],
+      "operation": [
+        "IsNot"
+      ],
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Assign parent_stop result once per E, include only exact non-null; extract tuple element 1.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2348,
+        15,
+        2348,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 192,
+      "prior_row": 184,
+      "prior_id": 8337,
+      "span": [
+        2472,
+        7,
+        2472,
+        36
+      ],
+      "operation": [
+        "NotEq"
+      ],
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Rebuild only if returned S list differs by native equality.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2388,
+        7,
+        2388,
+        36
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 193,
+      "prior_row": 185,
+      "prior_id": 8427,
+      "span": [
+        2510,
+        11,
+        2511,
+        41
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Exclude only stage-invalid (source_time,int source_index) pairs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2426,
+        11,
+        2427,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 194,
+      "prior_row": 186,
+      "prior_id": 8477,
+      "span": [
+        2528,
+        19,
+        2528,
+        101
+      ],
+      "operation": [
+        "Eq"
+      ],
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        19,
+        2444,
+        101
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 195,
+      "prior_row": 187,
+      "prior_id": 8490,
+      "span": [
+        2529,
+        20,
+        2529,
+        90
+      ],
+      "operation": [
+        "Eq"
+      ],
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Require exact source time equality.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2445,
+        20,
+        2445,
+        90
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 196,
+      "prior_row": 188,
+      "prior_id": 8501,
+      "span": [
+        2533,
+        11,
+        2533,
+        24
+      ],
+      "operation": [
+        "Is"
+      ],
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Skip evidence if no current owner.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2449,
+        11,
+        2449,
+        24
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "comparisons",
+      "row": 197,
+      "prior_row": 189,
+      "prior_id": 8542,
+      "span": [
+        2551,
+        11,
+        2552,
+        35
+      ],
+      "operation": [
+        "NotIn"
+      ],
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Remove any full invalid S identity, not merely stage-invalid.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2467,
+        11,
+        2468,
+        35
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 116,
+      "prior_row": 105,
+      "prior_id": 7317,
+      "span": [
+        2132,
+        20,
+        2132,
+        33
+      ],
+      "operation": "BitOr",
+      "contracts": [
+        "CP294-G01"
+      ],
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_52.json",
+      "prior_evidence_blob": "528a2729a2fe7822e6d7d70fe95bb2e90f9a3eae",
+      "prior_span": [
+        2049,
+        20,
+        2049,
+        33
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 117,
+      "prior_row": 106,
+      "prior_id": 7323,
+      "span": [
+        2133,
+        17,
+        2133,
+        30
+      ],
+      "operation": "BitOr",
+      "contracts": [
+        "CP294-G01"
+      ],
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_52.json",
+      "prior_evidence_blob": "528a2729a2fe7822e6d7d70fe95bb2e90f9a3eae",
+      "prior_span": [
+        2050,
+        17,
+        2050,
+        30
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 118,
+      "prior_row": 107,
+      "prior_id": 7416,
+      "span": [
+        2163,
+        31,
+        2163,
+        51
+      ],
+      "operation": "BitOr",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2079,
+        31,
+        2079,
+        51
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 119,
+      "prior_row": 108,
+      "prior_id": 7430,
+      "span": [
+        2165,
+        31,
+        2165,
+        63
+      ],
+      "operation": "BitOr",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2081,
+        31,
+        2081,
+        63
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 120,
+      "prior_row": 109,
+      "prior_id": 7464,
+      "span": [
+        2173,
+        16,
+        2173,
+        43
+      ],
+      "operation": "Sub",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "End index full candle length minus one.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2089,
+        16,
+        2089,
+        43
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 121,
+      "prior_row": 110,
+      "prior_id": 7581,
+      "span": [
+        2220,
+        19,
+        2220,
+        44
+      ],
+      "operation": "BitOr",
+      "contracts": [
+        "CP294-G06"
+      ],
+      "interpretation": "Nullable interface type union annotation, not runtime price arithmetic.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2136,
+        19,
+        2136,
+        44
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 122,
+      "prior_row": 111,
+      "prior_id": 7725,
+      "span": [
+        2264,
+        12,
+        2264,
+        28
+      ],
+      "operation": "Sub",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "S end index full candle length minus one.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2180,
+        12,
+        2180,
+        28
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "arithmetic",
+      "row": 123,
+      "prior_row": 112,
+      "prior_id": 8042,
+      "span": [
+        2372,
+        43,
+        2372,
+        84
+      ],
+      "operation": "Sub",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Integer-convert reaction ordinal then subtract one; directly index, no local bounds guard.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2288,
+        43,
+        2288,
+        84
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 728,
+      "prior_row": 710,
+      "prior_id": 7327,
+      "span": [
+        2113,
+        1,
+        2113,
+        22
+      ],
+      "operation": "dataclass",
+      "contracts": [
+        "CP294-G01"
+      ],
+      "interpretation": "PipelineState mutable slotted record of requested directions, native results, reusable geometry and full-direction maps.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_52.json",
+      "prior_evidence_blob": "528a2729a2fe7822e6d7d70fe95bb2e90f9a3eae",
+      "prior_span": [
+        2031,
+        1,
+        2031,
+        22
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 730,
+      "prior_row": 711,
+      "prior_id": 7388,
+      "span": [
+        2136,
+        1,
+        2136,
+        22
+      ],
+      "operation": "dataclass",
+      "contracts": [
+        "CP294-G02"
+      ],
+      "interpretation": "FullDirectionState mutable slotted record for E/S detectors, Blue/A, invalid identities, S candidates and initial S snapshot.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_52.json",
+      "prior_evidence_blob": "528a2729a2fe7822e6d7d70fe95bb2e90f9a3eae",
+      "prior_span": [
+        2053,
+        1,
+        2053,
+        22
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 731,
+      "prior_row": 712,
+      "prior_id": 7447,
+      "span": [
+        2164,
+        76,
+        2164,
+        87
+      ],
+      "operation": "frozenset",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "Immutable empty frozenset default for E parent exceptions.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2080,
+        76,
+        2080,
+        87
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 732,
+      "prior_row": 713,
+      "prior_id": 7458,
+      "span": [
+        2172,
+        15,
+        2172,
+        55
+      ],
+      "operation": "chronology.opposite_direction",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "Delegate opposite direction to chronology.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2088,
+        15,
+        2088,
+        55
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 733,
+      "prior_row": 714,
+      "prior_id": 7465,
+      "span": [
+        2173,
+        16,
+        2173,
+        39
+      ],
+      "operation": "len",
+      "contracts": [
+        "CP294-G03"
+      ],
+      "interpretation": "End index full candle length minus one.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2089,
+        16,
+        2089,
+        39
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 734,
+      "prior_row": 715,
+      "prior_id": 7480,
+      "span": [
+        2179,
+        19,
+        2182,
+        13
+      ],
+      "operation": "order_geometry",
+      "contracts": [
+        "CP294-G04"
+      ],
+      "interpretation": "Call provided callback with selected geometry detector and unchanged direction/start/end/gate.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2095,
+        19,
+        2098,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 735,
+      "prior_row": 716,
+      "prior_id": 7490,
+      "span": [
+        2183,
+        15,
+        2188,
+        9
+      ],
+      "operation": "geometry_detectors[].first_order_reaction_after_gate",
+      "contracts": [
+        "CP294-G04"
+      ],
+      "interpretation": "Otherwise delegate detector first_order_reaction_after_gate with same geometry arguments.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2099,
+        15,
+        2104,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 736,
+      "prior_row": 717,
+      "prior_id": 7500,
+      "span": [
+        2190,
+        11,
+        2208,
+        5
+      ],
+      "operation": "e_engine.EZoneDetector",
+      "contracts": [
+        "CP294-G05"
+      ],
+      "interpretation": "Construct EZoneDetector with full-range indexes and shared direction/opposite reactions/reset, S, audit, blocked times, exceptions, sequence priority, invalid S and B legs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_53.json",
+      "prior_evidence_blob": "ef478a213a1dcf21f43943558a3fe02466cc0f62",
+      "prior_span": [
+        2106,
+        11,
+        2124,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 737,
+      "prior_row": 718,
+      "prior_id": 7627,
+      "span": [
+        2233,
+        15,
+        2233,
+        61
+      ],
+      "operation": "engines.reaction.opposite_direction",
+      "contracts": [
+        "CP294-G06"
+      ],
+      "interpretation": "Delegate opposite direction to Reaction engine.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2149,
+        15,
+        2149,
+        61
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 738,
+      "prior_row": 719,
+      "prior_id": 7638,
+      "span": [
+        2236,
+        21,
+        2245,
+        9
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Time Blue stage.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2152,
+        21,
+        2161,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 739,
+      "prior_row": 720,
+      "prior_id": 7644,
+      "span": [
+        2238,
+        29,
+        2238,
+        46
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Format direction title for telemetry only.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2154,
+        29,
+        2154,
+        46
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 740,
+      "prior_row": 721,
+      "prior_id": 7652,
+      "span": [
+        2239,
+        20,
+        2239,
+        71
+      ],
+      "operation": "live.blue_lines",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live Blue stage with native result; otherwise native Blue detector with direction, full reactions, chronology and resets.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2155,
+        20,
+        2155,
+        71
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 741,
+      "prior_row": 722,
+      "prior_id": 7659,
+      "span": [
+        2239,
+        97,
+        2244,
+        13
+      ],
+      "operation": "blue_engine.detect_blue_lines",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live Blue stage with native result; otherwise native Blue detector with direction, full reactions, chronology and resets.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2155,
+        97,
+        2160,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 742,
+      "prior_row": 723,
+      "prior_id": 7674,
+      "span": [
+        2246,
+        18,
+        2255,
+        9
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Time A stage.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2162,
+        18,
+        2171,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 743,
+      "prior_row": 724,
+      "prior_id": 7680,
+      "span": [
+        2248,
+        21,
+        2248,
+        38
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Format direction title for telemetry.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2164,
+        21,
+        2164,
+        38
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 744,
+      "prior_row": 725,
+      "prior_id": 7688,
+      "span": [
+        2249,
+        20,
+        2249,
+        90
+      ],
+      "operation": "live.a_zones",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live A with full reactions and Blue; otherwise native A detector with same plus chronology.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2165,
+        20,
+        2165,
+        90
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 745,
+      "prior_row": 726,
+      "prior_id": 7697,
+      "span": [
+        2249,
+        116,
+        2254,
+        13
+      ],
+      "operation": "a_engine.detect_a_zones",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live non-null call live A with full reactions and Blue; otherwise native A detector with same plus chronology.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2165,
+        116,
+        2170,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 746,
+      "prior_row": 727,
+      "prior_id": 7709,
+      "span": [
+        2256,
+        21,
+        2267,
+        9
+      ],
+      "operation": "s_engine.SZoneDetector",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Construct full-range S detector from direction/opposite reactions, Blue/A, chronology, opposite resets and directional geometry.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2172,
+        21,
+        2183,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 747,
+      "prior_row": 728,
+      "prior_id": 7726,
+      "span": [
+        2264,
+        12,
+        2264,
+        24
+      ],
+      "operation": "len",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "S end index full candle length minus one.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2180,
+        12,
+        2180,
+        24
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 748,
+      "prior_row": 729,
+      "prior_id": 7740,
+      "span": [
+        2268,
+        18,
+        2271,
+        9
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Time initial S calculation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2184,
+        18,
+        2187,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 749,
+      "prior_row": 730,
+      "prior_id": 7746,
+      "span": [
+        2269,
+        30,
+        2269,
+        47
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Format direction title for telemetry.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2185,
+        30,
+        2185,
+        47
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 750,
+      "prior_row": 731,
+      "prior_id": 7756,
+      "span": [
+        2270,
+        59,
+        2270,
+        94
+      ],
+      "operation": "live.s_zones",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "If live exact null use bound native detect, otherwise invoke live S callback.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2186,
+        59,
+        2186,
+        94
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 751,
+      "prior_row": 732,
+      "prior_id": 7763,
+      "span": [
+        2272,
+        26,
+        2272,
+        39
+      ],
+      "operation": "list",
+      "contracts": [
+        "CP294-G07"
+      ],
+      "interpretation": "Copy initial S list after fresh calculation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2188,
+        26,
+        2188,
+        39
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 752,
+      "prior_row": 733,
+      "prior_id": 7780,
+      "span": [
+        2278,
+        18,
+        2278,
+        53
+      ],
+      "operation": "list",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Reuse shared initial S by making fresh current S list.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2194,
+        18,
+        2194,
+        53
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 753,
+      "prior_row": 734,
+      "prior_id": 7790,
+      "span": [
+        2280,
+        19,
+        2280,
+        32
+      ],
+      "operation": "list",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Snapshot S candidates by list copy.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_54.json",
+      "prior_evidence_blob": "c1f24424c39638f272f20382ecd61f88c478a6a0",
+      "prior_span": [
+        2196,
+        19,
+        2196,
+        32
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 754,
+      "prior_row": 735,
+      "prior_id": 7818,
+      "span": [
+        2288,
+        28,
+        2288,
+        56
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Build set of source times for all S-eligible A objects; required attribute.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2204,
+        28,
+        2204,
+        56
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 755,
+      "prior_row": 736,
+      "prior_id": 7827,
+      "span": [
+        2289,
+        29,
+        2291,
+        5
+      ],
+      "operation": "accepted_audit_entries",
+      "contracts": [
+        "CP294-G08"
+      ],
+      "interpretation": "Filter accepted initial S audit using eligible A source set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2205,
+        29,
+        2207,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 756,
+      "prior_row": 737,
+      "prior_id": 7834,
+      "span": [
+        2293,
+        17,
+        2306,
+        5
+      ],
+      "operation": "create_e_detector",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Create initial E detector with current S, accepted audit and scope(feedback index,initial), current B legs/live hooks.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2209,
+        17,
+        2222,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 757,
+      "prior_row": 738,
+      "prior_id": 7856,
+      "span": [
+        2307,
+        14,
+        2309,
+        5
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Time E initial detect.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2223,
+        14,
+        2225,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 758,
+      "prior_row": 739,
+      "prior_id": 7862,
+      "span": [
+        2308,
+        26,
+        2308,
+        43
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Format directional telemetry label.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2224,
+        26,
+        2224,
+        43
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 759,
+      "prior_row": 740,
+      "prior_id": 7870,
+      "span": [
+        2310,
+        20,
+        2312,
+        5
+      ],
+      "operation": "lifecycle_engine.s_zones_for_module_engines",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Delegate valid S selection to lifecycle using S/E and direction.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2226,
+        20,
+        2228,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 760,
+      "prior_row": 741,
+      "prior_id": 7878,
+      "span": [
+        2313,
+        7,
+        2313,
+        25
+      ],
+      "operation": "len",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Only differing list lengths trigger S reconciliation, not equality of contents.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2229,
+        7,
+        2229,
+        25
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 761,
+      "prior_row": 742,
+      "prior_id": 7881,
+      "span": [
+        2313,
+        29,
+        2313,
+        41
+      ],
+      "operation": "len",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Only differing list lengths trigger S reconciliation, not equality of contents.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2229,
+        29,
+        2229,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 762,
+      "prior_row": 743,
+      "prior_id": 7887,
+      "span": [
+        2315,
+        33,
+        2315,
+        51
+      ],
+      "operation": "set",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Convert valid S to set when hashable.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2231,
+        33,
+        2231,
+        51
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 763,
+      "prior_row": 744,
+      "prior_id": 7893,
+      "span": [
+        2317,
+        16,
+        2317,
+        44
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Collect required source times for original S absent from valid set; preserve membership semantics.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2233,
+        16,
+        2233,
+        44
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 764,
+      "prior_row": 745,
+      "prior_id": 7908,
+      "span": [
+        2321,
+        16,
+        2321,
+        44
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Fallback collect blocked S source times using valid list membership.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2237,
+        16,
+        2237,
+        44
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 765,
+      "prior_row": 746,
+      "prior_id": 7920,
+      "span": [
+        2323,
+        21,
+        2337,
+        9
+      ],
+      "operation": "create_e_detector",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Recreate E from valid S and accepted audit, blocked First times, scope(feedback index,s-reconciliation).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2239,
+        21,
+        2253,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 766,
+      "prior_row": 747,
+      "prior_id": 7944,
+      "span": [
+        2338,
+        18,
+        2342,
+        9
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Time rebuilt E detect.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2254,
+        18,
+        2258,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 767,
+      "prior_row": 748,
+      "prior_id": 7950,
+      "span": [
+        2340,
+        21,
+        2340,
+        38
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G09"
+      ],
+      "interpretation": "Format S reconciliation telemetry label.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_55.json",
+      "prior_evidence_blob": "6ebd88c747d8787e6d13317681db1b34bf72b166",
+      "prior_span": [
+        2256,
+        21,
+        2256,
+        38
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 768,
+      "prior_row": 749,
+      "prior_id": 7961,
+      "span": [
+        2345,
+        18,
+        2347,
+        5
+      ],
+      "operation": "lifecycle_engine.visible_a_zones",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Call A visibility with eligible A and active S.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2261,
+        18,
+        2263,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 769,
+      "prior_row": 750,
+      "prior_id": 7968,
+      "span": [
+        2348,
+        18,
+        2350,
+        5
+      ],
+      "operation": "lifecycle_engine.visible_a_zones_after_s_stops",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Apply second A visibility pass with current S and full candles.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2264,
+        18,
+        2266,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 770,
+      "prior_row": 751,
+      "prior_id": 7983,
+      "span": [
+        2351,
+        60,
+        2351,
+        65
+      ],
+      "operation": "set",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Allocate fresh stage-invalid A identity set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2267,
+        60,
+        2267,
+        65
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 771,
+      "prior_row": 752,
+      "prior_id": 7987,
+      "span": [
+        2356,
+        29,
+        2356,
+        51
+      ],
+      "operation": "list",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Shallow-copy ALL eligible A, not the visibility-filtered candidate_a.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2272,
+        29,
+        2272,
+        51
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 772,
+      "prior_row": 753,
+      "prior_id": 7994,
+      "span": [
+        2357,
+        32,
+        2377,
+        5
+      ],
+      "operation": "lifecycle_engine.split_a_zones_by_dominant_stops",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Delegate dominant-stop split with original S candidates, current E, empty StopAll, full candles and direction; keep returned invalid A, not calculation A.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2273,
+        32,
+        2293,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 773,
+      "prior_row": 754,
+      "prior_id": 8005,
+      "span": [
+        2364,
+        21,
+        2366,
+        9
+      ],
+      "operation": "e_detector.parent_stop",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Callback delegates parent_stop on current E detector.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2280,
+        21,
+        2282,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 774,
+      "prior_row": 755,
+      "prior_id": 8009,
+      "span": [
+        2365,
+        19,
+        2365,
+        49
+      ],
+      "operation": "hasattr",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Presence of a_source_time selects S label, otherwise E; not a type test.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2281,
+        19,
+        2281,
+        49
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 775,
+      "prior_row": 756,
+      "prior_id": 8025,
+      "span": [
+        2369,
+        41,
+        2375,
+        9
+      ],
+      "operation": "s_detector.first_a_stop",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Callback delegates first A stop on normalized price and reaction confirmation.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2285,
+        41,
+        2291,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 776,
+      "prior_row": 757,
+      "prior_id": 8028,
+      "span": [
+        2370,
+        12,
+        2370,
+        48
+      ],
+      "operation": "Decimal",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Required price converted through str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2286,
+        12,
+        2286,
+        48
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 777,
+      "prior_row": 758,
+      "prior_id": 8030,
+      "span": [
+        2370,
+        20,
+        2370,
+        47
+      ],
+      "operation": "str",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Required price converted through str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2286,
+        20,
+        2286,
+        47
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 778,
+      "prior_row": 759,
+      "prior_id": 8032,
+      "span": [
+        2370,
+        24,
+        2370,
+        46
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Required price converted through str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2286,
+        24,
+        2286,
+        46
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 779,
+      "prior_row": 760,
+      "prior_id": 8036,
+      "span": [
+        2371,
+        12,
+        2374,
+        13
+      ],
+      "operation": "s_detector.reaction_confirmation_time",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Obtain confirmation from S detector with indexed trend reaction and direction.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2287,
+        12,
+        2290,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 780,
+      "prior_row": 761,
+      "prior_id": 8043,
+      "span": [
+        2372,
+        43,
+        2372,
+        80
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Integer-convert reaction ordinal then subtract one; directly index, no local bounds guard.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2288,
+        43,
+        2288,
+        80
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 781,
+      "prior_row": 762,
+      "prior_id": 8045,
+      "span": [
+        2372,
+        47,
+        2372,
+        79
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G10"
+      ],
+      "interpretation": "Integer-convert reaction ordinal then subtract one; directly index, no local bounds guard.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_56.json",
+      "prior_evidence_blob": "cc547896ed492b899cefa073cf2fc5ddba595966",
+      "prior_span": [
+        2288,
+        47,
+        2288,
+        79
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 782,
+      "prior_row": 763,
+      "prior_id": 8057,
+      "span": [
+        2379,
+        9,
+        2379,
+        37
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Build invalid A identity from source_time and integer source_index.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2295,
+        9,
+        2295,
+        37
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 783,
+      "prior_row": 764,
+      "prior_id": 8061,
+      "span": [
+        2379,
+        39,
+        2379,
+        73
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Build invalid A identity from source_time and integer source_index.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2295,
+        39,
+        2295,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 784,
+      "prior_row": 765,
+      "prior_id": 8063,
+      "span": [
+        2379,
+        43,
+        2379,
+        72
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Build invalid A identity from source_time and integer source_index.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2295,
+        43,
+        2295,
+        72
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 785,
+      "prior_row": 766,
+      "prior_id": 8087,
+      "span": [
+        2385,
+        11,
+        2385,
+        41
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select S when recorded a_source_time belongs to invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2301,
+        11,
+        2301,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 786,
+      "prior_row": 767,
+      "prior_id": 8096,
+      "span": [
+        2388,
+        9,
+        2388,
+        37
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2304,
+        9,
+        2304,
+        37
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 787,
+      "prior_row": 768,
+      "prior_id": 8100,
+      "span": [
+        2388,
+        39,
+        2388,
+        73
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2304,
+        39,
+        2304,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 788,
+      "prior_row": 769,
+      "prior_id": 8102,
+      "span": [
+        2388,
+        43,
+        2388,
+        72
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2304,
+        43,
+        2304,
+        72
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 789,
+      "prior_row": 770,
+      "prior_id": 8122,
+      "span": [
+        2395,
+        9,
+        2395,
+        37
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct stage-invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2311,
+        9,
+        2311,
+        37
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 790,
+      "prior_row": 771,
+      "prior_id": 8126,
+      "span": [
+        2395,
+        39,
+        2395,
+        73
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct stage-invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2311,
+        39,
+        2311,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 791,
+      "prior_row": 772,
+      "prior_id": 8128,
+      "span": [
+        2395,
+        43,
+        2395,
+        72
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Construct stage-invalid S identity (source_time,int source_index).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2311,
+        43,
+        2311,
+        72
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 792,
+      "prior_row": 773,
+      "prior_id": 8136,
+      "span": [
+        2397,
+        11,
+        2397,
+        41
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Select candidates whose a_source_time is in stage-invalid A source times.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2313,
+        11,
+        2313,
+        41
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 793,
+      "prior_row": 774,
+      "prior_id": 8150,
+      "span": [
+        2404,
+        12,
+        2404,
+        40
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Keep S only if physical source identity not in stage-invalid set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2320,
+        12,
+        2320,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 794,
+      "prior_row": 775,
+      "prior_id": 8154,
+      "span": [
+        2404,
+        42,
+        2404,
+        76
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Keep S only if physical source identity not in stage-invalid set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2320,
+        42,
+        2320,
+        76
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 795,
+      "prior_row": 776,
+      "prior_id": 8156,
+      "span": [
+        2404,
+        46,
+        2404,
+        75
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G11"
+      ],
+      "interpretation": "Keep S only if physical source identity not in stage-invalid set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_57.json",
+      "prior_evidence_blob": "3b1b0a7321d28fc7fdd3dd2ba9580888061d92f8",
+      "prior_span": [
+        2320,
+        46,
+        2320,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 796,
+      "prior_row": 777,
+      "prior_id": 8164,
+      "span": [
+        2409,
+        8,
+        2409,
+        36
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Read accepted A source time for set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2325,
+        8,
+        2325,
+        36
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 797,
+      "prior_row": 778,
+      "prior_id": 8173,
+      "span": [
+        2411,
+        12,
+        2411,
+        40
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Exclude full source identity in invalid A set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2327,
+        12,
+        2327,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 798,
+      "prior_row": 779,
+      "prior_id": 8177,
+      "span": [
+        2411,
+        42,
+        2411,
+        76
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Exclude full source identity in invalid A set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2327,
+        42,
+        2327,
+        76
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 799,
+      "prior_row": 780,
+      "prior_id": 8179,
+      "span": [
+        2411,
+        46,
+        2411,
+        75
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Exclude full source identity in invalid A set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2327,
+        46,
+        2327,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 800,
+      "prior_row": 781,
+      "prior_id": 8187,
+      "span": [
+        2414,
+        27,
+        2414,
+        57
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Collect a_source_time from every original S candidate into set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2330,
+        27,
+        2330,
+        57
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 801,
+      "prior_row": 782,
+      "prior_id": 8203,
+      "span": [
+        2415,
+        58,
+        2415,
+        63
+      ],
+      "operation": "set",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Allocate mutable empty E parent exception set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2331,
+        58,
+        2331,
+        63
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 802,
+      "prior_row": 783,
+      "prior_id": 8209,
+      "span": [
+        2416,
+        49,
+        2438,
+        5
+      ],
+      "operation": "lifecycle_engine.resolve_order_context",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Resolve Order context with S audit, accepted A, copied E blocked times, invalid A, pending S, opposite reactions, full candles and callbacks.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2332,
+        49,
+        2354,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 803,
+      "prior_row": 784,
+      "prior_id": 8215,
+      "span": [
+        2419,
+        8,
+        2419,
+        68
+      ],
+      "operation": "set",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Read blocked_order_first_times with fresh empty-set default, then copy to set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2335,
+        8,
+        2335,
+        68
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 804,
+      "prior_row": 785,
+      "prior_id": 8217,
+      "span": [
+        2419,
+        12,
+        2419,
+        67
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Read blocked_order_first_times with fresh empty-set default, then copy to set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2335,
+        12,
+        2335,
+        67
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 805,
+      "prior_row": 786,
+      "prior_id": 8221,
+      "span": [
+        2419,
+        61,
+        2419,
+        66
+      ],
+      "operation": "set",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Read blocked_order_first_times with fresh empty-set default, then copy to set.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2335,
+        61,
+        2335,
+        66
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 806,
+      "prior_row": 787,
+      "prior_id": 8233,
+      "span": [
+        2425,
+        21,
+        2428,
+        9
+      ],
+      "operation": "s_detector.first_a_stop",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Delegate A stop lookup at A source_time (not reaction confirmation).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2341,
+        21,
+        2344,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 807,
+      "prior_row": 788,
+      "prior_id": 8236,
+      "span": [
+        2426,
+        12,
+        2426,
+        48
+      ],
+      "operation": "Decimal",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Convert required price via str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2342,
+        12,
+        2342,
+        48
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 808,
+      "prior_row": 789,
+      "prior_id": 8238,
+      "span": [
+        2426,
+        20,
+        2426,
+        47
+      ],
+      "operation": "str",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Convert required price via str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2342,
+        20,
+        2342,
+        47
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 809,
+      "prior_row": 790,
+      "prior_id": 8240,
+      "span": [
+        2426,
+        24,
+        2426,
+        46
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Convert required price via str then Decimal.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2342,
+        24,
+        2342,
+        46
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 810,
+      "prior_row": 791,
+      "prior_id": 8244,
+      "span": [
+        2427,
+        12,
+        2427,
+        40
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Read native A source time.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2343,
+        12,
+        2343,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 811,
+      "prior_row": 792,
+      "prior_id": 8259,
+      "span": [
+        2432,
+        27,
+        2432,
+        62
+      ],
+      "operation": "e_detector.parent_stop",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Assign parent_stop result once per E, include only exact non-null; extract tuple element 1.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2348,
+        27,
+        2348,
+        62
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 812,
+      "prior_row": 793,
+      "prior_id": 8268,
+      "span": [
+        2434,
+        54,
+        2436,
+        9
+      ],
+      "operation": "chronology.reaction_confirmation",
+      "contracts": [
+        "CP294-G12"
+      ],
+      "interpretation": "Opposite confirmation callback delegates chronology with captured opposite direction.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_58.json",
+      "prior_evidence_blob": "597adc9c6b5f1dc135add3c5ce4a85715e1de786",
+      "prior_span": [
+        2350,
+        54,
+        2352,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 813,
+      "prior_row": 794,
+      "prior_id": 8277,
+      "span": [
+        2439,
+        17,
+        2455,
+        5
+      ],
+      "operation": "create_e_detector",
+      "contracts": [
+        "CP294-G13"
+      ],
+      "interpretation": "Construct fresh E with current S, accepted_orders, blocked First times, parent exceptions, all invalid S identities, current B legs and live hooks; scope (feedback_index, final).",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_59.json",
+      "prior_evidence_blob": "9c918f79a452c364ea6e8f3849929174df6a237a",
+      "prior_span": [
+        2355,
+        17,
+        2371,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 814,
+      "prior_row": 795,
+      "prior_id": 8305,
+      "span": [
+        2456,
+        14,
+        2458,
+        5
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G13"
+      ],
+      "interpretation": "Time final detector.detect and replace E list with returned result.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_59.json",
+      "prior_evidence_blob": "9c918f79a452c364ea6e8f3849929174df6a237a",
+      "prior_span": [
+        2372,
+        14,
+        2374,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 815,
+      "prior_row": 796,
+      "prior_id": 8311,
+      "span": [
+        2457,
+        26,
+        2457,
+        43
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G13"
+      ],
+      "interpretation": "Title-case direction for telemetry only.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_59.json",
+      "prior_evidence_blob": "9c918f79a452c364ea6e8f3849929174df6a237a",
+      "prior_span": [
+        2373,
+        26,
+        2373,
+        43
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 816,
+      "prior_row": 797,
+      "prior_id": 8321,
+      "span": [
+        2466,
+        9,
+        2466,
+        33
+      ],
+      "operation": "accepted_orders.values",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Take accepted initial audit values first.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2382,
+        9,
+        2382,
+        33
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 817,
+      "prior_row": 798,
+      "prior_id": 8325,
+      "span": [
+        2467,
+        9,
+        2467,
+        40
+      ],
+      "operation": "e_detector.order_audit.values",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Then append E detector audit values; no local deduplication.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2383,
+        9,
+        2383,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 818,
+      "prior_row": 799,
+      "prior_id": 8331,
+      "span": [
+        2469,
+        25,
+        2471,
+        5
+      ],
+      "operation": "s_detector.reconcile_shared_order_stops",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Delegate reconciliation of current S using concatenated accepted ledgers.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2385,
+        25,
+        2387,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 819,
+      "prior_row": 800,
+      "prior_id": 8347,
+      "span": [
+        2475,
+        13,
+        2475,
+        43
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Map reconciled S by pair (a_source_time,source_time); later duplicate wins.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2391,
+        13,
+        2391,
+        43
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 820,
+      "prior_row": 801,
+      "prior_id": 8351,
+      "span": [
+        2475,
+        45,
+        2475,
+        73
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Map reconciled S by pair (a_source_time,source_time); later duplicate wins.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2391,
+        45,
+        2391,
+        73
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 821,
+      "prior_row": 802,
+      "prior_id": 8362,
+      "span": [
+        2479,
+        12,
+        2482,
+        13
+      ],
+      "operation": "reconciled_by_identity.get",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Lookup candidate by pair with original object as fallback.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2395,
+        12,
+        2398,
+        13
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 822,
+      "prior_row": 803,
+      "prior_id": 8366,
+      "span": [
+        2480,
+        17,
+        2480,
+        47
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Read candidate a_source_time and source_time, no index component.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2396,
+        17,
+        2396,
+        47
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 823,
+      "prior_row": 804,
+      "prior_id": 8370,
+      "span": [
+        2480,
+        49,
+        2480,
+        77
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Read candidate a_source_time and source_time, no index component.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2396,
+        49,
+        2396,
+        77
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 824,
+      "prior_row": 805,
+      "prior_id": 8380,
+      "span": [
+        2485,
+        21,
+        2501,
+        9
+      ],
+      "operation": "create_e_detector",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Create fresh E with reconciled S and same accepted inputs; live scope shared-order.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2401,
+        21,
+        2417,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 825,
+      "prior_row": 806,
+      "prior_id": 8408,
+      "span": [
+        2502,
+        18,
+        2506,
+        9
+      ],
+      "operation": "timed",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Time detection of new E and replace result.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2418,
+        18,
+        2422,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 826,
+      "prior_row": 807,
+      "prior_id": 8414,
+      "span": [
+        2504,
+        21,
+        2504,
+        38
+      ],
+      "operation": "direction.title",
+      "contracts": [
+        "CP294-G14"
+      ],
+      "interpretation": "Directional label for telemetry.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_60.json",
+      "prior_evidence_blob": "893410c2e7c72266049777e0586effbc9dc7e422",
+      "prior_span": [
+        2420,
+        21,
+        2420,
+        38
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 827,
+      "prior_row": 808,
+      "prior_id": 8429,
+      "span": [
+        2510,
+        12,
+        2510,
+        40
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Exclude only stage-invalid (source_time,int source_index) pairs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2426,
+        12,
+        2426,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 828,
+      "prior_row": 809,
+      "prior_id": 8433,
+      "span": [
+        2510,
+        42,
+        2510,
+        76
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Exclude only stage-invalid (source_time,int source_index) pairs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2426,
+        42,
+        2426,
+        76
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 829,
+      "prior_row": 810,
+      "prior_id": 8435,
+      "span": [
+        2510,
+        46,
+        2510,
+        75
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Exclude only stage-invalid (source_time,int source_index) pairs.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2426,
+        46,
+        2426,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 830,
+      "prior_row": 811,
+      "prior_id": 8442,
+      "span": [
+        2513,
+        26,
+        2520,
+        5
+      ],
+      "operation": "lifecycle_engine.consumed_s_evidence_after_larger_stop",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Delegate consumed-S evidence search with filtered candidates, current S/E, direction, E parent stop callback and candles.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2429,
+        26,
+        2436,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 831,
+      "prior_row": 812,
+      "prior_id": 8451,
+      "span": [
+        2518,
+        21,
+        2518,
+        54
+      ],
+      "operation": "e_detector.parent_stop",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Callback calls parent_stop with exact E label.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2434,
+        21,
+        2434,
+        54
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 832,
+      "prior_row": 813,
+      "prior_id": 8459,
+      "span": [
+        2523,
+        37,
+        2523,
+        63
+      ],
+      "operation": "frozenset",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Freeze accepted_orders keys as independent A physical identities.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2439,
+        37,
+        2439,
+        63
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 833,
+      "prior_row": 814,
+      "prior_id": 8469,
+      "span": [
+        2525,
+        16,
+        2532,
+        9
+      ],
+      "operation": "next",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Select first current E matching owner, default null.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2441,
+        16,
+        2448,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 834,
+      "prior_row": 815,
+      "prior_id": 8478,
+      "span": [
+        2528,
+        19,
+        2528,
+        53
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        19,
+        2444,
+        53
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 835,
+      "prior_row": 816,
+      "prior_id": 8480,
+      "span": [
+        2528,
+        23,
+        2528,
+        52
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        23,
+        2444,
+        52
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 836,
+      "prior_row": 817,
+      "prior_id": 8484,
+      "span": [
+        2528,
+        57,
+        2528,
+        101
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        57,
+        2444,
+        101
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 837,
+      "prior_row": 818,
+      "prior_id": 8486,
+      "span": [
+        2528,
+        61,
+        2528,
+        100
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Compare integer source indexes first; short-circuit time check on mismatch.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2444,
+        61,
+        2444,
+        100
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 838,
+      "prior_row": 819,
+      "prior_id": 8491,
+      "span": [
+        2529,
+        20,
+        2529,
+        48
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Require exact source time equality.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2445,
+        20,
+        2445,
+        48
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 839,
+      "prior_row": 820,
+      "prior_id": 8495,
+      "span": [
+        2529,
+        52,
+        2529,
+        90
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Require exact source time equality.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2445,
+        52,
+        2445,
+        90
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 840,
+      "prior_row": 821,
+      "prior_id": 8507,
+      "span": [
+        2535,
+        23,
+        2537,
+        9
+      ],
+      "operation": "e_detector.continuation_chain_from_s",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Construct continuation with current owner, evidence and frozen independent A identities.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2451,
+        23,
+        2453,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 841,
+      "prior_row": 822,
+      "prior_id": 8515,
+      "span": [
+        2538,
+        18,
+        2540,
+        9
+      ],
+      "operation": "e_detector.replace_with_earlier_continuation",
+      "contracts": [
+        "CP294-G15"
+      ],
+      "interpretation": "Replace E list using delegated earlier-continuation helper.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_61.json",
+      "prior_evidence_blob": "3c79e32d8aaac1b3971c42615663734518136abb",
+      "prior_span": [
+        2454,
+        18,
+        2456,
+        9
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 842,
+      "prior_row": 823,
+      "prior_id": 8523,
+      "span": [
+        2545,
+        14,
+        2547,
+        5
+      ],
+      "operation": "e_detector.rebuild_accepted_order_audit",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Rebuild E accepted audit from actual final E, using supplemental consumed S evidence.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2461,
+        14,
+        2463,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 843,
+      "prior_row": 824,
+      "prior_id": 8544,
+      "span": [
+        2551,
+        12,
+        2551,
+        40
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Remove any full invalid S identity, not merely stage-invalid.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2467,
+        12,
+        2467,
+        40
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 844,
+      "prior_row": 825,
+      "prior_id": 8548,
+      "span": [
+        2551,
+        42,
+        2551,
+        76
+      ],
+      "operation": "int",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Remove any full invalid S identity, not merely stage-invalid.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2467,
+        42,
+        2467,
+        76
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 845,
+      "prior_row": 826,
+      "prior_id": 8550,
+      "span": [
+        2551,
+        46,
+        2551,
+        75
+      ],
+      "operation": "getattr",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Remove any full invalid S identity, not merely stage-invalid.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2467,
+        46,
+        2467,
+        75
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 846,
+      "prior_row": 827,
+      "prior_id": 8556,
+      "span": [
+        2555,
+        11,
+        2566,
+        5
+      ],
+      "operation": "FullDirectionState",
+      "contracts": [
+        "CP294-G16"
+      ],
+      "interpretation": "Return FullDirectionState with new E, E/S detectors, Blue/A, both invalid sets, current S, candidate and initial S references.",
+      "prior_evidence": "Audit/Phase_07/Semantic_Closure_B09_62.json",
+      "prior_evidence_blob": "4a72f817cbac88ac087fca864a491b91debfd21c",
+      "prior_span": [
+        2471,
+        11,
+        2482,
+        5
+      ],
+      "disposition": "VERIFIED_SOURCE_CONTINUITY_WITH_CURRENT_LOCAL_CONTEXT",
+      "conditional_boundary": "Delegated services and caller invariants remain W2/W3; no runtime acceptance."
+    },
+    {
+      "category": "calls",
+      "row": 729,
+      "node": 7759,
+      "span": [
+        2150,
+        29,
+        2150,
+        56
+      ],
+      "operation": "field",
+      "contracts": [
+        "CP294-G02"
+      ],
+      "interpretation": "dataclasses.field(default_factory=list) configures a per-instance fresh list on omitted stopalls; no market or price arithmetic.",
+      "disposition": "CURRENT_NEW_SITE_SOURCE_REVIEWED",
+      "basis": "CP292_NonAccess_AST_Linkage_01 exact projected call linkage"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP294-F01",
+      "detail": "Current TB73 macro states FullDirectionState return but does not explicitly say stopalls defaults empty here; G16 establishes this. Current general declaration macro already records field default."
+    },
+    {
+      "id": "CP294-F02",
+      "detail": "Initial S reconcile tests only length, not content; same-length alternative list is not assigned at 2343. Keep this boundary explicit."
+    }
+  ],
+  "remaining": [
+    "Reconcile additional access/effect/exit rows to current scopes and check dependency owner implementations. Confirm updated active macro wording and independent readback. Do not add this partition to accepted cumulative W1 until completion gate."
+  ],
+  "runtime": "NOT RUN",
+  "raw": "NOT RUN"
+}
