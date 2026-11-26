@@ -263,3 +263,8 @@ Per the user's 2026-11-26 instruction, continue source-only reverse engineering.
 ### Phase 07 — checkpoint 39
 
 [Strict A stop, candidate extrema and trend alignment](Audit/Phase_07/Semantic_Closure_B04_02.md): 167 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+### Phase 07 — checkpoint 40
+
+[Independent Type3 and Type4 decisions](Audit/Phase_07/Semantic_Closure_B04_03.md): 80 original rows, local PASS. B04 INCOMPLETE; Phase 07 INCOMPLETE; Phase 08 BLOCKED.

@@ -206,3 +206,8 @@ Remaining: every temporal guard and implicit time dependency, Reaction/Reset pat
 ## Checkpoint 39 — Strict A stop, candidate extrema and trend alignment
 
 [Local review](Semantic_Closure_B04_02.md) and [site evidence](Semantic_Closure_B04_02.json): 167 original rows, 10 supplemental items, 4 resolved findings; local PASS. S 284/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 40 — Independent Type3 and Type4 decisions
+
+[Local review](Semantic_Closure_B04_03.md) and [site evidence](Semantic_Closure_B04_03.json): 80 original rows, 8 supplemental items, 5 resolved findings; local PASS. S 364/962. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
