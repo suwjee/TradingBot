@@ -29,4 +29,4 @@ At the end of each completed work session, provide a very brief user-facing prog
 
 ## Checkpoint cadence and verification (2026-11-26)
 
-Prefer five consecutive evidence-complete checkpoints per work session when feasible; never split or label incomplete work PASS merely to meet the count. End-of-session report must name each checkpoint number/title and its actual verification status, explicitly confirming PASS for completed scoped checkpoints only after evidence validation and publication. Disclose any incomplete checkpoint and next exact resume location. Phase, owner and runtime acceptance remain separate.
+Target ten consecutive evidence-complete checkpoints per work session when feasible; never split or label incomplete work PASS merely to meet the count. End-of-session report must name each checkpoint number/title and its actual verification status, explicitly confirming PASS for completed scoped checkpoints only after evidence validation and publication. Disclose any incomplete checkpoint and next exact resume location. Phase, owner and runtime acceptance remain separate.

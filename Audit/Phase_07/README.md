@@ -538,3 +538,45 @@ W1 cumulative 7234/11504. Next B07 LC15, line 361; W2/W3/W4 open.
 [Local review](Semantic_Closure_B07_10.md) and [site evidence](Semantic_Closure_B07_10.json): 52 original rows, 3 supplemental items, 3 resolved local clarifications; local partition PASS. Lifecycle 380/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 7439/11504. Next B07 LC25, line 606; W2/W3/W4 open.
+
+## Checkpoint 108 — Accepted Order audit and blocked First precedence
+
+[Local review](Semantic_Closure_B07_11.md) and [site evidence](Semantic_Closure_B07_11.json): 23 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 403/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 109 — Exact E-stop exception without global unblock
+
+[Local review](Semantic_Closure_B07_12.md) and [site evidence](Semantic_Closure_B07_12.json): 39 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 442/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 110 — A visibility at S decision-containing candle
+
+[Local review](Semantic_Closure_B07_13.md) and [site evidence](Semantic_Closure_B07_13.json): 13 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 455/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 111 — Module priority and exact identity
+
+[Local review](Semantic_Closure_B07_14.md) and [site evidence](Semantic_Closure_B07_14.json): 22 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 477/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 112 — Strict stop resolution and dominant-module ranking
+
+[Local review](Semantic_Closure_B07_15.md) and [site evidence](Semantic_Closure_B07_15.json): 22 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 499/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 113 — Stopped-owner inventory and duplicate identity contracts
+
+[Local review](Semantic_Closure_B07_16.md) and [site evidence](Semantic_Closure_B07_16.json): 41 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 540/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 114 — A sweep, eligibility and deterministic owner selection
+
+[Local review](Semantic_Closure_B07_17.md) and [site evidence](Semantic_Closure_B07_17.json): 46 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 586/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 115 — Strict price extension and interior Reaction evidence
+
+[Local review](Semantic_Closure_B07_18.md) and [site evidence](Semantic_Closure_B07_18.json): 73 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 659/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 116 — Stage-invalid A, owner retention and consumption
+
+[Local review](Semantic_Closure_B07_19.md) and [site evidence](Semantic_Closure_B07_19.json): 22 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 681/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 117 — Invalid A live-leg Order First blocks
+
+[Local review](Semantic_Closure_B07_20.md) and [site evidence](Semantic_Closure_B07_20.json): 14 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 695/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 7754/11504. Next B07 LC34, line 996; W2/W3/W4 open.
