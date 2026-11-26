@@ -1,0 +1,100 @@
+{
+  "checkpoint": 404,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          66
+        ]
+      ],
+      "meaning": "Decimal normalization retains Decimal instances else Decimal(str(value)); physical identity normalizes First then Break by int. OA62 uses normalized pair for current/prior/initial ledger access, but raw First for opposite lookup and raw pair comparisons in fallback; malformed data and conversion failure not handled locally."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          640,
+          651
+        ],
+        [
+          1089,
+          1132
+        ],
+        [
+          1135,
+          1198
+        ],
+        [
+          1339,
+          1433
+        ],
+        [
+          1459,
+          1477
+        ],
+        [
+          2020,
+          2043
+        ]
+      ],
+      "meaning": "Opposite First map is last-wins by int First while separate pair position map is first-wins. OA27 clears audit/index and carried/post-stop state, not crossing/initial geometry caches. OA28 B registration may insert row/index and append/sort B causes. OA40 skips invalid/occupied S full identity pair, reset in (parent source, stop], delegates routes by label; registers only parent-stop use matches, creates normalized identity, adds physical parent cause with StopAll override, invalidates carried on new/earlier creation and may stage append. OA43 caches start/level including None, strict lower crossing in [max(start,range_start),range_end), direction-sensitive. OA60/61 are exclusion predicates, not OA63 pruning. OA62 has no final cause-union cache invalidation; coherent cache lifecycle remains owner-dependent."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          337,
+          356
+        ],
+        [
+          385,
+          389
+        ],
+        [
+          507,
+          535
+        ],
+        [
+          537,
+          557
+        ],
+        [
+          569,
+          578
+        ],
+        [
+          1495,
+          1506
+        ]
+      ],
+      "meaning": "Detector snapshots invalid root set, sorts S by source_time,int index, retains truthy initial ledger, tuples B legs. Parent stop ignores passed label, uses decision_event_time and normalized price, searches strict crossing from max(start,range_start) to exclusive end, returns mapped index/exact event or None; live continuation path can delegate. Cross helper override delegates to base or live first_stop and populates same local cache, so no assertion of universal base dispatch. detect clears previous accepted sources/audit, registers B, discovers/reconciles/consumed-S/same-source conflicts, then returns OA62's sorted result. E ownership and acceptance remain outside local review."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2535,
+          2557
+        ],
+        [
+          2606,
+          2627
+        ]
+      ],
+      "meaning": "External continuation replacement invokes public rebuild with final E zones and consumed S as supplemental evidence before filtering invalid S public list. Later StopAll feedback reconciles, restores independent S roots and calls ensure before discovering accepted Order B reset legs. Adjacent OA64/OA65 wrappers (2234–2290) forward shallow list and have distinct restoration/invalidations; not included in CP404 closure. No final pipeline equivalence or cross-owner acceptance."
+    }
+  ],
+  "limitations": [
+    "Source-first local review by GPT, not independently staffed. OA62 reconstructs ledger from supplied accepted state and prior provenance, not proof of final E/S acceptance or valid B legs. Pair-based OA40 eligibility and time-only OA63 pruning differ; no production defect asserted merely from potential malformed inputs or incoherent owner state.",
+    "Recovery and retention are ordered mutations, not an atomic transaction; a late exception can leave partial state. Native source equality/hash, dynamic dispatch, index consistency, live cache reuse, cause-only cache coherence and prior alias immutability remain conditional. No cross-owner acceptance or runtime equivalence asserted.",
+    "No RAW payload, runtime, ZIP, production changes, performance measurements, fresh AST generator, or independent SHA-256 claim. Pinned old/current canonical AST arrays, CP316, historical W1 crosswalk and prior registers were directly reconciled."
+  ]
+}
