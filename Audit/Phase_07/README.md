@@ -580,3 +580,45 @@ W1 cumulative 7439/11504. Next B07 LC25, line 606; W2/W3/W4 open.
 [Local review](Semantic_Closure_B07_20.md) and [site evidence](Semantic_Closure_B07_20.json): 14 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 695/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
 
 W1 cumulative 7754/11504. Next B07 LC34, line 996; W2/W3/W4 open.
+
+## Checkpoint 118 — Accepted S identities and stopped E inventory
+
+[Local review](Semantic_Closure_B07_21.md) and [site evidence](Semantic_Closure_B07_21.json): 24 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 719/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 119 — Suppressed S eligibility and exact Close boundary
+
+[Local review](Semantic_Closure_B07_22.md) and [site evidence](Semantic_Closure_B07_22.json): 39 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 758/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 120 — Latest E and overlapping older-owner eligibility
+
+[Local review](Semantic_Closure_B07_23.md) and [site evidence](Semantic_Closure_B07_23.json): 31 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 789/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 121 — Dominant stopped-main owner and earliest S evidence
+
+[Local review](Semantic_Closure_B07_24.md) and [site evidence](Semantic_Closure_B07_24.json): 28 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 817/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 122 — S input eligibility and first duplicate prior owner
+
+[Local review](Semantic_Closure_B07_25.md) and [site evidence](Semantic_Closure_B07_25.json): 48 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 865/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 123 — StopAll same-source S/E exclusion
+
+[Local review](Semantic_Closure_B07_26.md) and [site evidence](Semantic_Closure_B07_26.json): 11 original rows, 1 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 876/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 124 — Lifecycle setup and identity-keyed exact stop cache
+
+[Local review](Semantic_Closure_B07_27.md) and [site evidence](Semantic_Closure_B07_27.json): 18 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 894/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 125 — S source event, prior owners and external lifecycle cutoff
+
+[Local review](Semantic_Closure_B07_28.md) and [site evidence](Semantic_Closure_B07_28.json): 38 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 932/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 126 — Stopped prior and lower-priority S continuation Close test
+
+[Local review](Semantic_Closure_B07_29.md) and [site evidence](Semantic_Closure_B07_29.json): 50 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 982/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+## Checkpoint 127 — Exact stop dominance, S priority override and consumption
+
+[Local review](Semantic_Closure_B07_30.md) and [site evidence](Semantic_Closure_B07_30.json): 36 original rows, 2 supplemental items, 1 resolved local clarification groups; local partition PASS. Lifecycle 1018/1179. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+W1 cumulative 8077/11504. Next B07 LC40, line 1377; W2/W3/W4 open.
