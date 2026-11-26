@@ -1,0 +1,110 @@
+{
+  "checkpoint": 355,
+  "phase": "07/W3",
+  "status": "PASS_SCOPED_W3_B02_RACES_LOCAL",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "ebf7f6784e6b9bf70ed8c09e1715741f93689ad0",
+  "entry_tree": "e0385ec191ee036e37ebdc4623573ded0e0ab3f3",
+  "scope": "B02 source lines 235–327, local semantic review plus bounded consumer boundary checks",
+  "evidence": [
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP355_W3_Race_Local_Forensic_Register.json",
+      "sha": "958e7d0aa1467ab47f7c57ea01f4fc9625598988"
+    },
+    {
+      "path": "Audit/Phase_07/Rebaseline_v2_8_7/CP355_W3_Race_Consumer_Boundaries.json",
+      "sha": "bd0ec63d0668983d408298ce936913553c0025e3"
+    },
+    {
+      "path": "Algorithms/V3/01_Reaction_Engine.md",
+      "sha": "dbcf2d419e76f1072070f39bb8916d99278e8bff"
+    },
+    {
+      "path": "Algorithms/V3/Chronology/40_W3_Reaction_Breakout_And_Races_Forensic.md",
+      "sha": "7bc59d8c9e494e53387e13c6ddc99709d37336c1"
+    }
+  ],
+  "progress": {
+    "local_modules": {
+      "reviewed": 5,
+      "denominator": 16
+    },
+    "local_owner_batches": {
+      "reviewed": 1,
+      "denominator": 10
+    },
+    "local_category_rows": {
+      "reviewed": 2838,
+      "denominator": 50220
+    },
+    "w1_category_rows": {
+      "reviewed": 627,
+      "denominator": 11575
+    },
+    "additional_category_rows": {
+      "reviewed": 2211,
+      "denominator": 38645
+    },
+    "b01_category_rows": {
+      "reviewed": 336,
+      "denominator": 336
+    },
+    "b01_supplemental": {
+      "reviewed": 14,
+      "denominator": 14
+    },
+    "cross_owner_denominator": null,
+    "b02_category_rows": {
+      "reviewed": 2502,
+      "denominator": 8697
+    },
+    "b02_w1": {
+      "reviewed": 553,
+      "denominator": 1877
+    },
+    "b02_additional": {
+      "reviewed": 1949,
+      "denominator": 6820
+    },
+    "b02_completed_ranges": [
+      [
+        1,
+        234
+      ],
+      [
+        235,
+        327
+      ],
+      [
+        886,
+        1131
+      ],
+      [
+        1132,
+        1369
+      ]
+    ],
+    "b02_historical_supplemental_reviewed": 30
+  },
+  "findings": [
+    {
+      "id": "CP355-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "RE10–12 clarify caller admission, full nominal main interval (race helpers ignore candidate intrabar_start), exact positional tie distinct from duplicate timestamp equality, and both queries evaluated before arbitration."
+    },
+    {
+      "id": "CP355-F02",
+      "status": "OPEN_CALLER_ADMISSION_AND_MIRROR",
+      "meaning": "Mode A helper itself does not validate candidate.mode; confirmed reset helper does not test main Low. Native callers gate differently; mirror adapters and full state ownership must be reviewed before complete B02 acceptance."
+    }
+  ],
+  "prior_w1": "PASS_SCOPED CP321 retained",
+  "prior_w2": "PASS_SCOPED CP350 retained",
+  "w3": "INCOMPLETE",
+  "w4": "NOT RUN",
+  "rb02": "WAIVED_NON_BLOCKING",
+  "phase08": "BLOCKED",
+  "publication_gate": "Verify full candidate recursive tree diff, CAS expected parent force=false and readback before reporting publication.",
+  "prohibitions": "No RAW payload, project runtime, ZIP, production/main change",
+  "next": "CP356 / W3 B02 independent Reaction post-breakout reset and Bullish scan source review, starting from actual published CP355 algorithm HEAD/tree and pinned main c99b4c957e932d9ee70c492ca03ce80711447fc1. Verify CP351–355 artifacts; read AGENTS.md, Operating Protocol, active Execution Plan and relevant CP321–350 evidence. Independently review reaction_engine.py lines 328–689 (post_breakout_reset, Bullish detect/_scan state transitions and mirror records) in complete adaptive partitions, then 690–885 and 1370–2908. Source before prior conclusions; map exact canonical W1 and additional category rows to reviewed source contracts, inspect historical B02-02 and related procedures, compare active docs and CP352–355 findings. Preserve every prior record; B02 2502/8697 category rows (553/1877 W1, 1949/6820 additional), reviewed ranges 1–327 and 886–1369, 30 historical supplemental. CP351-F03, CP352-F03, CP353-F03, CP354-F03, CP355-F02 remain open for complete consumer/lifetime, record copying and ownership, dirty frontier, failure/rollback, admission and mirror review. All remaining B02, B03–B10 and cross-owner W3 obligations must be independently reviewed. No overlap-based acceptance. Up to 10 substantive checkpoints; no RAW, runtime, ZIP, production or main change; RB02 WAIVED_NON_BLOCKING. Full candidate recursive tree diff, CAS force=false expected parent and remote readback per checkpoint. W4 only after independent W3 acceptance. Report exact denominators, limitations, commit/tree and tailored continuation in Persian."
+}

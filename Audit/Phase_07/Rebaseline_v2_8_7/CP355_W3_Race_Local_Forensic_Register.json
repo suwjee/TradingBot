@@ -1,0 +1,6615 @@
+{
+  "checkpoint": 355,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "ebf7f6784e6b9bf70ed8c09e1715741f93689ad0",
+  "scope": "B02 Green run, breakout analysis, Mode A invalidation and confirmed-reset race, lines 235–327 only",
+  "provenance": "Separate same-assistant source-first pass. Group contracts derived directly from pinned source; category rows link coordinate and operation. Historical W1 interpretations retained separately. No embedded production implementation or runtime trace.",
+  "source": {
+    "path": "engine/pipeline/reaction_engine.py",
+    "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+    "range": [
+      235,
+      327
+    ],
+    "canonical_report": "3bfa193e718fdf31b62d51f9a690b66a024d8403",
+    "prior_partition": "a695f734f50fe8492fb6f69c464a35137b923fc1",
+    "prior_rebaseline": "2db128057a2f8f5d50d576e29eaaa944ef8bc403"
+  },
+  "groups": [
+    {
+      "id": "G1",
+      "range": [
+        235,
+        236
+      ],
+      "procedure": "RE09",
+      "interpretation": "Bullish detector inherits DetectorBase. Green-run helper returns price and owning row; signature alone validates nothing."
+    },
+    {
+      "id": "G2",
+      "range": [
+        237,
+        237
+      ],
+      "procedure": "RE09",
+      "interpretation": "Compute predecessor index FirstRed minus one before checking stage bounds."
+    },
+    {
+      "id": "G3",
+      "range": [
+        238,
+        239
+      ],
+      "procedure": "RE09",
+      "interpretation": "First reject predecessor below selected start; only otherwise read predecessor tag, require exact GREEN. Either failure raises ValueError. No explicit upper-range check; native indexing errors propagate."
+    },
+    {
+      "id": "G4",
+      "range": [
+        241,
+        243
+      ],
+      "procedure": "RE09",
+      "interpretation": "Initialize run_start at predecessor. While above start, test immediately preceding tag exactly GREEN; decrement once each success, stop on first failed boundary/tag. Does not search disjoint earlier run."
+    },
+    {
+      "id": "G5",
+      "range": [
+        244,
+        244
+      ],
+      "procedure": "RE09",
+      "interpretation": "Delegate inclusive maximum_high(run_start,run_end); returns owner from base, no extra tie or price transform."
+    },
+    {
+      "id": "G6",
+      "range": [
+        246,
+        248
+      ],
+      "procedure": "RE10",
+      "interpretation": "Breakout analysis accepts candidate and candle, does not locally require main High>BoxTop; selection authority is caller."
+    },
+    {
+      "id": "G7",
+      "range": [
+        249,
+        253
+      ],
+      "procedure": "RE10",
+      "interpretation": "Evaluate comparison of top-source index to First; if strictly earlier use top source+1, otherwise top source itself; no clamp or selected-range validation."
+    },
+    {
+      "id": "G8",
+      "range": [
+        254,
+        254
+      ],
+      "procedure": "RE10",
+      "interpretation": "Truthy intrabar_start wins; otherwise lookup derived main timestamp. Source-index calculation precedes this truthiness decision."
+    },
+    {
+      "id": "G9",
+      "range": [
+        255,
+        257
+      ],
+      "procedure": "RE10",
+      "interpretation": "End is supplied Break candle timestamp plus inferred timeframe, not next main timestamp. Bisect both lower bounds independently, left inclusive/right exclusive; no local clamping of start to Break."
+    },
+    {
+      "id": "G10",
+      "range": [
+        258,
+        260
+      ],
+      "procedure": "RE10",
+      "interpretation": "Ask lower index for first strict greater High than candidate BoxTop in bounds. Missing hit returns None without extrema or owner lookup."
+    },
+    {
+      "id": "G11",
+      "range": [
+        261,
+        263
+      ],
+      "procedure": "RE10",
+      "interpretation": "Query min Low over [left,crossing+1), includes crossing row. No additional event filtering; input/index validity required."
+    },
+    {
+      "id": "G12",
+      "range": [
+        264,
+        267
+      ],
+      "procedure": "RE10",
+      "interpretation": "Read timestamp at min position, then main_source_for_time; if no selected owner return None despite crossing. Owner is min event's main row, not necessarily crossing row."
+    },
+    {
+      "id": "G13",
+      "range": [
+        268,
+        270
+      ],
+      "procedure": "RE10",
+      "interpretation": "Construct IntrabarAnalysis from crossing lower row, minimum price and selected main source. No candidate mutation or confirmation append here."
+    },
+    {
+      "id": "G14",
+      "range": [
+        272,
+        278
+      ],
+      "procedure": "RE11",
+      "interpretation": "Mode-A invalidation helper's name/comment do not enforce candidate.mode or create Reset. Caller admits Mode A."
+    },
+    {
+      "id": "G15",
+      "range": [
+        279,
+        283
+      ],
+      "procedure": "RE11",
+      "interpretation": "Select anchor_value whenever not None, including zero; otherwise leg_boundary_value. No normalization."
+    },
+    {
+      "id": "G16",
+      "range": [
+        284,
+        285
+      ],
+      "procedure": "RE11",
+      "interpretation": "If selected level None return False before accessing candle low."
+    },
+    {
+      "id": "G17",
+      "range": [
+        286,
+        287
+      ],
+      "procedure": "RE11",
+      "interpretation": "If main Low>=level return False; equality is not invalidation. High not consulted on this path."
+    },
+    {
+      "id": "G18",
+      "range": [
+        288,
+        289
+      ],
+      "procedure": "RE11",
+      "interpretation": "After strict main low breach, if main High<=BoxTop return True; equality not breakout; no lower search."
+    },
+    {
+      "id": "G19",
+      "range": [
+        291,
+        293
+      ],
+      "procedure": "RE11",
+      "interpretation": "When both main thresholds strictly crossed, compute current main interval [open,open+timeframe) via two lower bounds; no intrabar_start restriction."
+    },
+    {
+      "id": "G20",
+      "range": [
+        294,
+        296
+      ],
+      "procedure": "RE11",
+      "interpretation": "First strict lower Low<invalidation_level index queried before breakout. No new Reset or candidate mutation."
+    },
+    {
+      "id": "G21",
+      "range": [
+        297,
+        299
+      ],
+      "procedure": "RE11",
+      "interpretation": "First strict lower High>BoxTop index queried second, regardless of first result."
+    },
+    {
+      "id": "G22",
+      "range": [
+        300,
+        301
+      ],
+      "procedure": "RE11",
+      "interpretation": "Missing invalidation returns True exactly when breakout also missing; when breakout exists returns False."
+    },
+    {
+      "id": "G23",
+      "range": [
+        302,
+        303
+      ],
+      "procedure": "RE11",
+      "interpretation": "Invalidation present and breakout missing returns True."
+    },
+    {
+      "id": "G24",
+      "range": [
+        304,
+        306
+      ],
+      "procedure": "RE11",
+      "interpretation": "Both present: invalidation position<=breakout position wins, including same physical lower row. Equal timestamps at different positions are not necessarily tie."
+    },
+    {
+      "id": "G25",
+      "range": [
+        308,
+        310
+      ],
+      "procedure": "RE12",
+      "interpretation": "Confirmed reset helper accepts nullable candidate and confirmed bottom. Does not locally check main Low or that confirmed bottom belongs to accepted ledger."
+    },
+    {
+      "id": "G26",
+      "range": [
+        311,
+        312
+      ],
+      "procedure": "RE12",
+      "interpretation": "Short circuit candidate None before accessing High/top; return True if None or main High<=candidate top. Caller supplies reset context."
+    },
+    {
+      "id": "G27",
+      "range": [
+        314,
+        316
+      ],
+      "procedure": "RE12",
+      "interpretation": "Otherwise compute current full main lower interval by nominal end and bisect_left at both ends."
+    },
+    {
+      "id": "G28",
+      "range": [
+        317,
+        320
+      ],
+      "procedure": "RE12",
+      "interpretation": "Query first strict Low<confirmed bottom then High>candidate top; both queries before result arbitration, not selecting another candidate."
+    },
+    {
+      "id": "G29",
+      "range": [
+        321,
+        322
+      ],
+      "procedure": "RE12",
+      "interpretation": "No reset hit returns True only if breakout also missing."
+    },
+    {
+      "id": "G30",
+      "range": [
+        323,
+        324
+      ],
+      "procedure": "RE12",
+      "interpretation": "Reset hit and no breakout returns True."
+    },
+    {
+      "id": "G31",
+      "range": [
+        325,
+        326
+      ],
+      "procedure": "RE12",
+      "interpretation": "Both present reset wins when position<=breakout; same-position priority, not timestamp equality across distinct lower positions. Returns Boolean only."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 19,
+      "node": 872,
+      "span": [
+        238,
+        8,
+        239,
+        87
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G3",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 872,
+        "disposition": "VERIFIED",
+        "interpretation": "Reject invalid predecessor before extending GREEN run; raise rather than return null."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 20,
+      "node": 873,
+      "span": [
+        238,
+        11,
+        238,
+        77
+      ],
+      "operation": [
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G3",
+      "semantic_role": "Control BoolOp: operand_0_continue, operand_0_short_circuit; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 873,
+        "disposition": "VERIFIED",
+        "interpretation": "Check predecessor below start first; only if false inspect tag and reject non-GREEN."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 21,
+      "node": 892,
+      "span": [
+        242,
+        8,
+        243,
+        26
+      ],
+      "operation": [
+        "While",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G4",
+      "semantic_role": "Control While: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 892,
+        "disposition": "VERIFIED",
+        "interpretation": "Continue backward one position per iteration while above start and predecessor GREEN."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 22,
+      "node": 893,
+      "span": [
+        242,
+        14,
+        242,
+        89
+      ],
+      "operation": [
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G4",
+      "semantic_role": "Control BoolOp: operand_0_continue, operand_0_short_circuit; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 893,
+        "disposition": "VERIFIED",
+        "interpretation": "Check run_start>start first, then inspect preceding tag; prevents preceding lookup at boundary."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 23,
+      "node": 929,
+      "span": [
+        250,
+        12,
+        252,
+        45
+      ],
+      "operation": [
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Control IfExp: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 929,
+        "disposition": "VERIFIED",
+        "interpretation": "Choose top source+1 when top source strictly before First; else top source itself."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 24,
+      "node": 943,
+      "span": [
+        254,
+        16,
+        254,
+        79
+      ],
+      "operation": [
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G8",
+      "semantic_role": "Control BoolOp: operand_0_continue, operand_0_short_circuit; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 943,
+        "disposition": "VERIFIED",
+        "interpretation": "Use truthy intrabar_start directly; otherwise access selected main timestamp. No local clamp."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 25,
+      "node": 984,
+      "span": [
+        259,
+        8,
+        260,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 984,
+        "disposition": "VERIFIED",
+        "interpretation": "If first strict lower breakout absent, return null before extreme query."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 26,
+      "node": 1014,
+      "span": [
+        266,
+        8,
+        267,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G12",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1014,
+        "disposition": "VERIFIED",
+        "interpretation": "If extreme's timestamp cannot map to selected main source, return null before analysis construction."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 27,
+      "node": 1040,
+      "span": [
+        280,
+        12,
+        282,
+        45
+      ],
+      "operation": [
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Control IfExp: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1040,
+        "disposition": "VERIFIED",
+        "interpretation": "Use anchor when nonnull, else frozen leg boundary; zero anchor not absence."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 28,
+      "node": 1049,
+      "span": [
+        284,
+        8,
+        285,
+        24
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1049,
+        "disposition": "VERIFIED",
+        "interpretation": "If selected invalidation level null, return false before comparing prices."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 29,
+      "node": 1055,
+      "span": [
+        286,
+        8,
+        287,
+        24
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G17",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1055,
+        "disposition": "VERIFIED",
+        "interpretation": "If main Low>=level, return false (including equality), before high guard."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 30,
+      "node": 1062,
+      "span": [
+        288,
+        8,
+        289,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G18",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1062,
+        "disposition": "VERIFIED",
+        "interpretation": "After strict outward low breach, main High<=top returns true without lower search."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 31,
+      "node": 1113,
+      "span": [
+        300,
+        8,
+        301,
+        35
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G22",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1113,
+        "disposition": "VERIFIED",
+        "interpretation": "When lower invalidation absent, return whether breakout also absent."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 32,
+      "node": 1121,
+      "span": [
+        302,
+        8,
+        303,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G23",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1121,
+        "disposition": "VERIFIED",
+        "interpretation": "When lower invalidation present but breakout absent, return true; otherwise compare positions."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 33,
+      "node": 1142,
+      "span": [
+        311,
+        8,
+        312,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G26",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1142,
+        "disposition": "VERIFIED",
+        "interpretation": "Return true without lower race if candidate absent or its top not strictly breached by main High."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 34,
+      "node": 1143,
+      "span": [
+        311,
+        11,
+        311,
+        64
+      ],
+      "operation": [
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "G26",
+      "semantic_role": "Control BoolOp: operand_0_continue, operand_0_short_circuit; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1143,
+        "disposition": "VERIFIED",
+        "interpretation": "Check null candidate first; only if present read box top and compare High."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 35,
+      "node": 1197,
+      "span": [
+        321,
+        8,
+        322,
+        35
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G29",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1197,
+        "disposition": "VERIFIED",
+        "interpretation": "When lower reset absent, return whether breakout absent."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 36,
+      "node": 1205,
+      "span": [
+        323,
+        8,
+        324,
+        23
+      ],
+      "operation": [
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "G30",
+      "semantic_role": "Control If: true, false; branch semantics and order in linked group.",
+      "prior_w1": {
+        "original_id": 1205,
+        "disposition": "VERIFIED",
+        "interpretation": "When lower reset present but breakout absent, return true; otherwise compare positions."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 13,
+      "node": 874,
+      "span": [
+        238,
+        11,
+        238,
+        37
+      ],
+      "operation": [
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G3",
+      "semantic_role": "Native comparison Lt; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 874,
+        "disposition": "VERIFIED",
+        "interpretation": "Predecessor strictly before start is invalid."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 14,
+      "node": 878,
+      "span": [
+        238,
+        41,
+        238,
+        77
+      ],
+      "operation": [
+        [
+          "NotEq"
+        ]
+      ],
+      "group": "G3",
+      "semantic_role": "Native comparison NotEq; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 878,
+        "disposition": "VERIFIED",
+        "interpretation": "Predecessor tag unequal to exact GREEN rejects."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 15,
+      "node": 894,
+      "span": [
+        242,
+        14,
+        242,
+        42
+      ],
+      "operation": [
+        [
+          "Gt"
+        ]
+      ],
+      "group": "G4",
+      "semantic_role": "Native comparison Gt; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 894,
+        "disposition": "VERIFIED",
+        "interpretation": "Run start strictly above detector start before preceding-tag access."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 16,
+      "node": 898,
+      "span": [
+        242,
+        47,
+        242,
+        89
+      ],
+      "operation": [
+        [
+          "Eq"
+        ]
+      ],
+      "group": "G4",
+      "semantic_role": "Native comparison Eq; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 898,
+        "disposition": "VERIFIED",
+        "interpretation": "Preceding tag exactly GREEN allows backward extension."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 17,
+      "node": 930,
+      "span": [
+        251,
+        15,
+        251,
+        65
+      ],
+      "operation": [
+        [
+          "Lt"
+        ]
+      ],
+      "group": "G7",
+      "semantic_role": "Native comparison Lt; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 930,
+        "disposition": "VERIFIED",
+        "interpretation": "Top source strictly earlier than First means start after source, equality uses source."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 18,
+      "node": 985,
+      "span": [
+        259,
+        11,
+        259,
+        27
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 985,
+        "disposition": "VERIFIED",
+        "interpretation": "Crossing identity null, not truthiness; position zero is valid."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 19,
+      "node": 1015,
+      "span": [
+        266,
+        11,
+        266,
+        25
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G12",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1015,
+        "disposition": "VERIFIED",
+        "interpretation": "Mapped main source identity null, not truthiness."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 20,
+      "node": 1041,
+      "span": [
+        281,
+        15,
+        281,
+        49
+      ],
+      "operation": [
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "G15",
+      "semantic_role": "Native comparison IsNot; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1041,
+        "disposition": "VERIFIED",
+        "interpretation": "Anchor identity nonnull selects it even if zero."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 21,
+      "node": 1050,
+      "span": [
+        284,
+        11,
+        284,
+        37
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G16",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1050,
+        "disposition": "VERIFIED",
+        "interpretation": "Selected level identity null means no invalidation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 22,
+      "node": 1056,
+      "span": [
+        286,
+        11,
+        286,
+        43
+      ],
+      "operation": [
+        [
+          "GtE"
+        ]
+      ],
+      "group": "G17",
+      "semantic_role": "Native comparison GtE; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1056,
+        "disposition": "VERIFIED",
+        "interpretation": "Main Low>=level prevents strict outward invalidation; equality false for breach."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 23,
+      "node": 1063,
+      "span": [
+        288,
+        11,
+        288,
+        43
+      ],
+      "operation": [
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G18",
+      "semantic_role": "Native comparison LtE; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1063,
+        "disposition": "VERIFIED",
+        "interpretation": "Main High<=top means no strict main breakout, equality included."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 24,
+      "node": 1114,
+      "span": [
+        300,
+        11,
+        300,
+        31
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G22",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1114,
+        "disposition": "VERIFIED",
+        "interpretation": "Invalidation position null indicates no lower hit."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 25,
+      "node": 1118,
+      "span": [
+        301,
+        19,
+        301,
+        35
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G22",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1118,
+        "disposition": "VERIFIED",
+        "interpretation": "Breakout position null when no invalidation determines true; actual position zero not null."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 26,
+      "node": 1122,
+      "span": [
+        302,
+        11,
+        302,
+        27
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G23",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1122,
+        "disposition": "VERIFIED",
+        "interpretation": "Breakout position null when invalidation exists determines true."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 27,
+      "node": 1128,
+      "span": [
+        306,
+        15,
+        306,
+        39
+      ],
+      "operation": [
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G24",
+      "semantic_role": "Native comparison LtE; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1128,
+        "disposition": "VERIFIED",
+        "interpretation": "Invalidation position <= breakout position wins; equality explicitly outward-first."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 28,
+      "node": 1144,
+      "span": [
+        311,
+        11,
+        311,
+        28
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G26",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1144,
+        "disposition": "VERIFIED",
+        "interpretation": "Candidate identity null returns true without accessing candidate top."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 29,
+      "node": 1147,
+      "span": [
+        311,
+        32,
+        311,
+        64
+      ],
+      "operation": [
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G26",
+      "semantic_role": "Native comparison LtE; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1147,
+        "disposition": "VERIFIED",
+        "interpretation": "Main High<=candidate top returns true for reset race helper; caller owns reset trigger."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 30,
+      "node": 1198,
+      "span": [
+        321,
+        11,
+        321,
+        24
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G29",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1198,
+        "disposition": "VERIFIED",
+        "interpretation": "Reset position identity null means absent."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 31,
+      "node": 1202,
+      "span": [
+        322,
+        19,
+        322,
+        35
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G29",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1202,
+        "disposition": "VERIFIED",
+        "interpretation": "With absent reset, breakout identity null determines true."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 32,
+      "node": 1206,
+      "span": [
+        323,
+        11,
+        323,
+        27
+      ],
+      "operation": [
+        [
+          "Is"
+        ]
+      ],
+      "group": "G30",
+      "semantic_role": "Native comparison Is; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1206,
+        "disposition": "VERIFIED",
+        "interpretation": "With reset present, breakout identity null determines true."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 33,
+      "node": 1212,
+      "span": [
+        326,
+        15,
+        326,
+        32
+      ],
+      "operation": [
+        [
+          "LtE"
+        ]
+      ],
+      "group": "G31",
+      "semantic_role": "Native comparison LtE; exact boundary and operands in linked group.",
+      "prior_w1": {
+        "original_id": 1212,
+        "disposition": "VERIFIED",
+        "interpretation": "Reset position <= breakout position wins; equality explicitly reset-first."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 36,
+      "node": 869,
+      "span": [
+        237,
+        18,
+        237,
+        37
+      ],
+      "operation": [
+        "Sub"
+      ],
+      "group": "G2",
+      "semantic_role": "Operation Sub; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 869,
+        "disposition": "VERIFIED",
+        "interpretation": "First RED index minus one gives immediate predecessor."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 37,
+      "node": 903,
+      "span": [
+        242,
+        60,
+        242,
+        73
+      ],
+      "operation": [
+        "Sub"
+      ],
+      "group": "G4",
+      "semantic_role": "Operation Sub; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 903,
+        "disposition": "VERIFIED",
+        "interpretation": "Run start minus one addresses preceding candle only after start bound guard."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 38,
+      "node": 907,
+      "span": [
+        243,
+        12,
+        243,
+        26
+      ],
+      "operation": [
+        "Sub"
+      ],
+      "group": "G4",
+      "semantic_role": "Operation Sub; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 907,
+        "disposition": "VERIFIED",
+        "interpretation": "Decrease run start by one after preceding GREEN passes."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 39,
+      "node": 935,
+      "span": [
+        250,
+        12,
+        250,
+        44
+      ],
+      "operation": [
+        "Add"
+      ],
+      "group": "G7",
+      "semantic_role": "Operation Add; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 935,
+        "disposition": "VERIFIED",
+        "interpretation": "Top source plus one used only when top source strictly before First."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 40,
+      "node": 953,
+      "span": [
+        255,
+        14,
+        255,
+        56
+      ],
+      "operation": [
+        "Add"
+      ],
+      "group": "G9",
+      "semantic_role": "Operation Add; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 953,
+        "disposition": "VERIFIED",
+        "interpretation": "Break main open plus inferred timeframe forms exclusive lower search end."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 41,
+      "node": 999,
+      "span": [
+        262,
+        18,
+        262,
+        30
+      ],
+      "operation": [
+        "Add"
+      ],
+      "group": "G11",
+      "semantic_role": "Operation Add; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 999,
+        "disposition": "VERIFIED",
+        "interpretation": "Crossing position plus one includes confirming lower row in min query."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 42,
+      "node": 1029,
+      "span": [
+        248,
+        9,
+        248,
+        32
+      ],
+      "operation": [
+        "BitOr"
+      ],
+      "group": "G6",
+      "semantic_role": "Operation BitOr; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 1029,
+        "disposition": "NOT_APPLICABLE",
+        "interpretation": "Postponed type-union annotation describing nullable field or return type; not a runtime price/time arithmetic operation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 43,
+      "node": 1072,
+      "span": [
+        291,
+        14,
+        291,
+        47
+      ],
+      "operation": [
+        "Add"
+      ],
+      "group": "G19",
+      "semantic_role": "Operation Add; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 1072,
+        "disposition": "VERIFIED",
+        "interpretation": "Current main open plus timeframe forms exclusive lower race end."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 44,
+      "node": 1135,
+      "span": [
+        309,
+        25,
+        309,
+        41
+      ],
+      "operation": [
+        "BitOr"
+      ],
+      "group": "G25",
+      "semantic_role": "Operation BitOr; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 1135,
+        "disposition": "NOT_APPLICABLE",
+        "interpretation": "Postponed type-union annotation describing nullable field or return type; not a runtime price/time arithmetic operation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 45,
+      "node": 1156,
+      "span": [
+        314,
+        14,
+        314,
+        47
+      ],
+      "operation": [
+        "Add"
+      ],
+      "group": "G27",
+      "semantic_role": "Operation Add; index/time or declaration operation distinguished by linked group.",
+      "prior_w1": {
+        "original_id": 1156,
+        "disposition": "VERIFIED",
+        "interpretation": "Current main open plus timeframe forms exclusive reset race end."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 38,
+      "node": 886,
+      "span": [
+        239,
+        18,
+        239,
+        87
+      ],
+      "operation": [
+        "ValueError",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "G3",
+      "semantic_role": "Call ValueError; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 886,
+        "disposition": "VERIFIED",
+        "interpretation": "Construct ValueError for predecessor invalid or non-GREEN; raise immediately."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 39,
+      "node": 911,
+      "span": [
+        244,
+        15,
+        244,
+        52
+      ],
+      "operation": [
+        "self.maximum_high",
+        "UNRESOLVED_INHERITED_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G5",
+      "semantic_role": "Call self.maximum_high; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 911,
+        "disposition": "VERIFIED",
+        "interpretation": "Compute inclusive maximum over full contiguous GREEN run, using RE08's own branch rules."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 40,
+      "node": 960,
+      "span": [
+        256,
+        15,
+        256,
+        59
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G9",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 960,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound chosen analysis start, includes equality."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 41,
+      "node": 968,
+      "span": [
+        257,
+        16,
+        257,
+        58
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G9",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 968,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound Break end, excludes equality."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 42,
+      "node": 976,
+      "span": [
+        258,
+        19,
+        258,
+        81
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "G10",
+      "semantic_role": "Call self.lower_index.first_greater; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 976,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first strict greater lower High than frozen BoxTop within bounds; service later reviewed."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 43,
+      "node": 994,
+      "span": [
+        261,
+        40,
+        263,
+        9
+      ],
+      "operation": [
+        "self.lower_index.range_minimum",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G11",
+      "semantic_role": "Call self.lower_index.range_minimum; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 994,
+        "disposition": "VERIFIED",
+        "interpretation": "Query minimum Low from left through crossing inclusive, not whole Break remainder."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 44,
+      "node": 1010,
+      "span": [
+        265,
+        17,
+        265,
+        56
+      ],
+      "operation": [
+        "self.main_source_for_time",
+        "UNRESOLVED_INHERITED_OR_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "G12",
+      "semantic_role": "Call self.main_source_for_time; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1010,
+        "disposition": "VERIFIED",
+        "interpretation": "Map selected min timestamp to detector main source using RE06, not crossing timestamp."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 45,
+      "node": 1021,
+      "span": [
+        268,
+        15,
+        270,
+        9
+      ],
+      "operation": [
+        "IntrabarAnalysis",
+        "LEXICAL_CANDIDATE",
+        [
+          "engine/pipeline/reaction_engine.py:84:0:IntrabarAnalysis"
+        ],
+        3,
+        []
+      ],
+      "group": "G13",
+      "semantic_role": "Call IntrabarAnalysis; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1021,
+        "disposition": "VERIFIED",
+        "interpretation": "Construct analysis with crossing lower candle, minimum Low and owning main source after all checks."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 46,
+      "node": 1079,
+      "span": [
+        292,
+        15,
+        292,
+        70
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G19",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1079,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound current main open, includes exact open."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 47,
+      "node": 1088,
+      "span": [
+        293,
+        16,
+        293,
+        58
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G19",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1088,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound current main end, excludes exact end."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 48,
+      "node": 1096,
+      "span": [
+        294,
+        23,
+        296,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_less",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "G20",
+      "semantic_role": "Call self.lower_index.first_less; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1096,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first strict Low below invalidation level before querying breakout."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 49,
+      "node": 1105,
+      "span": [
+        297,
+        19,
+        299,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "G21",
+      "semantic_role": "Call self.lower_index.first_greater; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1105,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first strict High above box top over identical lower window, even if invalidation absent."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 50,
+      "node": 1163,
+      "span": [
+        315,
+        15,
+        315,
+        70
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G27",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1163,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound main open for reset race."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 51,
+      "node": 1172,
+      "span": [
+        316,
+        16,
+        316,
+        58
+      ],
+      "operation": [
+        "bisect.bisect_left",
+        "IMPORTED_EXTERNAL_OR_DYNAMIC",
+        [],
+        2,
+        []
+      ],
+      "group": "G27",
+      "semantic_role": "Call bisect.bisect_left; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1172,
+        "disposition": "VERIFIED",
+        "interpretation": "Lower bound main end for reset race, exclusive."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 52,
+      "node": 1180,
+      "span": [
+        317,
+        16,
+        317,
+        74
+      ],
+      "operation": [
+        "self.lower_index.first_less",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "G28",
+      "semantic_role": "Call self.lower_index.first_less; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1180,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first strict lower Low below confirmed bottom before querying breakout."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 53,
+      "node": 1189,
+      "span": [
+        318,
+        19,
+        320,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "G28",
+      "semantic_role": "Call self.lower_index.first_greater; linked group states source selection, bounds and conditional effects.",
+      "prior_w1": {
+        "original_id": 1189,
+        "disposition": "VERIFIED",
+        "interpretation": "Find first strict lower High above candidate top over same window."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 448,
+      "node": 862,
+      "span": [
+        235,
+        22,
+        235,
+        34
+      ],
+      "operation": [
+        861,
+        "Load",
+        "DetectorBase"
+      ],
+      "group": "G1",
+      "semantic_role": "Load DetectorBase; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 449,
+      "node": 866,
+      "span": [
+        236,
+        53,
+        236,
+        56
+      ],
+      "operation": [
+        863,
+        "Load",
+        "int"
+      ],
+      "group": "G1",
+      "semantic_role": "Load int; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 450,
+      "node": 868,
+      "span": [
+        237,
+        8,
+        237,
+        15
+      ],
+      "operation": [
+        867,
+        "Store",
+        "run_end"
+      ],
+      "group": "G2",
+      "semantic_role": "Store run_end; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 451,
+      "node": 870,
+      "span": [
+        237,
+        18,
+        237,
+        33
+      ],
+      "operation": [
+        867,
+        "Load",
+        "first_red_index"
+      ],
+      "group": "G2",
+      "semantic_role": "Load first_red_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 452,
+      "node": 875,
+      "span": [
+        238,
+        11,
+        238,
+        18
+      ],
+      "operation": [
+        872,
+        "Load",
+        "run_end"
+      ],
+      "group": "G3",
+      "semantic_role": "Load run_end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 453,
+      "node": 876,
+      "span": [
+        238,
+        21,
+        238,
+        37
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self.start_index"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self.start_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 454,
+      "node": 877,
+      "span": [
+        238,
+        21,
+        238,
+        25
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 455,
+      "node": 879,
+      "span": [
+        238,
+        41,
+        238,
+        66
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self.candles[].tag"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self.candles[].tag; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 456,
+      "node": 880,
+      "span": [
+        238,
+        41,
+        238,
+        62
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self.candles[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 457,
+      "node": 881,
+      "span": [
+        238,
+        41,
+        238,
+        53
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self.candles; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 458,
+      "node": 882,
+      "span": [
+        238,
+        41,
+        238,
+        45
+      ],
+      "operation": [
+        872,
+        "Load",
+        "self"
+      ],
+      "group": "G3",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 459,
+      "node": 883,
+      "span": [
+        238,
+        54,
+        238,
+        61
+      ],
+      "operation": [
+        872,
+        "Load",
+        "run_end"
+      ],
+      "group": "G3",
+      "semantic_role": "Load run_end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 460,
+      "node": 887,
+      "span": [
+        239,
+        18,
+        239,
+        28
+      ],
+      "operation": [
+        885,
+        "Load",
+        "ValueError"
+      ],
+      "group": "G3",
+      "semantic_role": "Load ValueError; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 461,
+      "node": 890,
+      "span": [
+        241,
+        8,
+        241,
+        17
+      ],
+      "operation": [
+        889,
+        "Store",
+        "run_start"
+      ],
+      "group": "G4",
+      "semantic_role": "Store run_start; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 462,
+      "node": 891,
+      "span": [
+        241,
+        20,
+        241,
+        27
+      ],
+      "operation": [
+        889,
+        "Load",
+        "run_end"
+      ],
+      "group": "G4",
+      "semantic_role": "Load run_end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 463,
+      "node": 895,
+      "span": [
+        242,
+        14,
+        242,
+        23
+      ],
+      "operation": [
+        892,
+        "Load",
+        "run_start"
+      ],
+      "group": "G4",
+      "semantic_role": "Load run_start; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 464,
+      "node": 896,
+      "span": [
+        242,
+        26,
+        242,
+        42
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self.start_index"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self.start_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 465,
+      "node": 897,
+      "span": [
+        242,
+        26,
+        242,
+        30
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 466,
+      "node": 899,
+      "span": [
+        242,
+        47,
+        242,
+        78
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self.candles[].tag"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self.candles[].tag; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 467,
+      "node": 900,
+      "span": [
+        242,
+        47,
+        242,
+        74
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self.candles[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 468,
+      "node": 901,
+      "span": [
+        242,
+        47,
+        242,
+        59
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self.candles; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 469,
+      "node": 902,
+      "span": [
+        242,
+        47,
+        242,
+        51
+      ],
+      "operation": [
+        892,
+        "Load",
+        "self"
+      ],
+      "group": "G4",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 470,
+      "node": 904,
+      "span": [
+        242,
+        60,
+        242,
+        69
+      ],
+      "operation": [
+        892,
+        "Load",
+        "run_start"
+      ],
+      "group": "G4",
+      "semantic_role": "Load run_start; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 471,
+      "node": 908,
+      "span": [
+        243,
+        12,
+        243,
+        21
+      ],
+      "operation": [
+        907,
+        "Store",
+        "run_start"
+      ],
+      "group": "G4",
+      "semantic_role": "Store run_start; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 472,
+      "node": 912,
+      "span": [
+        244,
+        15,
+        244,
+        32
+      ],
+      "operation": [
+        910,
+        "Load",
+        "self.maximum_high"
+      ],
+      "group": "G5",
+      "semantic_role": "Load self.maximum_high; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 473,
+      "node": 913,
+      "span": [
+        244,
+        15,
+        244,
+        19
+      ],
+      "operation": [
+        910,
+        "Load",
+        "self"
+      ],
+      "group": "G5",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 474,
+      "node": 914,
+      "span": [
+        244,
+        33,
+        244,
+        42
+      ],
+      "operation": [
+        910,
+        "Load",
+        "run_start"
+      ],
+      "group": "G5",
+      "semantic_role": "Load run_start; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 475,
+      "node": 915,
+      "span": [
+        244,
+        44,
+        244,
+        51
+      ],
+      "operation": [
+        910,
+        "Load",
+        "run_end"
+      ],
+      "group": "G5",
+      "semantic_role": "Load run_end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 476,
+      "node": 916,
+      "span": [
+        236,
+        61,
+        236,
+        83
+      ],
+      "operation": [
+        863,
+        "Load",
+        "tuple[]"
+      ],
+      "group": "G1",
+      "semantic_role": "Load tuple[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 477,
+      "node": 917,
+      "span": [
+        236,
+        61,
+        236,
+        66
+      ],
+      "operation": [
+        863,
+        "Load",
+        "tuple"
+      ],
+      "group": "G1",
+      "semantic_role": "Load tuple; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 478,
+      "node": 919,
+      "span": [
+        236,
+        67,
+        236,
+        74
+      ],
+      "operation": [
+        863,
+        "Load",
+        "Decimal"
+      ],
+      "group": "G1",
+      "semantic_role": "Load Decimal; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 479,
+      "node": 920,
+      "span": [
+        236,
+        76,
+        236,
+        82
+      ],
+      "operation": [
+        863,
+        "Load",
+        "Candle"
+      ],
+      "group": "G1",
+      "semantic_role": "Load Candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 480,
+      "node": 924,
+      "span": [
+        247,
+        25,
+        247,
+        34
+      ],
+      "operation": [
+        921,
+        "Load",
+        "Candidate"
+      ],
+      "group": "G6",
+      "semantic_role": "Load Candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 481,
+      "node": 926,
+      "span": [
+        247,
+        53,
+        247,
+        59
+      ],
+      "operation": [
+        921,
+        "Load",
+        "Candle"
+      ],
+      "group": "G6",
+      "semantic_role": "Load Candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 482,
+      "node": 928,
+      "span": [
+        249,
+        8,
+        249,
+        19
+      ],
+      "operation": [
+        927,
+        "Store",
+        "start_index"
+      ],
+      "group": "G7",
+      "semantic_role": "Store start_index; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 483,
+      "node": 931,
+      "span": [
+        251,
+        15,
+        251,
+        43
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate.box_top_source_idx"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate.box_top_source_idx; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 484,
+      "node": 932,
+      "span": [
+        251,
+        15,
+        251,
+        24
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 485,
+      "node": 933,
+      "span": [
+        251,
+        46,
+        251,
+        65
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate.first_idx"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate.first_idx; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 486,
+      "node": 934,
+      "span": [
+        251,
+        46,
+        251,
+        55
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 487,
+      "node": 936,
+      "span": [
+        250,
+        12,
+        250,
+        40
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate.box_top_source_idx"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate.box_top_source_idx; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 488,
+      "node": 937,
+      "span": [
+        250,
+        12,
+        250,
+        21
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 489,
+      "node": 939,
+      "span": [
+        252,
+        17,
+        252,
+        45
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate.box_top_source_idx"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate.box_top_source_idx; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 490,
+      "node": 940,
+      "span": [
+        252,
+        17,
+        252,
+        26
+      ],
+      "operation": [
+        927,
+        "Load",
+        "candidate"
+      ],
+      "group": "G7",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 491,
+      "node": 942,
+      "span": [
+        254,
+        8,
+        254,
+        13
+      ],
+      "operation": [
+        941,
+        "Store",
+        "start"
+      ],
+      "group": "G8",
+      "semantic_role": "Store start; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 492,
+      "node": 944,
+      "span": [
+        254,
+        16,
+        254,
+        40
+      ],
+      "operation": [
+        941,
+        "Load",
+        "candidate.intrabar_start"
+      ],
+      "group": "G8",
+      "semantic_role": "Load candidate.intrabar_start; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 493,
+      "node": 945,
+      "span": [
+        254,
+        16,
+        254,
+        25
+      ],
+      "operation": [
+        941,
+        "Load",
+        "candidate"
+      ],
+      "group": "G8",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 494,
+      "node": 946,
+      "span": [
+        254,
+        44,
+        254,
+        79
+      ],
+      "operation": [
+        941,
+        "Load",
+        "self.candles[].timestamp"
+      ],
+      "group": "G8",
+      "semantic_role": "Load self.candles[].timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 495,
+      "node": 947,
+      "span": [
+        254,
+        44,
+        254,
+        69
+      ],
+      "operation": [
+        941,
+        "Load",
+        "self.candles[]"
+      ],
+      "group": "G8",
+      "semantic_role": "Load self.candles[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 496,
+      "node": 948,
+      "span": [
+        254,
+        44,
+        254,
+        56
+      ],
+      "operation": [
+        941,
+        "Load",
+        "self.candles"
+      ],
+      "group": "G8",
+      "semantic_role": "Load self.candles; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 497,
+      "node": 949,
+      "span": [
+        254,
+        44,
+        254,
+        48
+      ],
+      "operation": [
+        941,
+        "Load",
+        "self"
+      ],
+      "group": "G8",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 498,
+      "node": 950,
+      "span": [
+        254,
+        57,
+        254,
+        68
+      ],
+      "operation": [
+        941,
+        "Load",
+        "start_index"
+      ],
+      "group": "G8",
+      "semantic_role": "Load start_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 499,
+      "node": 952,
+      "span": [
+        255,
+        8,
+        255,
+        11
+      ],
+      "operation": [
+        951,
+        "Store",
+        "end"
+      ],
+      "group": "G9",
+      "semantic_role": "Store end; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 500,
+      "node": 954,
+      "span": [
+        255,
+        14,
+        255,
+        39
+      ],
+      "operation": [
+        951,
+        "Load",
+        "breakout_candle.timestamp"
+      ],
+      "group": "G9",
+      "semantic_role": "Load breakout_candle.timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 501,
+      "node": 955,
+      "span": [
+        255,
+        14,
+        255,
+        29
+      ],
+      "operation": [
+        951,
+        "Load",
+        "breakout_candle"
+      ],
+      "group": "G9",
+      "semantic_role": "Load breakout_candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 502,
+      "node": 956,
+      "span": [
+        255,
+        42,
+        255,
+        56
+      ],
+      "operation": [
+        951,
+        "Load",
+        "self.timeframe"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self.timeframe; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 503,
+      "node": 957,
+      "span": [
+        255,
+        42,
+        255,
+        46
+      ],
+      "operation": [
+        951,
+        "Load",
+        "self"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 504,
+      "node": 959,
+      "span": [
+        256,
+        8,
+        256,
+        12
+      ],
+      "operation": [
+        958,
+        "Store",
+        "left"
+      ],
+      "group": "G9",
+      "semantic_role": "Store left; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 505,
+      "node": 961,
+      "span": [
+        256,
+        15,
+        256,
+        33
+      ],
+      "operation": [
+        958,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G9",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 506,
+      "node": 962,
+      "span": [
+        256,
+        15,
+        256,
+        21
+      ],
+      "operation": [
+        958,
+        "Load",
+        "bisect"
+      ],
+      "group": "G9",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 507,
+      "node": 963,
+      "span": [
+        256,
+        34,
+        256,
+        51
+      ],
+      "operation": [
+        958,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 508,
+      "node": 964,
+      "span": [
+        256,
+        34,
+        256,
+        38
+      ],
+      "operation": [
+        958,
+        "Load",
+        "self"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 509,
+      "node": 965,
+      "span": [
+        256,
+        53,
+        256,
+        58
+      ],
+      "operation": [
+        958,
+        "Load",
+        "start"
+      ],
+      "group": "G9",
+      "semantic_role": "Load start; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 510,
+      "node": 967,
+      "span": [
+        257,
+        8,
+        257,
+        13
+      ],
+      "operation": [
+        966,
+        "Store",
+        "right"
+      ],
+      "group": "G9",
+      "semantic_role": "Store right; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 511,
+      "node": 969,
+      "span": [
+        257,
+        16,
+        257,
+        34
+      ],
+      "operation": [
+        966,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G9",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 512,
+      "node": 970,
+      "span": [
+        257,
+        16,
+        257,
+        22
+      ],
+      "operation": [
+        966,
+        "Load",
+        "bisect"
+      ],
+      "group": "G9",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 513,
+      "node": 971,
+      "span": [
+        257,
+        35,
+        257,
+        52
+      ],
+      "operation": [
+        966,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 514,
+      "node": 972,
+      "span": [
+        257,
+        35,
+        257,
+        39
+      ],
+      "operation": [
+        966,
+        "Load",
+        "self"
+      ],
+      "group": "G9",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 515,
+      "node": 973,
+      "span": [
+        257,
+        54,
+        257,
+        57
+      ],
+      "operation": [
+        966,
+        "Load",
+        "end"
+      ],
+      "group": "G9",
+      "semantic_role": "Load end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 516,
+      "node": 975,
+      "span": [
+        258,
+        8,
+        258,
+        16
+      ],
+      "operation": [
+        974,
+        "Store",
+        "crossing"
+      ],
+      "group": "G10",
+      "semantic_role": "Store crossing; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 517,
+      "node": 977,
+      "span": [
+        258,
+        19,
+        258,
+        49
+      ],
+      "operation": [
+        974,
+        "Load",
+        "self.lower_index.first_greater"
+      ],
+      "group": "G10",
+      "semantic_role": "Load self.lower_index.first_greater; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 518,
+      "node": 978,
+      "span": [
+        258,
+        19,
+        258,
+        35
+      ],
+      "operation": [
+        974,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G10",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 519,
+      "node": 979,
+      "span": [
+        258,
+        19,
+        258,
+        23
+      ],
+      "operation": [
+        974,
+        "Load",
+        "self"
+      ],
+      "group": "G10",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 520,
+      "node": 980,
+      "span": [
+        258,
+        50,
+        258,
+        54
+      ],
+      "operation": [
+        974,
+        "Load",
+        "left"
+      ],
+      "group": "G10",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 521,
+      "node": 981,
+      "span": [
+        258,
+        56,
+        258,
+        61
+      ],
+      "operation": [
+        974,
+        "Load",
+        "right"
+      ],
+      "group": "G10",
+      "semantic_role": "Load right; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 522,
+      "node": 982,
+      "span": [
+        258,
+        63,
+        258,
+        80
+      ],
+      "operation": [
+        974,
+        "Load",
+        "candidate.box_top"
+      ],
+      "group": "G10",
+      "semantic_role": "Load candidate.box_top; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 523,
+      "node": 983,
+      "span": [
+        258,
+        63,
+        258,
+        72
+      ],
+      "operation": [
+        974,
+        "Load",
+        "candidate"
+      ],
+      "group": "G10",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 524,
+      "node": 986,
+      "span": [
+        259,
+        11,
+        259,
+        19
+      ],
+      "operation": [
+        984,
+        "Load",
+        "crossing"
+      ],
+      "group": "G10",
+      "semantic_role": "Load crossing; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 525,
+      "node": 992,
+      "span": [
+        261,
+        8,
+        261,
+        19
+      ],
+      "operation": [
+        990,
+        "Store",
+        "minimum_low"
+      ],
+      "group": "G11",
+      "semantic_role": "Store minimum_low; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 526,
+      "node": 993,
+      "span": [
+        261,
+        21,
+        261,
+        37
+      ],
+      "operation": [
+        990,
+        "Store",
+        "minimum_position"
+      ],
+      "group": "G11",
+      "semantic_role": "Store minimum_position; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 527,
+      "node": 995,
+      "span": [
+        261,
+        40,
+        261,
+        70
+      ],
+      "operation": [
+        990,
+        "Load",
+        "self.lower_index.range_minimum"
+      ],
+      "group": "G11",
+      "semantic_role": "Load self.lower_index.range_minimum; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 528,
+      "node": 996,
+      "span": [
+        261,
+        40,
+        261,
+        56
+      ],
+      "operation": [
+        990,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G11",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 529,
+      "node": 997,
+      "span": [
+        261,
+        40,
+        261,
+        44
+      ],
+      "operation": [
+        990,
+        "Load",
+        "self"
+      ],
+      "group": "G11",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 530,
+      "node": 998,
+      "span": [
+        262,
+        12,
+        262,
+        16
+      ],
+      "operation": [
+        990,
+        "Load",
+        "left"
+      ],
+      "group": "G11",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 531,
+      "node": 1000,
+      "span": [
+        262,
+        18,
+        262,
+        26
+      ],
+      "operation": [
+        990,
+        "Load",
+        "crossing"
+      ],
+      "group": "G11",
+      "semantic_role": "Load crossing; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 532,
+      "node": 1003,
+      "span": [
+        264,
+        8,
+        264,
+        20
+      ],
+      "operation": [
+        1002,
+        "Store",
+        "minimum_time"
+      ],
+      "group": "G12",
+      "semantic_role": "Store minimum_time; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 533,
+      "node": 1004,
+      "span": [
+        264,
+        23,
+        264,
+        58
+      ],
+      "operation": [
+        1002,
+        "Load",
+        "self.second_times[]"
+      ],
+      "group": "G12",
+      "semantic_role": "Load self.second_times[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 534,
+      "node": 1005,
+      "span": [
+        264,
+        23,
+        264,
+        40
+      ],
+      "operation": [
+        1002,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G12",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 535,
+      "node": 1006,
+      "span": [
+        264,
+        23,
+        264,
+        27
+      ],
+      "operation": [
+        1002,
+        "Load",
+        "self"
+      ],
+      "group": "G12",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 536,
+      "node": 1007,
+      "span": [
+        264,
+        41,
+        264,
+        57
+      ],
+      "operation": [
+        1002,
+        "Load",
+        "minimum_position"
+      ],
+      "group": "G12",
+      "semantic_role": "Load minimum_position; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 537,
+      "node": 1009,
+      "span": [
+        265,
+        8,
+        265,
+        14
+      ],
+      "operation": [
+        1008,
+        "Store",
+        "source"
+      ],
+      "group": "G12",
+      "semantic_role": "Store source; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 538,
+      "node": 1011,
+      "span": [
+        265,
+        17,
+        265,
+        42
+      ],
+      "operation": [
+        1008,
+        "Load",
+        "self.main_source_for_time"
+      ],
+      "group": "G12",
+      "semantic_role": "Load self.main_source_for_time; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 539,
+      "node": 1012,
+      "span": [
+        265,
+        17,
+        265,
+        21
+      ],
+      "operation": [
+        1008,
+        "Load",
+        "self"
+      ],
+      "group": "G12",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 540,
+      "node": 1013,
+      "span": [
+        265,
+        43,
+        265,
+        55
+      ],
+      "operation": [
+        1008,
+        "Load",
+        "minimum_time"
+      ],
+      "group": "G12",
+      "semantic_role": "Load minimum_time; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 541,
+      "node": 1016,
+      "span": [
+        266,
+        11,
+        266,
+        17
+      ],
+      "operation": [
+        1014,
+        "Load",
+        "source"
+      ],
+      "group": "G12",
+      "semantic_role": "Load source; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 542,
+      "node": 1022,
+      "span": [
+        268,
+        15,
+        268,
+        31
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "IntrabarAnalysis"
+      ],
+      "group": "G13",
+      "semantic_role": "Load IntrabarAnalysis; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 543,
+      "node": 1023,
+      "span": [
+        269,
+        12,
+        269,
+        34
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "self.seconds[]"
+      ],
+      "group": "G13",
+      "semantic_role": "Load self.seconds[]; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 544,
+      "node": 1024,
+      "span": [
+        269,
+        12,
+        269,
+        24
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "self.seconds"
+      ],
+      "group": "G13",
+      "semantic_role": "Load self.seconds; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 545,
+      "node": 1025,
+      "span": [
+        269,
+        12,
+        269,
+        16
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "self"
+      ],
+      "group": "G13",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 546,
+      "node": 1026,
+      "span": [
+        269,
+        25,
+        269,
+        33
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "crossing"
+      ],
+      "group": "G13",
+      "semantic_role": "Load crossing; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 547,
+      "node": 1027,
+      "span": [
+        269,
+        36,
+        269,
+        47
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "minimum_low"
+      ],
+      "group": "G13",
+      "semantic_role": "Load minimum_low; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 548,
+      "node": 1028,
+      "span": [
+        269,
+        49,
+        269,
+        55
+      ],
+      "operation": [
+        1020,
+        "Load",
+        "source"
+      ],
+      "group": "G13",
+      "semantic_role": "Load source; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 549,
+      "node": 1030,
+      "span": [
+        248,
+        9,
+        248,
+        25
+      ],
+      "operation": [
+        921,
+        "Load",
+        "IntrabarAnalysis"
+      ],
+      "group": "G6",
+      "semantic_role": "Load IntrabarAnalysis; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 550,
+      "node": 1035,
+      "span": [
+        273,
+        25,
+        273,
+        34
+      ],
+      "operation": [
+        1032,
+        "Load",
+        "Candidate"
+      ],
+      "group": "G14",
+      "semantic_role": "Load Candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 551,
+      "node": 1037,
+      "span": [
+        273,
+        44,
+        273,
+        50
+      ],
+      "operation": [
+        1032,
+        "Load",
+        "Candle"
+      ],
+      "group": "G14",
+      "semantic_role": "Load Candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 552,
+      "node": 1039,
+      "span": [
+        279,
+        8,
+        279,
+        26
+      ],
+      "operation": [
+        1038,
+        "Store",
+        "invalidation_level"
+      ],
+      "group": "G15",
+      "semantic_role": "Store invalidation_level; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 553,
+      "node": 1042,
+      "span": [
+        281,
+        15,
+        281,
+        37
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate.anchor_value"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate.anchor_value; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 554,
+      "node": 1043,
+      "span": [
+        281,
+        15,
+        281,
+        24
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 555,
+      "node": 1045,
+      "span": [
+        280,
+        12,
+        280,
+        34
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate.anchor_value"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate.anchor_value; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 556,
+      "node": 1046,
+      "span": [
+        280,
+        12,
+        280,
+        21
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 557,
+      "node": 1047,
+      "span": [
+        282,
+        17,
+        282,
+        45
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate.leg_boundary_value"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate.leg_boundary_value; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 558,
+      "node": 1048,
+      "span": [
+        282,
+        17,
+        282,
+        26
+      ],
+      "operation": [
+        1038,
+        "Load",
+        "candidate"
+      ],
+      "group": "G15",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 559,
+      "node": 1051,
+      "span": [
+        284,
+        11,
+        284,
+        29
+      ],
+      "operation": [
+        1049,
+        "Load",
+        "invalidation_level"
+      ],
+      "group": "G16",
+      "semantic_role": "Load invalidation_level; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 560,
+      "node": 1057,
+      "span": [
+        286,
+        11,
+        286,
+        21
+      ],
+      "operation": [
+        1055,
+        "Load",
+        "candle.low"
+      ],
+      "group": "G17",
+      "semantic_role": "Load candle.low; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 561,
+      "node": 1058,
+      "span": [
+        286,
+        11,
+        286,
+        17
+      ],
+      "operation": [
+        1055,
+        "Load",
+        "candle"
+      ],
+      "group": "G17",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 562,
+      "node": 1059,
+      "span": [
+        286,
+        25,
+        286,
+        43
+      ],
+      "operation": [
+        1055,
+        "Load",
+        "invalidation_level"
+      ],
+      "group": "G17",
+      "semantic_role": "Load invalidation_level; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 563,
+      "node": 1064,
+      "span": [
+        288,
+        11,
+        288,
+        22
+      ],
+      "operation": [
+        1062,
+        "Load",
+        "candle.high"
+      ],
+      "group": "G18",
+      "semantic_role": "Load candle.high; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 564,
+      "node": 1065,
+      "span": [
+        288,
+        11,
+        288,
+        17
+      ],
+      "operation": [
+        1062,
+        "Load",
+        "candle"
+      ],
+      "group": "G18",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 565,
+      "node": 1066,
+      "span": [
+        288,
+        26,
+        288,
+        43
+      ],
+      "operation": [
+        1062,
+        "Load",
+        "candidate.box_top"
+      ],
+      "group": "G18",
+      "semantic_role": "Load candidate.box_top; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 566,
+      "node": 1067,
+      "span": [
+        288,
+        26,
+        288,
+        35
+      ],
+      "operation": [
+        1062,
+        "Load",
+        "candidate"
+      ],
+      "group": "G18",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 567,
+      "node": 1071,
+      "span": [
+        291,
+        8,
+        291,
+        11
+      ],
+      "operation": [
+        1070,
+        "Store",
+        "end"
+      ],
+      "group": "G19",
+      "semantic_role": "Store end; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 568,
+      "node": 1073,
+      "span": [
+        291,
+        14,
+        291,
+        30
+      ],
+      "operation": [
+        1070,
+        "Load",
+        "candle.timestamp"
+      ],
+      "group": "G19",
+      "semantic_role": "Load candle.timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 569,
+      "node": 1074,
+      "span": [
+        291,
+        14,
+        291,
+        20
+      ],
+      "operation": [
+        1070,
+        "Load",
+        "candle"
+      ],
+      "group": "G19",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 570,
+      "node": 1075,
+      "span": [
+        291,
+        33,
+        291,
+        47
+      ],
+      "operation": [
+        1070,
+        "Load",
+        "self.timeframe"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self.timeframe; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 571,
+      "node": 1076,
+      "span": [
+        291,
+        33,
+        291,
+        37
+      ],
+      "operation": [
+        1070,
+        "Load",
+        "self"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 572,
+      "node": 1078,
+      "span": [
+        292,
+        8,
+        292,
+        12
+      ],
+      "operation": [
+        1077,
+        "Store",
+        "left"
+      ],
+      "group": "G19",
+      "semantic_role": "Store left; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 573,
+      "node": 1080,
+      "span": [
+        292,
+        15,
+        292,
+        33
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G19",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 574,
+      "node": 1081,
+      "span": [
+        292,
+        15,
+        292,
+        21
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "bisect"
+      ],
+      "group": "G19",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 575,
+      "node": 1082,
+      "span": [
+        292,
+        34,
+        292,
+        51
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 576,
+      "node": 1083,
+      "span": [
+        292,
+        34,
+        292,
+        38
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "self"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 577,
+      "node": 1084,
+      "span": [
+        292,
+        53,
+        292,
+        69
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "candle.timestamp"
+      ],
+      "group": "G19",
+      "semantic_role": "Load candle.timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 578,
+      "node": 1085,
+      "span": [
+        292,
+        53,
+        292,
+        59
+      ],
+      "operation": [
+        1077,
+        "Load",
+        "candle"
+      ],
+      "group": "G19",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 579,
+      "node": 1087,
+      "span": [
+        293,
+        8,
+        293,
+        13
+      ],
+      "operation": [
+        1086,
+        "Store",
+        "right"
+      ],
+      "group": "G19",
+      "semantic_role": "Store right; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 580,
+      "node": 1089,
+      "span": [
+        293,
+        16,
+        293,
+        34
+      ],
+      "operation": [
+        1086,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G19",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 581,
+      "node": 1090,
+      "span": [
+        293,
+        16,
+        293,
+        22
+      ],
+      "operation": [
+        1086,
+        "Load",
+        "bisect"
+      ],
+      "group": "G19",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 582,
+      "node": 1091,
+      "span": [
+        293,
+        35,
+        293,
+        52
+      ],
+      "operation": [
+        1086,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 583,
+      "node": 1092,
+      "span": [
+        293,
+        35,
+        293,
+        39
+      ],
+      "operation": [
+        1086,
+        "Load",
+        "self"
+      ],
+      "group": "G19",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 584,
+      "node": 1093,
+      "span": [
+        293,
+        54,
+        293,
+        57
+      ],
+      "operation": [
+        1086,
+        "Load",
+        "end"
+      ],
+      "group": "G19",
+      "semantic_role": "Load end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 585,
+      "node": 1095,
+      "span": [
+        294,
+        8,
+        294,
+        20
+      ],
+      "operation": [
+        1094,
+        "Store",
+        "invalidation"
+      ],
+      "group": "G20",
+      "semantic_role": "Store invalidation; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 586,
+      "node": 1097,
+      "span": [
+        294,
+        23,
+        294,
+        50
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "self.lower_index.first_less"
+      ],
+      "group": "G20",
+      "semantic_role": "Load self.lower_index.first_less; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 587,
+      "node": 1098,
+      "span": [
+        294,
+        23,
+        294,
+        39
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G20",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 588,
+      "node": 1099,
+      "span": [
+        294,
+        23,
+        294,
+        27
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "self"
+      ],
+      "group": "G20",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 589,
+      "node": 1100,
+      "span": [
+        295,
+        12,
+        295,
+        16
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "left"
+      ],
+      "group": "G20",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 590,
+      "node": 1101,
+      "span": [
+        295,
+        18,
+        295,
+        23
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "right"
+      ],
+      "group": "G20",
+      "semantic_role": "Load right; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 591,
+      "node": 1102,
+      "span": [
+        295,
+        25,
+        295,
+        43
+      ],
+      "operation": [
+        1094,
+        "Load",
+        "invalidation_level"
+      ],
+      "group": "G20",
+      "semantic_role": "Load invalidation_level; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 592,
+      "node": 1104,
+      "span": [
+        297,
+        8,
+        297,
+        16
+      ],
+      "operation": [
+        1103,
+        "Store",
+        "breakout"
+      ],
+      "group": "G21",
+      "semantic_role": "Store breakout; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 593,
+      "node": 1106,
+      "span": [
+        297,
+        19,
+        297,
+        49
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "self.lower_index.first_greater"
+      ],
+      "group": "G21",
+      "semantic_role": "Load self.lower_index.first_greater; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 594,
+      "node": 1107,
+      "span": [
+        297,
+        19,
+        297,
+        35
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G21",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 595,
+      "node": 1108,
+      "span": [
+        297,
+        19,
+        297,
+        23
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "self"
+      ],
+      "group": "G21",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 596,
+      "node": 1109,
+      "span": [
+        298,
+        12,
+        298,
+        16
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "left"
+      ],
+      "group": "G21",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 597,
+      "node": 1110,
+      "span": [
+        298,
+        18,
+        298,
+        23
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "right"
+      ],
+      "group": "G21",
+      "semantic_role": "Load right; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 598,
+      "node": 1111,
+      "span": [
+        298,
+        25,
+        298,
+        42
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "candidate.box_top"
+      ],
+      "group": "G21",
+      "semantic_role": "Load candidate.box_top; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 599,
+      "node": 1112,
+      "span": [
+        298,
+        25,
+        298,
+        34
+      ],
+      "operation": [
+        1103,
+        "Load",
+        "candidate"
+      ],
+      "group": "G21",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 600,
+      "node": 1115,
+      "span": [
+        300,
+        11,
+        300,
+        23
+      ],
+      "operation": [
+        1113,
+        "Load",
+        "invalidation"
+      ],
+      "group": "G22",
+      "semantic_role": "Load invalidation; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 601,
+      "node": 1119,
+      "span": [
+        301,
+        19,
+        301,
+        27
+      ],
+      "operation": [
+        1117,
+        "Load",
+        "breakout"
+      ],
+      "group": "G22",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 602,
+      "node": 1123,
+      "span": [
+        302,
+        11,
+        302,
+        19
+      ],
+      "operation": [
+        1121,
+        "Load",
+        "breakout"
+      ],
+      "group": "G23",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 603,
+      "node": 1129,
+      "span": [
+        306,
+        15,
+        306,
+        27
+      ],
+      "operation": [
+        1127,
+        "Load",
+        "invalidation"
+      ],
+      "group": "G24",
+      "semantic_role": "Load invalidation; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 604,
+      "node": 1130,
+      "span": [
+        306,
+        31,
+        306,
+        39
+      ],
+      "operation": [
+        1127,
+        "Load",
+        "breakout"
+      ],
+      "group": "G24",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 605,
+      "node": 1131,
+      "span": [
+        274,
+        9,
+        274,
+        13
+      ],
+      "operation": [
+        1032,
+        "Load",
+        "bool"
+      ],
+      "group": "G14",
+      "semantic_role": "Load bool; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 606,
+      "node": 1136,
+      "span": [
+        309,
+        25,
+        309,
+        34
+      ],
+      "operation": [
+        1132,
+        "Load",
+        "Candidate"
+      ],
+      "group": "G25",
+      "semantic_role": "Load Candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 607,
+      "node": 1139,
+      "span": [
+        309,
+        51,
+        309,
+        57
+      ],
+      "operation": [
+        1132,
+        "Load",
+        "Candle"
+      ],
+      "group": "G25",
+      "semantic_role": "Load Candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 608,
+      "node": 1141,
+      "span": [
+        309,
+        77,
+        309,
+        84
+      ],
+      "operation": [
+        1132,
+        "Load",
+        "Decimal"
+      ],
+      "group": "G25",
+      "semantic_role": "Load Decimal; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 609,
+      "node": 1145,
+      "span": [
+        311,
+        11,
+        311,
+        20
+      ],
+      "operation": [
+        1142,
+        "Load",
+        "candidate"
+      ],
+      "group": "G26",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 610,
+      "node": 1148,
+      "span": [
+        311,
+        32,
+        311,
+        43
+      ],
+      "operation": [
+        1142,
+        "Load",
+        "candle.high"
+      ],
+      "group": "G26",
+      "semantic_role": "Load candle.high; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 611,
+      "node": 1149,
+      "span": [
+        311,
+        32,
+        311,
+        38
+      ],
+      "operation": [
+        1142,
+        "Load",
+        "candle"
+      ],
+      "group": "G26",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 612,
+      "node": 1150,
+      "span": [
+        311,
+        47,
+        311,
+        64
+      ],
+      "operation": [
+        1142,
+        "Load",
+        "candidate.box_top"
+      ],
+      "group": "G26",
+      "semantic_role": "Load candidate.box_top; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 613,
+      "node": 1151,
+      "span": [
+        311,
+        47,
+        311,
+        56
+      ],
+      "operation": [
+        1142,
+        "Load",
+        "candidate"
+      ],
+      "group": "G26",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 614,
+      "node": 1155,
+      "span": [
+        314,
+        8,
+        314,
+        11
+      ],
+      "operation": [
+        1154,
+        "Store",
+        "end"
+      ],
+      "group": "G27",
+      "semantic_role": "Store end; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 615,
+      "node": 1157,
+      "span": [
+        314,
+        14,
+        314,
+        30
+      ],
+      "operation": [
+        1154,
+        "Load",
+        "candle.timestamp"
+      ],
+      "group": "G27",
+      "semantic_role": "Load candle.timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 616,
+      "node": 1158,
+      "span": [
+        314,
+        14,
+        314,
+        20
+      ],
+      "operation": [
+        1154,
+        "Load",
+        "candle"
+      ],
+      "group": "G27",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 617,
+      "node": 1159,
+      "span": [
+        314,
+        33,
+        314,
+        47
+      ],
+      "operation": [
+        1154,
+        "Load",
+        "self.timeframe"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self.timeframe; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 618,
+      "node": 1160,
+      "span": [
+        314,
+        33,
+        314,
+        37
+      ],
+      "operation": [
+        1154,
+        "Load",
+        "self"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 619,
+      "node": 1162,
+      "span": [
+        315,
+        8,
+        315,
+        12
+      ],
+      "operation": [
+        1161,
+        "Store",
+        "left"
+      ],
+      "group": "G27",
+      "semantic_role": "Store left; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 620,
+      "node": 1164,
+      "span": [
+        315,
+        15,
+        315,
+        33
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G27",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 621,
+      "node": 1165,
+      "span": [
+        315,
+        15,
+        315,
+        21
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "bisect"
+      ],
+      "group": "G27",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 622,
+      "node": 1166,
+      "span": [
+        315,
+        34,
+        315,
+        51
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 623,
+      "node": 1167,
+      "span": [
+        315,
+        34,
+        315,
+        38
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "self"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 624,
+      "node": 1168,
+      "span": [
+        315,
+        53,
+        315,
+        69
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "candle.timestamp"
+      ],
+      "group": "G27",
+      "semantic_role": "Load candle.timestamp; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 625,
+      "node": 1169,
+      "span": [
+        315,
+        53,
+        315,
+        59
+      ],
+      "operation": [
+        1161,
+        "Load",
+        "candle"
+      ],
+      "group": "G27",
+      "semantic_role": "Load candle; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 626,
+      "node": 1171,
+      "span": [
+        316,
+        8,
+        316,
+        13
+      ],
+      "operation": [
+        1170,
+        "Store",
+        "right"
+      ],
+      "group": "G27",
+      "semantic_role": "Store right; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 627,
+      "node": 1173,
+      "span": [
+        316,
+        16,
+        316,
+        34
+      ],
+      "operation": [
+        1170,
+        "Load",
+        "bisect.bisect_left"
+      ],
+      "group": "G27",
+      "semantic_role": "Load bisect.bisect_left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 628,
+      "node": 1174,
+      "span": [
+        316,
+        16,
+        316,
+        22
+      ],
+      "operation": [
+        1170,
+        "Load",
+        "bisect"
+      ],
+      "group": "G27",
+      "semantic_role": "Load bisect; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 629,
+      "node": 1175,
+      "span": [
+        316,
+        35,
+        316,
+        52
+      ],
+      "operation": [
+        1170,
+        "Load",
+        "self.second_times"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self.second_times; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 630,
+      "node": 1176,
+      "span": [
+        316,
+        35,
+        316,
+        39
+      ],
+      "operation": [
+        1170,
+        "Load",
+        "self"
+      ],
+      "group": "G27",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 631,
+      "node": 1177,
+      "span": [
+        316,
+        54,
+        316,
+        57
+      ],
+      "operation": [
+        1170,
+        "Load",
+        "end"
+      ],
+      "group": "G27",
+      "semantic_role": "Load end; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 632,
+      "node": 1179,
+      "span": [
+        317,
+        8,
+        317,
+        13
+      ],
+      "operation": [
+        1178,
+        "Store",
+        "reset"
+      ],
+      "group": "G28",
+      "semantic_role": "Store reset; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 633,
+      "node": 1181,
+      "span": [
+        317,
+        16,
+        317,
+        43
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "self.lower_index.first_less"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self.lower_index.first_less; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 634,
+      "node": 1182,
+      "span": [
+        317,
+        16,
+        317,
+        32
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 635,
+      "node": 1183,
+      "span": [
+        317,
+        16,
+        317,
+        20
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "self"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 636,
+      "node": 1184,
+      "span": [
+        317,
+        44,
+        317,
+        48
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "left"
+      ],
+      "group": "G28",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 637,
+      "node": 1185,
+      "span": [
+        317,
+        50,
+        317,
+        55
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "right"
+      ],
+      "group": "G28",
+      "semantic_role": "Load right; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 638,
+      "node": 1186,
+      "span": [
+        317,
+        57,
+        317,
+        73
+      ],
+      "operation": [
+        1178,
+        "Load",
+        "confirmed_bottom"
+      ],
+      "group": "G28",
+      "semantic_role": "Load confirmed_bottom; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 639,
+      "node": 1188,
+      "span": [
+        318,
+        8,
+        318,
+        16
+      ],
+      "operation": [
+        1187,
+        "Store",
+        "breakout"
+      ],
+      "group": "G28",
+      "semantic_role": "Store breakout; write/binding on linked path.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 640,
+      "node": 1190,
+      "span": [
+        318,
+        19,
+        318,
+        49
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "self.lower_index.first_greater"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self.lower_index.first_greater; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 641,
+      "node": 1191,
+      "span": [
+        318,
+        19,
+        318,
+        35
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self.lower_index; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 642,
+      "node": 1192,
+      "span": [
+        318,
+        19,
+        318,
+        23
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "self"
+      ],
+      "group": "G28",
+      "semantic_role": "Load self; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 643,
+      "node": 1193,
+      "span": [
+        319,
+        12,
+        319,
+        16
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "left"
+      ],
+      "group": "G28",
+      "semantic_role": "Load left; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 644,
+      "node": 1194,
+      "span": [
+        319,
+        18,
+        319,
+        23
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "right"
+      ],
+      "group": "G28",
+      "semantic_role": "Load right; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 645,
+      "node": 1195,
+      "span": [
+        319,
+        25,
+        319,
+        42
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "candidate.box_top"
+      ],
+      "group": "G28",
+      "semantic_role": "Load candidate.box_top; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 646,
+      "node": 1196,
+      "span": [
+        319,
+        25,
+        319,
+        34
+      ],
+      "operation": [
+        1187,
+        "Load",
+        "candidate"
+      ],
+      "group": "G28",
+      "semantic_role": "Load candidate; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 647,
+      "node": 1199,
+      "span": [
+        321,
+        11,
+        321,
+        16
+      ],
+      "operation": [
+        1197,
+        "Load",
+        "reset"
+      ],
+      "group": "G29",
+      "semantic_role": "Load reset; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 648,
+      "node": 1203,
+      "span": [
+        322,
+        19,
+        322,
+        27
+      ],
+      "operation": [
+        1201,
+        "Load",
+        "breakout"
+      ],
+      "group": "G29",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 649,
+      "node": 1207,
+      "span": [
+        323,
+        11,
+        323,
+        19
+      ],
+      "operation": [
+        1205,
+        "Load",
+        "breakout"
+      ],
+      "group": "G30",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 650,
+      "node": 1213,
+      "span": [
+        326,
+        15,
+        326,
+        20
+      ],
+      "operation": [
+        1211,
+        "Load",
+        "reset"
+      ],
+      "group": "G31",
+      "semantic_role": "Load reset; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 651,
+      "node": 1214,
+      "span": [
+        326,
+        24,
+        326,
+        32
+      ],
+      "operation": [
+        1211,
+        "Load",
+        "breakout"
+      ],
+      "group": "G31",
+      "semantic_role": "Load breakout; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 652,
+      "node": 1215,
+      "span": [
+        310,
+        9,
+        310,
+        13
+      ],
+      "operation": [
+        1132,
+        "Load",
+        "bool"
+      ],
+      "group": "G25",
+      "semantic_role": "Load bool; reference on linked path; declaration references not runtime reads.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 19,
+      "node": 907,
+      "span": [
+        243,
+        12,
+        243,
+        26
+      ],
+      "operation": [
+        "run_start",
+        [
+          "AUGMENTED_ASSIGNMENT_READ_WRITE_POSSIBLE_INPLACE"
+        ]
+      ],
+      "group": "G4",
+      "semantic_role": "Effect run_start; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 20,
+      "node": 911,
+      "span": [
+        244,
+        15,
+        244,
+        52
+      ],
+      "operation": [
+        "self.maximum_high",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G5",
+      "semantic_role": "Effect self.maximum_high; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 21,
+      "node": 976,
+      "span": [
+        258,
+        19,
+        258,
+        81
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G10",
+      "semantic_role": "Effect self.lower_index.first_greater; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 22,
+      "node": 994,
+      "span": [
+        261,
+        40,
+        263,
+        9
+      ],
+      "operation": [
+        "self.lower_index.range_minimum",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G11",
+      "semantic_role": "Effect self.lower_index.range_minimum; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 23,
+      "node": 1010,
+      "span": [
+        265,
+        17,
+        265,
+        56
+      ],
+      "operation": [
+        "self.main_source_for_time",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G12",
+      "semantic_role": "Effect self.main_source_for_time; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 24,
+      "node": 1096,
+      "span": [
+        294,
+        23,
+        296,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_less",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G20",
+      "semantic_role": "Effect self.lower_index.first_less; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 25,
+      "node": 1105,
+      "span": [
+        297,
+        19,
+        299,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G21",
+      "semantic_role": "Effect self.lower_index.first_greater; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 26,
+      "node": 1180,
+      "span": [
+        317,
+        16,
+        317,
+        74
+      ],
+      "operation": [
+        "self.lower_index.first_less",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G28",
+      "semantic_role": "Effect self.lower_index.first_less; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 27,
+      "node": 1189,
+      "span": [
+        318,
+        19,
+        320,
+        9
+      ],
+      "operation": [
+        "self.lower_index.first_greater",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "G28",
+      "semantic_role": "Effect self.lower_index.first_greater; actual assignment or delegated effect in linked group.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 13,
+      "node": 885,
+      "span": [
+        239,
+        12,
+        239,
+        87
+      ],
+      "operation": [
+        "Raise",
+        "ValueError()"
+      ],
+      "group": "G3",
+      "semantic_role": "Raise; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 14,
+      "node": 910,
+      "span": [
+        244,
+        8,
+        244,
+        52
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G5",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 15,
+      "node": 988,
+      "span": [
+        260,
+        12,
+        260,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G10",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 16,
+      "node": 1018,
+      "span": [
+        267,
+        12,
+        267,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G12",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 17,
+      "node": 1020,
+      "span": [
+        268,
+        8,
+        270,
+        9
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G13",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 18,
+      "node": 1053,
+      "span": [
+        285,
+        12,
+        285,
+        24
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G16",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 19,
+      "node": 1060,
+      "span": [
+        287,
+        12,
+        287,
+        24
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G17",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 20,
+      "node": 1068,
+      "span": [
+        289,
+        12,
+        289,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G18",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 21,
+      "node": 1117,
+      "span": [
+        301,
+        12,
+        301,
+        35
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G22",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 22,
+      "node": 1125,
+      "span": [
+        303,
+        12,
+        303,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G23",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 23,
+      "node": 1127,
+      "span": [
+        306,
+        8,
+        306,
+        39
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G24",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 24,
+      "node": 1152,
+      "span": [
+        312,
+        12,
+        312,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G26",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 25,
+      "node": 1201,
+      "span": [
+        322,
+        12,
+        322,
+        35
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G29",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 26,
+      "node": 1209,
+      "span": [
+        324,
+        12,
+        324,
+        23
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G30",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 27,
+      "node": 1211,
+      "span": [
+        326,
+        8,
+        326,
+        32
+      ],
+      "operation": [
+        "Return",
+        null
+      ],
+      "group": "G31",
+      "semantic_role": "Return; exit only on specified source branch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B02-01-S8",
+      "span": [
+        236,
+        244
+      ],
+      "groups": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "historical": "GREEN run uses immediate predecessor then backwards contiguous scan. Native predecessor failure or invalid source indexes propagate; no earlier disjoint GREEN runs considered.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B02-01-S9",
+      "span": [
+        249,
+        270
+      ],
+      "groups": [
+        "G7",
+        "G8",
+        "G9",
+        "G10",
+        "G11",
+        "G12",
+        "G13"
+      ],
+      "historical": "Analysis starts from explicit truthy intrabar start or top-source derived main; no local clamp to Break. Extreme search includes first lower crossing; owning main derived from extreme not event. No exact analysis fabricated if hit or owner absent.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B02-01-S10",
+      "span": [
+        279,
+        306
+      ],
+      "groups": [
+        "G15",
+        "G16",
+        "G17",
+        "G18",
+        "G19",
+        "G20",
+        "G21",
+        "G22",
+        "G23",
+        "G24"
+      ],
+      "historical": "Race outcomes for strict main outward and strict main breakout: lower hits (absent,absent)=>true; (absent,present)=>false; (present,absent)=>true; both=>outward<=confirmation. Invalidation rejects unresolved candidate; no reset emitted by helper.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    },
+    {
+      "id": "B02-01-S11",
+      "span": [
+        311,
+        326
+      ],
+      "groups": [
+        "G26",
+        "G27",
+        "G28",
+        "G29",
+        "G30",
+        "G31"
+      ],
+      "historical": "Confirmed reset race helper does not check main Low itself. Caller supplies reset context; candidate null or nonbreaking main High returns true. Both-lower-hit priority and absence outcomes match invalidation helper, but event ownership differs.",
+      "disposition": "RECONCILED_WITH_DIRECT_SOURCE_CONTRACTS"
+    }
+  ],
+  "validation": {
+    "counts": {
+      "branches": 18,
+      "comparisons": 21,
+      "arithmetic": 10,
+      "calls": 16,
+      "accesses": 205,
+      "effects": 9,
+      "exits": 15
+    },
+    "w1": 65,
+    "additional": 229,
+    "total": 294,
+    "historical_supplemental": 4,
+    "coordinate_join_errors": 0
+  },
+  "race_truth_table": [
+    {
+      "lower_outward": null,
+      "lower_breakout": null,
+      "result": true
+    },
+    {
+      "lower_outward": null,
+      "lower_breakout": "present",
+      "result": false
+    },
+    {
+      "lower_outward": "present",
+      "lower_breakout": null,
+      "result": true
+    },
+    {
+      "lower_outward": "present",
+      "lower_breakout": "present",
+      "result": "outward_position <= breakout_position"
+    }
+  ],
+  "limitations": [
+    "Local source-group contracts and exact row-role linkage, not execution or unique rule count. Native input, index alignment, position ordering and caller admission are conditional.",
+    "No full Reaction owner, creator or consumer acceptance."
+  ],
+  "findings": [
+    {
+      "id": "CP355-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "meaning": "RE10–12 clarify caller admission, full nominal main interval (race helpers ignore candidate intrabar_start), exact positional tie distinct from duplicate timestamp equality, and both queries evaluated before arbitration."
+    },
+    {
+      "id": "CP355-F02",
+      "status": "OPEN_CALLER_ADMISSION_AND_MIRROR",
+      "meaning": "Mode A helper itself does not validate candidate.mode; confirmed reset helper does not test main Low. Native callers gate differently; mirror adapters and full state ownership must be reviewed before complete B02 acceptance."
+    }
+  ],
+  "remaining": "B02 ranges 328–885 and 1370–2908, full cross-owner review."
+}

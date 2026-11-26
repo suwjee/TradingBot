@@ -67,13 +67,13 @@ Mirror of RE07: strict higher, reflected queries original minimum then copy-nega
 Previous main index must be >=start and GREEN, else ValueError. Extend contiguous GREEN run backward to start; RE08 inclusive peak.
 
 ### RE10 — breakout_analysis
-Start index = top source+1 if top source<First, else top source. Start candidate.intrabar_start or main time there. End Break main+timeframe. First lower High>BoxTop; null absent. Min Low over lower interval through crossing inclusive, map min timestamp to selected main candle; null if unmappable. Return analysis(event lower candle,extreme,main source).
+Start index = top source+1 if top source<First, else top source; this is evaluated even when a truthy candidate.intrabar_start supplies the start. Otherwise use derived main time. End supplied Break main+nominal timeframe, half-open lower window; no local clamp of start to Break or main-crossing admission check. First lower High>BoxTop; null absent. Min Low through crossing inclusive, map minimum timestamp (not crossing timestamp) to selected main candle; null if unmappable. Return analysis(event lower candle,extreme,main source); no candidate mutation.
 
 ### RE11 — mode_a_invalidation_before_breakout
-Level anchor_value if non-null else leg_boundary. Missing or main Low>=level false; main High<=top with strict low breach true. If both, search exact lower first Low<level and High>top in current main. No invalidation => true only if no breakout either; invalidation present/no breakout true; both => invalidation<=breakout (same lower position invalidates first).
+Caller admits Mode A; helper does not test mode or emit Reset. Level anchor_value if non-null else leg_boundary. Missing or main Low>=level false; main High<=top with strict low breach true. If both, query exact lower first Low<level then High>top across current main open to open+nominal timeframe, end exclusive, regardless of intrabar_start. Both queries precede arbitration. No invalidation => true only if no breakout either; invalidation present/no breakout true; both => invalidation_position<=breakout_position (same lower position invalidates first; duplicate timestamps at different positions do not establish a tie).
 
 ### RE12 — confirmed_reset_before_breakout
-Null candidate or main High<=top true. Else race Low<confirmed bottom vs High>candidate top with same no-event and tie logic RE11.
+Caller supplies reset context; helper does not test main Low or emit Reset. Null candidate or main High<=top true. Else query Low<confirmed bottom then High>candidate top across full nominal current main interval, with same no-event and positional tie logic RE11.
 
 ### RE13 — post_breakout_reset
 Null analysis =>null. Search lower Low<box_bottom strictly after confirmation (event+1us) through Break end exclusive. Return lower candle or null.
