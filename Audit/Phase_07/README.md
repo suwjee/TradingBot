@@ -728,3 +728,58 @@ W1 cumulative 8422/11504. Next B08 P16, line 287; W2/W3/W4 open.
 ## Checkpoint 151 — Global point commitment, native Order invalidation and aggregate publication
 
 [Local review](Semantic_Closure_B08_14.md) and [site evidence](Semantic_Closure_B08_14.json): 34 original rows, 3 supplemental items, one resolved finding; local PASS. Primary 322/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 152 — Cycle records, activation identity and retained-step frontier
+
+[Local review](Semantic_Closure_B08_15.md) and [site evidence](Semantic_Closure_B08_15.json): 33 original rows, 2 supplemental items, 2 resolved clarification groups; local PASS. Primary 355/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 153 — Run crossing-cache reuse, MBL refresh and independent activation
+
+[Local review](Semantic_Closure_B08_16.md) and [site evidence](Semantic_Closure_B08_16.json): 34 original rows, 3 supplemental items, 3 resolved clarification groups; local PASS. Primary 389/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 154 — Prospective state copy, numbering and exact seek race
+
+[Local review](Semantic_Closure_B08_17.md) and [site evidence](Semantic_Closure_B08_17.json): 40 original rows, 3 supplemental items, 2 resolved clarification groups; local PASS. Primary 429/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 155 — Native Order filters, strict continuation and opposing RAW race
+
+[Local review](Semantic_Closure_B08_18.md) and [site evidence](Semantic_Closure_B08_18.json): 41 original rows, 2 supplemental items, 2 resolved clarification groups; local PASS. Primary 470/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 156 — Post-secondary3, cancellation transitions and point publication
+
+[Local review](Semantic_Closure_B08_19.md) and [site evidence](Semantic_Closure_B08_19.json): 34 original rows, 3 supplemental items, 3 resolved clarification groups; local PASS. Primary 504/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 157 — Native Order ownership, confirmation gate and direct-candidate priority
+
+[Local review](Semantic_Closure_B08_20.md) and [site evidence](Semantic_Closure_B08_20.json): 54 original rows, 3 supplemental items, 2 resolved clarification groups; local PASS. Primary 558/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 158 — Exact Decimal reflection and immutable chronology adapters
+
+[Local review](Semantic_Closure_B08_21.md) and [site evidence](Semantic_Closure_B08_21.json): 25 original rows, 3 supplemental items, 3 resolved clarification groups; local PASS. Primary 583/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 159 — Bullish projection identity, recursive point cache and replay
+
+[Local review](Semantic_Closure_B08_22.md) and [site evidence](Semantic_Closure_B08_22.json): 26 original rows, 2 supplemental items, 2 resolved clarification groups; local PASS. Primary 609/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 160 — Bullish result projection and native Order callback adapter
+
+[Local review](Semantic_Closure_B08_23.md) and [site evidence](Semantic_Closure_B08_23.json): 36 original rows, 2 supplemental items, 3 resolved clarification groups; local PASS. Primary 645/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## Checkpoint 161 — Live continuation, dirty main-candle rewind and commit order
+
+[Local review](Semantic_Closure_B08_24.md) and [site evidence](Semantic_Closure_B08_24.json): 25 original rows, 3 supplemental items, 2 resolved clarification groups; local PASS. Primary 670/670. Phase 07 INCOMPLETE; Phase 08 BLOCKED.
+
+
+## B08 W1 local completion
+
+[Completion evidence](Semantic_Closure_B08_Completion.json): 670/670 original rows, 840 source lines including terminal blank, 50 supplemental items, 38 resolved local clarification groups across 24 contiguous partitions. Local PASS; W2/W3/W4 open. Next B09 Trading Pipeline. Phase 07 INCOMPLETE; Phase 08 BLOCKED.

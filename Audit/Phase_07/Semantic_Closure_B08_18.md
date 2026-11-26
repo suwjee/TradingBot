@@ -1,0 +1,17 @@
+# Phase 07 — Checkpoint 155 / W1 B08-18
+
+Baseline `466eb875070f02cd0dbfb105033422bbe2fd8c70`; entry algorithm `5b8fc97ab572038ab288cb9d51bb47b22efa3b16`. **Local partition PASS; Phase 07 INCOMPLETE; Phase 08 BLOCKED.** P22, lines 554–582; 41 original rows, 2 supplemental items, 2 resolved local clarification groups. Primary cumulative 470/670.
+
+[Site evidence](Semantic_Closure_B08_18.json), [immutable crosswalk](Decision_Site_Crosswalk_02.json), [context ledger](Semantic_Context_Primary.json), [Primary](../../Algorithms/V3/12_Primary_Structures.md#L127), [state model](../../Algorithms/V3/State_Machines/06_Primary_Reversal.md). Pinned blob `33ecb3671c7808c7f92b494d39ac5b156a8cd67e`; exact IDs, spans, procedures and operations matched.
+
+## Native Order filters, strict continuation and opposing RAW race
+
+- B08-18-S01: Use high number only for exact PH, otherwise low number. Continuing primary iff exact PH and number>1; number test short-circuits. Invoke orders once for phase,number,gate,cursor; preserve iteration order of accepted candidates. First gate predicate must pass before any cause or stop checks. Continuing PH requires parent-stop OR qualifying reset-leg; noncontinuing skips cause constraints; parent-stop short-circuits reset test. Reset-leg cause must exist and box_top be non-null before strict extension comparison. Require box_top strictly greater than prior high, equality fails. Every retained candidate stop strictly later than confirmation. Choose minimum tuple (stop time,negative First,Break), default null; first exact tie. Negative First index provides descending tie-break; not price arithmetic. [Source](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L554-L569).
+- B08-18-S02: Cancellation: PH below floor, otherwise level high; above flag true only exact PL. cancel_is_next uses truthiness of cancel before other tests. PL number>3 independently makes cancellation next; otherwise inspect winner. No winner or cancellation strictly earlier than winner stop; equal normal winner not here. Inspect cancellation RAW row only if cancel_is_next truthy. Select last RAW timestamp <= cancellation event using upper bound minus 1; no extra bounds guard. PH checks normalized RAW High strictly greater than high level. Other phase checks normalized RAW Low strictly less than floor. Truthy opposing penetration returns ambiguous status and null proposal. [Source](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/pipeline/PL_PH_detector.py#L570-L582).
+
+## Findings
+
+- B08-18-F01: The outer candidate gate short-circuits in order: P11, continuation causes, stop-after-confirmation. Parent-stop needs no box check, and noncontinuing phase skips cause constraints. Exact equal winning keys keep the first accepted candidate. P22 itself does not independently require stop after gate: P25 adds that condition when the native service is used. [Active contract](../../Algorithms/V3/12_Primary_Structures.md#L127).
+- B08-18-F02: The cancellation above flag is exact PL, while floor selection is exact PH. RAW opposing inspection uses the last timestamp at or before the cancellation instant with no extra local bounds validation. Normal equal cancellation/winner is handled later, not as cancel_is_next. [Active contract](../../Algorithms/V3/12_Primary_Structures.md#L128).
+
+W2/W3/W4 open. No RAW payload read, runtime, benchmark or production change.
