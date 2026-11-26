@@ -4,7 +4,7 @@ Source-only Phase 07 checkpoint. These clauses describe pinned main, not propose
 
 ## CH37
 
-Projection horizon exclusive visible last start + timeframe. Recorded strict event verified only at same timestamp including duplicate lower times. Missing/unproven/late event null; no replacement search.
+Projection horizon exclusive visible last start + timeframe. Recorded strict event verified only at same timestamp including duplicate lower times. Missing/unproven/late event null; no replacement search. For native Reaction confirmation the returned timestamp may be the Break-open fallback; proof can still succeed if an exact equal-time lower row crosses the strict level, even when that row precedes the effective native intrabar scan start. This is not proof of native scan firstness (CP342/TB38).
 
 [Source engine/bridge/trading_pipeline.py:690–738](https://github.com/suwjee/TradingBot/blob/466eb875070f02cd0dbfb105033422bbe2fd8c70/engine/bridge/trading_pipeline.py#L690-L738)
 
