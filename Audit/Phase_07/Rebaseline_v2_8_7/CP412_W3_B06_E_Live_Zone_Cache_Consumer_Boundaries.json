@@ -1,0 +1,97 @@
+{
+  "checkpoint": 412,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          103,
+          151
+        ],
+        [
+          196,
+          218
+        ],
+        [
+          335,
+          390
+        ],
+        [
+          608,
+          675
+        ],
+        [
+          677,
+          733
+        ]
+      ],
+      "contract": "Native _zone obtains inherited, gate-owned, carried and post-stop accepted routes, registers audit, requests direct candidates, sorts crossed direct/inherited/carried streams by exact crossing and negative First index, merges with post-stop groups sorted by same key, computes prospective source, skips disowned-S-only Orders and takes first surviving match. No match returns None; only non-null continuation delegates E06; otherwise direct E32. E06 alone never performs this race. Equal key consistency requires current selected ledger/geometry, exact identity and aligned chronology. E02 rotates maps only on same first-main/timeframe scope; E03 checks chronology identity."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          523,
+          527
+        ],
+        [
+          925,
+          951
+        ]
+      ],
+      "contract": "OrderMatch alias has exactly nine items; crossing is nullable (int,datetime,datetime), causes tuple[str,...], nullable parent stop cause time. Native parent-stop registration constructs the same positional record and compares physical geometry; E06 does not create Order or adjudicate ledger ownership."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ]
+      ],
+      "contract": "as_decimal preserves existing Decimal object; otherwise Decimal(str(value)). E32 uses this for parent and box prices, not E06 cache key normalization."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2280,
+          2306
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3738,
+          3767
+        ]
+      ],
+      "contract": "live_e is optional from live.e_continuation; create_e_detector receives it. Native calculate_live_from_buckets calls _run_live_calculation, which calls prepare_pipeline_state without live, default None. This observed route is not proof of active E cache; other conditional caller routes remain separate."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          22,
+          65
+        ]
+      ],
+      "contract": "Native live transport calls calculate_live_from_buckets with market views and bucket delta; no E continuation argument. No empirical equivalence or global dispatch claim."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Local source-only scope; no RAW payload, runtime, ZIP, production or main change, new cross-owner acceptance or empirical cache equivalence.",
+    "Prior 563 row identities, operations, spans, historical W1 dispositions/interpretations and six supplemental identities checked against pinned artifacts; semantic contracts re-read by groups, not re-executed. All 1109 CP317 links checked against canonical inventory, W1 crosswalk and partitions; historical 25-partition reconciliation retained from predecessor, not all historical partitions fetched anew.",
+    "Ordinary native object, hashable tuple members, finite Decimal representation, comparable times, stable omitted-field consistency and valid dirty evidence remain conditional. No assertion malformed input is reachable.",
+    "Publication readback is Git identity and exact content comparison, not independent SHA-256 or signature verification."
+  ]
+}

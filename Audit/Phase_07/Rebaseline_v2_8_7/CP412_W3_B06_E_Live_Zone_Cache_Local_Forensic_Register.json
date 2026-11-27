@@ -1,0 +1,3293 @@
+{
+  "checkpoint": 412,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "5c61b4e23bb4ee00e0a54c05a148c697a4def44e",
+  "entry_tree": "ed8400981471256644668e48896fdbd0b7cfe744",
+  "scope": "B06-03 E06 lines 196–219 scoped local only",
+  "source": {
+    "path": "engine/pipeline/e_zone_detector.py",
+    "blob": "240369edf3352006082efe094eb68ac027d6689f",
+    "range": [
+      196,
+      219
+    ],
+    "canonical_inventory": "f535795a7a247f3fa37307be6f426270ef9e0fbf",
+    "historical_inventory": "1308a85ef49957aeb5e603c5347916fb79d616bf",
+    "historical_partition": "e54d56760eeca340cd93c71f330c1c1576d3ae89",
+    "crosswalk": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "cp317": [
+      "c38cf82dcec0df3e2ed41fdf13a3760ac8a0200f",
+      "96c21b30d6e4a1f309443e08631c518bc4cc2c4f"
+    ]
+  },
+  "groups": [
+    {
+      "id": "E06-A",
+      "span": [
+        196,
+        200
+      ],
+      "contract": "Inputs detector, family, number, parent type and object, exact parent stop event, nine-item OrderMatch and source triple; return annotation EZone. Postponed annotations do not validate or coerce."
+    },
+    {
+      "id": "E06-B",
+      "span": [
+        201,
+        201
+      ],
+      "contract": "Invoke E03 first; chronology identity (not equality) and non-null dirty required. Dirty retained unchanged. Failure precedes unpack and map access; this gate alone proves neither valid dirty evidence nor native race selection."
+    },
+    {
+      "id": "E06-C",
+      "span": [
+        202,
+        203
+      ],
+      "contract": "Unpack exactly nine items in order: order_number, order, confirmation, level, stop_index, stop_time, crossed, causes, cause_time. Non-iterable or wrong arity raises; no starred fallback. Assert crossed is not None, not truthiness or tuple length; AssertionError in normal assertion mode, omitted under optimization. No alternate selection. Malformed crossing can still fail later; a current hit may bypass crossed[2]."
+    },
+    {
+      "id": "E06-D",
+      "span": [
+        204,
+        211
+      ],
+      "contract": "Construct one ordered 26-element tuple left to right: detector.direction; family; number; parent_type; parent.source_index; parent.source_time; str(parent.price); stop_event; order_number; order.first_idx; order.break_idx; order.mode; order.box_top_source_idx; str(order.box_top); order.box_bottom_source_idx; str(order.box_bottom); confirmation; str(level); stop_index; stop_time; crossed; causes; cause_time; source[0]; source[1]; str(source[2]). Retain nested crossing and causes as supplied, not flattened, sorted or normalized. Five explicit strings are representation-sensitive. Decimal 1.0 versus 1.00 compares numerically equal and hashes equally in E04, but their strings differ in E06; signed zero and exponent representations can also differ. No rounding, quantization or normalization. Ordinary dictionary hashing and tuple equality apply elementwise with Python identity/equality behavior; collisions alone are not equality; elements must be hashable. No separate Order object identity, parent object identity, Order direction, First/Break or box-source timestamps, chronology identity/time array, range or feedback scope in key. Their relevant consistency is conditional on native caller/market ownership. Native Order direction derives from detector chronology; builder derives times from positions. Key retains uncoerced indices and mode; builder conversion is separate."
+    },
+    {
+      "id": "E06-E",
+      "span": [
+        212,
+        212
+      ],
+      "contract": "Current dictionary get by complete tuple, None sentinel. Non-null result including a falsey object is a hit; no type check, builder or cutoff evaluation on this route. Attribute, string, subscript, hashing and equality failures propagate."
+    },
+    {
+      "id": "E06-F",
+      "span": [
+        213,
+        214
+      ],
+      "contract": "Only current None evaluates max(stop_event,crossed[2],confirmation) strictly less than dirty. All three comparable event instants must be earlier; equality of maximum excludes previous lookup. No lower or range-end guard; no race recomputation. Max arguments evaluated in order; crossing indexed only on current miss. If strict guard true consult previous dictionary by same tuple. Non-null previous is reused as identical object, no copy, replace or field check. Previous map not mutated."
+    },
+    {
+      "id": "E06-G",
+      "span": [
+        215,
+        216
+      ],
+      "contract": "Remaining None calls detector._build_zone once with seven positional arguments family, number, parent_type, parent, stop_event, original match, original source. No reconstruction from key. Native E32 unpacks again, asserts crossing, computes decision_event=max(stop_event,crossed[2]) (confirmation not in this max), maps decision and parent stop to main positions, uses detector order_direction and indexed times; normalizes parent and box prices via as_decimal, int-converts selected indices, str-converts mode, retains provided source price, Order stop level, cause tuple and exact event times. Constructs frozen slotted EZone with 35 declared fields. E06 does not validate return type or value, including None from custom builder. Dynamic calls and failures propagate."
+    },
+    {
+      "id": "E06-H",
+      "span": [
+        217,
+        219
+      ],
+      "contract": "Unconditional current-map assignment after current hit, previous hit or successful build, then return exactly the selected reference. No mutation of previous map or zone fields, no copying. Ordinary dict insertion adds encounter order, overwrite does not move an existing equal key. Failed gate, unpack, key construction, lookup, cutoff or builder prevents final explicit write; assignment can itself fail. No try, rollback, cleanup or compensation for prior dynamic side effects or upstream ledger changes. No promise of behavior on malformed custom objects; annotations are not enforcement."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 25,
+      "node": 849,
+      "ast_node": 849,
+      "span": [
+        203,
+        8,
+        203,
+        34
+      ],
+      "operation": [
+        12,
+        "Assert",
+        [
+          "true",
+          "raise"
+        ]
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Assert: outcomes true, raise; E06-C specifies predicate and reachability.",
+      "prior_w1": {
+        "original_id": 849,
+        "disposition": "VERIFIED",
+        "interpretation": "Assert crossing tuple is not None; no alternate selection (assertion execution mode matters)."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 26,
+      "node": 916,
+      "ast_node": 916,
+      "span": [
+        213,
+        8,
+        214,
+        48
+      ],
+      "operation": [
+        12,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "If: outcomes true, false; E06-F specifies predicate and reachability.",
+      "prior_w1": {
+        "original_id": 916,
+        "disposition": "VERIFIED",
+        "interpretation": "Only current miss and maximum of parent stop, exact crossing, confirmation strictly before dirty allow previous lookup."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 27,
+      "node": 917,
+      "ast_node": 917,
+      "span": [
+        213,
+        11,
+        213,
+        77
+      ],
+      "operation": [
+        12,
+        "BoolOp",
+        [
+          "operand_0_continue",
+          "operand_0_short_circuit"
+        ]
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "BoolOp: outcomes operand_0_continue, operand_0_short_circuit; E06-F specifies predicate and reachability.",
+      "prior_w1": {
+        "original_id": 917,
+        "disposition": "VERIFIED",
+        "interpretation": "Only current miss and maximum of parent stop, exact crossing, confirmation strictly before dirty allow previous lookup."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 28,
+      "node": 937,
+      "ast_node": 937,
+      "span": [
+        215,
+        8,
+        216,
+        103
+      ],
+      "operation": [
+        12,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "If: outcomes true, false; E06-G specifies predicate and reachability.",
+      "prior_w1": {
+        "original_id": 937,
+        "disposition": "VERIFIED",
+        "interpretation": "Remaining miss delegates builder with original family, number, parent, stop, full match, source; store returned zone."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 18,
+      "node": 850,
+      "ast_node": 850,
+      "span": [
+        203,
+        15,
+        203,
+        34
+      ],
+      "operation": [
+        12,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "IsNot: E06-C specifies identity or strict time comparison.",
+      "prior_w1": {
+        "original_id": 850,
+        "disposition": "VERIFIED",
+        "interpretation": "Assert crossing tuple is not None; no alternate selection (assertion execution mode matters)."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 19,
+      "node": 918,
+      "ast_node": 918,
+      "span": [
+        213,
+        11,
+        213,
+        23
+      ],
+      "operation": [
+        12,
+        [
+          "Is"
+        ]
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Is: E06-F specifies identity or strict time comparison.",
+      "prior_w1": {
+        "original_id": 918,
+        "disposition": "VERIFIED",
+        "interpretation": "None identity distinguishes cache miss."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 20,
+      "node": 921,
+      "ast_node": 921,
+      "span": [
+        213,
+        28,
+        213,
+        77
+      ],
+      "operation": [
+        12,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Lt: E06-F specifies identity or strict time comparison.",
+      "prior_w1": {
+        "original_id": 921,
+        "disposition": "VERIFIED",
+        "interpretation": "Maximum of three event instants must be strictly before dirty; equality invalidates previous reuse."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 21,
+      "node": 938,
+      "ast_node": 938,
+      "span": [
+        215,
+        11,
+        215,
+        23
+      ],
+      "operation": [
+        12,
+        [
+          "Is"
+        ]
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Is: E06-G specifies identity or strict time comparison.",
+      "prior_w1": {
+        "original_id": 938,
+        "disposition": "VERIFIED",
+        "interpretation": "None identity distinguishes cache miss."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 22,
+      "node": 833,
+      "ast_node": 833,
+      "span": [
+        201,
+        16,
+        201,
+        42
+      ],
+      "operation": [
+        12,
+        "self._dirty_time",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/e_zone_detector.py:148:4:_dirty_time"
+        ],
+        1,
+        []
+      ],
+      "group": "E06-B",
+      "contained_groups": [],
+      "semantic_role": "self._dirty_time: 1 positional argument(s); E06-B specifies input and output.",
+      "prior_w1": {
+        "original_id": 833,
+        "disposition": "VERIFIED",
+        "interpretation": "Validate chronology identity and dirty instant before cache work."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 23,
+      "node": 865,
+      "ast_node": 865,
+      "span": [
+        206,
+        32,
+        206,
+        49
+      ],
+      "operation": [
+        12,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "str: 1 positional argument(s); E06-D specifies input and output.",
+      "prior_w1": {
+        "original_id": 865,
+        "disposition": "VERIFIED",
+        "interpretation": "Stringify parent price in key, no price mutation."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 24,
+      "node": 879,
+      "ast_node": 879,
+      "span": [
+        208,
+        12,
+        208,
+        30
+      ],
+      "operation": [
+        12,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "str: 1 positional argument(s); E06-D specifies input and output.",
+      "prior_w1": {
+        "original_id": 879,
+        "disposition": "VERIFIED",
+        "interpretation": "Stringify box top for key."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 25,
+      "node": 885,
+      "ast_node": 885,
+      "span": [
+        208,
+        61,
+        208,
+        82
+      ],
+      "operation": [
+        12,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "str: 1 positional argument(s); E06-D specifies input and output.",
+      "prior_w1": {
+        "original_id": 885,
+        "disposition": "VERIFIED",
+        "interpretation": "Stringify box bottom for key."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 26,
+      "node": 890,
+      "ast_node": 890,
+      "span": [
+        209,
+        26,
+        209,
+        36
+      ],
+      "operation": [
+        12,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "str: 1 positional argument(s); E06-D specifies input and output.",
+      "prior_w1": {
+        "original_id": 890,
+        "disposition": "VERIFIED",
+        "interpretation": "Stringify stop level for key."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 27,
+      "node": 904,
+      "ast_node": 904,
+      "span": [
+        210,
+        34,
+        210,
+        48
+      ],
+      "operation": [
+        12,
+        "str",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "str: 1 positional argument(s); E06-D specifies input and output.",
+      "prior_w1": {
+        "original_id": 904,
+        "disposition": "VERIFIED",
+        "interpretation": "Stringify E source price for key."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 28,
+      "node": 911,
+      "ast_node": 911,
+      "span": [
+        212,
+        15,
+        212,
+        35
+      ],
+      "operation": [
+        12,
+        "self._zones.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "self._zones.get: 1 positional argument(s); E06-E specifies input and output.",
+      "prior_w1": {
+        "original_id": 911,
+        "disposition": "VERIFIED",
+        "interpretation": "Lookup exact current zone key before dirty cutoff."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 29,
+      "node": 922,
+      "ast_node": 922,
+      "span": [
+        213,
+        28,
+        213,
+        69
+      ],
+      "operation": [
+        12,
+        "max",
+        "BUILTIN_CANDIDATE",
+        [],
+        3,
+        []
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "max: 3 positional argument(s); E06-F specifies input and output.",
+      "prior_w1": {
+        "original_id": 922,
+        "disposition": "VERIFIED",
+        "interpretation": "Maximum of three event instants must be strictly before dirty; equality invalidates previous reuse."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 30,
+      "node": 932,
+      "ast_node": 932,
+      "span": [
+        214,
+        19,
+        214,
+        48
+      ],
+      "operation": [
+        12,
+        "self._previous_zones.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "self._previous_zones.get: 1 positional argument(s); E06-F specifies input and output.",
+      "prior_w1": {
+        "original_id": 932,
+        "disposition": "VERIFIED",
+        "interpretation": "Previous lookup by same key."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 31,
+      "node": 943,
+      "ast_node": 943,
+      "span": [
+        216,
+        19,
+        216,
+        103
+      ],
+      "operation": [
+        12,
+        "detector._build_zone",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        7,
+        []
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "detector._build_zone: 7 positional argument(s); E06-G specifies input and output.",
+      "prior_w1": {
+        "original_id": 943,
+        "disposition": "VERIFIED",
+        "interpretation": "Remaining miss delegates builder with original family, number, parent, stop, full match, source; store returned zone."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 440,
+      "node": 811,
+      "ast_node": 811,
+      "span": [
+        197,
+        24,
+        197,
+        37
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "EZoneDetector"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load EZoneDetector: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 441,
+      "node": 813,
+      "ast_node": 813,
+      "span": [
+        197,
+        47,
+        197,
+        50
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "str"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 442,
+      "node": 815,
+      "ast_node": 815,
+      "span": [
+        197,
+        60,
+        197,
+        63
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "int"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load int: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 443,
+      "node": 817,
+      "ast_node": 817,
+      "span": [
+        197,
+        78,
+        197,
+        81
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "str"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 444,
+      "node": 819,
+      "ast_node": 819,
+      "span": [
+        198,
+        16,
+        198,
+        22
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "object"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load object: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 445,
+      "node": 821,
+      "ast_node": 821,
+      "span": [
+        198,
+        36,
+        198,
+        44
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "datetime"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load datetime: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 446,
+      "node": 823,
+      "ast_node": 823,
+      "span": [
+        198,
+        53,
+        198,
+        63
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "OrderMatch"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load OrderMatch: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 447,
+      "node": 825,
+      "ast_node": 825,
+      "span": [
+        199,
+        16,
+        199,
+        45
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "tuple[]"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load tuple[]: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 448,
+      "node": 826,
+      "ast_node": 826,
+      "span": [
+        199,
+        16,
+        199,
+        21
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "tuple"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load tuple: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 449,
+      "node": 828,
+      "ast_node": 828,
+      "span": [
+        199,
+        22,
+        199,
+        25
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "int"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load int: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 450,
+      "node": 829,
+      "ast_node": 829,
+      "span": [
+        199,
+        27,
+        199,
+        35
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "datetime"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load datetime: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 451,
+      "node": 830,
+      "ast_node": 830,
+      "span": [
+        199,
+        37,
+        199,
+        44
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "Decimal"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load Decimal: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 452,
+      "node": 832,
+      "ast_node": 832,
+      "span": [
+        201,
+        8,
+        201,
+        13
+      ],
+      "operation": [
+        12,
+        831,
+        "Store",
+        "dirty"
+      ],
+      "group": "E06-B",
+      "contained_groups": [],
+      "semantic_role": "Store dirty: assignment target; E06-B governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 453,
+      "node": 834,
+      "ast_node": 834,
+      "span": [
+        201,
+        16,
+        201,
+        32
+      ],
+      "operation": [
+        12,
+        831,
+        "Load",
+        "self._dirty_time"
+      ],
+      "group": "E06-B",
+      "contained_groups": [],
+      "semantic_role": "Load self._dirty_time: read; E06-B governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 454,
+      "node": 835,
+      "ast_node": 835,
+      "span": [
+        201,
+        16,
+        201,
+        20
+      ],
+      "operation": [
+        12,
+        831,
+        "Load",
+        "self"
+      ],
+      "group": "E06-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: read; E06-B governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 455,
+      "node": 836,
+      "ast_node": 836,
+      "span": [
+        201,
+        33,
+        201,
+        41
+      ],
+      "operation": [
+        12,
+        831,
+        "Load",
+        "detector"
+      ],
+      "group": "E06-B",
+      "contained_groups": [],
+      "semantic_role": "Load detector: read; E06-B governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 456,
+      "node": 839,
+      "ast_node": 839,
+      "span": [
+        202,
+        8,
+        202,
+        20
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "order_number"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store order_number: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 457,
+      "node": 840,
+      "ast_node": 840,
+      "span": [
+        202,
+        22,
+        202,
+        27
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "order"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store order: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 458,
+      "node": 841,
+      "ast_node": 841,
+      "span": [
+        202,
+        29,
+        202,
+        41
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "confirmation"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store confirmation: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 459,
+      "node": 842,
+      "ast_node": 842,
+      "span": [
+        202,
+        43,
+        202,
+        48
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "level"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store level: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 460,
+      "node": 843,
+      "ast_node": 843,
+      "span": [
+        202,
+        50,
+        202,
+        60
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "stop_index"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store stop_index: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 461,
+      "node": 844,
+      "ast_node": 844,
+      "span": [
+        202,
+        62,
+        202,
+        71
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "stop_time"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store stop_time: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 462,
+      "node": 845,
+      "ast_node": 845,
+      "span": [
+        202,
+        73,
+        202,
+        80
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "crossed"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store crossed: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 463,
+      "node": 846,
+      "ast_node": 846,
+      "span": [
+        202,
+        82,
+        202,
+        88
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "causes"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store causes: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 464,
+      "node": 847,
+      "ast_node": 847,
+      "span": [
+        202,
+        90,
+        202,
+        100
+      ],
+      "operation": [
+        12,
+        837,
+        "Store",
+        "cause_time"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Store cause_time: assignment target; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 465,
+      "node": 848,
+      "ast_node": 848,
+      "span": [
+        202,
+        103,
+        202,
+        108
+      ],
+      "operation": [
+        12,
+        837,
+        "Load",
+        "match"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Load match: read; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 466,
+      "node": 851,
+      "ast_node": 851,
+      "span": [
+        203,
+        15,
+        203,
+        22
+      ],
+      "operation": [
+        12,
+        849,
+        "Load",
+        "crossed"
+      ],
+      "group": "E06-C",
+      "contained_groups": [],
+      "semantic_role": "Load crossed: read; E06-C governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 467,
+      "node": 854,
+      "ast_node": 854,
+      "span": [
+        204,
+        8,
+        204,
+        11
+      ],
+      "operation": [
+        12,
+        853,
+        "Store",
+        "key"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Store key: assignment target; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 468,
+      "node": 856,
+      "ast_node": 856,
+      "span": [
+        205,
+        12,
+        205,
+        30
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "detector.direction"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load detector.direction: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 469,
+      "node": 857,
+      "ast_node": 857,
+      "span": [
+        205,
+        12,
+        205,
+        20
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "detector"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load detector: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 470,
+      "node": 858,
+      "ast_node": 858,
+      "span": [
+        205,
+        32,
+        205,
+        38
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "family"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load family: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 471,
+      "node": 859,
+      "ast_node": 859,
+      "span": [
+        205,
+        40,
+        205,
+        46
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "number"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load number: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 472,
+      "node": 860,
+      "ast_node": 860,
+      "span": [
+        205,
+        48,
+        205,
+        59
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent_type"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent_type: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 473,
+      "node": 861,
+      "ast_node": 861,
+      "span": [
+        205,
+        61,
+        205,
+        80
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent.source_index"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent.source_index: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 474,
+      "node": 862,
+      "ast_node": 862,
+      "span": [
+        205,
+        61,
+        205,
+        67
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 475,
+      "node": 863,
+      "ast_node": 863,
+      "span": [
+        206,
+        12,
+        206,
+        30
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent.source_time"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent.source_time: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 476,
+      "node": 864,
+      "ast_node": 864,
+      "span": [
+        206,
+        12,
+        206,
+        18
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 477,
+      "node": 866,
+      "ast_node": 866,
+      "span": [
+        206,
+        32,
+        206,
+        35
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "str"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 478,
+      "node": 867,
+      "ast_node": 867,
+      "span": [
+        206,
+        36,
+        206,
+        48
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent.price"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent.price: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 479,
+      "node": 868,
+      "ast_node": 868,
+      "span": [
+        206,
+        36,
+        206,
+        42
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "parent"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load parent: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 480,
+      "node": 869,
+      "ast_node": 869,
+      "span": [
+        206,
+        51,
+        206,
+        61
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "stop_event"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load stop_event: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 481,
+      "node": 870,
+      "ast_node": 870,
+      "span": [
+        206,
+        63,
+        206,
+        75
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order_number"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order_number: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 482,
+      "node": 871,
+      "ast_node": 871,
+      "span": [
+        207,
+        12,
+        207,
+        27
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.first_idx"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.first_idx: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 483,
+      "node": 872,
+      "ast_node": 872,
+      "span": [
+        207,
+        12,
+        207,
+        17
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 484,
+      "node": 873,
+      "ast_node": 873,
+      "span": [
+        207,
+        29,
+        207,
+        44
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.break_idx"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.break_idx: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 485,
+      "node": 874,
+      "ast_node": 874,
+      "span": [
+        207,
+        29,
+        207,
+        34
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 486,
+      "node": 875,
+      "ast_node": 875,
+      "span": [
+        207,
+        46,
+        207,
+        56
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.mode"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.mode: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 487,
+      "node": 876,
+      "ast_node": 876,
+      "span": [
+        207,
+        46,
+        207,
+        51
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 488,
+      "node": 877,
+      "ast_node": 877,
+      "span": [
+        207,
+        58,
+        207,
+        82
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.box_top_source_idx"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.box_top_source_idx: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 489,
+      "node": 878,
+      "ast_node": 878,
+      "span": [
+        207,
+        58,
+        207,
+        63
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 490,
+      "node": 880,
+      "ast_node": 880,
+      "span": [
+        208,
+        12,
+        208,
+        15
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "str"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 491,
+      "node": 881,
+      "ast_node": 881,
+      "span": [
+        208,
+        16,
+        208,
+        29
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.box_top"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.box_top: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 492,
+      "node": 882,
+      "ast_node": 882,
+      "span": [
+        208,
+        16,
+        208,
+        21
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 493,
+      "node": 883,
+      "ast_node": 883,
+      "span": [
+        208,
+        32,
+        208,
+        59
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.box_bottom_source_idx"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.box_bottom_source_idx: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 494,
+      "node": 884,
+      "ast_node": 884,
+      "span": [
+        208,
+        32,
+        208,
+        37
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 495,
+      "node": 886,
+      "ast_node": 886,
+      "span": [
+        208,
+        61,
+        208,
+        64
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "str"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 496,
+      "node": 887,
+      "ast_node": 887,
+      "span": [
+        208,
+        65,
+        208,
+        81
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order.box_bottom"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order.box_bottom: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 497,
+      "node": 888,
+      "ast_node": 888,
+      "span": [
+        208,
+        65,
+        208,
+        70
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "order"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load order: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 498,
+      "node": 889,
+      "ast_node": 889,
+      "span": [
+        209,
+        12,
+        209,
+        24
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "confirmation"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load confirmation: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 499,
+      "node": 891,
+      "ast_node": 891,
+      "span": [
+        209,
+        26,
+        209,
+        29
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "str"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 500,
+      "node": 892,
+      "ast_node": 892,
+      "span": [
+        209,
+        30,
+        209,
+        35
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "level"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load level: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 501,
+      "node": 893,
+      "ast_node": 893,
+      "span": [
+        209,
+        38,
+        209,
+        48
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "stop_index"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load stop_index: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 502,
+      "node": 894,
+      "ast_node": 894,
+      "span": [
+        209,
+        50,
+        209,
+        59
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "stop_time"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load stop_time: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 503,
+      "node": 895,
+      "ast_node": 895,
+      "span": [
+        209,
+        61,
+        209,
+        68
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "crossed"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load crossed: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 504,
+      "node": 896,
+      "ast_node": 896,
+      "span": [
+        209,
+        70,
+        209,
+        76
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "causes"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load causes: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 505,
+      "node": 897,
+      "ast_node": 897,
+      "span": [
+        209,
+        78,
+        209,
+        88
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "cause_time"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load cause_time: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 506,
+      "node": 898,
+      "ast_node": 898,
+      "span": [
+        210,
+        12,
+        210,
+        21
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source[]"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source[]: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 507,
+      "node": 899,
+      "ast_node": 899,
+      "span": [
+        210,
+        12,
+        210,
+        18
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 508,
+      "node": 901,
+      "ast_node": 901,
+      "span": [
+        210,
+        23,
+        210,
+        32
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source[]"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source[]: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 509,
+      "node": 902,
+      "ast_node": 902,
+      "span": [
+        210,
+        23,
+        210,
+        29
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 510,
+      "node": 905,
+      "ast_node": 905,
+      "span": [
+        210,
+        34,
+        210,
+        37
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "str"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load str: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 511,
+      "node": 906,
+      "ast_node": 906,
+      "span": [
+        210,
+        38,
+        210,
+        47
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source[]"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source[]: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 512,
+      "node": 907,
+      "ast_node": 907,
+      "span": [
+        210,
+        38,
+        210,
+        44
+      ],
+      "operation": [
+        12,
+        853,
+        "Load",
+        "source"
+      ],
+      "group": "E06-D",
+      "contained_groups": [],
+      "semantic_role": "Load source: read; E06-D governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 513,
+      "node": 910,
+      "ast_node": 910,
+      "span": [
+        212,
+        8,
+        212,
+        12
+      ],
+      "operation": [
+        12,
+        909,
+        "Store",
+        "zone"
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "Store zone: assignment target; E06-E governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 514,
+      "node": 912,
+      "ast_node": 912,
+      "span": [
+        212,
+        15,
+        212,
+        30
+      ],
+      "operation": [
+        12,
+        909,
+        "Load",
+        "self._zones.get"
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "Load self._zones.get: read; E06-E governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 515,
+      "node": 913,
+      "ast_node": 913,
+      "span": [
+        212,
+        15,
+        212,
+        26
+      ],
+      "operation": [
+        12,
+        909,
+        "Load",
+        "self._zones"
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "Load self._zones: read; E06-E governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 516,
+      "node": 914,
+      "ast_node": 914,
+      "span": [
+        212,
+        15,
+        212,
+        19
+      ],
+      "operation": [
+        12,
+        909,
+        "Load",
+        "self"
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "Load self: read; E06-E governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 517,
+      "node": 915,
+      "ast_node": 915,
+      "span": [
+        212,
+        31,
+        212,
+        34
+      ],
+      "operation": [
+        12,
+        909,
+        "Load",
+        "key"
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "Load key: read; E06-E governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 518,
+      "node": 919,
+      "ast_node": 919,
+      "span": [
+        213,
+        11,
+        213,
+        15
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "zone"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load zone: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 519,
+      "node": 923,
+      "ast_node": 923,
+      "span": [
+        213,
+        28,
+        213,
+        31
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "max"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load max: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 520,
+      "node": 924,
+      "ast_node": 924,
+      "span": [
+        213,
+        32,
+        213,
+        42
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "stop_event"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load stop_event: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 521,
+      "node": 925,
+      "ast_node": 925,
+      "span": [
+        213,
+        44,
+        213,
+        54
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "crossed[]"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load crossed[]: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 522,
+      "node": 926,
+      "ast_node": 926,
+      "span": [
+        213,
+        44,
+        213,
+        51
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "crossed"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load crossed: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 523,
+      "node": 928,
+      "ast_node": 928,
+      "span": [
+        213,
+        56,
+        213,
+        68
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "confirmation"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load confirmation: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 524,
+      "node": 929,
+      "ast_node": 929,
+      "span": [
+        213,
+        72,
+        213,
+        77
+      ],
+      "operation": [
+        12,
+        916,
+        "Load",
+        "dirty"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load dirty: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 525,
+      "node": 931,
+      "ast_node": 931,
+      "span": [
+        214,
+        12,
+        214,
+        16
+      ],
+      "operation": [
+        12,
+        930,
+        "Store",
+        "zone"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Store zone: assignment target; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 526,
+      "node": 933,
+      "ast_node": 933,
+      "span": [
+        214,
+        19,
+        214,
+        43
+      ],
+      "operation": [
+        12,
+        930,
+        "Load",
+        "self._previous_zones.get"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load self._previous_zones.get: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 527,
+      "node": 934,
+      "ast_node": 934,
+      "span": [
+        214,
+        19,
+        214,
+        39
+      ],
+      "operation": [
+        12,
+        930,
+        "Load",
+        "self._previous_zones"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load self._previous_zones: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 528,
+      "node": 935,
+      "ast_node": 935,
+      "span": [
+        214,
+        19,
+        214,
+        23
+      ],
+      "operation": [
+        12,
+        930,
+        "Load",
+        "self"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load self: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 529,
+      "node": 936,
+      "ast_node": 936,
+      "span": [
+        214,
+        44,
+        214,
+        47
+      ],
+      "operation": [
+        12,
+        930,
+        "Load",
+        "key"
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "Load key: read; E06-F governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 530,
+      "node": 939,
+      "ast_node": 939,
+      "span": [
+        215,
+        11,
+        215,
+        15
+      ],
+      "operation": [
+        12,
+        937,
+        "Load",
+        "zone"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load zone: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 531,
+      "node": 942,
+      "ast_node": 942,
+      "span": [
+        216,
+        12,
+        216,
+        16
+      ],
+      "operation": [
+        12,
+        941,
+        "Store",
+        "zone"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Store zone: assignment target; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 532,
+      "node": 944,
+      "ast_node": 944,
+      "span": [
+        216,
+        19,
+        216,
+        39
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "detector._build_zone"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load detector._build_zone: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 533,
+      "node": 945,
+      "ast_node": 945,
+      "span": [
+        216,
+        19,
+        216,
+        27
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "detector"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load detector: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 534,
+      "node": 946,
+      "ast_node": 946,
+      "span": [
+        216,
+        40,
+        216,
+        46
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "family"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load family: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 535,
+      "node": 947,
+      "ast_node": 947,
+      "span": [
+        216,
+        48,
+        216,
+        54
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "number"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load number: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 536,
+      "node": 948,
+      "ast_node": 948,
+      "span": [
+        216,
+        56,
+        216,
+        67
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "parent_type"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load parent_type: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 537,
+      "node": 949,
+      "ast_node": 949,
+      "span": [
+        216,
+        69,
+        216,
+        75
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "parent"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load parent: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 538,
+      "node": 950,
+      "ast_node": 950,
+      "span": [
+        216,
+        77,
+        216,
+        87
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "stop_event"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load stop_event: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 539,
+      "node": 951,
+      "ast_node": 951,
+      "span": [
+        216,
+        89,
+        216,
+        94
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "match"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load match: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 540,
+      "node": 952,
+      "ast_node": 952,
+      "span": [
+        216,
+        96,
+        216,
+        102
+      ],
+      "operation": [
+        12,
+        941,
+        "Load",
+        "source"
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "Load source: read; E06-G governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 541,
+      "node": 954,
+      "ast_node": 954,
+      "span": [
+        217,
+        8,
+        217,
+        24
+      ],
+      "operation": [
+        12,
+        953,
+        "Store",
+        "self._zones[]"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Store self._zones[]: assignment target; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 542,
+      "node": 955,
+      "ast_node": 955,
+      "span": [
+        217,
+        8,
+        217,
+        19
+      ],
+      "operation": [
+        12,
+        953,
+        "Load",
+        "self._zones"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Load self._zones: read; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 543,
+      "node": 956,
+      "ast_node": 956,
+      "span": [
+        217,
+        8,
+        217,
+        12
+      ],
+      "operation": [
+        12,
+        953,
+        "Load",
+        "self"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Load self: read; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 544,
+      "node": 957,
+      "ast_node": 957,
+      "span": [
+        217,
+        20,
+        217,
+        23
+      ],
+      "operation": [
+        12,
+        953,
+        "Load",
+        "key"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Load key: read; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 545,
+      "node": 958,
+      "ast_node": 958,
+      "span": [
+        217,
+        27,
+        217,
+        31
+      ],
+      "operation": [
+        12,
+        953,
+        "Load",
+        "zone"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Load zone: read; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 546,
+      "node": 960,
+      "ast_node": 960,
+      "span": [
+        218,
+        15,
+        218,
+        19
+      ],
+      "operation": [
+        12,
+        959,
+        "Load",
+        "zone"
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Load zone: read; E06-H governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 547,
+      "node": 961,
+      "ast_node": 961,
+      "span": [
+        200,
+        9,
+        200,
+        14
+      ],
+      "operation": [
+        6,
+        808,
+        "Load",
+        "EZone"
+      ],
+      "group": "E06-A",
+      "contained_groups": [],
+      "semantic_role": "Load EZone: read; E06-A governs evaluation order and reachability.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 38,
+      "node": 911,
+      "ast_node": 911,
+      "span": [
+        212,
+        15,
+        212,
+        35
+      ],
+      "operation": [
+        12,
+        "self._zones.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E06-E",
+      "contained_groups": [],
+      "semantic_role": "self._zones.get: DYNAMIC_EFFECT_UNKNOWN; distinguish native map semantics from dynamic dispatch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 39,
+      "node": 932,
+      "ast_node": 932,
+      "span": [
+        214,
+        19,
+        214,
+        48
+      ],
+      "operation": [
+        12,
+        "self._previous_zones.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E06-F",
+      "contained_groups": [],
+      "semantic_role": "self._previous_zones.get: DYNAMIC_EFFECT_UNKNOWN; distinguish native map semantics from dynamic dispatch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 40,
+      "node": 943,
+      "ast_node": 943,
+      "span": [
+        216,
+        19,
+        216,
+        103
+      ],
+      "operation": [
+        12,
+        "detector._build_zone",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E06-G",
+      "contained_groups": [],
+      "semantic_role": "detector._build_zone: DYNAMIC_EFFECT_UNKNOWN; distinguish native map semantics from dynamic dispatch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 41,
+      "node": 954,
+      "ast_node": 954,
+      "span": [
+        217,
+        8,
+        217,
+        24
+      ],
+      "operation": [
+        12,
+        "self._zones[]",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "self._zones[]: EXPLICIT_OBJECT_MUTATION; distinguish native map semantics from dynamic dispatch.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 7,
+      "node": 959,
+      "ast_node": 959,
+      "span": [
+        218,
+        8,
+        218,
+        19
+      ],
+      "operation": [
+        12,
+        "Return",
+        null
+      ],
+      "group": "E06-H",
+      "contained_groups": [],
+      "semantic_role": "Return: selected reference returned after assignment.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B06-03-S1",
+      "span": [
+        202,
+        211
+      ],
+      "prior_interpretation": "Key omits separate Order direction and First/Break/box-source time fields; owner consistency required.",
+      "groups": [
+        "E06-C",
+        "E06-D"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-03-S2",
+      "span": [
+        212,
+        218
+      ],
+      "prior_interpretation": "Current hit bypasses dirty cutoff; returned zone object reused; assertion not fallback.",
+      "groups": [
+        "E06-E",
+        "E06-F",
+        "E06-G",
+        "E06-H"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 4,
+      "comparisons": 4,
+      "arithmetic": 0,
+      "calls": 10,
+      "accesses": 108,
+      "effects": 4,
+      "exits": 1
+    },
+    "rows": 131,
+    "w1": 18,
+    "additional": 113,
+    "supplemental": 2,
+    "identity_errors": 0,
+    "overlap": 0,
+    "missing": 0,
+    "extra": 0,
+    "cp317_link_total": 1109,
+    "cp317_link_errors": 0,
+    "filter_resolution_count": 18,
+    "prior_rows_revalidated": 563,
+    "prior_w1_revalidated": 78,
+    "prior_additional_revalidated": 485,
+    "prior_supplemental_revalidated": 6,
+    "prior_identity_errors": 0,
+    "canonical_total": 5257,
+    "covered_union": 694,
+    "remaining": 4563,
+    "range": [
+      196,
+      219
+    ],
+    "historical_current_seven_category_identity": true,
+    "ast_node_array_identity": true,
+    "method": "Pinned source-first local contracts; exact canonical/historical seven arrays and AST nodes, filter suffix resolution, all CP317 canonical category/index/id/span plus W1 crosswalk site/span and partition range, previous registers row identity and historical W1 text/disposition and supplements, current partition and complete 25-partition disjoint union. Existing inventories only.",
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP412-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "description": "Revalidated B06-03-F1 and clarified ordered 26-element representation-sensitive key, omitted identity/time fields, current hit bypass, strict previous guard, native race precondition and no rollback."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Local source-only scope; no RAW payload, runtime, ZIP, production or main change, new cross-owner acceptance or empirical cache equivalence.",
+    "Prior 563 row identities, operations, spans, historical W1 dispositions/interpretations and six supplemental identities checked against pinned artifacts; semantic contracts re-read by groups, not re-executed. All 1109 CP317 links checked against canonical inventory, W1 crosswalk and partitions; historical 25-partition reconciliation retained from predecessor, not all historical partitions fetched anew.",
+    "Ordinary native object, hashable tuple members, finite Decimal representation, comparable times, stable omitted-field consistency and valid dirty evidence remain conditional. No assertion malformed input is reachable.",
+    "Publication readback is Git identity and exact content comparison, not independent SHA-256 or signature verification."
+  ]
+}
