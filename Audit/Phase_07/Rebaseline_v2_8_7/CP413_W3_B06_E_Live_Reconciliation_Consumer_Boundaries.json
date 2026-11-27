@@ -1,0 +1,90 @@
+{
+  "checkpoint": 413,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          80,
+          100
+        ],
+        [
+          128,
+          151
+        ],
+        [
+          335,
+          390
+        ],
+        [
+          416,
+          417
+        ],
+        [
+          1125,
+          1210
+        ],
+        [
+          1294,
+          1318
+        ],
+        [
+          1444,
+          1506
+        ]
+      ],
+      "contract": "E02 rotates exact/scoped reconciliation maps independently only on matching market scope, E03 validates chronology identity. Native wrapper calls E07 only if continuation non-null. E44 initializes pending by (minimum source time, minimum decision time, source index) for source >= frontier, heap order, not a local sorted-source guarantee. Checkpoint restores prefix of previous.native_numbered, active and sequence_start; accepted set assigned; reopened flag reset. Step append before group decisions; checkpoint reopen raised before that branch's native race regeneration, but prior state may already have changed. Reopened flag true for dynamic native race and regenerated descendants. Terminal step at len(candles); native tuple before StopAll parent projection; accepted and last candidates updated; detect performs further consumed-S evidence, same-source conflicts and accepted-audit rebuild, not E07 exact-hit side effects. E07 retains original candidate tuple; E44 may copy internal list on first regeneration. No new E44 semantic acceptance."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          2035,
+          2043
+        ]
+      ],
+      "contract": "Gate callback returns false absent parent-stop cause, else queries gate-owned initial Order at exact parent stop event; blocked iff result non-None and its confirmation strictly before zone.order_first_time. E07 stores callback result and ledger subset, not full owner state; provider dynamic effects remain conditional."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2280,
+          2306
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3738,
+          3767
+        ]
+      ],
+      "contract": "live_e optional from live.e_continuation and forwarded to detector. Native _run_live_calculation invokes prepare_pipeline_state with no live argument, default None; native live transport does not establish active E07. Callback equivalence and scope consistency remain conditional."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          22,
+          65
+        ]
+      ],
+      "contract": "Live transport calls calculate_live_from_buckets with market views and bucket delta, not a live E continuation. No empirical equivalence or global dispatch claim."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Local source-only scope; no RAW payload, runtime, ZIP, production/main change, new cross-owner acceptance or empirical cache equivalence. Uploaded operating protocol's historical ZIP/runtime requirements superseded by explicit source-only scope and repository AGENTS.",
+    "Prior 694 category row identities, operations, spans, historical W1 dispositions/interpretations and eight supplemental identities checked against pinned artifacts; not runtime validation or new semantic acceptance of the prior partitions. All 1109 CP317 links checked against canonical inventory, W1 crosswalk and partitions; all 25 historical partition link sets not independently refetched in CP413 (four reviewed partitions checked).",
+    "Native provider assumptions include stable source-index/time alignment, source-ordered nonempty checkpoints, comparable/hashable evidence and valid dirty scope. No claim arbitrary callback/key equivalence, or that malformed inputs are reachable.",
+    "Publication readback is Git identity and exact content comparison, not independent SHA-256 or signature verification."
+  ]
+}
