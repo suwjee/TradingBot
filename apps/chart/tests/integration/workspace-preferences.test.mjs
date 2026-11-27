@@ -199,6 +199,18 @@ test("filesystem preferences survive a fresh server and browser context", {
     });
     assert.match(await visible.locator(".bridge-yaml").textContent(), /100\.005/);
     assert.match(await visible.locator(".bridge-yaml").textContent(), /Fixture stop/);
+    await report.unroute("**/api/info/**");
+    const remoteDetail = "Report unavailable <strong>fixture response</strong>";
+    await report.route("**/api/info/**", route => route.fulfill({ status: 404, json: { error: remoteDetail } }));
+    const [diagnostic] = await Promise.all([
+      report.waitForRequest(request => request.method() === "POST" && new URL(request.url()).pathname === "/api/error-journal"),
+      report.reload(),
+    ]);
+    const entry = diagnostic.postDataJSON();
+    assert.equal(entry.event, "REPORT_LOAD_FAILED");
+    assert.match(entry.error, /HTTP 404/);
+    assert.ok(!JSON.stringify(entry).includes("fixture response"));
+    assert.match(await report.locator("#review-loading p").textContent(), /<strong>fixture response<\/strong>/);
     await report.close();
     const restored = await openChart();
     assert.deepEqual(await drawingOrder(restored), order);

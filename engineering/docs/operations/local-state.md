@@ -9,7 +9,7 @@ scope:
   - sessions
   - cache
   - raw
-last_modified_at: 2026-11-27T05:51:35+03:30
+last_modified_at: 2026-11-27T07:14:01+03:30
 ---
 
 # TradingBot Local State
@@ -77,7 +77,7 @@ Filesystem persistence under the Chart cache owner currently includes durable co
 
 The local server writes workstation preferences to `cache/workspace-preferences.json` under the configured Chart state root. Chart uses `GET /api/workspace-preferences` to restore the settings and `PATCH /api/workspace-preferences` to persist individual changes. Each write atomically replaces the preference file. Browser storage supplies the fallback and replays pending edits on a subsequent workspace load.
 
-Real-time Chart defaults and the indicator controls are workstation preferences shared by all charts. Calculation ranges and RAW bookmarks are keyed by permanent chart ID. A RAW filename change during acquisition or append retains the same identity. Existing chart-specific preferences provide migration fallbacks until a shared value is saved. Drawing defaults, toolbar location, and tool order are workstation preferences. The calculation cache and drawing files retain their separate storage scopes. The local Error log journal stores browser warnings/errors, captured Engine request failures, and server API errors. It reloads after a server restart and is removed through the Error log clear action. Browser storage retains unsent diagnostics until the server acknowledges them.
+Real-time Chart defaults and the indicator controls are workstation preferences shared by all charts. Calculation ranges and RAW bookmarks are keyed by permanent chart ID. A RAW filename change during acquisition or append retains the same identity. Existing chart-specific preferences provide migration fallbacks until a shared value is saved. Drawing defaults, toolbar location, and tool order are workstation preferences. The calculation cache and drawing files retain their separate storage scopes. The local Error log journal stores browser warnings/errors, captured Engine request failures, and server API errors. It reloads after a server restart and is removed through the Error log clear action. Browser storage retains unsent diagnostics until the server acknowledges them. Calculation Report request failures retain the HTTP status, route, and stack in that queue. Server-supplied error text is displayed as text in the report page.
 
 These categories have different recovery properties. Saved drawings and templates can contain user-created state and are not presumed reproducible. Saved calculation results are report snapshots tied to their original input and Source. Apply and Live updates compute a fresh result from RAW.
 

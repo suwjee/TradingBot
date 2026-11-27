@@ -8,7 +8,7 @@ const loading = document.getElementById("review-loading");
 const app = document.getElementById("app");
 const diagnostics = createErrorJournalClient({ storage: localStorage, changed: () => {} });
 function recordReportError(event, error) {
-  const id = globalThis.crypto?.randomUUID?.() || `report-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const id = `report-${globalThis.crypto.getRandomValues(new Uint32Array(4)).join("-")}`;
   void diagnostics.record({ id, event, scope: "CALCULATION REPORT", level: "ERROR",
     recordedAt: Date.now(), path: location.pathname, ...errorDetails(error) })
     .catch(failure => console.error("Could not persist report diagnostic", failure));
@@ -127,7 +127,11 @@ async function fetchReport(url, options) {
   const response = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(12_000), ...options });
   if (response.status === 304) return response;
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Calculation report was not found");
+  if (!response.ok) {
+    const error = new Error(`Calculation Report request failed with HTTP ${response.status}.`);
+    error.displayMessage = typeof result?.error === "string" && result.error ? result.error : error.message;
+    throw error;
+  }
   await renderReview(result);
   return response;
 }
@@ -142,7 +146,7 @@ async function loadCalculationReport() {
   } catch (error) {
     if (!follow) {
       recordReportError("REPORT_LOAD_FAILED", error);
-      fail(`Could not load this calculation report: ${error.message}`);
+      fail(`Could not load this calculation report: ${error.displayMessage ?? error.message}`);
     }
   }
   if (!follow) return;
@@ -161,7 +165,7 @@ async function loadCalculationReport() {
       });
       tag = response.headers.get("ETag") || tag;
     } catch (error) {
-      if (!renderedId) fail(`Waiting for the chart calculation. ${error.message}`);
+      if (!renderedId) fail(`Waiting for the chart calculation. ${error.displayMessage ?? error.message}`);
     } finally {
       inFlight = false;
       if (!document.hidden) timer = setTimeout(refresh, 3_000);
