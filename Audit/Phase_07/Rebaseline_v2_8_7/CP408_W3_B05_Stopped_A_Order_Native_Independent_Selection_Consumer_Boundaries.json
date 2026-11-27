@@ -1,0 +1,110 @@
+{
+  "checkpoint": 408,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer contract review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "ranges": [
+        [
+          78,
+          119
+        ],
+        [
+          178,
+          189
+        ],
+        [
+          1251,
+          1299
+        ]
+      ],
+      "contract": "S validates direction and range; derives opposite direction through chronology, copies opposite sequence into mutable list of original elements, stores optional callback, shares chronology and calls OA75 after range initialization. Main-index wrapper passes no clamp; confirmation wrapper passes direction/reaction using provider default intrabar start. _detect clears ownership and audit, audits each A, then calls OA76 before next-A confirmation exclusion; passes result to candidate resolver. No OA77 reset is shown in _detect; repeated invocations on the same instance retain native cache unless reinitialized.",
+      "boundary": "Local delegation and observed callsites only; do not infer global input immutability or candidate acceptance."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          64,
+          66
+        ]
+      ],
+      "contract": "reaction_identity reads First then Break, int-normalizes both; no direction, time, price or ordinal component.",
+      "boundary": "Physical normalized pair equality is not full object or chronology equivalence."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          1132,
+          1150
+        ],
+        [
+          1185,
+          1192
+        ],
+        [
+          1257,
+          1302
+        ],
+        [
+          1554,
+          1614
+        ],
+        [
+          2068,
+          2093
+        ]
+      ],
+      "contract": "Main mapping bisect_right(times,timestamp)-1, pre-first raises unless clamp, default False. Confirmation cache uses provider key and exact intrabar start default; normalizes direction-dependent level and scans strict lower crossing in break candle, falls back to break candle start if absent. Standalone bounded callback accepts gate/stop/end but local cache keys gate/end, uses bounded directional search. Continuous provider limits end and guards gate, keys by direction/gate/limit/event; copies cached candidate on hit.",
+      "boundary": "OA76 does not verify provider geometry, remapped chronology or cache consistency; local source-level provider boundaries only. No equivalence between callback paths asserted."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2256,
+          2271
+        ],
+        [
+          2712,
+          2727
+        ],
+        [
+          2757,
+          2763
+        ],
+        [
+          2900,
+          2922
+        ]
+      ],
+      "contract": "S receives opposite native reactions and direction-specific initial_order_geometry. Reusable context binds opposite direction in lambda; forwards gate_index,end_index,gate_event to geometry detector; when live non-None invokes live.order_geometry(detector,order_direction,gate_index,end_index,gate_event). Standalone path uses directional_a_stop_order_finder. S result consumption can reuse full state or construct S for non-reusable path.",
+      "boundary": "Dynamic live receiver implementation not inferred; forwarding order verified, no new W2/W3 cross-owner acceptance."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          2517,
+          2621
+        ]
+      ],
+      "contract": "OA75–OA77 own initial native index, native-only exact-stop cache and independent-vs-native selection; callback may return nested geometry without inventing public Reaction number. No stop calculation, ledger registration, acceptance or crossing performed in these methods.",
+      "boundary": "Later OA78+ and Lifecycle/Bridge consumers remain outside this checkpoint."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local review by GPT, not independently staffed. No runtime, RAW, ZIP, new cross-owner acceptance or production change.",
+    "The native lookup depends on stable comparable timestamps, stable normalized indices, tuple/list alignment and stable owner state; mutability, aliasing and custom attribute/call semantics are not ruled out. No assertion that malformed input occurs.",
+    "OA76 remapped confirmation is not re-gated; the native winner ranks by confirmation first, the combined selection ranks by First first. No runtime equivalence or defect assertion.",
+    "Live Bridge invocation is a dynamic provider boundary; the presence or implementation of an arbitrary live object is not established by the callsite alone. No new cross-owner acceptance.",
+    "Existing canonical AST inventories compared directly, not freshly generated; no independent SHA-256 assertion."
+  ]
+}
