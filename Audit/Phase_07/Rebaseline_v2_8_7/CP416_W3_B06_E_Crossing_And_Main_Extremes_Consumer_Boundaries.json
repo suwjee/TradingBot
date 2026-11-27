@@ -1,0 +1,149 @@
+{
+  "checkpoint": 416,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only; no new cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          176,
+          194
+        ],
+        [
+          338,
+          339
+        ],
+        [
+          358,
+          381
+        ],
+        [
+          420,
+          457
+        ],
+        [
+          458,
+          504
+        ],
+        [
+          507,
+          535
+        ],
+        [
+          581,
+          606
+        ]
+      ],
+      "contract": "E08 aliases chronology lower index, main/lower sequences and timestamps. Nonlive constructor selects shared main range query only if index.candles is detector.candles (at 1s can use lower index when main index absent); if exact None query, calls E15. E23 calls shared query on valid inclusive positions converted to half-open end+1; invalid bounds can lazily initialize E15 when sparse attribute absent, then use E17. E16 native sparse table and E17 query use earliest position when neither strict comparison wins. E20 maps half-open times via bisect_left then E13 and maps non-None position to lower_times. E14 is local definition; E15 does not call it. Live E extreme cache separate, keyed direction/start/end, dirty boundary checks previous result, uses its own LowerTimeframeIndex on miss. No activation or new acceptance inferred."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          18,
+          21
+        ],
+        [
+          886,
+          969
+        ],
+        [
+          973,
+          1069
+        ],
+        [
+          1077,
+          1116
+        ],
+        [
+          1153,
+          1178
+        ]
+      ],
+      "contract": "LowerTimeframeIndex aliases candles, records timestamps and precomputes low/high with shared Decimal helper; min/max ties use earlier position. First crossing methods delegate with ge/le exclusion, clamp lower left and upper right, return None for empty. Chronological node ordering and left-first descent yield earliest strict crossing under valid ordered data. Optional retained crossing history (key left,level,exclusion) excludes latest unsettled candle from stored progress; suffix refresh can clear history; separate from LiveEContinuation. Range minimum/maximum reject invalid/empty half-open bounds and preserve earliest ties. Reflected provider delegates opposite crossing with copy_negate and preserves position. Chronology constructs own _e_main_extremes empty dict and normally provides lower index (truthy supplied index or shared index); E15 relies on chronology-scoped stable main geometry."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ]
+      ],
+      "contract": "as_decimal returns existing Decimal object or Decimal(str(value)); no rounding by helper. Used in E13 fallback, E14, E15 and via alias in Reaction index; level remains unchanged in E13."
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "ranges": [
+        [
+          20,
+          68
+        ]
+      ],
+      "contract": "Native frozen direction policy chooses low for bullish and high for bearish; E14/E15 read policy attribute dynamically. E13 explicit less switch is distinct and can represent either query independently."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2055,
+          2079
+        ],
+        [
+          2190,
+          2208
+        ],
+        [
+          2280,
+          2309
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3748,
+          3767
+        ]
+      ],
+      "contract": "Batch market prep uses shared lower index, main candles alias seconds at 1s, otherwise separate sequence and no explicit main range index. Live market views may provide prepared lower and main range indexes for fresh chronology, with identity check in shared index provider. This native range acceleration is not E continuation. E factory only forwards continuation when non-None; direction state takes live.e_continuation only if live supplied. Native _run_live_calculation invokes prepare_pipeline_state without live, which defaults None. No evidence of active native E continuation on traced path; other injected paths conditional."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          58,
+          68
+        ]
+      ],
+      "contract": "Native transport stages append and invokes bucket calculation with market views/delta; does not itself activate E continuation. No runtime claim."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP416-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-07-F01",
+      "description": "Revalidated exact-None indexed dispatch, immediate return including misses, strict half-open fallback without clamping, negative index and error differences, native index-owned clamping, Decimal/level and dynamic truthiness boundaries."
+    },
+    {
+      "id": "CP416-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-07-F02",
+      "description": "Revalidated exact-None chronology mapping/hit gates, two ordered comprehensions, sparse builder before publication, direction-only key, shared triple aliasing, falsey/malformed hits and partial failure/no rollback. Native range index is distinct from optional E continuation."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Prior 1587 rows structurally checked (category/index/node/AST/span/operation, W1 ID/disposition/interpretation) and 19 supplements (ID/span/text). All 1109 CP317 links matched canonical inventory, W1 crosswalk and partition membership; seven reviewed historical partitions refetched, not all 25. B05 category-index union independently rechecked; 159 supplements retained from CP409, not item-by-item re-audited.",
+    "Grouped source contracts qualify local rows; no per-access runtime execution, empirical equivalence, or new cross-owner acceptance. Malformed data, dynamic objects, alias mutation and dispatch are conditional, not asserted reachable. E16/E17 and index/provider paths bounded only.",
+    "Git identity and remote text readback, not independent cryptographic signature verification. No RAW payload, runtime, ZIP or production/main changes. Current explicit scope overrides historical ZIP/runtime startup rules."
+  ]
+}

@@ -1,0 +1,3822 @@
+{
+  "checkpoint": 416,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "aad46a9789a9c7c69d411fef1f67000e9b62487e",
+  "entry_tree": "5f0db085597591ca31fcb5c25e455714f4041eff",
+  "scope": "B06-07 E13–E15 lines 420–457; scoped local only",
+  "source": {
+    "path": "engine/pipeline/e_zone_detector.py",
+    "blob": "240369edf3352006082efe094eb68ac027d6689f",
+    "range": [
+      420,
+      457
+    ],
+    "canonical_inventory": "f535795a7a247f3fa37307be6f426270ef9e0fbf",
+    "historical_inventory": "1308a85ef49957aeb5e603c5347916fb79d616bf",
+    "historical_partition": "c0092daefdefbd7aa45736c141c74d86cb581ba8",
+    "crosswalk": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "cp317": [
+      "c38cf82dcec0df3e2ed41fdf13a3760ac8a0200f",
+      "96c21b30d6e4a1f309443e08631c518bc4cc2c4f"
+    ]
+  },
+  "groups": [
+    {
+      "id": "E13-A",
+      "span": [
+        420,
+        423
+      ],
+      "contract": "Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions."
+    },
+    {
+      "id": "E13-B",
+      "span": [
+        424,
+        429
+      ],
+      "contract": "If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers."
+    },
+    {
+      "id": "E13-C",
+      "span": [
+        430,
+        432
+      ],
+      "contract": "Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ."
+    },
+    {
+      "id": "E13-D",
+      "span": [
+        433,
+        435
+      ],
+      "contract": "For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not."
+    },
+    {
+      "id": "E14-A",
+      "span": [
+        437,
+        438
+      ],
+      "contract": "Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates."
+    },
+    {
+      "id": "E15-A",
+      "span": [
+        440,
+        444
+      ],
+      "contract": "Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof."
+    },
+    {
+      "id": "E15-B",
+      "span": [
+        445,
+        448
+      ],
+      "contract": "On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps."
+    },
+    {
+      "id": "E15-C",
+      "span": [
+        449,
+        449
+      ],
+      "contract": "After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback."
+    },
+    {
+      "id": "E15-D",
+      "span": [
+        450,
+        450
+      ],
+      "contract": "After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement."
+    },
+    {
+      "id": "E15-E",
+      "span": [
+        451,
+        454
+      ],
+      "contract": "Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here."
+    },
+    {
+      "id": "E15-F",
+      "span": [
+        455,
+        456
+      ],
+      "contract": "For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 69,
+      "node": 2037,
+      "ast_node": 2037,
+      "span": [
+        424,
+        8,
+        429,
+        13
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "If lower_index not None, delegate and return immediately; indexed miss does not trigger scan and no local empty-range guard.",
+      "prior_w1": {
+        "original_id": 2037,
+        "disposition": "VERIFIED",
+        "interpretation": "If lower_index not None, delegate and return immediately; indexed miss does not trigger scan and no local empty-range guard."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 70,
+      "node": 2043,
+      "ast_node": 2043,
+      "span": [
+        426,
+        16,
+        428,
+        71
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Select first_less if less truthy, else first_greater; only selected call evaluated.",
+      "prior_w1": {
+        "original_id": 2043,
+        "disposition": "VERIFIED",
+        "interpretation": "Select first_less if less truthy, else first_greater; only selected call evaluated."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 71,
+      "node": 2061,
+      "ast_node": 2061,
+      "span": [
+        430,
+        16,
+        430,
+        41
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Scan field is low when less truthy, high otherwise.",
+      "prior_w1": {
+        "original_id": 2061,
+        "disposition": "VERIFIED",
+        "interpretation": "Scan field is low when less truthy, high otherwise."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 72,
+      "node": 2065,
+      "ast_node": 2065,
+      "span": [
+        431,
+        8,
+        434,
+        31
+      ],
+      "operation": [
+        26,
+        "For",
+        [
+          "next",
+          "exhausted"
+        ]
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Iterate Python range(left,right) in increasing positions, right excluded, no local clamp.",
+      "prior_w1": {
+        "original_id": 2065,
+        "disposition": "VERIFIED",
+        "interpretation": "Iterate Python range(left,right) in increasing positions, right excluded, no local clamp."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 73,
+      "node": 2082,
+      "ast_node": 2082,
+      "span": [
+        433,
+        12,
+        434,
+        31
+      ],
+      "operation": [
+        26,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Return first scanned position whose selected strict comparison is true; exhausted returns None.",
+      "prior_w1": {
+        "original_id": 2082,
+        "disposition": "VERIFIED",
+        "interpretation": "Return first scanned position whose selected strict comparison is true; exhausted returns None."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 74,
+      "node": 2083,
+      "ast_node": 2083,
+      "span": [
+        433,
+        15,
+        433,
+        55
+      ],
+      "operation": [
+        26,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Evaluate value < level only if less truthy, otherwise value > level.",
+      "prior_w1": {
+        "original_id": 2083,
+        "disposition": "VERIFIED",
+        "interpretation": "Evaluate value < level only if less truthy, otherwise value > level."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 75,
+      "node": 2127,
+      "ast_node": 2127,
+      "span": [
+        443,
+        17,
+        443,
+        89
+      ],
+      "operation": [
+        28,
+        "IfExp",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Consult direction cache only when mapping not None, including an empty mapping.",
+      "prior_w1": {
+        "original_id": 2127,
+        "disposition": "VERIFIED",
+        "interpretation": "Consult direction cache only when mapping not None, including an empty mapping."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 76,
+      "node": 2137,
+      "ast_node": 2137,
+      "span": [
+        444,
+        8,
+        456,
+        80
+      ],
+      "operation": [
+        28,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E15-A",
+      "contained_groups": [
+        "E15-B",
+        "E15-C",
+        "E15-D",
+        "E15-E",
+        "E15-F"
+      ],
+      "semantic_role": "Compute only if cached is None; otherwise unpack cached triple by reference.",
+      "prior_w1": {
+        "original_id": 2137,
+        "disposition": "VERIFIED",
+        "interpretation": "Compute only if cached is None; otherwise unpack cached triple by reference."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 77,
+      "node": 2153,
+      "ast_node": 2153,
+      "span": [
+        447,
+        20,
+        447,
+        26
+      ],
+      "operation": [
+        29,
+        "comprehension",
+        [
+          "next",
+          "exhausted"
+        ]
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Visit all main candles in sequence order for directional normalized price list.",
+      "prior_w1": {
+        "original_id": 2153,
+        "disposition": "VERIFIED",
+        "interpretation": "Visit all main candles in sequence order for directional normalized price list."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 78,
+      "node": 2167,
+      "ast_node": 2167,
+      "span": [
+        449,
+        68,
+        449,
+        74
+      ],
+      "operation": [
+        30,
+        "comprehension",
+        [
+          "next",
+          "exhausted"
+        ]
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Visit all main candles again in order for integer candle code list.",
+      "prior_w1": {
+        "original_id": 2167,
+        "disposition": "VERIFIED",
+        "interpretation": "Visit all main candles again in order for integer candle code list."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 79,
+      "node": 2177,
+      "ast_node": 2177,
+      "span": [
+        451,
+        12,
+        454,
+        17
+      ],
+      "operation": [
+        28,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Store same three detector objects in chronology mapping if mapping non-None, otherwise keep detector-local.",
+      "prior_w1": {
+        "original_id": 2177,
+        "disposition": "VERIFIED",
+        "interpretation": "Store same three detector objects in chronology mapping if mapping non-None, otherwise keep detector-local."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 42,
+      "node": 2038,
+      "ast_node": 2038,
+      "span": [
+        424,
+        11,
+        424,
+        39
+      ],
+      "operation": [
+        26,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "If lower_index not None, delegate and return immediately; indexed miss does not trigger scan and no local empty-range guard.",
+      "prior_w1": {
+        "original_id": 2038,
+        "disposition": "VERIFIED",
+        "interpretation": "If lower_index not None, delegate and return immediately; indexed miss does not trigger scan and no local empty-range guard."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 43,
+      "node": 2085,
+      "ast_node": 2085,
+      "span": [
+        433,
+        15,
+        433,
+        28
+      ],
+      "operation": [
+        26,
+        [
+          "Lt"
+        ]
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Strict less excludes equal level.",
+      "prior_w1": {
+        "original_id": 2085,
+        "disposition": "VERIFIED",
+        "interpretation": "Strict less excludes equal level."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 44,
+      "node": 2088,
+      "ast_node": 2088,
+      "span": [
+        433,
+        42,
+        433,
+        55
+      ],
+      "operation": [
+        26,
+        [
+          "Gt"
+        ]
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Strict greater excludes equal level.",
+      "prior_w1": {
+        "original_id": 2088,
+        "disposition": "VERIFIED",
+        "interpretation": "Strict greater excludes equal level."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 45,
+      "node": 2128,
+      "ast_node": 2128,
+      "span": [
+        443,
+        54,
+        443,
+        79
+      ],
+      "operation": [
+        28,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Consult direction cache only when mapping not None, including an empty mapping.",
+      "prior_w1": {
+        "original_id": 2128,
+        "disposition": "VERIFIED",
+        "interpretation": "Consult direction cache only when mapping not None, including an empty mapping."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 46,
+      "node": 2138,
+      "ast_node": 2138,
+      "span": [
+        444,
+        11,
+        444,
+        25
+      ],
+      "operation": [
+        28,
+        [
+          "Is"
+        ]
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Compute only if cached is None; otherwise unpack cached triple by reference.",
+      "prior_w1": {
+        "original_id": 2138,
+        "disposition": "VERIFIED",
+        "interpretation": "Compute only if cached is None; otherwise unpack cached triple by reference."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 47,
+      "node": 2178,
+      "ast_node": 2178,
+      "span": [
+        451,
+        15,
+        451,
+        40
+      ],
+      "operation": [
+        28,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Store same three detector objects in chronology mapping if mapping non-None, otherwise keep detector-local.",
+      "prior_w1": {
+        "original_id": 2178,
+        "disposition": "VERIFIED",
+        "interpretation": "Store same three detector objects in chronology mapping if mapping non-None, otherwise keep detector-local."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "arithmetic",
+      "current_row": 32,
+      "node": 2095,
+      "ast_node": 2095,
+      "span": [
+        422,
+        9,
+        422,
+        19
+      ],
+      "operation": [
+        19,
+        "BitOr"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Optional type annotation union; not runtime price or chronology arithmetic.",
+      "prior_w1": {
+        "original_id": 2095,
+        "disposition": "NOT_APPLICABLE",
+        "interpretation": "Optional type annotation union; not runtime price or chronology arithmetic."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 126,
+      "node": 2045,
+      "ast_node": 2045,
+      "span": [
+        426,
+        16,
+        426,
+        63
+      ],
+      "operation": [
+        26,
+        "self.lower_index.first_less",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Call first_less(left,right,level) unchanged; strict search and index clamping owned by index.",
+      "prior_w1": {
+        "original_id": 2045,
+        "disposition": "VERIFIED",
+        "interpretation": "Call first_less(left,right,level) unchanged; strict search and index clamping owned by index."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 127,
+      "node": 2052,
+      "ast_node": 2052,
+      "span": [
+        428,
+        21,
+        428,
+        71
+      ],
+      "operation": [
+        26,
+        "self.lower_index.first_greater",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        3,
+        []
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Call first_greater(left,right,level) unchanged; strict search and index clamping owned by index.",
+      "prior_w1": {
+        "original_id": 2052,
+        "disposition": "VERIFIED",
+        "interpretation": "Call first_greater(left,right,level) unchanged; strict search and index clamping owned by index."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 128,
+      "node": 2067,
+      "ast_node": 2067,
+      "span": [
+        431,
+        24,
+        431,
+        42
+      ],
+      "operation": [
+        26,
+        "range",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Iterate Python range(left,right) in increasing positions, right excluded, no local clamp.",
+      "prior_w1": {
+        "original_id": 2067,
+        "disposition": "VERIFIED",
+        "interpretation": "Iterate Python range(left,right) in increasing positions, right excluded, no local clamp."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 129,
+      "node": 2073,
+      "ast_node": 2073,
+      "span": [
+        432,
+        20,
+        432,
+        68
+      ],
+      "operation": [
+        26,
+        "as_decimal",
+        "IMPORTED_INTERNAL_CANDIDATE",
+        [
+          "engine/pipeline/core_utils.py:51:0:as_decimal"
+        ],
+        1,
+        []
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Read only selected field from lower[position] and normalize once with as_decimal; level is unchanged.",
+      "prior_w1": {
+        "original_id": 2073,
+        "disposition": "VERIFIED",
+        "interpretation": "Read only selected field from lower[position] and normalize once with as_decimal; level is unchanged."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 130,
+      "node": 2075,
+      "ast_node": 2075,
+      "span": [
+        432,
+        31,
+        432,
+        67
+      ],
+      "operation": [
+        26,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Read only selected field from lower[position] and normalize once with as_decimal; level is unchanged.",
+      "prior_w1": {
+        "original_id": 2075,
+        "disposition": "VERIFIED",
+        "interpretation": "Read only selected field from lower[position] and normalize once with as_decimal; level is unchanged."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 131,
+      "node": 2103,
+      "ast_node": 2103,
+      "span": [
+        438,
+        15,
+        438,
+        66
+      ],
+      "operation": [
+        27,
+        "as_decimal",
+        "IMPORTED_INTERNAL_CANDIDATE",
+        [
+          "engine/pipeline/core_utils.py:51:0:as_decimal"
+        ],
+        1,
+        []
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Read item attribute named by policy.extreme_attr without default, normalize with as_decimal; return unchanged normalized value.",
+      "prior_w1": {
+        "original_id": 2103,
+        "disposition": "VERIFIED",
+        "interpretation": "Read item attribute named by policy.extreme_attr without default, normalize with as_decimal; return unchanged normalized value."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 132,
+      "node": 2105,
+      "ast_node": 2105,
+      "span": [
+        438,
+        26,
+        438,
+        65
+      ],
+      "operation": [
+        27,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Read item attribute named by policy.extreme_attr without default, normalize with as_decimal; return unchanged normalized value.",
+      "prior_w1": {
+        "original_id": 2105,
+        "disposition": "VERIFIED",
+        "interpretation": "Read item attribute named by policy.extreme_attr without default, normalize with as_decimal; return unchanged normalized value."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 133,
+      "node": 2120,
+      "ast_node": 2120,
+      "span": [
+        442,
+        24,
+        442,
+        69
+      ],
+      "operation": [
+        28,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        3,
+        []
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Read optional chronology._e_main_extremes with None default; do not create missing dict.",
+      "prior_w1": {
+        "original_id": 2120,
+        "disposition": "VERIFIED",
+        "interpretation": "Read optional chronology._e_main_extremes with None default; do not create missing dict."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 134,
+      "node": 2131,
+      "ast_node": 2131,
+      "span": [
+        443,
+        17,
+        443,
+        50
+      ],
+      "operation": [
+        28,
+        "main_extremes.get",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Get cached triple for exact direction, default None.",
+      "prior_w1": {
+        "original_id": 2131,
+        "disposition": "VERIFIED",
+        "interpretation": "Get cached triple for exact direction, default None."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 135,
+      "node": 2145,
+      "ast_node": 2145,
+      "span": [
+        446,
+        16,
+        446,
+        69
+      ],
+      "operation": [
+        29,
+        "as_decimal",
+        "IMPORTED_INTERNAL_CANDIDATE",
+        [
+          "engine/pipeline/core_utils.py:51:0:as_decimal"
+        ],
+        1,
+        []
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Read configured extreme attribute, normalize price; no rounding by E.",
+      "prior_w1": {
+        "original_id": 2145,
+        "disposition": "VERIFIED",
+        "interpretation": "Read configured extreme attribute, normalize price; no rounding by E."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 136,
+      "node": 2147,
+      "ast_node": 2147,
+      "span": [
+        446,
+        27,
+        446,
+        68
+      ],
+      "operation": [
+        29,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Read configured extreme attribute, normalize price; no rounding by E.",
+      "prior_w1": {
+        "original_id": 2147,
+        "disposition": "VERIFIED",
+        "interpretation": "Read configured extreme attribute, normalize price; no rounding by E."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 137,
+      "node": 2161,
+      "ast_node": 2161,
+      "span": [
+        449,
+        34,
+        449,
+        63
+      ],
+      "operation": [
+        30,
+        "int",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Read candle.index without default and convert to int; preserve physical code rather than position.",
+      "prior_w1": {
+        "original_id": 2161,
+        "disposition": "VERIFIED",
+        "interpretation": "Read candle.index without default and convert to int; preserve physical code rather than position."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 138,
+      "node": 2163,
+      "ast_node": 2163,
+      "span": [
+        449,
+        38,
+        449,
+        62
+      ],
+      "operation": [
+        30,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        2,
+        []
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Read candle.index without default and convert to int; preserve physical code rather than position.",
+      "prior_w1": {
+        "original_id": 2163,
+        "disposition": "VERIFIED",
+        "interpretation": "Read candle.index without default and convert to int; preserve physical code rather than position."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 139,
+      "node": 2174,
+      "ast_node": 2174,
+      "span": [
+        450,
+        35,
+        450,
+        63
+      ],
+      "operation": [
+        28,
+        "self._build_extreme_sparse",
+        "SELF_CLASS_CANDIDATE",
+        [
+          "engine/pipeline/e_zone_detector.py:458:4:_build_extreme_sparse"
+        ],
+        0,
+        []
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "Build sparse table after prices and codes assigned.",
+      "prior_w1": {
+        "original_id": 2174,
+        "disposition": "VERIFIED",
+        "interpretation": "Build sparse table after prices and codes assigned."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1172,
+      "node": 2028,
+      "ast_node": 2028,
+      "span": [
+        421,
+        20,
+        421,
+        23
+      ],
+      "operation": [
+        19,
+        2025,
+        "Load",
+        "int"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1173,
+      "node": 2030,
+      "ast_node": 2030,
+      "span": [
+        421,
+        32,
+        421,
+        35
+      ],
+      "operation": [
+        19,
+        2025,
+        "Load",
+        "int"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1174,
+      "node": 2032,
+      "ast_node": 2032,
+      "span": [
+        421,
+        44,
+        421,
+        51
+      ],
+      "operation": [
+        19,
+        2025,
+        "Load",
+        "Decimal"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1175,
+      "node": 2034,
+      "ast_node": 2034,
+      "span": [
+        421,
+        62,
+        421,
+        66
+      ],
+      "operation": [
+        19,
+        2025,
+        "Load",
+        "bool"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1176,
+      "node": 2039,
+      "ast_node": 2039,
+      "span": [
+        424,
+        11,
+        424,
+        27
+      ],
+      "operation": [
+        26,
+        2037,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower_index: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1177,
+      "node": 2040,
+      "ast_node": 2040,
+      "span": [
+        424,
+        11,
+        424,
+        15
+      ],
+      "operation": [
+        26,
+        2037,
+        "Load",
+        "self"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1178,
+      "node": 2044,
+      "ast_node": 2044,
+      "span": [
+        427,
+        19,
+        427,
+        23
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "less"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load less: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1179,
+      "node": 2046,
+      "ast_node": 2046,
+      "span": [
+        426,
+        16,
+        426,
+        43
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self.lower_index.first_less"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower_index.first_less: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1180,
+      "node": 2047,
+      "ast_node": 2047,
+      "span": [
+        426,
+        16,
+        426,
+        32
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower_index: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1181,
+      "node": 2048,
+      "ast_node": 2048,
+      "span": [
+        426,
+        16,
+        426,
+        20
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1182,
+      "node": 2049,
+      "ast_node": 2049,
+      "span": [
+        426,
+        44,
+        426,
+        48
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "left"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load left: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1183,
+      "node": 2050,
+      "ast_node": 2050,
+      "span": [
+        426,
+        50,
+        426,
+        55
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "right"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load right: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1184,
+      "node": 2051,
+      "ast_node": 2051,
+      "span": [
+        426,
+        57,
+        426,
+        62
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "level"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load level: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1185,
+      "node": 2053,
+      "ast_node": 2053,
+      "span": [
+        428,
+        21,
+        428,
+        51
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self.lower_index.first_greater"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower_index.first_greater: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1186,
+      "node": 2054,
+      "ast_node": 2054,
+      "span": [
+        428,
+        21,
+        428,
+        37
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self.lower_index"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower_index: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1187,
+      "node": 2055,
+      "ast_node": 2055,
+      "span": [
+        428,
+        21,
+        428,
+        25
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "self"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1188,
+      "node": 2056,
+      "ast_node": 2056,
+      "span": [
+        428,
+        52,
+        428,
+        56
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "left"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load left: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1189,
+      "node": 2057,
+      "ast_node": 2057,
+      "span": [
+        428,
+        58,
+        428,
+        63
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "right"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load right: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1190,
+      "node": 2058,
+      "ast_node": 2058,
+      "span": [
+        428,
+        65,
+        428,
+        70
+      ],
+      "operation": [
+        26,
+        2042,
+        "Load",
+        "level"
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Load level: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1191,
+      "node": 2060,
+      "ast_node": 2060,
+      "span": [
+        430,
+        8,
+        430,
+        13
+      ],
+      "operation": [
+        26,
+        2059,
+        "Store",
+        "field"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Store field: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1192,
+      "node": 2062,
+      "ast_node": 2062,
+      "span": [
+        430,
+        25,
+        430,
+        29
+      ],
+      "operation": [
+        26,
+        2059,
+        "Load",
+        "less"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load less: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1193,
+      "node": 2066,
+      "ast_node": 2066,
+      "span": [
+        431,
+        12,
+        431,
+        20
+      ],
+      "operation": [
+        26,
+        2065,
+        "Store",
+        "position"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Store position: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1194,
+      "node": 2068,
+      "ast_node": 2068,
+      "span": [
+        431,
+        24,
+        431,
+        29
+      ],
+      "operation": [
+        26,
+        2065,
+        "Load",
+        "range"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load range: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1195,
+      "node": 2069,
+      "ast_node": 2069,
+      "span": [
+        431,
+        30,
+        431,
+        34
+      ],
+      "operation": [
+        26,
+        2065,
+        "Load",
+        "left"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load left: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1196,
+      "node": 2070,
+      "ast_node": 2070,
+      "span": [
+        431,
+        36,
+        431,
+        41
+      ],
+      "operation": [
+        26,
+        2065,
+        "Load",
+        "right"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load right: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1197,
+      "node": 2072,
+      "ast_node": 2072,
+      "span": [
+        432,
+        12,
+        432,
+        17
+      ],
+      "operation": [
+        26,
+        2071,
+        "Store",
+        "value"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Store value: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1198,
+      "node": 2074,
+      "ast_node": 2074,
+      "span": [
+        432,
+        20,
+        432,
+        30
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "as_decimal"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load as_decimal: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1199,
+      "node": 2076,
+      "ast_node": 2076,
+      "span": [
+        432,
+        31,
+        432,
+        38
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "getattr"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1200,
+      "node": 2077,
+      "ast_node": 2077,
+      "span": [
+        432,
+        39,
+        432,
+        59
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "self.lower[]"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower[]: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1201,
+      "node": 2078,
+      "ast_node": 2078,
+      "span": [
+        432,
+        39,
+        432,
+        49
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "self.lower"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load self.lower: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1202,
+      "node": 2079,
+      "ast_node": 2079,
+      "span": [
+        432,
+        39,
+        432,
+        43
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "self"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load self: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1203,
+      "node": 2080,
+      "ast_node": 2080,
+      "span": [
+        432,
+        50,
+        432,
+        58
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "position"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load position: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1204,
+      "node": 2081,
+      "ast_node": 2081,
+      "span": [
+        432,
+        61,
+        432,
+        66
+      ],
+      "operation": [
+        26,
+        2071,
+        "Load",
+        "field"
+      ],
+      "group": "E13-C",
+      "contained_groups": [],
+      "semantic_role": "Load field: Only exact None lower_index enters linear path. Choose low once for truthy less else high; iterate increasing positions in half-open range(left,right), no clamp. Empty/reversed integer range returns None without row access. For ordinary sequence, valid negative positions use Python end-relative indexing but return the original possibly negative position; too negative or past end raises IndexError if reached. A prior hit can avoid later invalid positions. Read selected lower row and required selected field only, then as_decimal; native helper returns existing Decimal unchanged, otherwise Decimal(str(value)). Supplied level unchanged. Range construction, indexing, attribute access and normalization may raise; custom sequences may differ.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1205,
+      "node": 2084,
+      "ast_node": 2084,
+      "span": [
+        433,
+        32,
+        433,
+        36
+      ],
+      "operation": [
+        26,
+        2082,
+        "Load",
+        "less"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load less: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1206,
+      "node": 2086,
+      "ast_node": 2086,
+      "span": [
+        433,
+        15,
+        433,
+        20
+      ],
+      "operation": [
+        26,
+        2082,
+        "Load",
+        "value"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load value: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1207,
+      "node": 2087,
+      "ast_node": 2087,
+      "span": [
+        433,
+        23,
+        433,
+        28
+      ],
+      "operation": [
+        26,
+        2082,
+        "Load",
+        "level"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load level: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1208,
+      "node": 2089,
+      "ast_node": 2089,
+      "span": [
+        433,
+        42,
+        433,
+        47
+      ],
+      "operation": [
+        26,
+        2082,
+        "Load",
+        "value"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load value: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1209,
+      "node": 2090,
+      "ast_node": 2090,
+      "span": [
+        433,
+        50,
+        433,
+        55
+      ],
+      "operation": [
+        26,
+        2082,
+        "Load",
+        "level"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load level: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1210,
+      "node": 2092,
+      "ast_node": 2092,
+      "span": [
+        434,
+        23,
+        434,
+        31
+      ],
+      "operation": [
+        26,
+        2091,
+        "Load",
+        "position"
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Load position: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1211,
+      "node": 2096,
+      "ast_node": 2096,
+      "span": [
+        422,
+        9,
+        422,
+        12
+      ],
+      "operation": [
+        19,
+        2025,
+        "Load",
+        "int"
+      ],
+      "group": "E13-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Inputs left/right positions, level, keyword-only less. Optional integer return annotation; annotations postponed, not runtime type guards. No local conversion of level or positions.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1212,
+      "node": 2101,
+      "ast_node": 2101,
+      "span": [
+        437,
+        32,
+        437,
+        38
+      ],
+      "operation": [
+        19,
+        2098,
+        "Load",
+        "object"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1213,
+      "node": 2104,
+      "ast_node": 2104,
+      "span": [
+        438,
+        15,
+        438,
+        25
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "as_decimal"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load as_decimal: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1214,
+      "node": 2106,
+      "ast_node": 2106,
+      "span": [
+        438,
+        26,
+        438,
+        33
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "getattr"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1215,
+      "node": 2107,
+      "ast_node": 2107,
+      "span": [
+        438,
+        34,
+        438,
+        38
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "item"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load item: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1216,
+      "node": 2108,
+      "ast_node": 2108,
+      "span": [
+        438,
+        40,
+        438,
+        64
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "self.policy.extreme_attr"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.policy.extreme_attr: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1217,
+      "node": 2109,
+      "ast_node": 2109,
+      "span": [
+        438,
+        40,
+        438,
+        51
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "self.policy"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.policy: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1218,
+      "node": 2110,
+      "ast_node": 2110,
+      "span": [
+        438,
+        40,
+        438,
+        44
+      ],
+      "operation": [
+        27,
+        2102,
+        "Load",
+        "self"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1219,
+      "node": 2111,
+      "ast_node": 2111,
+      "span": [
+        437,
+        43,
+        437,
+        50
+      ],
+      "operation": [
+        19,
+        2098,
+        "Load",
+        "Decimal"
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: postponed annotation; no local price arithmetic or runtime type check. Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1220,
+      "node": 2115,
+      "ast_node": 2115,
+      "span": [
+        441,
+        8,
+        441,
+        18
+      ],
+      "operation": [
+        28,
+        2114,
+        "Store",
+        "chronology"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Store chronology: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1221,
+      "node": 2116,
+      "ast_node": 2116,
+      "span": [
+        441,
+        21,
+        441,
+        36
+      ],
+      "operation": [
+        28,
+        2114,
+        "Load",
+        "self.chronology"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.chronology: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1222,
+      "node": 2117,
+      "ast_node": 2117,
+      "span": [
+        441,
+        21,
+        441,
+        25
+      ],
+      "operation": [
+        28,
+        2114,
+        "Load",
+        "self"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1223,
+      "node": 2119,
+      "ast_node": 2119,
+      "span": [
+        442,
+        8,
+        442,
+        21
+      ],
+      "operation": [
+        28,
+        2118,
+        "Store",
+        "main_extremes"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Store main_extremes: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1224,
+      "node": 2121,
+      "ast_node": 2121,
+      "span": [
+        442,
+        24,
+        442,
+        31
+      ],
+      "operation": [
+        28,
+        2118,
+        "Load",
+        "getattr"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1225,
+      "node": 2122,
+      "ast_node": 2122,
+      "span": [
+        442,
+        32,
+        442,
+        42
+      ],
+      "operation": [
+        28,
+        2118,
+        "Load",
+        "chronology"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load chronology: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1226,
+      "node": 2126,
+      "ast_node": 2126,
+      "span": [
+        443,
+        8,
+        443,
+        14
+      ],
+      "operation": [
+        28,
+        2125,
+        "Store",
+        "cached"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Store cached: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1227,
+      "node": 2129,
+      "ast_node": 2129,
+      "span": [
+        443,
+        54,
+        443,
+        67
+      ],
+      "operation": [
+        28,
+        2125,
+        "Load",
+        "main_extremes"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load main_extremes: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1228,
+      "node": 2132,
+      "ast_node": 2132,
+      "span": [
+        443,
+        17,
+        443,
+        34
+      ],
+      "operation": [
+        28,
+        2125,
+        "Load",
+        "main_extremes.get"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load main_extremes.get: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1229,
+      "node": 2133,
+      "ast_node": 2133,
+      "span": [
+        443,
+        17,
+        443,
+        30
+      ],
+      "operation": [
+        28,
+        2125,
+        "Load",
+        "main_extremes"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load main_extremes: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1230,
+      "node": 2134,
+      "ast_node": 2134,
+      "span": [
+        443,
+        35,
+        443,
+        49
+      ],
+      "operation": [
+        28,
+        2125,
+        "Load",
+        "self.direction"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.direction: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1231,
+      "node": 2135,
+      "ast_node": 2135,
+      "span": [
+        443,
+        35,
+        443,
+        39
+      ],
+      "operation": [
+        28,
+        2125,
+        "Load",
+        "self"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1232,
+      "node": 2139,
+      "ast_node": 2139,
+      "span": [
+        444,
+        11,
+        444,
+        17
+      ],
+      "operation": [
+        28,
+        2137,
+        "Load",
+        "cached"
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "Load cached: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1233,
+      "node": 2142,
+      "ast_node": 2142,
+      "span": [
+        445,
+        12,
+        445,
+        29
+      ],
+      "operation": [
+        28,
+        2141,
+        "Store",
+        "self._stop_values"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Store self._stop_values: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1234,
+      "node": 2143,
+      "ast_node": 2143,
+      "span": [
+        445,
+        12,
+        445,
+        16
+      ],
+      "operation": [
+        28,
+        2141,
+        "Load",
+        "self"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1235,
+      "node": 2146,
+      "ast_node": 2146,
+      "span": [
+        446,
+        16,
+        446,
+        26
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "as_decimal"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load as_decimal: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1236,
+      "node": 2148,
+      "ast_node": 2148,
+      "span": [
+        446,
+        27,
+        446,
+        34
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "getattr"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1237,
+      "node": 2149,
+      "ast_node": 2149,
+      "span": [
+        446,
+        35,
+        446,
+        41
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "candle"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load candle: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1238,
+      "node": 2150,
+      "ast_node": 2150,
+      "span": [
+        446,
+        43,
+        446,
+        67
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "self.policy.extreme_attr"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.policy.extreme_attr: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1239,
+      "node": 2151,
+      "ast_node": 2151,
+      "span": [
+        446,
+        43,
+        446,
+        54
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "self.policy"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.policy: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1240,
+      "node": 2152,
+      "ast_node": 2152,
+      "span": [
+        446,
+        43,
+        446,
+        47
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "self"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1241,
+      "node": 2154,
+      "ast_node": 2154,
+      "span": [
+        447,
+        20,
+        447,
+        26
+      ],
+      "operation": [
+        29,
+        2141,
+        "Store",
+        "candle"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Store candle: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1242,
+      "node": 2155,
+      "ast_node": 2155,
+      "span": [
+        447,
+        30,
+        447,
+        42
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "self.candles"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self.candles: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1243,
+      "node": 2156,
+      "ast_node": 2156,
+      "span": [
+        447,
+        30,
+        447,
+        34
+      ],
+      "operation": [
+        29,
+        2141,
+        "Load",
+        "self"
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1244,
+      "node": 2158,
+      "ast_node": 2158,
+      "span": [
+        449,
+        12,
+        449,
+        30
+      ],
+      "operation": [
+        28,
+        2157,
+        "Store",
+        "self._candle_codes"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Store self._candle_codes: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1245,
+      "node": 2159,
+      "ast_node": 2159,
+      "span": [
+        449,
+        12,
+        449,
+        16
+      ],
+      "operation": [
+        28,
+        2157,
+        "Load",
+        "self"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load self: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1246,
+      "node": 2162,
+      "ast_node": 2162,
+      "span": [
+        449,
+        34,
+        449,
+        37
+      ],
+      "operation": [
+        30,
+        2157,
+        "Load",
+        "int"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load int: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1247,
+      "node": 2164,
+      "ast_node": 2164,
+      "span": [
+        449,
+        38,
+        449,
+        45
+      ],
+      "operation": [
+        30,
+        2157,
+        "Load",
+        "getattr"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1248,
+      "node": 2165,
+      "ast_node": 2165,
+      "span": [
+        449,
+        46,
+        449,
+        52
+      ],
+      "operation": [
+        30,
+        2157,
+        "Load",
+        "candle"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load candle: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1249,
+      "node": 2168,
+      "ast_node": 2168,
+      "span": [
+        449,
+        68,
+        449,
+        74
+      ],
+      "operation": [
+        30,
+        2157,
+        "Store",
+        "candle"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Store candle: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1250,
+      "node": 2169,
+      "ast_node": 2169,
+      "span": [
+        449,
+        78,
+        449,
+        90
+      ],
+      "operation": [
+        30,
+        2157,
+        "Load",
+        "self.candles"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load self.candles: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1251,
+      "node": 2170,
+      "ast_node": 2170,
+      "span": [
+        449,
+        78,
+        449,
+        82
+      ],
+      "operation": [
+        30,
+        2157,
+        "Load",
+        "self"
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "Load self: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1252,
+      "node": 2172,
+      "ast_node": 2172,
+      "span": [
+        450,
+        12,
+        450,
+        32
+      ],
+      "operation": [
+        28,
+        2171,
+        "Store",
+        "self._extreme_sparse"
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "Store self._extreme_sparse: After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1253,
+      "node": 2173,
+      "ast_node": 2173,
+      "span": [
+        450,
+        12,
+        450,
+        16
+      ],
+      "operation": [
+        28,
+        2171,
+        "Load",
+        "self"
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "Load self: After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1254,
+      "node": 2175,
+      "ast_node": 2175,
+      "span": [
+        450,
+        35,
+        450,
+        61
+      ],
+      "operation": [
+        28,
+        2171,
+        "Load",
+        "self._build_extreme_sparse"
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "Load self._build_extreme_sparse: After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1255,
+      "node": 2176,
+      "ast_node": 2176,
+      "span": [
+        450,
+        35,
+        450,
+        39
+      ],
+      "operation": [
+        28,
+        2171,
+        "Load",
+        "self"
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "Load self: After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1256,
+      "node": 2179,
+      "ast_node": 2179,
+      "span": [
+        451,
+        15,
+        451,
+        28
+      ],
+      "operation": [
+        28,
+        2177,
+        "Load",
+        "main_extremes"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load main_extremes: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1257,
+      "node": 2182,
+      "ast_node": 2182,
+      "span": [
+        452,
+        16,
+        452,
+        45
+      ],
+      "operation": [
+        28,
+        2181,
+        "Store",
+        "main_extremes[]"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Store main_extremes[]: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1258,
+      "node": 2183,
+      "ast_node": 2183,
+      "span": [
+        452,
+        16,
+        452,
+        29
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "main_extremes"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load main_extremes: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1259,
+      "node": 2184,
+      "ast_node": 2184,
+      "span": [
+        452,
+        30,
+        452,
+        44
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self.direction"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self.direction: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1260,
+      "node": 2185,
+      "ast_node": 2185,
+      "span": [
+        452,
+        30,
+        452,
+        34
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1261,
+      "node": 2187,
+      "ast_node": 2187,
+      "span": [
+        453,
+        20,
+        453,
+        37
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self._stop_values"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self._stop_values: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1262,
+      "node": 2188,
+      "ast_node": 2188,
+      "span": [
+        453,
+        20,
+        453,
+        24
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1263,
+      "node": 2189,
+      "ast_node": 2189,
+      "span": [
+        453,
+        39,
+        453,
+        57
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self._candle_codes"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self._candle_codes: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1264,
+      "node": 2190,
+      "ast_node": 2190,
+      "span": [
+        453,
+        39,
+        453,
+        43
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1265,
+      "node": 2191,
+      "ast_node": 2191,
+      "span": [
+        453,
+        59,
+        453,
+        79
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self._extreme_sparse"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self._extreme_sparse: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1266,
+      "node": 2192,
+      "ast_node": 2192,
+      "span": [
+        453,
+        59,
+        453,
+        63
+      ],
+      "operation": [
+        28,
+        2181,
+        "Load",
+        "self"
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "Load self: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1267,
+      "node": 2195,
+      "ast_node": 2195,
+      "span": [
+        456,
+        12,
+        456,
+        29
+      ],
+      "operation": [
+        28,
+        2193,
+        "Store",
+        "self._stop_values"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Store self._stop_values: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1268,
+      "node": 2196,
+      "ast_node": 2196,
+      "span": [
+        456,
+        12,
+        456,
+        16
+      ],
+      "operation": [
+        28,
+        2193,
+        "Load",
+        "self"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Load self: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1269,
+      "node": 2197,
+      "ast_node": 2197,
+      "span": [
+        456,
+        31,
+        456,
+        49
+      ],
+      "operation": [
+        28,
+        2193,
+        "Store",
+        "self._candle_codes"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Store self._candle_codes: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1270,
+      "node": 2198,
+      "ast_node": 2198,
+      "span": [
+        456,
+        31,
+        456,
+        35
+      ],
+      "operation": [
+        28,
+        2193,
+        "Load",
+        "self"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Load self: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1271,
+      "node": 2199,
+      "ast_node": 2199,
+      "span": [
+        456,
+        51,
+        456,
+        71
+      ],
+      "operation": [
+        28,
+        2193,
+        "Store",
+        "self._extreme_sparse"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Store self._extreme_sparse: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1272,
+      "node": 2200,
+      "ast_node": 2200,
+      "span": [
+        456,
+        51,
+        456,
+        55
+      ],
+      "operation": [
+        28,
+        2193,
+        "Load",
+        "self"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Load self: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1273,
+      "node": 2201,
+      "ast_node": 2201,
+      "span": [
+        456,
+        74,
+        456,
+        80
+      ],
+      "operation": [
+        28,
+        2193,
+        "Load",
+        "cached"
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "Load cached: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 130,
+      "node": 2045,
+      "ast_node": 2045,
+      "span": [
+        426,
+        16,
+        426,
+        63
+      ],
+      "operation": [
+        26,
+        "self.lower_index.first_less",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "self.lower_index.first_less: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 131,
+      "node": 2052,
+      "ast_node": 2052,
+      "span": [
+        428,
+        21,
+        428,
+        71
+      ],
+      "operation": [
+        26,
+        "self.lower_index.first_greater",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "self.lower_index.first_greater: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 132,
+      "node": 2131,
+      "ast_node": 2131,
+      "span": [
+        443,
+        17,
+        443,
+        50
+      ],
+      "operation": [
+        28,
+        "main_extremes.get",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E15-A",
+      "contained_groups": [],
+      "semantic_role": "main_extremes.get: Read stored chronology then optional _e_main_extremes using getattr default None. Only exact None suppresses lookup, not empty/falsey mapping; otherwise call mapping.get(direction) dynamically once, using exact current direction key. Only result exactly None is miss (including absent key in native dict or explicit None); other falsey cached values enter hit path even if malformed. No local mapping creation, type/shape validation or broader key (sequence identity/length/dirty marker/range). Scope safety relies on chronology ownership and stable main sequence, not a local freshness proof.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 133,
+      "node": 2142,
+      "ast_node": 2142,
+      "span": [
+        445,
+        12,
+        445,
+        29
+      ],
+      "operation": [
+        28,
+        "self._stop_values",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-B",
+      "contained_groups": [],
+      "semantic_role": "self._stop_values: On miss materialize fresh directional stop-value list over entire self.candles in iteration order, reading policy.extreme_attr for each row and normalizing required attribute with as_decimal. Assign list after entire comprehension succeeds. No range clipping, sorting, dedup, rounding or _stop_value dispatch. Failure during iteration/read/normalization prevents this list assignment (external effects not excluded), and prevents later steps.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 134,
+      "node": 2158,
+      "ast_node": 2158,
+      "span": [
+        449,
+        12,
+        449,
+        30
+      ],
+      "operation": [
+        28,
+        "self._candle_codes",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-C",
+      "contained_groups": [],
+      "semantic_role": "self._candle_codes: After successful price assignment iterate entire candles again in order, read required index and convert int for each candle, then assign fresh candle-code list only after comprehension completes. Codes are converted source index values, not necessarily positional ordinals. No check that values/codes correspond under mutable or unusual sequences. Failure leaves earlier completed price assignment, no local rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 135,
+      "node": 2172,
+      "ast_node": 2172,
+      "span": [
+        450,
+        12,
+        450,
+        32
+      ],
+      "operation": [
+        28,
+        "self._extreme_sparse",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-D",
+      "contained_groups": [],
+      "semantic_role": "self._extreme_sparse: After price and code lists assigned, dynamically call _build_extreme_sparse() without arguments and assign result to detector. Native E16 reads stop values, returns empty table for empty list; otherwise stores earliest min positions for bullish or max positions otherwise, using power-of-two intervals and tie selection by smaller position when neither strict comparison wins. E16 is a bounded dependency, not new accepted partition. Failure preserves earlier assignments, no chronology publication from later statement.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 136,
+      "node": 2182,
+      "ast_node": 2182,
+      "span": [
+        452,
+        16,
+        452,
+        45
+      ],
+      "operation": [
+        28,
+        "main_extremes[]",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-E",
+      "contained_groups": [],
+      "semantic_role": "main_extremes[]: Only when existing mapping is not None, evaluate current direction key and publish tuple of the detector's three current object references (prices, codes, sparse table) after all three assignments; no copies. No creation of a new mapping when absent/None. Empty mapping still receives assignment. Custom mapping or attribute operations can raise or mutate partially; no rollback. If absent, keep detector-local objects. No locking, cache invalidation or other direction publication here.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 137,
+      "node": 2195,
+      "ast_node": 2195,
+      "span": [
+        456,
+        12,
+        456,
+        29
+      ],
+      "operation": [
+        28,
+        "self._stop_values",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "self._stop_values: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 138,
+      "node": 2197,
+      "ast_node": 2197,
+      "span": [
+        456,
+        31,
+        456,
+        49
+      ],
+      "operation": [
+        28,
+        "self._candle_codes",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "self._candle_codes: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 139,
+      "node": 2199,
+      "ast_node": 2199,
+      "span": [
+        456,
+        51,
+        456,
+        71
+      ],
+      "operation": [
+        28,
+        "self._extreme_sparse",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E15-F",
+      "contained_groups": [],
+      "semantic_role": "self._extreme_sparse: For non-None cached result unpack exactly three elements and assign attributes left-to-right, sharing the underlying objects without copying, conversion, rebuilding, type/shape/freshness checks. A falsey empty tuple/list or noniterable value can raise before stores; a falsey iterable of three objects is accepted. Unpacking failure prevents ordinary target stores, later attribute assignment can fail after earlier stores. Shared lists/table can alias other detectors through chronology; no local immutability enforcement. No retry or rollback. Method returns implicit None on successful miss or hit.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 16,
+      "node": 2042,
+      "ast_node": 2042,
+      "span": [
+        425,
+        12,
+        429,
+        13
+      ],
+      "operation": [
+        26,
+        "Return",
+        null
+      ],
+      "group": "E13-B",
+      "contained_groups": [],
+      "semantic_role": "Return at this site: If lower_index is not exactly None (including falsey objects), select first_less(left,right,level) when less is truthy, otherwise first_greater(left,right,level); only chosen call runs. Resolve index and method dynamically, pass inputs unchanged, immediately return its exact result including None, zero or other custom-provider result. No scan retry, local bounds/empty-range checks, comparison, coercion or exception catch. Native index owns half-open strict earliest crossing and clamps left=max(0,left), right=min(length,right); if left>=right returns None. Native first_less excludes minima >= level, first_greater excludes maxima <= level, chronological segment search and left-first descent choose earliest position on valid ordinary data. Optional retained-crossing history belongs to that index, not E continuation. Reflected provider reverses comparator and negates Decimal level via copy_negate; no inferred equivalence for arbitrary providers.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 17,
+      "node": 2091,
+      "ast_node": 2091,
+      "span": [
+        434,
+        16,
+        434,
+        31
+      ],
+      "operation": [
+        26,
+        "Return",
+        null
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Return at this site: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 18,
+      "node": 2093,
+      "ast_node": 2093,
+      "span": [
+        435,
+        8,
+        435,
+        19
+      ],
+      "operation": [
+        26,
+        "Return",
+        null
+      ],
+      "group": "E13-D",
+      "contained_groups": [],
+      "semantic_role": "Return at this site: For each visited row re-evaluate truthiness of less, then compare normalized value strictly < level or > level, only chosen comparison. Return original position at first true comparison; exhaustion returns None. Equality is not a crossing for ordinary finite comparable Decimal values. No tie scan, retry, main-candle fallback, error suppression or rollback; malformed types, signaling NaN or dynamic truthiness can raise. Under normal Boolean less, chosen field and comparator agree; arbitrary stateful truthiness need not.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 19,
+      "node": 2102,
+      "ast_node": 2102,
+      "span": [
+        438,
+        8,
+        438,
+        66
+      ],
+      "operation": [
+        27,
+        "Return",
+        null
+      ],
+      "group": "E14-A",
+      "contained_groups": [],
+      "semantic_role": "Return at this site: Read policy.extreme_attr dynamically, required item attribute with no default, normalize via as_decimal, return value. Native policy bullish selects low, bearish high; helper preserves Decimal identity or converts Decimal(str(value)), no rounding or float coercion step. No hardcoded field, direction check, fallback, exception handling or local mutation. A missing attribute or invalid conversion propagates.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B06-07-S01",
+      "span": [
+        424,
+        435
+      ],
+      "prior_interpretation": "Indexed route immediately returns first_less/first_greater even for None; no scan retry, no local bound check. Linear route does not clamp, reads selected low/high only, strict comparison and first hit.",
+      "groups": [
+        "E13-B",
+        "E13-C",
+        "E13-D"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-07-S02",
+      "span": [
+        440,
+        456
+      ],
+      "prior_interpretation": "Cache hit unpacks three references, not copies. Miss assigns price list, code list, sparse table in that order; publishes same objects only into a non-null existing mapping.",
+      "groups": [
+        "E15-A",
+        "E15-B",
+        "E15-C",
+        "E15-D",
+        "E15-E",
+        "E15-F"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-07-S03",
+      "span": [
+        431,
+        438
+      ],
+      "prior_interpretation": "as_decimal applies only to selected value; level unmodified. E14 uses policy.extreme_attr, not a hardcoded mirror.",
+      "groups": [
+        "E13-C",
+        "E13-D",
+        "E14-A"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 11,
+      "comparisons": 6,
+      "arithmetic": 1,
+      "calls": 14,
+      "accesses": 102,
+      "effects": 10,
+      "exits": 4
+    },
+    "rows": 148,
+    "w1": 32,
+    "additional": 116,
+    "supplemental": 3,
+    "identity_errors": 0,
+    "overlap": 0,
+    "missing": 0,
+    "extra": 0,
+    "cp317_link_total": 1109,
+    "cp317_link_errors": 0,
+    "filter_resolution_count": 18,
+    "prior_rows_revalidated": 1587,
+    "prior_w1_revalidated": 269,
+    "prior_additional_revalidated": 1318,
+    "prior_supplemental_revalidated": 19,
+    "prior_identity_errors": 0,
+    "canonical_total": 5257,
+    "covered_union": 1735,
+    "remaining": 3522,
+    "range": [
+      420,
+      457
+    ],
+    "historical_current_seven_category_identity": true,
+    "ast_node_array_identity": true,
+    "method": "Pinned canonical and historical seven arrays/node array equality; resolve all 18 filter IDs by kind and start position and compare recorded filter identities. All 1109 CP317 links matched unique canonical category/index/id/span, W1 crosswalk site/span and exact partition. Recomputed all 25 partition memberships by start line; six prior registers and seven historical partition records matched exact row metadata, historical W1 text/disposition and supplements. B05 8318 category-index union recomputed independently from CP409 inventory and partitions; no missing or duplicate indices or range errors.",
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP416-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-07-F01",
+      "description": "Revalidated exact-None indexed dispatch, immediate return including misses, strict half-open fallback without clamping, negative index and error differences, native index-owned clamping, Decimal/level and dynamic truthiness boundaries."
+    },
+    {
+      "id": "CP416-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-07-F02",
+      "description": "Revalidated exact-None chronology mapping/hit gates, two ordered comprehensions, sparse builder before publication, direction-only key, shared triple aliasing, falsey/malformed hits and partial failure/no rollback. Native range index is distinct from optional E continuation."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Prior 1587 rows structurally checked (category/index/node/AST/span/operation, W1 ID/disposition/interpretation) and 19 supplements (ID/span/text). All 1109 CP317 links matched canonical inventory, W1 crosswalk and partition membership; seven reviewed historical partitions refetched, not all 25. B05 category-index union independently rechecked; 159 supplements retained from CP409, not item-by-item re-audited.",
+    "Grouped source contracts qualify local rows; no per-access runtime execution, empirical equivalence, or new cross-owner acceptance. Malformed data, dynamic objects, alias mutation and dispatch are conditional, not asserted reachable. E16/E17 and index/provider paths bounded only.",
+    "Git identity and remote text readback, not independent cryptographic signature verification. No RAW payload, runtime, ZIP or production/main changes. Current explicit scope overrides historical ZIP/runtime startup rules."
+  ]
+}
