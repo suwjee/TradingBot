@@ -1,7 +1,7 @@
 // Presentation of finalized Engine PH, PL and matching-behavior-leg results.
 // Price crossings, structure validity and numbering remain Engine-owned.
 import { formatTehranMetadataTime } from "../features/raw-file-contract.js";
-import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawTrueFalseLabel, trueFalseAppearance, trueFalseVisualObjects, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   phVisible: true,
@@ -32,8 +32,6 @@ export const TREND_VISUAL_DEFAULTS = Object.freeze({
   trendBearColor: "#f23645",
   trendLineWidth: 1,
   trendLineStyle: "dash",
-  trendIconSize: 28,
-  trendIconGap: 100,
   trendLabelSize: 10,
 });
 
@@ -59,25 +57,47 @@ export function clipHistoricalHitBoxes(hits, right) {
   });
 }
 
-export function trendTransitionLayout(transition, { timeToX, priceToY, height, settings = {} }) {
-  const lineX = timeToX(transition.sourceTime);
-  const bullish = transition.direction !== "bearish";
-  const targetPrice = bullish ? transition.iconCandleHigh : transition.iconCandleLow;
-  let icon = null;
-  if (transition.iconCandleTime != null && targetPrice != null) {
-    const centerX = timeToX(transition.iconCandleTime);
-    const priceY = priceToY(Number(targetPrice));
-    if (Number.isFinite(centerX) && Number.isFinite(priceY)) {
-      const size = settings.trendIconSize ?? TREND_VISUAL_DEFAULTS.trendIconSize;
-      const gap = settings.trendIconGap ?? TREND_VISUAL_DEFAULTS.trendIconGap;
-      const top = bullish ? priceY - gap - size : priceY + gap;
-      icon = { left: centerX - size / 2, top, right: centerX + size / 2, bottom: top + size, size };
-    }
-  }
-  return { lineX, lineBottom: height, icon };
+export function trendTransitionLayout(transition, { timeToX, height }) {
+  return { lineX: timeToX(transition.sourceTime), lineBottom: height };
 }
 
-export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = Infinity, height, settings = {} }) {
+function trendObjectId(transition, part) {
+  return `indicator:market:${transition.id ?? `${transition.direction}:${transition.sourceTime}`}:${part}`;
+}
+
+function trendTimestamp(sourceTime) {
+  const epoch = Number(sourceTime);
+  return Number.isSafeInteger(epoch) && epoch > 0 ? formatTehranMetadataTime(epoch).slice(0, 19) : null;
+}
+
+export function trendVisualObjects(group, settings) {
+  const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
+  const output = [];
+  for (const transition of group.trendTransitions || []) {
+    const bullish = transition.direction !== "bearish";
+    const direction = bullish ? "Bullish" : "Bearish";
+    const price = transition.level ?? (bullish ? transition.iconCandleHigh : transition.iconCandleLow);
+    const color = bullish ? style.trendBullColor : style.trendBearColor;
+    output.push({
+      id: trendObjectId(transition, "line"), type: "indicator-stop", name: `${direction} market line`,
+      time: transition.sourceTime, direction: transition.direction, price, color, width: style.trendLineWidth, lineStyle: style.trendLineStyle,
+    });
+    const text = trendTimestamp(transition.sourceTime);
+    if (text) {
+      output.push({
+        id: trendObjectId(transition, "time"), type: "indicator-label", name: `${direction} market timestamp`,
+        text, color: "#111827", size: style.trendLabelSize, weight: 600, time: transition.sourceTime,
+        direction: transition.direction, price,
+      });
+    }
+  }
+  return output;
+}
+
+export function drawTrendTransitions(ctx, group, {
+  timeToX, width = Infinity, height, settings = {},
+  objectFor = () => null, offsetPoint = (_object, x, y) => ({ x, y }), onHit = () => {},
+}) {
   const transitions = group.trendTransitions;
   if (!transitions?.length || settings.trendLineVisible === false) return;
   const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
@@ -85,54 +105,53 @@ export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = In
   for (const transition of transitions) {
     const bullish = transition.direction !== "bearish";
     const color = bullish ? style.trendBullColor : style.trendBearColor;
-    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height, settings });
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = style.trendLineWidth;
-    ctx.lineCap = style.trendLineStyle === "dot" ? "round" : "butt";
-    ctx.setLineDash(style.trendLineStyle === "dot" ? [0, style.trendLineWidth * 3]
-      : style.trendLineStyle === "dash" ? [6, 5] : []);
+    const lineId = trendObjectId(transition, "line"), line = objectFor(lineId);
+    const labelId = trendObjectId(transition, "time"), timestamp = objectFor(labelId);
+    const lineStyle = line?.customized ? line : null;
+    const labelStyle = timestamp?.customized ? timestamp : null;
+    const marker = trendTransitionLayout(transition, { timeToX, height });
+    let label = null;
     if (Number.isFinite(marker.lineX) && marker.lineX >= 0 && marker.lineX <= width) {
-      const label = trendTimestampLayout(ctx, transition.sourceTime, marker.lineX, width, height, style.trendLabelSize, labels);
-      ctx.beginPath();
-      ctx.moveTo(marker.lineX, 0);
-      ctx.lineTo(marker.lineX, label?.top ?? marker.lineBottom);
-      ctx.stroke();
-      if (label) labels.push({ ...label, color });
+      const text = labelStyle?.text ?? trendTimestamp(transition.sourceTime);
+      if (!timestamp?.hidden && text) {
+        const layout = trendTimestampLayout(ctx, text, marker.lineX, width, height,
+          labelStyle?.size ?? style.trendLabelSize, labels);
+        if (layout) {
+          const position = offsetPoint(timestamp, layout.left, layout.top);
+          label = { ...layout, left: position.x, top: position.y, color, textColor: labelStyle?.color, objectId: labelId };
+          labels.push(label);
+        }
+      }
     }
-    if (marker.icon) {
-      const { left, top, size } = marker.icon;
-      ctx.translate(left, top + (bullish ? 0 : size));
-      ctx.scale(size / 20, (bullish ? 1 : -1) * size / 20);
-      ctx.setLineDash([]);
-      ctx.lineWidth = 2.4;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
+    const lineStart = offsetPoint(line, marker.lineX, 0);
+    if (!line?.hidden && Number.isFinite(marker.lineX) && lineStart.x >= 0 && lineStart.x <= width) {
+      const thickness = lineStyle?.width ?? style.trendLineWidth;
+      const pattern = lineStyle?.lineStyle ?? style.trendLineStyle;
+      const baseline = label && lineStart.x >= label.left && lineStart.x <= label.left + label.width
+        ? label.top : marker.lineBottom;
+      const top = Math.max(0, lineStart.y), bottom = Math.min(height, baseline + lineStart.y);
+      ctx.save();
+      ctx.strokeStyle = lineStyle?.color ?? color;
+      ctx.lineWidth = thickness;
+      ctx.lineCap = pattern === "dot" ? "round" : "butt";
+      ctx.setLineDash(pattern === "dot" ? [0, thickness * 3] : pattern === "dash" ? [6, 5] : []);
       ctx.beginPath();
-      ctx.moveTo(1.2, 18.8);
-      ctx.lineTo(6.1, 12.2);
-      ctx.lineTo(9.3, 15.4);
-      ctx.lineTo(13.7, 8.4);
-      ctx.lineTo(16, 10.5);
-      ctx.lineTo(18.8, 1.2);
+      ctx.moveTo(lineStart.x, top);
+      ctx.lineTo(lineStart.x, bottom);
       ctx.stroke();
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(13.2, 3);
-      ctx.lineTo(18.8, 1.2);
-      ctx.lineTo(18.1, 7);
-      ctx.closePath();
-      ctx.fill();
+      ctx.restore();
+      onHit({ objectId: lineId, shape: "line", x1: lineStart.x, y1: top, x2: lineStart.x, y2: bottom });
     }
-    ctx.restore();
   }
-  for (const label of labels) drawTrendTimestamp(ctx, label);
+  for (const label of labels) {
+    drawTrendTimestamp(ctx, label);
+    onHit({ objectId: label.objectId, shape: "rect", area: true, left: label.left, top: label.top,
+      right: label.left + label.width, bottom: label.top + label.height });
+  }
 }
 
-function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, labels) {
-  const epoch = Number(sourceTime);
-  if (!Number.isSafeInteger(epoch) || epoch < 1 || width < 32 || height < size + 12) return null;
-  const text = formatTehranMetadataTime(epoch).slice(0, 19);
+function trendTimestampLayout(ctx, text, lineX, width, height, size, labels) {
+  if (width < 32 || height < size + 12) return null;
   const font = `600 ${size}px ${FONT}`;
   const margin = 2;
   const padding = 4;
@@ -151,7 +170,7 @@ function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, label
 }
 
 function drawTrendTimestamp(ctx, label) {
-  const { text, font, left, top, width, height, padding, color } = label;
+  const { text, font, left, top, width, height, padding, color, textColor = "#111827" } = label;
   ctx.save();
   ctx.setLineDash([]);
   ctx.lineWidth = 0.75;
@@ -159,7 +178,7 @@ function drawTrendTimestamp(ctx, label) {
   ctx.fillRect(left, top, width, height);
   ctx.strokeStyle = color;
   ctx.strokeRect(left, top, width, height);
-  ctx.fillStyle = "#111827";
+  ctx.fillStyle = textColor;
   ctx.font = font;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -224,19 +243,25 @@ export function primaryLabelLayout(marker, metrics) {
 
 export function primaryVisualObjects(group, direction, settings = {}) {
   const style = settingsWithDefaults(settings);
+  const verdict = trueFalseAppearance(settings, "primary");
   const output = [];
   for (const [kind, rows] of [["PH", group.primaryHighs], ["PL", group.primaryLows]]) {
     for (const item of rows || []) {
       if (item.calculationValid === false) continue;
       const marker = primaryMarkerLayout(kind, direction, 0, 0, settings);
+      const objectId = primaryObjectId(direction, kind, item);
+      const name = `${kind}-${item.number}`;
       output.push({
-        id: primaryObjectId(direction, kind, item),
+        id: objectId,
         type: "indicator-label", primaryKind: kind,
-        name: `${kind}-${item.number}`, text: `${kind}-${item.number}`,
+        name, text: name, copyLabel: item.trueFalse ? `${name} (${item.trueFalse})` : name,
         time: item.sourceTime, price: item.price,
         color: marker.color, fill: marker.color, size: marker.fontSize,
         opacity: marker.opacity, weight: 600,
       });
+      for (const object of trueFalseVisualObjects(objectId, item, marker.fontSize, verdict, {
+        weight: TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, verdictSizeOffset: 2,
+      })) output.push({ ...object, name: `${name} ${object.text}` });
     }
   }
   for (const item of group.matchingBehaviorLegs || []) {
@@ -303,7 +328,6 @@ export function drawPrimaryStructures(ctx, group, {
       if (item.calculationValid === false) continue;
       const objectId = primaryObjectId(direction, kind, item);
       const object = objectFor(objectId);
-      if (object?.hidden) continue;
       const x = timeToX(item.sourceTime), y = priceToY(Number(item.price));
       if (x == null || y == null || !Number.isFinite(x) || !Number.isFinite(y)) continue;
       const shifted = offsetPoint(object, x, y);
@@ -315,7 +339,7 @@ export function drawPrimaryStructures(ctx, group, {
       ctx.fillStyle = color;
       ctx.globalAlpha = appearance?.opacity ?? marker.opacity;
       ctx.setLineDash([]);
-      if (visible) {
+      if (visible && !object?.hidden) {
         if (marker.shape === "circle") {
           ctx.beginPath();
           ctx.arc(marker.x, marker.y, marker.radius, 0, Math.PI * 2);
@@ -333,12 +357,15 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
         const label = primaryLabelLayout({ ...marker, fontSize: size }, ctx.measureText(text));
-        ctx.fillText(text, marker.x, label.baselineY);
         const below = marker.textBaseline === "top";
+        if (!object?.hidden) {
+          ctx.fillText(text, marker.x, label.baselineY);
+          onHit({ objectId, shape: "rect", left: label.left, right: label.right,
+            top: label.top, bottom: label.bottom });
+        }
         drawTrueFalseLabel(ctx, item.trueFalse, verdict.visible, size,
-          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2, verdict);
-        onHit({ objectId, shape: "rect", left: label.left, right: label.right,
-          top: label.top, bottom: label.bottom });
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2,
+          verdict, item, { parentId: objectId, objectFor, offsetPoint, onHit });
       }
       ctx.restore();
     }

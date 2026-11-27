@@ -18,10 +18,9 @@ export function startLiveEngineWorker({ command, args, env, onProgress, signal, 
   const child = spawn(command, args, { env, windowsHide: true });
   const exited = new Promise(resolve => child.once("close", resolve));
   const output = createInterface({ input: child.stdout, crlfDelay: Infinity });
-  const errors = createInterface({ input: child.stderr, crlfDelay: Infinity });
+  child.stderr.resume();
   let pending;
   let closed = false;
-  let seedProgress = onProgress;
 
   function settle(error, message) {
     if (!pending) return;
@@ -36,10 +35,8 @@ export function startLiveEngineWorker({ command, args, env, onProgress, signal, 
   function close(error = new LiveEngineError(410, EXPIRED, "LIVE_SESSION_CLOSED")) {
     if (closed) return;
     closed = true;
-    seedProgress = null;
     settle(error);
     output.close();
-    errors.close();
     child.kill();
   }
 
@@ -70,12 +67,6 @@ export function startLiveEngineWorker({ command, args, env, onProgress, signal, 
     }
   }
 
-  errors.on("line", line => {
-    const prefix = "QG_PROGRESS:";
-    if (seedProgress && line.startsWith(prefix)) {
-      try { seedProgress(JSON.parse(line.slice(prefix.length))); } catch {}
-    }
-  });
   output.on("line", line => {
     let message;
     try { message = JSON.parse(line); }
@@ -83,7 +74,7 @@ export function startLiveEngineWorker({ command, args, env, onProgress, signal, 
       close(new LiveEngineError(410, "The live Engine returned an invalid response.", "LIVE_ENGINE_PROTOCOL"));
       return;
     }
-    if (message?.type === "progress" && pending?.type === "update" && typeof message.event?.label === "string") {
+    if (message?.type === "progress" && pending && typeof message.event?.label === "string") {
       try { pending.reportProgress?.(message.event); } catch { /* Progress does not change the calculation. */ }
       return;
     }
@@ -101,14 +92,13 @@ export function startLiveEngineWorker({ command, args, env, onProgress, signal, 
       close(new LiveEngineError(410, "The live Engine returned an unexpected response.", "LIVE_ENGINE_PROTOCOL"));
       return;
     }
-    if (message.type === "seed") seedProgress = null;
     settle(null, message);
   });
   child.on("error", () => close());
   child.stdin.on("error", () => close());
   child.on("close", () => close());
 
-  const seed = receive("seed", undefined, undefined, signal);
+  const seed = receive("seed", undefined, onProgress, signal);
   return {
     seed,
     get closed() { return closed; },

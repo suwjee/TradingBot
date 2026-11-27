@@ -12,6 +12,7 @@ paths.bell = 'M6 17h12l-1.5-2.4V10a4.5 4.5 0 0 0-9 0v4.6L6 17zm4 3h4';
 paths.history = 'M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5M12 8v4l3 2';
 paths.profile = 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0';
 paths.pin = 'M8 4h8l-1 6 3 3v1H6v-1l3-3-1-6zm4 10v6';
+paths.bookmark = 'M6 4h12v16l-6-4-6 4z';
 paths.folder = 'M3 6h7l2 2h9v10H3zM3 6v12';
 paths.target = 'M12 3v4m0 10v4M3 12h4m10 0h4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z';
 paths.database = 'M4 6c0-2 3.6-3 8-3s8 1 8 3-3.6 3-8 3-8-1-8-3zm0 0v6c0 2 3.6 3 8 3s8-1 8-3V6M4 12v6c0 2 3.6 3 8 3s8-1 8-3v-6';

@@ -1,3 +1,6 @@
+import { createErrorJournalClient } from "./features/error-journal.js";
+import { errorDetails, scrubDiagnostic } from "./features/diagnostic-details.js";
+import { liquidityEndpoints, liquidityVisualObjects } from "./chart/indicator-liquidity.js";
 import {
   createChart,
   CandlestickSeries,
@@ -6,16 +9,22 @@ import {
 import "./platform/browser-compat.js";
 import { icon } from "./ui/icons.js";
 import { drawingArray, normalizeHistorySnapshot, CHART_TIMEFRAME_KEY, restoredTimeframe, indicatorControlId, drawingToolOrder } from "./chart/state.js";
-import { PRIMARY_VISUAL_DEFAULTS, TREND_VISUAL_DEFAULTS, primaryVisualObjects as initialPrimaryVisualObjects } from "./chart/primary-structure.js";
-import { drawIndicator as initialPaintIndicator, INDICATOR_MARKER_DEFAULTS } from "./chart/indicator-renderer.js";
+import { PRIMARY_VISUAL_DEFAULTS, TREND_VISUAL_DEFAULTS, indicatorCalculationSegments, primaryVisualObjects as initialPrimaryVisualObjects, trendVisualObjects } from "./chart/primary-structure.js";
+import { drawIndicator as initialPaintIndicator, indicatorDecorationObjects, INDICATOR_MARKER_DEFAULTS } from "./chart/indicator-renderer.js";
+import {
+  indicatorPositionDrawing, indicatorPositionObjects, isIndicatorPosition, isPositionOverrideId,
+  paintPositionBoxes, positionGeometry as calculatePositionGeometry, POSITION_VISIBILITY_GROUPS,
+  positionVisibilityKey, saveIndicatorPositionEdit,
+} from "./chart/indicator-positions.js";
 import { startLiveIndicatorProgress } from "./features/indicator-live-progress.js";
 import * as initialVerdictLabels from "./chart/true-false-label.js";
 import { buildCandleLod, chooseLodStride, lowerBoundTime } from "./chart/lod.js";
 import { aggregateCandles as aggregate, appendCandleBuckets } from "./chart/candle-buckets.js";
 import { mountRealtimeChart, readRealtimeUpdate } from "./features/realtime-chart.js";
+import { mountMarketClock } from "./features/market-clock.js";
 import { mountAlerts } from "./features/alerts/page.js";
 import { coordinateToRawTime, createViewAnchorCache, rawIndexAtTime, rawIndexToCoordinate, remapCandleLogicalRange, selectDensityMode } from "./chart/view-transform.js";
-import { updateStageAggregate } from "./chart/progress.js";
+import { calculationStageKey, calculationStageProgress, plannedCalculationStages, updateStageAggregate } from "./chart/progress.js";
 import { cacheClearLayers, clearIndicatorBrowserState } from "./features/indicator-cache.js";
 import { buildIndicatorCalculationRequest } from "./features/indicator-calculation-request.js";
 import { captureCalculationInputs, calculationInputsMatch, engineCalculationDuration, migrateIndicatorVisibility, restoreIndicatorLifecycle } from "./features/indicator-lifecycle.js";
@@ -42,10 +51,12 @@ import { formatInventoryDateTime, formatSymbolWithBroker } from "./ui/symbol-for
 import { MIN_SAFE_BAR_SPACING } from "./chart/zoom-config.js";
 import { resolveCanonicalChartPoint, positionTimeToCoordinate } from "./chart/drawing-coordinates.js";
 import { drawScreenshotOverlay } from "./features/screenshot-overlay.js";
-import { chartTabUrl, resolveChartTabState, resolveWorkspaceRefreshState } from "./features/workspace-session.js";
+import { chartTabUrl, resolveChartTabState, resolveWorkspaceRefreshState, workspaceFromUrl, workspaceTabUrl } from "./features/workspace-session.js";
+import { createWorkspacePreferences } from "./features/workspace-preferences.js";
+import { orderSymbolFiles } from "./features/symbol-inventory.js";
 import { parseTehranMetadataTime } from "./features/raw-file-contract.js";
 import { moveIndicatorRange, normalizeIndicatorRange } from "./chart/indicator-range.js";
-import { calculateMeasureStats, calculatePositionLevels, initialPositionLevels, editPositionLevel, editPositionTime, positionEndTime, positionRightTime, positionWidthBars, translatePosition } from "./drawings/drawing-math.js";
+import { calculateMeasureStats, positionLevels, initialPositionLevels, editPositionLevel, editPositionTime, positionEndTime, positionRightTime, positionWidthBars, translatePosition } from "./drawings/drawing-math.js";
 import { fullChartId, shortChartId } from "./ui/chart-identity.js";
 import "./styles/tokens.css";
 import "./styles/app.css";
@@ -77,7 +88,26 @@ function humanizeEvent(event) {
     .replaceAll("_", " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
-const runtimeErrors = [];
+let runtimeErrors = [];
+let journalUnavailable = false;
+const errorJournal = createErrorJournalClient({ storage: localStorage, changed(entries) {
+  runtimeErrors = entries;
+  refreshRuntimeHealth();
+  if (document.querySelector("#errorLogModal:not(.hidden)")) renderErrorLog();
+} });
+function reportJournalFailure(error) {
+  journalUnavailable = true;
+  console.error("Error journal unavailable", error);
+  refreshRuntimeHealth();
+  if (document.querySelector("#errorLogModal:not(.hidden)")) renderErrorLog();
+}
+function reloadErrorJournal() {
+  return errorJournal.reload().then(() => {
+    journalUnavailable = false;
+    refreshRuntimeHealth();
+    if (document.querySelector("#errorLogModal:not(.hidden)")) renderErrorLog();
+  }, reportJournalFailure);
+}
 function formatSystemDateTime(value) {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
@@ -87,26 +117,19 @@ function formatSystemDateTime(value) {
 function refreshRuntimeHealth() {
   const control = document.querySelector("#healthStatus");
   const label = document.querySelector("#healthLabel");
-  const hasErrors = runtimeErrors.length > 0;
+  const hasErrors = runtimeErrors.length > 0 || journalUnavailable;
   if (label) label.textContent = hasErrors ? "Error" : "Healthy";
   if (control) {
     control.dataset.state = hasErrors ? "error" : "healthy";
-    control.setAttribute("aria-label", hasErrors ? `${runtimeErrors.length} application errors. Open error log.` : "Application healthy. No errors recorded.");
+    control.setAttribute("aria-label", journalUnavailable ? "Error journal storage unavailable. Open error log." : hasErrors ? `${runtimeErrors.length} recorded diagnostics. Open error log.` : "Application healthy. No errors recorded.");
   }
 }
 function recordRuntimeError(scope, payload) {
-  runtimeErrors.unshift({ scope, ...payload, recordedAt: Date.now() });
-
-  refreshRuntimeHealth();
+  void errorJournal.record({ scope, ...payload, id: createUniqueId(), recordedAt: Date.now() }).catch(reportJournalFailure);
 }
 function createLogger(scope) {
   const emit = (level, event, details = {}) => {
-    const payload = {
-      time: new Date().toISOString(),
-      level: level.toUpperCase(),
-      event,
-      ...details,
-    };
+    const payload = scrubDiagnostic({ ...details, time: new Date().toISOString(), level: level.toUpperCase(), event });
     const method = level === "error" ? "error" : level === "warn" ? "warn" : level === "debug" ? "debug" : "info";
     console[method](`[${scope}] [${payload.time}] [${payload.level}] ${event}`, payload);
     const status = document.querySelector("#latestEvent");
@@ -115,7 +138,7 @@ function createLogger(scope) {
       status.textContent = humanizeEvent(event);
       status.title = `${payload.time} • ${event}`;
     }
-    if (level === "error") recordRuntimeError(scope, payload);
+    if (level === "error" || level === "warn") recordRuntimeError(scope, payload);
   };
   return {
     debug: (event, details) => emit("debug", event, details),
@@ -123,8 +146,7 @@ function createLogger(scope) {
     warn: (event, details) => emit("warn", event, details),
     error: (event, error, details = {}) => emit("error", event, {
       ...details,
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
+      ...errorDetails(error),
     }),
   };
 }
@@ -160,12 +182,12 @@ const liveIndicatorTabId = createUniqueId();
 window.addEventListener("error", (event) => {
   const signature = `${event.filename || ""} ${event.message || ""} ${event.error?.stack || ""}`;
   const scope = /indicator|reaction/i.test(signature) ? log.indicator : log.chart;
-  scope.error("UNCAUGHT_ERROR", event.error || event.message, {
-    source: event.filename,
+  scope.error("UNCAUGHT_ERROR", event.error || event.message || "Resource failed to load", {
+    source: event.filename || event.target?.src || event.target?.href,
     line: event.lineno,
     column: event.colno,
   });
-});
+}, true);
 window.addEventListener("unhandledrejection", (event) => {
   const signature = String(event.reason?.stack || event.reason || "");
   (/indicator|reaction/i.test(signature) ? log.indicator : log.chart)
@@ -191,6 +213,8 @@ const TF = [
   { l: "1D", s: 86400 },
 ];
 const DRAWING_TOOL_ORDER_KEY = "qg:drawing-tool-order:v1";
+const workspacePreferences = createWorkspacePreferences({ storage: localStorage });
+const requestedWorkspace = workspaceFromUrl(window.location.href);
 const drawingToolDefinitions = [
   ["cursor", "Cursor"],
   ["line", "Trend line"],
@@ -208,13 +232,12 @@ const drawingToolDefinitions = [
   ["short", "Short position"],
 ];
 const drawingToolById = new Map(drawingToolDefinitions);
-const drawingTools = (() => {
+const legacyDrawingToolOrder = (() => {
   try {
-    const saved = JSON.parse(localStorage.getItem(DRAWING_TOOL_ORDER_KEY) || "null");
-    return drawingToolOrder(drawingToolDefinitions, saved);
-  } catch {}
-  return drawingToolOrder(drawingToolDefinitions, null);
+    return JSON.parse(localStorage.getItem(DRAWING_TOOL_ORDER_KEY) || "null");
+  } catch { return null; }
 })();
+const drawingTools = drawingToolOrder(drawingToolDefinitions, legacyDrawingToolOrder);
 const materialIcon = (name) => {
   const paths = {
     expand_more: '<path d="m7 10 5 5 5-5"/>',
@@ -469,7 +492,7 @@ document.querySelector("#app").innerHTML = `<main class="app">
    </div>
    <span class="status-separator" aria-hidden="true"></span>
   </div>
-   <time class="status-cluster status-clock" id="clock" title="Local workstation time"></time>
+   <button class="status-cluster status-clock" id="clock" type="button" aria-controls="marketClockPopup" aria-expanded="false"><time></time></button>
  </footer></main>
  <div id="symbolMenu" class="popover symbol-menu hidden" role="dialog" aria-label="Local symbols"><div id="symbolList" role="list"></div></div>
  <div id="updateChoiceModal" class="modal-backdrop hidden"><section class="modal update-choice-dialog" role="dialog" aria-modal="true" aria-labelledby="updateChoiceTitle" aria-describedby="updateChoiceDescription"><header class="modal-title"><strong id="updateChoiceTitle">Update chart data</strong><button id="closeUpdateChoice" class="icon-btn modal-close" type="button" aria-label="Close update options">${icon("close", 18)}</button></header><p id="updateChoiceDescription">Choose exactly one operation. FARAZ requests always use this RAW file's source timeframe.</p><div class="update-choice-options" role="radiogroup" aria-label="Chart data operation"><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="gap-full" checked><span><strong>Gap Detector — Full File</strong><small>Scan every stored interval and request every missing source slot.</small></span></label><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="gap-since"><span><strong>Gap Detector — Since Last Check</strong><small>Scan from the last durable checkpoint; first use scans the full file.</small></span></label><label class="update-choice-option"><input type="radio" name="chartUpdateMode" value="latest"><span><strong>Update Candle</strong><small>Append new closed candles after the current final RAW candle.</small></span></label></div><footer class="modal-actions"><button id="cancelUpdateChoice" class="btn" type="button">Cancel</button><button id="runChartUpdate" class="btn primary" type="button">Run</button></footer></section></div>
@@ -546,11 +569,16 @@ function persistChartTabUrl(item = state.file) {
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   if (next !== current) window.history.replaceState(window.history.state, "", next);
 }
-function setWorkspaceState(name, { persist = true } = {}) {
+function setWorkspaceState(name, { persist = true, history = "replace" } = {}) {
   const topbar = $(".topbar");
   const scrollLeft = topbar.scrollLeft;
   applyWorkspaceState(appRoot, name);
-  if (persist && name !== "fullscreen-chart") persistWorkspaceRefresh(name);
+  if (persist && name !== "fullscreen-chart") {
+    persistWorkspaceRefresh(name);
+    const next = workspaceTabUrl(window.location.href, name);
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (next !== current) window.history[history === "push" ? "pushState" : "replaceState"](window.history.state, "", next);
+  }
   requestAnimationFrame(() => {
     topbar.scrollLeft = Math.min(scrollLeft, Math.max(0, topbar.scrollWidth - topbar.clientWidth));
   });
@@ -604,25 +632,33 @@ async function copyTextToClipboard(text) {
 function renderErrorLog() {
   const list = $("#errorLogList");
   $("#errorLogSummary").textContent = runtimeErrors.length
-    ? `${runtimeErrors.length} recorded error${runtimeErrors.length === 1 ? "" : "s"}`
-    : "No errors recorded";
+    ? `${runtimeErrors.length} recorded diagnostics${journalUnavailable ? " · storage unavailable" : ""}`
+    : journalUnavailable ? "Error journal is unavailable" : "No errors recorded";
   list.innerHTML = runtimeErrors.length ? runtimeErrors.map((entry) => {
     const { scope, level, event, error, stack, recordedAt, time, ...details } = entry;
     const detailText = Object.keys(details).length ? JSON.stringify(details, null, 2) : "No additional details.";
     return `<article class="error-log-entry"><header><span>${escapeHtml(scope)}</span><time>${escapeHtml(formatSystemDateTime(recordedAt))}</time></header><strong>${escapeHtml(humanizeEvent(event))}</strong>${error ? `<p>${escapeHtml(error)}</p>` : ""}<pre>${escapeHtml(detailText)}${stack ? `\n\n${escapeHtml(stack)}` : ""}</pre></article>`;
-  }).join("") : '<div class="error-log-empty">No application errors have been recorded in this session.</div>';
+  }).join("") : '<div class="error-log-empty">No application errors have been recorded.</div>';
 }
 function closeErrorLog() { $("#errorLogModal").classList.add("hidden"); }
-$("#healthStatus").onclick = () => { renderErrorLog(); $("#errorLogModal").classList.remove("hidden"); };
+$("#healthStatus").onclick = () => { renderErrorLog(); $("#errorLogModal").classList.remove("hidden"); void reloadErrorJournal(); };
 $("#closeErrorLog").onclick = closeErrorLog;
 $("#errorLogModal").onclick = (event) => { if (event.target === $("#errorLogModal")) closeErrorLog(); };
-$("#clearErrorLogs").onclick = () => {
-  if (!runtimeErrors.length) return toast("No errors to clear", "info");
-  runtimeErrors.length = 0;
-  renderErrorLog();
-  refreshRuntimeHealth();
-  toast("Error log cleared", "success");
+$("#clearErrorLogs").onclick = async () => {
+  try {
+    await errorJournal.clear();
+    journalUnavailable = false;
+    refreshRuntimeHealth();
+    renderErrorLog();
+    toast("Error log cleared", "success");
+  } catch (error) {
+    reportJournalFailure(error);
+    toast("Could not clear the error log", "error");
+  }
 };
+window.addEventListener("online", reloadErrorJournal);
+window.addEventListener("focus", reloadErrorJournal);
+void reloadErrorJournal();
 $("#copyErrorLogs").onclick = async () => {
   const text = errorLogText();
   if (!text) return toast("No errors to copy", "info");
@@ -703,27 +739,41 @@ const indicatorLayerGroups = [
     ["sVisible", "S"], ["eVisible", "E"], ["eStopVisible", "E stop line", false],
     ["orderVisible", "Order reaction"], ["orderStopVisible", "Order stop"],
     ["foundationTfVisible", "Foundation T/F label"],
+    ["foundationStarsVisible", "Repetition stars (*)"], ["foundationXVisible", "Repetition X"],
   ] },
   { id: "secondary", title: "Secondary", rows: [
     ["stopAllVisible", "StopAll"], ["secondaryTfVisible", "Secondary T/F label"],
+    ["secondaryNaVisible", "N/A label"],
   ] },
   { id: "primary", title: "PH-PL", rows: [
     ["phGroupVisible", "PH", true, "Marker and label"], ["plGroupVisible", "PL", true, "Marker and label"],
     ["mblGroupVisible", "MBL", true, "Line and label"], ["primaryTfVisible", "Third T/F label"],
-    ["trendLineVisible", "Change market line", true, "Line, icon and timestamp"],
+    ["trendLineVisible", "Change market line", true, "Line and timestamp"],
+  ] },
+  { id: "positions", title: "Positions", groups: POSITION_VISIBILITY_GROUPS.map(([label, types]) => ({
+    label, rows: types.map(type => [positionVisibilityKey(type), type]),
+  })) },
+  { id: "liquidity", title: "Liquidity", rows: [
+    ["liquidityActiveVisible", "Active liquidity"],
+    ["liquidityCollectedVisible", "Collected liquidity"],
+    ["liquidityRepeatedVisible", "Repeated F liquidity"],
   ] },
 ];
 const indicatorDisplayDefaults = {
-  ...Object.fromEntries(indicatorLayerGroups.flatMap(group => group.rows.map(([id, , checked = true]) => [id, checked]))),
+  ...Object.fromEntries(indicatorLayerGroups.flatMap(({ rows, groups }) =>
+    (rows || groups.flatMap(group => group.rows)).map(([id, , checked = true]) => [id, checked]))),
   ...Object.fromEntries(Object.entries(PRIMARY_VISUAL_DEFAULTS).filter(([id]) => !id.endsWith("Visible"))),
   ...initialVerdictLabels.TRUE_FALSE_VISUAL_DEFAULTS,
   ...TREND_VISUAL_DEFAULTS,
 };
 function indicatorSettingsGroup(tab, key, body) {
   const group = indicatorLayerGroups.find(({ id }) => id === key);
-  const expanded = key === "foundation";
+  const expanded = tab === "configure" || key === "foundation";
   const bodyId = `indicator-${tab}-${key}`;
   return `<section class="style-group${expanded ? "" : " collapsed"}" data-style-group="${key}"><button type="button" class="style-group-header" aria-controls="${bodyId}" aria-expanded="${expanded}"><strong>${group.title}</strong><span class="style-group-chevron">${icon("chevron", 16)}</span></button><div id="${bodyId}" class="style-group-body">${body}</div></section>`;
+}
+function indicatorLayerRows(rows) {
+  return rows.map(([key, title, checked = true, description]) => `<label class="module-row"><span><b>${title}</b>${description ? `<small>${description}</small>` : ""}</span><input id="${key}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}"${checked ? " checked" : ""}><span class="module-toggle" aria-hidden="true"></span></label>`).join("");
 }
 function verdictAppearance(prefix, title) {
   const trueColor = `${prefix}TfTrueColor`, falseColor = `${prefix}TfFalseColor`;
@@ -747,10 +797,8 @@ function marketTransitionAppearance() {
         ["trendBearColor", "Bearish", "color", style.trendBearColor]]),
       widthRow("trendLineWidth", "Line width", style.trendLineWidth),
       lineStyleRow("trendLineStyle", style.trendLineStyle),
-      rangeRow("trendIconSize", "Icon size", 10, 48, style.trendIconSize, "px"),
-      rangeRow("trendIconGap", "Icon distance from candle", 0, 150, style.trendIconGap, "px"),
       fontSizeRow("trendLabelSize", "Timestamp font size", style.trendLabelSize),
-    ], ["trendBullColor", "trendBearColor", "trendLineWidth", "trendLineStyle", "trendIconSize", "trendIconGap", "trendLabelSize"]),
+    ], ["trendBullColor", "trendBearColor", "trendLineWidth", "trendLineStyle", "trendLabelSize"]),
   ]);
 }
 document.body.insertAdjacentHTML(
@@ -907,7 +955,7 @@ $("#indicatorModal").innerHTML = `
   <nav class="indicator-tabs"><button class="active" data-indicator-tab="inputs">Configure</button><button data-indicator-tab="style">Appearance</button><button data-indicator-tab="info">Activity <span id="infoBadge">0</span></button></nav>
   <div class="indicator-body"></div>
   <footer><div id="indicatorStatus"><i></i><span>Indicator is disabled</span></div><button id="cancelIndicator">Close</button><button id="applyIndicator" class="primary">Apply & calculate</button></footer>
-  <div id="indicatorLoading" class="indicator-loading hidden" role="dialog" aria-modal="true" aria-labelledby="calculationTitle"><section class="calculation-card"><header class="progress-header"><div><span class="calculation-kicker">LOCAL PYTHON PIPELINE</span><strong id="calculationTitle">Calculation in progress</strong></div><span id="calculationPercent">0%</span></header><div class="calculation-overview"><p id="calculationStage">Preparing calculation…</p><div class="calculation-track"><i id="calculationBar"></i></div><div class="calculation-summary"><span id="calculationRemaining">Waiting for pipeline stages</span><time id="calculationElapsed">Elapsed 0.0s</time></div></div><div class="calculation-scroll-region" tabindex="0" aria-label="Calculation stages"><section class="calculation-stage-wrap"><header><div><strong>Processing stages</strong><small>Exact timing updates in place</small></div><span id="calculationStageCount">0 planned</span></header><ol id="calculationSteps" aria-label="Calculation stages" aria-live="polite"></ol></section></div></section></div>
+  <div id="indicatorLoading" class="indicator-loading hidden" role="dialog" aria-modal="true" aria-labelledby="calculationTitle"><section class="calculation-card"><header class="progress-header"><strong id="calculationTitle">Calculation in progress</strong><span id="calculationPercent">0%</span><button id="cancelIndicatorCalculation" type="button" aria-label="Cancel calculation" title="Cancel calculation">${icon("close", 16)}<span>Cancel</span></button></header><div class="calculation-overview"><p id="calculationStage">Connecting to the calculation</p><div class="calculation-track" role="progressbar" aria-label="Calculation progress" aria-valuenow="0"><i id="calculationBar"></i></div><div class="calculation-summary"><span id="calculationRemaining">Preparing stages</span><time id="calculationElapsed">Elapsed 0.0s</time></div></div><div class="calculation-scroll-region" tabindex="0" aria-label="Calculation stages"><section class="calculation-stage-wrap"><header><strong>Processing stages</strong><span id="calculationStageCount">0 stages</span></header><ol id="calculationSteps" aria-label="Calculation stages"></ol></section></div></section></div>
   <div id="dateTimePicker" class="datetime-picker hidden"><div class="picker-card"><header><div><strong id="pickerTitle">Select date & time</strong><small>Asia/Tehran</small></div><button id="pickerClose" aria-label="Close">${icon("close", 17)}</button></header><section class="calendar-section"><div class="picker-value-row"><span id="pickerDateValue"></span></div><div class="month-nav"><strong id="pickerMonth"></strong><div><button id="pickerPrev" aria-label="Previous month">‹</button><button id="pickerNext" aria-label="Next month">›</button></div></div><div class="weekday-row"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div><div id="pickerDays" class="picker-days"></div></section><section class="time-section" aria-label="Time"><div class="time-selects"><label><span>Hour</span><select id="pickerHour" aria-label="Hour">${Array.from({ length: 24 }, (_, i) => `<option value="${String(i).padStart(2, "0")}">${String(i).padStart(2, "0")}</option>`).join("")}</select></label><label><span>Minute</span><select id="pickerMinute" aria-label="Minute">${Array.from({ length: 60 }, (_, i) => `<option value="${String(i).padStart(2, "0")}">${String(i).padStart(2, "0")}</option>`).join("")}</select></label><label><span>Second</span><select id="pickerSecond" aria-label="Second">${Array.from({ length: 60 }, (_, i) => `<option value="${String(i).padStart(2, "0")}">${String(i).padStart(2, "0")}</option>`).join("")}</select></label></div></section><footer><button id="pickerToday">Today</button><span></span><button id="pickerCancel">Cancel</button><button id="pickerSave" class="primary">Apply</button></footer></div></div>
 </section>`;
 // Shared FARAZ-style picker is used by indicator ranges and Go To.
@@ -1005,11 +1053,11 @@ function selectWorkspaceNavigation(activeId) {
     button.setAttribute("aria-pressed", String(active));
   });
 }
-function showChartWorkspace() {
+function showChartWorkspace({ history = "push" } = {}) {
   candleExportController?.close();
   closeAlgorithmWorkspace();
   alertController.close();
-  setWorkspaceState("chart");
+  setWorkspaceState("chart", { history });
   selectWorkspaceNavigation("chartNavBtn");
   setDrawingToolsActive(true);
   requestAnimationFrame(resize);
@@ -1037,13 +1085,10 @@ candleExportController = initCandleExport({
 });
 function closeAlgorithmWorkspace() {
   workspaceNavigationRevision++;
-  if (!algorithmController && algorithmButton.hasAttribute("aria-busy") && isAlgorithmHash()) {
-    window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
-  }
   algorithmButton.removeAttribute("aria-busy");
   algorithmController?.close();
 }
-async function showAlgorithmWorkspace() {
+async function showAlgorithmWorkspace({ history = "push" } = {}) {
   const revision = ++workspaceNavigationRevision;
   if (!algorithmController) {
     const previousWorkspace = appRoot.dataset.workspace;
@@ -1069,50 +1114,69 @@ async function showAlgorithmWorkspace() {
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
   selectDrawing(null);
-  setWorkspaceState("algorithm");
+  setWorkspaceState("algorithm", { history });
   selectWorkspaceNavigation("algorithmBtn");
   setDrawingToolsActive(false);
   algorithmController.open();
 }
-algorithmButton.onclick = showAlgorithmWorkspace;
+algorithmButton.onclick = () => showAlgorithmWorkspace();
 if (isAlgorithmHash()) {
   // Start restoring the deep link after all workspace bindings initialize.
-  queueMicrotask(showAlgorithmWorkspace);
+  queueMicrotask(() => showAlgorithmWorkspace({ history: "replace" }));
 }
-function showFarazWorkspace() {
+function showFarazWorkspace({ history = "push" } = {}) {
   closeAlgorithmWorkspace();
   alertController.close();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
-  setWorkspaceState("faraz");
+  setWorkspaceState("faraz", { history });
   selectWorkspaceNavigation("candleExportBtn");
   setDrawingToolsActive(false);
   candleExportController.open();
 }
-$("#candleExportBtn").onclick = showFarazWorkspace;
-$("#farazStatusFooter").onclick = showFarazWorkspace;
-function showAlertWorkspace() {
+$("#candleExportBtn").onclick = () => showFarazWorkspace();
+$("#farazStatusFooter").onclick = () => showFarazWorkspace();
+function showAlertWorkspace({ history = "push" } = {}) {
   candleExportController?.close();
   closeAlgorithmWorkspace();
   closeSidePanel($("#objectTree"));
   closeSidePanel($("#indicatorModal"));
   selectDrawing(null);
-  setWorkspaceState("alert");
+  setWorkspaceState("alert", { history });
   selectWorkspaceNavigation("alertBtn");
   setDrawingToolsActive(false);
   alertController.open();
 }
-$("#alertBtn").onclick = showAlertWorkspace;
+$("#alertBtn").onclick = () => showAlertWorkspace();
+const workspaceNavigation = {
+  chart: showChartWorkspace, faraz: showFarazWorkspace, algorithm: showAlgorithmWorkspace, alert: showAlertWorkspace,
+};
 function restoreWorkspaceAfterRefresh() {
   if (workspaceNavigationRevision || isAlgorithmHash()) return;
-  const workspace = resolveWorkspaceRefreshState(storedWorkspaceRefresh, {
+  const workspace = requestedWorkspace || resolveWorkspaceRefreshState(storedWorkspaceRefresh, {
     fileIds: state.inventory.map((item) => item.id), timeframes: TF.map((item) => item.s),
   }).workspace;
-  if (workspace === "faraz") showFarazWorkspace();
-  else if (workspace === "algorithm") showAlgorithmWorkspace();
-  else if (workspace === "alert") showAlertWorkspace();
-  else showChartWorkspace();
+  void workspaceNavigation[workspace]({ history: "replace" });
 }
+window.addEventListener("popstate", () => {
+  const workspace = workspaceFromUrl(window.location.href) || "chart";
+  if (appRoot.dataset.workspace !== workspace || algorithmButton.hasAttribute("aria-busy")) {
+    void workspaceNavigation[workspace]({ history: "replace" });
+  }
+  const tabState = resolveChartTabState(window.location.search, {
+    inventory: state.inventory, timeframes: TF.map((item) => item.s),
+  });
+  const item = tabState.fileId && state.inventory.find((candidate) => candidate.id === tabState.fileId);
+  if (item && (item.id !== state.file?.id || symbolLoadController)) {
+    if (tabState.timeframe) state.tf = tabState.timeframe;
+    void loadFile(item).catch((error) => {
+      log.chart.error("CHART_HISTORY_LOAD_FAILED", error);
+      toast("Unable to reopen the chart from browser history.", "error");
+    });
+  } else if (tabState.timeframe) {
+    selectTimeframe(tabState.timeframe, TF.find((frame) => frame.s === tabState.timeframe).l);
+  }
+});
 $("#chartNavBtn").onclick = () => {
   showChartWorkspace();
 };
@@ -1258,8 +1322,9 @@ $(".indicator-body").innerHTML = `
       <div class="range-dates"><label><span>From • Asia/Tehran</span><button class="date-field" id="indicatorFromButton"><b id="indicatorFromDisplay">Select start</b>${icon("calendar", 16)}</button><input id="indicatorFrom" type="hidden"></label><label><span>To • Asia/Tehran</span><button class="date-field" id="indicatorToButton"><b id="indicatorToDisplay">Select end</b>${icon("calendar", 16)}</button><input id="indicatorTo" type="hidden"></label></div>
       <div class="range-shortcuts"><button data-range="all">All available data</button><button data-range="visible">Visible chart</button></div>
     </section>
-    ${indicatorLayerGroups.map(({ id, rows }) => indicatorSettingsGroup("configure", id,
-      rows.map(([key, title, checked = true, description]) => `<label class="module-row"><span><b>${title}</b>${description ? `<small>${description}</small>` : ""}</span><input id="${key}" class="module-toggle-input" type="checkbox" aria-label="Toggle ${title}"${checked ? " checked" : ""}><span class="module-toggle" aria-hidden="true"></span></label>`).join(""),
+    ${indicatorLayerGroups.map(({ id, rows, groups }) => indicatorSettingsGroup("configure", id,
+      rows ? indicatorLayerRows(rows) : `<div class="position-toggle-groups">${groups.map(({ label, rows }) =>
+        `<fieldset><legend>${label}</legend>${indicatorLayerRows(rows)}</fieldset>`).join("")}</div>`,
     )).join("")}
   </div>
   <div class="indicator-tab" data-indicator-page="style">
@@ -1840,6 +1905,8 @@ async function loadInventory() {
   }
 }
 let inventoryRefreshPromise = null;
+let inventoryConnectionFailure = null;
+const LOCAL_CHART_RESTART_GRACE_MS = 75_000;
 function inventorySignature(items) {
   return items.map((item) => `${item.id}|${item.chartId || ""}|${item.bytes}|${item.savedAt}|${item.metadata?.dataSha256 || ""}`).join("\n");
 }
@@ -1852,15 +1919,27 @@ async function requestSymbolInventory() {
   }
   return response.json();
 }
-function refreshSymbolInventory({ initial = false } = {}) {
+function refreshSymbolInventory({ initial = false, background = false } = {}) {
   if (inventoryRefreshPromise) return inventoryRefreshPromise;
   if (realtimeUpdateOwner || indicatorCalculationOwner) return Promise.resolve(false);
   const publication = realtimePublicationRevision;
   const refresh = (async () => {
     const nextInventory = await requestSymbolInventory().catch((error) => {
-      if (!initial || error?.name !== "TimeoutError") throw error;
-      return requestSymbolInventory();
+      if (initial && error?.name === "TimeoutError") return requestSymbolInventory();
+      if (!background || !["TypeError", "TimeoutError"].includes(error?.name)) throw error;
+      const now = Date.now();
+      inventoryConnectionFailure ??= { since: now, reported: false };
+      if (!inventoryConnectionFailure.reported && now - inventoryConnectionFailure.since >= LOCAL_CHART_RESTART_GRACE_MS) {
+        inventoryConnectionFailure.reported = true;
+        log.chart.warn("LOCAL_CHART_SERVICE_UNAVAILABLE", { endpoint: "/api/symbols", ...errorDetails(error) });
+      }
+      return null;
     });
+    if (!nextInventory) return false;
+    if (inventoryConnectionFailure) {
+      inventoryConnectionFailure = null;
+      if (journalUnavailable) void reloadErrorJournal();
+    }
     if (realtimeUpdateOwner || indicatorCalculationOwner || publication !== realtimePublicationRevision) return false;
     const previousFile = state.file;
     const changed = inventorySignature(state.inventory) !== inventorySignature(nextInventory);
@@ -2000,11 +2079,16 @@ async function loadFile(item, { reconcileLive = false } = {}) {
       moveRealtimeIndicatorPreferences(previous.id, item.id);
     } else {
       resetChartIndicatorContext();
-      const persistedIndicator = restoreIndicatorLifecycle(readPersistedIndicatorState(item.id));
+      const savedIndicator = readPersistedIndicatorState(item.id);
+      const persistedIndicator = restoreIndicatorLifecycle(savedIndicator);
       if ($("#rangePreset")) $("#rangePreset").value = "all";
       setDateTimeValue("#indicatorFrom", persistedIndicator.from || inputFromTehran(state.raw[0].time));
       setDateTimeValue("#indicatorTo", persistedIndicator.to || inputFromTehran(state.raw.at(-1).time));
-      if (persistedIndicator.form) applyIndicatorForm(persistedIndicator.form);
+      applyIndicatorForm(workspacePreferences.get("indicator-default") || persistedIndicator.form || indicatorDefaults);
+      $("#indicatorEnabled").checked = workspacePreferences.get("indicator-enabled", savedIndicator?.enabled === true);
+      if (persistedIndicator.form && item.chartId && !workspacePreferences.get(`indicator:${item.chartId}`)) {
+        saveChartIndicatorContext();
+      }
       openIndicator.restoredFor = persistedIndicator.form ? item.id : null;
       state.history = [];
       state.redo = [];
@@ -2043,6 +2127,10 @@ async function loadFile(item, { reconcileLive = false } = {}) {
     }
   }
 }
+function isSymbolBookmarked(item) {
+  return Boolean(item.chartId && workspacePreferences.get(`bookmark:${item.chartId}`));
+}
+
 function renderSymbolList(filter = "") {
   const q = filter.toLowerCase();
   const matching = state.inventory.filter((item) =>
@@ -2060,12 +2148,15 @@ function renderSymbolList(filter = "") {
     const encodedId = encodeURIComponent(item.id);
     const fullId = fullChartId(item.chartId);
     const displayId = shortChartId(item.chartId);
+    const bookmarked = isSymbolBookmarked(item);
+    const bookmarkLabel = bookmarked ? "Remove bookmark" : "Bookmark RAW file";
+    const bookmark = item.chartId ? `<button class="symbol-bookmark" type="button" data-bookmark-chart-id="${encodeURIComponent(item.chartId)}" aria-pressed="${bookmarked}" aria-label="${bookmarkLabel} ${escapeHtml(displayId)}" title="${bookmarkLabel}">${icon("bookmark", 15)}</button>` : '<span class="symbol-bookmark-placeholder" aria-hidden="true"></span>';
     const from = formatInventoryDateTime(item.from);
     const to = formatInventoryDateTime(item.to);
-    return `<div class="symbol-row ${selected ? "selected" : ""}" role="listitem"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><span class="symbol-chart-id" title="Permanent chart ID: ${escapeHtml(fullId)}">ID: ${escapeHtml(displayId)}</span><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small title="From ${escapeHtml(from)}"><b>FROM</b><span>${escapeHtml(from)}</span></small><i aria-hidden="true">→</i><small title="To ${escapeHtml(to)}"><b>TO</b><span>${escapeHtml(to)}</span></small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button><button class="symbol-copy-id" type="button" data-copy-chart-id="${encodeURIComponent(fullId)}" aria-label="Copy complete chart ID ${escapeHtml(displayId)}" title="Copy complete chart ID">${materialIcon("content_copy")}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
+    return `<div class="symbol-row ${selected ? "selected" : ""}" role="listitem"><button class="symbol-select" type="button" data-id="${encodedId}" aria-pressed="${selected}"><span class="symbol-avatar" aria-hidden="true">${escapeHtml(displayName.split(":").at(-1).slice(0, 2))}</span><span class="symbol-meta"><span class="symbol-title"><strong>${escapeHtml(displayName)}</strong><span class="symbol-chart-id" title="Permanent chart ID: ${escapeHtml(fullId)}">ID: ${escapeHtml(displayId)}</span><em>${escapeHtml(item.timeframe)}</em></span><span class="symbol-range"><small title="From ${escapeHtml(from)}"><b>FROM</b><span>${escapeHtml(from)}</span></small><i aria-hidden="true">→</i><small title="To ${escapeHtml(to)}"><b>TO</b><span>${escapeHtml(to)}</span></small></span><span class="symbol-stats"><span>${Number(item.count || 0).toLocaleString()} candles</span><span>${(item.bytes / 1048576).toFixed(1)} MB</span></span></span>${selected ? `<span class="symbol-selected" aria-label="Selected">${materialIcon("check")}</span>` : ""}</button>${bookmark}<button class="symbol-copy-id" type="button" data-copy-chart-id="${encodeURIComponent(fullId)}" aria-label="Copy complete chart ID ${escapeHtml(displayId)}" title="Copy complete chart ID">${materialIcon("content_copy")}</button><button class="symbol-delete" type="button" data-delete-id="${encodedId}" aria-label="Permanently delete ${escapeHtml(item.id)}" title="Permanently delete file">${materialIcon("delete")}</button></div>`;
   };
   $("#symbolList").innerHTML = [...groups.entries()].map(([symbol, items]) =>
-    `<section class="symbol-group"><div class="symbol-group-heading"><button class="symbol-group-toggle" type="button" data-symbol-group="${encodeURIComponent(symbol)}" aria-expanded="${!state.collapsedSymbolGroups.includes(symbol)}" aria-label="${state.collapsedSymbolGroups.includes(symbol) ? "Expand" : "Collapse"} ${escapeHtml(symbol)}"><span class="symbol-group-chevron" aria-hidden="true">${materialIcon("expand_more")}</span><strong>${escapeHtml(symbol)}</strong></button><small>${items.length} file${items.length === 1 ? "" : "s"}</small></div><div class="symbol-group-items ${state.collapsedSymbolGroups.includes(symbol) ? "hidden" : ""}">${items.map(itemRow).join("")}</div></section>`,
+    `<section class="symbol-group"><div class="symbol-group-heading"><button class="symbol-group-toggle" type="button" data-symbol-group="${encodeURIComponent(symbol)}" aria-expanded="${!state.collapsedSymbolGroups.includes(symbol)}" aria-label="${state.collapsedSymbolGroups.includes(symbol) ? "Expand" : "Collapse"} ${escapeHtml(symbol)}"><span class="symbol-group-chevron" aria-hidden="true">${materialIcon("expand_more")}</span><strong>${escapeHtml(symbol)}</strong></button><small>${items.length} file${items.length === 1 ? "" : "s"}</small></div><div class="symbol-group-items ${state.collapsedSymbolGroups.includes(symbol) ? "hidden" : ""}">${orderSymbolFiles(items, isSymbolBookmarked).map(itemRow).join("")}</div></section>`,
   ).join("") || (state.inventory.length ? '<div class="symbol-empty">No matching symbols</div>' : "");
 }
 function toast(msg, type = "auto") {
@@ -2225,6 +2316,15 @@ document.addEventListener("keydown", (event) => {
   }
 });
 $("#symbolList").onclick = async (e) => {
+  const bookmarkButton = e.target.closest("[data-bookmark-chart-id]");
+  if (bookmarkButton) {
+    const encodedId = bookmarkButton.dataset.bookmarkChartId;
+    const key = `bookmark:${decodeURIComponent(encodedId)}`;
+    workspacePreferences.set(key, !workspacePreferences.get(key));
+    renderSymbolList();
+    $("#symbolList")?.querySelector(`[data-bookmark-chart-id="${CSS.escape(encodedId)}"]`)?.focus({ preventScroll: true });
+    return;
+  }
   const groupToggle = e.target.closest("[data-symbol-group]");
   if (groupToggle) {
     const symbol = decodeURIComponent(groupToggle.dataset.symbolGroup || "");
@@ -2357,7 +2457,7 @@ function scheduleSymbolInventoryRefresh() {
   if (document.visibilityState !== "visible") return;
   inventoryRefreshTimer = setTimeout(async () => {
     try {
-      await refreshSymbolInventory();
+      await refreshSymbolInventory({ background: true });
     } catch (error) {
       log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message });
     } finally {
@@ -2367,7 +2467,7 @@ function scheduleSymbolInventoryRefresh() {
 }
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
-    void refreshSymbolInventory()
+    void refreshSymbolInventory({ background: true })
       .catch((error) => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }))
       .finally(scheduleSymbolInventoryRefresh);
   } else {
@@ -2472,18 +2572,19 @@ const chartElement = $("#chart"),
   canvas = $("#draw"),
   ctx = canvas.getContext("2d"),
   shell = $(".chart-shell");
+const drawingStyleDefaults = Object.freeze({
+  stroke: "#2962ff",
+  fill: "#2962ff",
+  width: 0.5,
+  style: "solid",
+  opacity: 0.1,
+});
 Object.assign(state, {
   selected: null,
   selectedIds: [],
   redo: [],
   interaction: null,
-  defaults: {
-    stroke: "#2962ff",
-    fill: "#2962ff",
-    width: 0.5,
-    style: "solid",
-    opacity: 0.1,
-  },
+  defaults: { ...drawingStyleDefaults },
 });
 $("#chart").insertAdjacentHTML(
   "afterend",
@@ -2504,6 +2605,9 @@ function indicatorStateKey(fileId = state.file?.id) {
   return `market-canvas:${fileId || "none"}:indicator-runtime:v1`;
 }
 function readPersistedIndicatorState(fileId = state.file?.id) {
+  const item = state.file?.id === fileId ? state.file : state.inventory.find((candidate) => candidate.id === fileId);
+  const cached = item?.chartId && workspacePreferences.get(`indicator:${item.chartId}`);
+  if (cached) return cached;
   try {
     const value = JSON.parse(localStorage.getItem(indicatorStateKey(fileId)) || "null");
     return value && typeof value === "object" ? value : null;
@@ -2513,10 +2617,13 @@ function readPersistedIndicatorState(fileId = state.file?.id) {
 }
 function saveChartIndicatorContext() {
   if (!state.file) return;
+  const preference = {
+    form: captureIndicatorForm(), from: $("#indicatorFrom")?.value || "", to: $("#indicatorTo")?.value || "",
+    enabled: $("#indicatorEnabled").checked,
+  };
+  if (state.file.chartId) workspacePreferences.set(`indicator:${state.file.chartId}`, preference);
   try {
-    localStorage.setItem(indicatorStateKey(), JSON.stringify({
-      form: captureIndicatorForm(), from: $("#indicatorFrom")?.value || "", to: $("#indicatorTo")?.value || "",
-    }));
+    localStorage.setItem(indicatorStateKey(), JSON.stringify(preference));
   } catch (error) { log.chart.warn("INDICATOR_STATE_STORAGE_FAILED", { message: error.message }); }
 }
 function resetChartIndicatorContext() {
@@ -2546,15 +2653,18 @@ async function restoreCachedIndicator() {
     const { payload, snapshot, proof, sourceFingerprint } = await response.json();
     if (!isCurrent()) return;
     const { calculationId, chartId, direction, timeframe, from, to } = snapshot.calculation;
-    const form = captureIndicatorForm();
-    if (form.controls.indicatorTf !== "follow" || timeframe !== chartTimeframe) {
-      form.controls.indicatorTf = String(timeframe);
+    const saved = readPersistedIndicatorState(file.id);
+    const restoredTimeframe = $("#indicatorTf").value === "follow" && timeframe === chartTimeframe
+      ? "follow" : String(timeframe);
+    if (!saved?.form && !workspacePreferences.get("indicator-default")) {
+      const form = captureIndicatorForm();
+      applyIndicatorForm({ ...form, controls: { ...form.controls, indicatorTf: restoredTimeframe }, direction });
     }
-    applyIndicatorForm({ ...form, direction });
-    setDateTimeValue("#indicatorFrom", inputFromTehran(from));
-    setDateTimeValue("#indicatorTo", inputFromTehran(to));
-    $("#indicatorEnabled").checked = true;
-    const settings = indicatorSettings();
+    setDateTimeValue("#indicatorFrom", saved?.from || inputFromTehran(from));
+    setDateTimeValue("#indicatorTo", saved?.to || inputFromTehran(to));
+    const enabled = workspacePreferences.get("indicator-enabled", saved?.enabled !== false);
+    $("#indicatorEnabled").checked = enabled;
+    const settings = { ...indicatorSettings(), direction, timeframe: restoredTimeframe };
     const key = calculationKey(settings, from, to, timeframe, chartTimeframe);
     state.indicator.settings = settings;
     state.indicator.results = removeInvalidIndicatorCalculations(payload);
@@ -2573,8 +2683,8 @@ async function restoreCachedIndicator() {
     state.indicator.infoDetailsDirty = true;
     if ($("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active')) renderIndicatorInfo();
     setFooterCacheStatus("file");
-    setIndicatorVisibility(true);
-    indicatorStatus("Cached indicator restored", "success");
+    setIndicatorVisibility(enabled, { persist: false });
+    indicatorStatus(enabled ? "Cached indicator restored" : "", enabled ? "success" : undefined);
   } catch (error) {
     if (isCurrent()) {
       setFooterCacheStatus("error");
@@ -2618,12 +2728,16 @@ function readIndicatorOverrides() {
 }
 function saveIndicatorObjectOverrides() {
   if (!state.file) return;
-  const overrides = {};
+  const overrides = Object.fromEntries(Object.entries(readIndicatorOverrides())
+    .filter(([id]) => isPositionOverrideId(id) || id.includes(":liquidity:")));
   state.indicator.objects.forEach((item) => {
-    if (!item.customized && !item.hidden && item.locked !== false) return;
+    if (isIndicatorPosition(item) || item.type === "indicator-liquidity") delete overrides[item.id];
+    if (!item.customized && !item.hidden && item.locked !== false && !item.positionEdit) return;
     overrides[item.id] = {
       offsetTime: Number(item.offsetTime) || 0,
       offsetPrice: Number(item.offsetPrice) || 0,
+      positionEdit: item.positionEdit,
+      liquidityEdit: item.liquidityEdit,
       color: item.color,
       fill: item.fill,
       width: item.width,
@@ -2760,7 +2874,11 @@ function restoreHistorySnapshot(snapshot) {
   const sameCalculation = (snapshot?.indicatorCalculationKey || null)
     === (state.indicator.calculationKey || null);
   if (sameCalculation) {
-    state.indicator.objects = normalized.indicatorObjects;
+    const savedPositions = new Map(normalized.indicatorObjects
+      .filter(isIndicatorPosition).map(item => [item.id, item]));
+    const positions = state.indicator.objects.filter(isIndicatorPosition).map(item =>
+      withPositionOverrides(item, savedPositions.get(item.id) ?? item));
+    state.indicator.objects = [...normalized.indicatorObjects.filter(item => !isIndicatorPosition(item)), ...positions];
     state.indicator.objectMap = new Map(state.indicator.objects.map((item) => [item.id, item]));
   } else if (state.indicator.results) {
     // Keep the drawing undo stack, but project indicator output from the
@@ -2982,7 +3100,7 @@ function rgba(hex, a) {
 }
 const dashPatterns = { dash: [9, 6], dot: [1, 4], solid: [] };
 function styleOf(d) {
-  return d.style || state.defaults;
+  return d.style || drawingStyleDefaults;
 }
 function dash(s) {
   return s === "dash" || s === "dot" ? dashPatterns[s] : dashPatterns.solid;
@@ -3003,54 +3121,33 @@ function handle(q) {
 function isPosition(d) {
   return d?.type === "long" || d?.type === "short";
 }
-function applyPositionEdit(drawing, edited) {
-  Object.assign(drawing, edited);
-  saveDrawings();
+function storePositionEdit(item, previous, edited) {
+  if (isIndicatorPosition(item)) saveIndicatorPositionEdit(item, previous, edited, state.data, state.tf);
+  else Object.assign(item, edited);
+}
+function applyPositionEdit(item, previous, edited) {
+  checkpoint();
+  storePositionEdit(item, previous, edited);
+  if (isIndicatorPosition(item)) saveIndicatorObjectOverrides();
+  else saveDrawings();
   updateToolbar();
   drawAll();
 }
 function positionGeometry(d) {
-  const levels = calculatePositionLevels(d.type, d.a?.price, d.b?.price, d.stopPrice);
-  if (!levels) return null;
-  const a = { x: positionCoordinateAtTime(d.a.time), y: overlayPriceCoordinate(levels.entry) };
-  const rightTime = positionRightTime(d, state.data, state.tf);
-  const end = { x: positionCoordinateAtTime(rightTime), y: overlayPriceCoordinate(levels.target) };
-  const stop = overlayPriceCoordinate(levels.stop);
-  if (!valid(a) || !valid(end) || !Number.isFinite(stop)) return null;
-  const handles = [
-    { x: a.x, y: end.y, level: "target" },
-    { x: end.x, y: end.y, level: "target" },
-    { x: a.x, y: stop, level: "stop" },
-    { x: end.x, y: stop, level: "stop" },
-    { x: a.x, y: a.y, level: "start" },
-    { x: end.x, y: a.y, level: "end" },
-  ];
-  return { left: a.x, right: end.x, entry: a.y, target: end.y, stop, levels, handles };
+  return calculatePositionGeometry(d, {
+    candles: state.data, timeframe: state.tf,
+    timeToX: positionCoordinateAtTime, priceToY: overlayPriceCoordinate,
+  });
 }
 function drawPosition(d, selected, geometry = positionGeometry(d)) {
   if (!geometry) return;
-  const { left, right, entry, target, stop, levels, handles } = geometry;
-  const width = right - left;
+  const { left, right, target, stop, levels, handles } = geometry;
   const s = styleOf(d);
   const label = `R:R ${Number(levels.riskReward.toFixed(2))}`;
   const padding = Math.max(8, s.width, label.length * 10);
   if (overlayFrame && (Math.max(left, right) < -padding || Math.min(left, right) > overlayFrame.width + padding)) return;
   ctx.save();
-  ctx.fillStyle = "rgba(8, 153, 129, 0.10)";
-  ctx.fillRect(left, Math.min(entry, target), width, Math.abs(target - entry));
-  ctx.fillStyle = "rgba(242, 54, 69, 0.10)";
-  ctx.fillRect(left, Math.min(entry, stop), width, Math.abs(stop - entry));
-  ctx.lineWidth = s.width;
-  ctx.strokeStyle = "#089981";
-  ctx.strokeRect(left, Math.min(entry, target), width, Math.abs(target - entry));
-  ctx.strokeStyle = "#f23645";
-  ctx.strokeRect(left, Math.min(entry, stop), width, Math.abs(stop - entry));
-  ctx.strokeStyle = s.stroke;
-  ctx.setLineDash([4, 3]);
-  ctx.beginPath();
-  ctx.moveTo(left, entry);
-  ctx.lineTo(right, entry);
-  ctx.stroke();
+  paintPositionBoxes(ctx, geometry, s);
   ctx.setLineDash([]);
   ctx.font = '500 10px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   const labelWidth = ctx.measureText(label).width + 4;
@@ -3265,6 +3362,18 @@ function removeInvalidIndicatorCalculations(payload) {
   }
   return payload;
 }
+function withPositionOverrides(item, source) {
+  return {
+    ...item,
+    color: source?.color ?? "#2962ff",
+    width: source?.width,
+    lineStyle: source?.lineStyle,
+    positionEdit: source?.positionEdit,
+    customized: Boolean(source?.customized),
+    hidden: Boolean(source?.hidden),
+    locked: source?.locked !== false,
+  };
+}
 function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   const output = [];
   if (!state.indicator.results) {
@@ -3273,17 +3382,26 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     renderObjectTree();
     return;
   }
-  const previous = preserveOverrides ? state.indicator.objectMap || new Map() : new Map();
-  const storedOverrides = preserveOverrides ? readIndicatorOverrides() : {};
+  const priorObjects = state.indicator.objectMap;
+  const previous = preserveOverrides ? priorObjects : new Map();
+  const storedOverrides = readIndicatorOverrides();
   const add = (item) => {
-    const old = previous.get(item.id);
-    const stored = storedOverrides[item.id];
+    if (isIndicatorPosition(item)) {
+      item.copyLabel = item.name;
+
+      output.push(withPositionOverrides(item, priorObjects.get(item.id) ?? storedOverrides[item.id]));
+      return;
+    }
+    const stable = item.type === "indicator-liquidity";
+    const old = (stable ? priorObjects : previous).get(item.id);
+    const stored = preserveOverrides || stable ? storedOverrides[item.id] : null;
     // A provisional result may shift array positions. Carry an override only
     // when the same object still occupies that position.
     const sameObject = old?.type === item.type && old?.time === item.time;
     const source = sameObject && (old.customized || old.hidden || old.locked === false)
       ? old : (!old || sameObject ? stored : null);
     const preserved = source ? {
+      liquidityEdit: source.liquidityEdit,
       offsetTime: source.offsetTime,
       offsetPrice: source.offsetPrice,
       color: source.color,
@@ -3304,6 +3422,8 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
   };
   for (const [direction, group] of Object.entries(state.indicator.results.directions)) {
     primaryVisualObjects(group, direction, state.indicator.settings).forEach(add);
+    indicatorPositionObjects(group, direction).forEach(add);
+    liquidityVisualObjects(group, direction).forEach(add);
     const behaviorOrders = [
       ...(group.sZones || []),
       ...(group.eZones || []),
@@ -3316,9 +3436,9 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     );
     (group.reactions || []).forEach((item, index) => add({ id: `indicator:${direction}:reaction:${index}`, type: "indicator-reaction", name: `${direction} Reaction ${index + 1}`, time: item.firstTime, price: item.boxTop, color: direction === "bullish" ? state.indicator.settings.bullBorder : state.indicator.settings.bearBorder }));
     (group.blueLines || []).forEach((item, index) => add({ id: `indicator:${direction}:blue:${index}`, type: "indicator-blue", name: `Blue Line ${index + 1}`, time: item.sourceTime, price: item.linePrice, color: state.indicator.settings.blueColor }));
-    (group.aZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: INDICATOR_MARKER_DEFAULTS.aSize, weight: 500, time: item.sourceTime, price: item.price, color: "#7c3aed" }));
-    (group.sZones || []).filter((item) => item.calculationValid !== false).forEach((item, index) => {
-      add({ id: `indicator:${direction}:s:${index}`, type: "indicator-label", name: `S ${index + 1}`, text: "S", size: INDICATOR_MARKER_DEFAULTS.sSize, weight: 500, time: item.sourceTime, price: item.price, color: item.color === "red" ? "#f23645" : "#2563eb" });
+    (group.aZones || []).forEach((item, index) => add({ id: `indicator:${direction}:a:${index}`, type: "indicator-label", name: `A ${index + 1}`, text: "A", size: state.indicator.settings.aSize ?? INDICATOR_MARKER_DEFAULTS.aSize, weight: 500, time: item.sourceTime, price: item.price, color: state.indicator.settings.aColor || "#7c3aed" }));
+    (group.sZones || []).forEach((item, index) => {
+      add({ id: `indicator:${direction}:s:${index}`, type: "indicator-label", name: `S ${index + 1}`, copyLabel: behaviorCopyLabel("S", item.color, item.trueFalse), text: "S", size: INDICATOR_MARKER_DEFAULTS.sSize, weight: 500, time: item.sourceTime, price: item.price, color: item.color === "red" ? "#f23645" : "#2563eb" });
       if (item.calculationValid !== false && item.orderFirstTime != null)
         add({ id: `indicator:${direction}:s-order:${index}`, type: "indicator-order", name: `S order ${index + 1}`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
     });
@@ -3326,8 +3446,10 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
       const family = item.family === "red" ? "red" : "blue";
       const eName = `E${item.number}`;
       const eColor = family === "red" ? "#7f1d1d" : "#1e3a8a";
-      add({ id: `indicator:${direction}:e:${index}`, type: "indicator-label", name: eName, text: eName, size: INDICATOR_MARKER_DEFAULTS.eSize, weight: 600, time: item.sourceTime, price: item.price, color: eColor });
-      add({ id: `indicator:${direction}:e-order:${index}`, type: "indicator-order", name: `${eName} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
+      add({ id: `indicator:${direction}:e:${index}`, type: "indicator-label", name: eName, copyLabel: behaviorCopyLabel(eName, family, item.trueFalse), text: eName, size: INDICATOR_MARKER_DEFAULTS.eSize, weight: 600, time: item.sourceTime, price: item.price, color: eColor });
+      if (item.orderFirstTime != null) {
+        add({ id: `indicator:${direction}:e-order:${index}`, type: "indicator-order", name: `${eName} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
+      }
       if (
         String(item.parentType).toUpperCase() === "E" &&
         Number(item.parentStopIndex) - Number(item.parentSourceIndex) > 350
@@ -3336,8 +3458,10 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
     });
     (group.stopAlls || []).forEach((item, index) => {
       const name = `StopAll${item.number}`;
-      add({ id: `indicator:${direction}:stopall:${index}`, type: "indicator-label", name, text: String(item.number), size: INDICATOR_MARKER_DEFAULTS.stopAllSize, weight: 600, time: item.sourceTime, price: item.price, color: "#ff9800" });
-      add({ id: `indicator:${direction}:stopall-order:${index}`, type: "indicator-order", name: `${name} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
+      add({ id: `indicator:${direction}:stopall:${index}`, type: "indicator-label", name, copyLabel: behaviorCopyLabel(name, null, item.trueFalse), text: String(item.number), size: INDICATOR_MARKER_DEFAULTS.stopAllSize, weight: 600, time: item.sourceTime, price: item.price, color: "#ff9800" });
+      if (item.orderFirstTime != null) {
+        add({ id: `indicator:${direction}:stopall-order:${index}`, type: "indicator-order", name: `${name} order`, time: item.orderFirstTime, price: item.orderStopLevel, color: state.indicator.settings.orderColor });
+      }
     });
     (group.orderAudit || []).forEach((item, index) => {
       const key = `${item.firstIndex}:${item.breakIndex}`;
@@ -3354,13 +3478,19 @@ function rebuildIndicatorObjects({ preserveOverrides = false } = {}) {
       add({ id: `indicator:${direction}:stop:${key}`, type: "indicator-stop", name: `Order stop ${seenStops.size}`, time: item.orderStopSourceTime, price: item.orderStopLevel, color: state.indicator.settings.orderStopColor });
     });
   }
+  for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
+    indicatorDecorationObjects(group, direction, state.indicator.settings, objectOffsets).forEach(add);
+    trendVisualObjects(group, state.indicator.settings).forEach(add);
+  }
   state.indicator.objects = output;
   state.indicator.objectMap = new Map(output.map((item) => [item.id, item]));
-  const oldSelected = previous.get(state.indicator.selectedObjectId);
+  const oldSelected = priorObjects.get(state.indicator.selectedObjectId);
   const newSelected = state.indicator.objectMap.get(state.indicator.selectedObjectId);
-  if (!oldSelected || !newSelected || oldSelected.time !== newSelected.time || oldSelected.type !== newSelected.type)
-    state.indicator.selectedObjectId = null;
+  const sameSelected = oldSelected && newSelected && (isIndicatorPosition(newSelected)
+    || (preserveOverrides && oldSelected.time === newSelected.time && oldSelected.type === newSelected.type));
+  if (!sameSelected) state.indicator.selectedObjectId = null;
   saveIndicatorObjectOverrides();
+  updateToolbar();
   renderObjectTree();
 }
 function indicatorOffset(item) {
@@ -3633,6 +3763,7 @@ function indicatorTimeToCoordinate(time) {
 function drawIndicator(canvasWidth, canvasHeight) {
   paintIndicator(canvasWidth, canvasHeight, {
     ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate,
+    positionTimeToCoordinate: positionCoordinateAtTime,
     plotHeight: canvasHeight - chart.timeScale().height(),
     plotWidth: canvasWidth - series.priceScale().width(),
     priceToY: price => series.priceToCoordinate(price),
@@ -3655,13 +3786,15 @@ function drawIndicatorSelection() {
   ctx.strokeStyle = "#3157d5";
   ctx.lineWidth = 1;
   ctx.setLineDash([3, 3]);
-  if (hit.shape === "rect")
+  if (hit.shape === "rect") {
     ctx.strokeRect(hit.left - 3, hit.top - 3, hit.right - hit.left + 6, hit.bottom - hit.top + 6);
-  else if (hit.shape === "line") {
+    if (!selectedIndicatorObject()?.locked) hit.handles?.forEach(handle);
+  } else if (hit.shape === "line") {
     ctx.beginPath();
     ctx.moveTo(hit.x1, hit.y1);
     ctx.lineTo(hit.x2, hit.y2);
     ctx.stroke();
+    if (!selectedIndicatorObject()?.locked) hit.handles?.forEach(handle);
   } else {
     ctx.beginPath();
     ctx.arc(hit.x, hit.y, (hit.radius || 12) + 3, 0, Math.PI * 2);
@@ -3820,13 +3953,24 @@ function hitTest(p) {
   }
   return null;
 }
+function positionHandleAt(handles = [], p) {
+  return handles.map(handle => ({ ...handle, distance: Math.hypot(p.x - handle.x, p.y - handle.y) }))
+    .filter(handle => handle.distance <= 10).sort((a, b) => a.distance - b.distance)[0];
+}
+function selectedIndicatorPositionHandle(p) {
+  const item = selectedIndicatorObject();
+  if (!isIndicatorPosition(item) || item.locked) return null;
+  const hit = state.indicator.hitBoxes.find(hit => hit.objectId === item.id && hit.viewRevision === state.chartViewRevision);
+  if (!hit || p.x > hit.clipRight) return null;
+  return positionHandleAt(hit.handles, p);
+}
 function indicatorHitTest(p) {
   for (let index = state.indicator.hitBoxes.length - 1; index >= 0; index--) {
     const hit = state.indicator.hitBoxes[index],
       item = indicatorObject(hit.objectId);
     if (hit.viewRevision !== state.chartViewRevision) continue;
     if (hit.clipRight != null && p.x > hit.clipRight) continue;
-    if (!item) continue;
+    if (!item || item.hidden) continue;
     if (hit.shape === "point" && Math.hypot(p.x - hit.x, p.y - hit.y) <= (hit.radius || 12))
       return item;
     if (
@@ -3835,11 +3979,12 @@ function indicatorHitTest(p) {
     )
       return item;
     if (hit.shape === "rect") {
-      const withinX = p.x >= hit.left - 7 && p.x <= hit.right + 7,
-        withinY = p.y >= hit.top - 7 && p.y <= hit.bottom + 7,
+      const padding = hit.padding ?? 7;
+      const withinX = p.x >= hit.left - padding && p.x <= hit.right + padding,
+        withinY = p.y >= hit.top - padding && p.y <= hit.bottom + padding,
         onBorder =
-          Math.abs(p.x - hit.left) <= 7 || Math.abs(p.x - hit.right) <= 7 ||
-          Math.abs(p.y - hit.top) <= 7 || Math.abs(p.y - hit.bottom) <= 7;
+          Math.abs(p.x - hit.left) <= padding || Math.abs(p.x - hit.right) <= padding ||
+          Math.abs(p.y - hit.top) <= padding || Math.abs(p.y - hit.bottom) <= padding;
       if (withinX && withinY && (onBorder || hit.area)) return item;
     }
   }
@@ -3850,6 +3995,13 @@ function selected() {
 }
 function selectedIndicatorObject() {
   return indicatorObject(state.indicator.selectedObjectId);
+}
+function selectedPositionItem() {
+  const item = selected() || selectedIndicatorObject();
+  return isPosition(item) || isIndicatorPosition(item) ? item : null;
+}
+function positionDrawingFor(item) {
+  return isIndicatorPosition(item) ? indicatorPositionDrawing(item, state.data, state.tf) : item;
 }
 let toolbarPositionFrame = 0;
 let manualToolbarPosition = null;
@@ -3867,15 +4019,19 @@ function scheduleDrawingToolbarPosition() {
     if (!bar || bar.classList.contains("hidden")) return;
     const chartRect = chartElement.getBoundingClientRect();
     const width = bar.offsetWidth, height = bar.offsetHeight;
+    const tree = $("#objectTree:not(.hidden):not(.is-pinned)");
+    const treeLeft = tree?.getBoundingClientRect().left;
+    const right = treeLeft > chartRect.left + width + 16 ? Math.min(treeLeft, chartRect.right) : chartRect.right;
+    const visibleChart = { left: chartRect.left, top: chartRect.top, right, bottom: chartRect.bottom };
     const automaticPosition = clampToolbarPosition(
-      chartRect.left + (chartRect.width - width) / 2,
-      chartRect.top + 12,
-      chartRect,
+      visibleChart.left + (right - visibleChart.left - width) / 2,
+      visibleChart.top + 12,
+      visibleChart,
       width,
       height,
     );
     const position = manualToolbarPosition
-      ? clampToolbarPosition(manualToolbarPosition.left, manualToolbarPosition.top, chartRect, width, height)
+      ? clampToolbarPosition(manualToolbarPosition.left, manualToolbarPosition.top, visibleChart, width, height)
       : automaticPosition;
     bar.style.left = `${Math.round(position.left)}px`;
     bar.style.top = `${Math.round(position.top)}px`;
@@ -3911,6 +4067,7 @@ toolbarGrip.addEventListener("pointermove", (event) => {
 function finishToolbarDrag(event) {
   if (!toolbarDrag) return;
   toolbarDrag = null;
+  workspacePreferences.set("drawing-toolbar-position", manualToolbarPosition);
   toolbarGrip.classList.remove("is-dragging");
   if (toolbarGrip.hasPointerCapture(event.pointerId)) toolbarGrip.releasePointerCapture(event.pointerId);
 }
@@ -3925,8 +4082,8 @@ function updateToolbar() {
   bar.classList.toggle("hidden", !visible);
   if (!visible) return;
   const s = d ? styleOf(d) : null;
-  const positionDrawing = selected();
-  const position = isPosition(positionDrawing) ? calculatePositionLevels(positionDrawing.type, positionDrawing.a.price, positionDrawing.b?.price, positionDrawing.stopPrice) : null;
+  const positionDrawing = positionDrawingFor(selectedPositionItem());
+  const position = positionDrawing ? positionLevels(positionDrawing) : null;
   $("#positionLevels").classList.toggle("hidden", !position);
   if (position) {
     $("#positionTarget").value = String(position.target);
@@ -3939,22 +4096,34 @@ function updateToolbar() {
   syncColorControl($("#strokeColor"));
   syncColorControl($("#fillColor"));
   $("#lineWidth").value = String(s?.width || indicatorItem.width || 0.5);
-  $("#lineStyle").value = s?.style || indicatorItem.lineStyle || "solid";
+  $("#lineStyle").value = s?.style || indicatorItem.lineStyle || (isIndicatorPosition(indicatorItem) ? "dash" : "solid");
   $("#fillOpacity").value = s?.opacity ?? indicatorItem.opacity ?? 0.1;
   const isLabel = indicatorItem?.type === "indicator-label",
+    hasIndicatorText = isLabel || indicatorItem?.primaryKind === "MBL" || indicatorItem?.type === "indicator-liquidity",
+    isIcon = indicatorItem?.type === "indicator-icon",
     isLine = ["indicator-blue", "indicator-stop"].includes(indicatorItem?.type),
     isBox = ["indicator-reaction", "indicator-order"].includes(indicatorItem?.type);
   const drawingText = d?.type === "text";
   const drawingHasFill = ["rect", "circle", "channel", "measure"].includes(d?.type);
-  $("#objectText").classList.toggle("hidden", !isLabel && !drawingText);
+  $("#objectText").classList.toggle("hidden", !hasIndicatorText && !drawingText);
   $("#objectText").value = indicatorItem?.text || d?.text || "";
-  $("#objectSize").classList.toggle("hidden", !isLabel && !drawingText);
-  $("#objectSize").value = String(indicatorItem?.size || d?.textSize || 13);
+  const sizeControl = $("#objectSize");
+  sizeControl.classList.toggle("hidden", !hasIndicatorText && !isIcon && !drawingText);
+  sizeControl.setAttribute("aria-label", isIcon ? "Icon size" : "Text size");
+  const currentSize = String(indicatorItem?.size || d?.textSize || 13);
+  const sizeOptions = isIcon ? [12, 16, 20, 24, 28, 32, 36, 40, 44, 48] : [9, 11, 13, 14, 16];
+  if (!sizeOptions.includes(Number(currentSize))) sizeOptions.push(Number(currentSize));
+  sizeOptions.sort((a, b) => a - b);
+  if (sizeControl.dataset.options !== String(sizeOptions)) {
+    sizeControl.replaceChildren(...sizeOptions.map(size => new Option(size, size)));
+    sizeControl.dataset.options = String(sizeOptions);
+  }
+  sizeControl.value = currentSize;
   $("#copyDrawing").classList.toggle("hidden", Boolean(indicatorItem));
   $("#fillColor").classList.toggle("hidden", indicatorItem ? !isBox : !drawingHasFill);
   $("#fillOpacity").closest(".opacity-control").classList.add("hidden");
-  $("#lineWidth").classList.toggle("hidden", isLabel || drawingText);
-  $("#lineStyle").classList.toggle("hidden", isLabel || drawingText);
+  $("#lineWidth").classList.toggle("hidden", isLabel || isIcon || drawingText);
+  $("#lineStyle").classList.toggle("hidden", isLabel || isIcon || drawingText);
   for (const id of ["strokeColor", "fillColor", "lineWidth", "lineStyle", "fillOpacity", "objectText", "objectSize"])
     $("#" + id).disabled = Boolean(indicatorItem?.locked);
   $("#lockDrawing").classList.toggle("active", !!target.locked);
@@ -4076,23 +4245,8 @@ const twoClickTools = new Set([
   "measure",
 ]);
 function constrainLinePoint(anchor, next, shiftKey) {
-  if (!shiftKey || state.tool !== "line") return next;
-  const start = xy(anchor);
-  if (!valid(start)) return next;
-  const dx = next.x - start.x,
-    dy = next.y - start.y,
-    length = Math.hypot(dx, dy),
-    angle = Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) * (Math.PI / 4),
-    x = start.x + Math.cos(angle) * length,
-    y = start.y + Math.sin(angle) * length,
-    point = resolveCanonicalChartPoint({
-      x,
-      y,
-      timeAtCoordinate: canonicalTimeAtCoordinate,
-      priceAtCoordinate: (coordinate) => series.coordinateToPrice(coordinate),
-      fallback: next,
-    });
-  return point;
+  if (!shiftKey || anchor?.price == null || !Number.isFinite(Number(anchor.price))) return next;
+  return { ...next, price: anchor.price };
 }
 function finishDraft() {
   if (!state.draft) return;
@@ -4167,6 +4321,7 @@ function selectDrawingTool(tool) {
   if (tool !== "cursor") cancelDrawingCopy();
   if (state.tool !== tool) state.draft = null;
   state.tool = tool;
+  if (tool === "cursor") concealDrawingCrosshair();
   $$("[data-tool]").forEach((item) =>
     item.classList.toggle("active", item.dataset.tool === tool),
   );
@@ -4220,7 +4375,7 @@ function moveDrawingTool(id, direction) {
   const to = from + direction;
   if (from < 0 || to < 0 || to >= drawingTools.length) return;
   [drawingTools[from], drawingTools[to]] = [drawingTools[to], drawingTools[from]];
-  localStorage.setItem(DRAWING_TOOL_ORDER_KEY, JSON.stringify(drawingTools));
+  workspacePreferences.set("drawing-order", drawingTools);
   renderDrawingToolbar(id);
 }
 const drawingToolbar = $(".top-drawing-tools");
@@ -4278,7 +4433,7 @@ drawingToolbar.addEventListener("drop", (event) => {
   const to = drawingTools.indexOf(target.dataset.drawingTool);
   drawingTools.splice(from, 1);
   drawingTools.splice(to, 0, source);
-  localStorage.setItem(DRAWING_TOOL_ORDER_KEY, JSON.stringify(drawingTools));
+  workspacePreferences.set("drawing-order", drawingTools);
   renderDrawingToolbar(source);
 });
 drawingToolbar.addEventListener("keydown", (event) => {
@@ -4338,6 +4493,8 @@ canvas.onpointerdown = (e) => {
     if (text) {
       const d = newDrawing("text", p);
       d.text = text;
+      const size = workspacePreferences.get("drawing-text-size");
+      if (size) d.textSize = size;
       state.draft = d;
       finishDraft();
     }
@@ -4356,7 +4513,7 @@ canvas.onpointerdown = (e) => {
     return;
   }
   if (state.draft && twoClickTools.has(state.tool)) {
-    p = constrainLinePoint(state.draft.a, p, e.shiftKey);
+    p = constrainLinePoint(state.draft.a, p, e.shiftKey && state.draft.type === "line");
     if (isPosition(state.draft)) updatePositionDraft(state.draft, p);
     else state.draft.b = p;
     finishDraft();
@@ -4367,7 +4524,7 @@ canvas.onpointerdown = (e) => {
 };
 canvas.onpointermove = (e) => {
   if (!state.draft) return;
-  const p = constrainLinePoint(state.draft.a, point(e), e.shiftKey);
+  const p = constrainLinePoint(state.draft.a, point(e), e.shiftKey && state.draft.type === "line");
   if (state.draft.type === "path") {
     state.draft.preview = p;
     drawAll();
@@ -4383,6 +4540,43 @@ canvas.onpointerup = () => {
   if (twoClickTools.has(state.tool) || state.draft.type === "path") return;
   finishDraft();
 };
+// Lightweight Charts does not receive the drawing layer's captured movement.
+const drawingCrosshair = document.createElement("div");
+drawingCrosshair.className = "drawing-crosshair";
+drawingCrosshair.hidden = true;
+drawingCrosshair.setAttribute("aria-hidden", "true");
+shell.append(drawingCrosshair);
+function updateDrawingCrosshair(event) {
+  if (!chartWorkspaceActive() || !chartSettings.crosshair
+      || (state.tool === "cursor" && !state.interaction)) {
+    drawingCrosshair.hidden = true;
+    return;
+  }
+  const bounds = chartElement.getBoundingClientRect();
+  const shellBounds = shell.getBoundingClientRect();
+  const x = event.clientX - bounds.left, y = event.clientY - bounds.top;
+  const width = bounds.width - series.priceScale().width();
+  const height = bounds.height - chart.timeScale().height();
+  if (!(x >= 0 && y >= 0 && x < width && y < height)) {
+    drawingCrosshair.hidden = true;
+    return;
+  }
+  if (drawingCrosshair.hidden) chart.clearCrosshairPosition();
+  drawingCrosshair.style.left = `${bounds.left - shellBounds.left}px`;
+  drawingCrosshair.style.top = `${bounds.top - shellBounds.top}px`;
+  drawingCrosshair.style.width = `${width}px`;
+  drawingCrosshair.style.height = `${height}px`;
+  drawingCrosshair.style.setProperty("--crosshair-x", `${x}px`);
+  drawingCrosshair.style.setProperty("--crosshair-y", `${y}px`);
+  drawingCrosshair.hidden = false;
+  const candle = sourceCandleAt(canonicalTimeAtCoordinate(x));
+  if (candle) setOHLC(candle);
+}
+shell.addEventListener("pointermove", updateDrawingCrosshair, { capture: true, passive: true });
+function concealDrawingCrosshair() { drawingCrosshair.hidden = true; }
+shell.addEventListener("pointerleave", concealDrawingCrosshair);
+shell.addEventListener("pointercancel", concealDrawingCrosshair);
+
 // Capture active drawing gestures before Lightweight Charts can consume them.
 // The canvas remains the rendering surface, while the shell is the reliable input surface.
 shell.addEventListener(
@@ -4444,14 +4638,27 @@ shell.addEventListener(
     const duplicate = e.ctrlKey || e.metaKey;
     const d = hitTest(p);
     if (duplicate && !d && startGroupSelection(e)) return;
-    const indicatorItem = d ? null : indicatorHitTest(p);
+    const positionHandle = d ? null : selectedIndicatorPositionHandle(p);
+    const selectedOverlay = selectedIndicatorObject();
+    const liquidityHandle = !d && selectedOverlay?.type === "indicator-liquidity" && !selectedOverlay.locked
+      ? state.indicator.hitBoxes.find(hit => hit.objectId === selectedOverlay.id
+        && hit.viewRevision === state.chartViewRevision)?.handles?.find(handle =>
+          Math.hypot(handle.x - p.x, handle.y - p.y) <= 10)
+      : null;
+    const indicatorItem = positionHandle || liquidityHandle ? selectedOverlay : d ? null : indicatorHitTest(p);
     if (indicatorItem) {
       e.preventDefault();
       e.stopPropagation();
       selectIndicatorObject(indicatorItem.id);
       if (!indicatorItem.locked) {
         checkpoint();
-        state.interaction = { indicatorId: indicatorItem.id, mode: "indicator-move", last: p };
+        const position = isIndicatorPosition(indicatorItem);
+        state.interaction = {
+          indicatorId: indicatorItem.id,
+          mode: position ? `indicator-position-${positionHandle?.level ?? "move"}`
+            : indicatorItem.type === "indicator-liquidity" ? `liquidity-${liquidityHandle?.level ?? "move"}` : "indicator-move",
+          last: position ? point(e, true) : p,
+        };
         canvas.classList.add("selection-active");
         shell.setPointerCapture(e.pointerId);
       }
@@ -4491,9 +4698,7 @@ shell.addEventListener(
       if (vertexIndex >= 0) mode = "path-vertex";
     }
     if (isPosition(d)) {
-      const corner = positionGeometry(d)?.handles
-        .map((q) => ({ ...q, distance: Math.hypot(p.x - q.x, p.y - q.y) }))
-        .filter((q) => q.distance <= 10).sort((a, b) => a.distance - b.distance)[0];
+      const corner = positionHandleAt(positionGeometry(d)?.handles, p);
       if (corner) mode = `position-${corner.level}`;
     } else if (!isFreeform && Math.hypot(p.x - a.x, p.y - a.y) < 7) mode = "a";
     else if (
@@ -4514,9 +4719,9 @@ shell.addEventListener(
     if (!state.interaction) return;
     e.preventDefault();
     e.stopPropagation();
-    const p = point(e);
-    if (!isDrawingSurface(p)) return;
     const interaction = state.interaction;
+    const p = point(e, interaction.mode.startsWith("indicator-position-"));
+    if (!isDrawingSurface(p)) return;
     if (interaction.mode === "copy") {
       if (e.pointerId !== interaction.pointerId || !drawingCopyIsCurrent(interaction) || !validDrawingPoint(p)) return;
       const { start, source } = interaction;
@@ -4533,6 +4738,46 @@ shell.addEventListener(
     }
     if (interaction.mode === "select") {
       state.selectionBox.b = p;
+      drawAll();
+      return;
+    }
+    if (interaction.mode.startsWith("indicator-position-")) {
+      const item = indicatorObject(interaction.indicatorId);
+      if (!item || item.locked || p.time == null || p.price == null) return;
+      const drawing = positionDrawingFor(item);
+      const part = interaction.mode.slice("indicator-position-".length);
+      const edited = part === "move"
+        ? translatePosition(drawing, state.data, state.tf,
+          positionWidthBars(state.data, interaction.last.time, p.time, state.tf),
+          p.price - interaction.last.price)
+        : editPositionPart(drawing, part, p);
+      if (edited) storePositionEdit(item, drawing, edited);
+      interaction.last = p;
+      updateToolbar();
+      drawAll();
+      return;
+    }
+    if (interaction.mode.startsWith("liquidity-")) {
+      const item = indicatorObject(interaction.indicatorId);
+      if (!item || item.locked || !validDrawingPoint(p)) return;
+      const ends = liquidityEndpoints(item);
+      const part = interaction.mode.slice("liquidity-".length);
+      if (part === "move") {
+        if (!validDrawingPoint(interaction.last)) return;
+        const dt = Number(p.time) - Number(interaction.last.time);
+        const dp = Number(p.price) - Number(interaction.last.price);
+        const fixed = e.shiftKey ? ends.a.price + dp : null;
+        if (Math.min(ends.a.time, ends.b.time) + dt <= 0) return;
+        item.liquidityEdit = {
+          a: { time: ends.a.time + dt, price: ends.a.price + dp },
+          b: { time: ends.b.time + dt, price: fixed ?? ends.b.price + dp },
+        };
+      } else {
+        const next = constrainLinePoint(ends[part === "a" ? "b" : "a"], p, e.shiftKey);
+        item.liquidityEdit = { ...ends, [part]: { time: Number(next.time), price: Number(next.price) } };
+      }
+      item.customized = true;
+      interaction.last = p;
       drawAll();
       return;
     }
@@ -4559,8 +4804,7 @@ shell.addEventListener(
     if (!d || p.time == null || p.price == null) return;
     if (isPosition(d) && state.interaction.mode.startsWith("position-")) {
       const part = state.interaction.mode.slice(9);
-      const edited = ["start", "end"].includes(part)
-        ? editPositionTime(d, part, p.time, positionRightTime(d, state.data, state.tf)) : editPositionLevel(d, part, p.price);
+      const edited = editPositionPart(d, part, p);
       if (edited) Object.assign(d, edited);
     } else if (state.interaction.mode === "path-vertex") {
       const index = state.interaction.vertexIndex;
@@ -4575,7 +4819,11 @@ shell.addEventListener(
         Number(p.price) - Number(state.interaction.last.price),
         isPosition(d) ? positionWidthBars(state.data, state.interaction.last.time, p.time, state.tf) : undefined,
       );
-    } else d[state.interaction.mode] = p;
+    } else {
+      const end = state.interaction.mode;
+      d[end] = constrainLinePoint(d[end === "a" ? "b" : "a"], p,
+        e.shiftKey && ["line", "trend"].includes(d.type) && ["a", "b"].includes(end));
+    }
     state.interaction.last = p;
     if (isPosition(d)) updateToolbar();
     drawAll();
@@ -4631,38 +4879,42 @@ shell.addEventListener(
     }
     state.interaction = null;
     canvas.classList.remove("selection-active");
-    saveDrawings();
+    if (!interaction.indicatorId) saveDrawings();
     saveIndicatorObjectOverrides();
-    if (isPosition(selected())) updateToolbar();
+    if (selectedPositionItem()) updateToolbar();
     drawAll();
   },
   true,
 );
+function editPositionPart(drawing, part, point) {
+  return part === "start" || part === "end"
+    ? editPositionTime(drawing, part, point.time, positionRightTime(drawing, state.data, state.tf))
+    : editPositionLevel(drawing, part, point.price);
+}
 for (const [id, level] of [["positionTarget", "target"], ["positionStop", "stop"]]) {
   $("#" + id).addEventListener("change", (event) => {
-    const d = selected();
-    if (!isPosition(d) || d.locked) return;
-    const edited = event.target.value.trim() ? editPositionLevel(d, level, event.target.value) : null;
+    const item = selectedPositionItem();
+    if (!item || item.locked) return;
+    const drawing = positionDrawingFor(item);
+    const edited = event.target.value.trim() ? editPositionLevel(drawing, level, event.target.value) : null;
     if (!edited) {
       updateToolbar();
       return;
     }
-    checkpoint();
-    applyPositionEdit(d, edited);
+    applyPositionEdit(item, drawing, edited);
   });
 }
 $("#positionBars").addEventListener("change", (event) => {
-  const d = selected(), bars = Number(event.target.value);
-  if (!isPosition(d) || d.locked) return;
+  const item = selectedPositionItem(), bars = Number(event.target.value);
+  if (!item || item.locked) return;
+  const drawing = positionDrawingFor(item);
   if (!Number.isFinite(bars) || bars <= 0) {
     updateToolbar();
     return;
   }
-  const endTime = positionEndTime(state.data, d.a.time, state.tf, bars);
-  const edited = editPositionTime(d, "end", endTime);
-  if (!edited) return;
-  checkpoint();
-  applyPositionEdit(d, edited);
+  const endTime = positionEndTime(state.data, drawing.a.time, state.tf, bars);
+  const edited = editPositionTime(drawing, "end", endTime);
+  if (edited) applyPositionEdit(item, drawing, edited);
 });
 shell.addEventListener("lostpointercapture", cancelDrawingCopy);
 shell.addEventListener("pointercancel", (event) => {
@@ -4670,10 +4922,13 @@ shell.addEventListener("pointercancel", (event) => {
     cancelDrawingCopy(event);
     return;
   }
-  if (!state.interaction?.id || !isPosition(selected())) return;
+  const interaction = state.interaction;
+  const generatedPosition = interaction?.mode.startsWith("indicator-position-");
+  if (!generatedPosition && (!interaction?.id || !isPosition(selected()))) return;
   state.interaction = null;
   canvas.classList.remove("selection-active");
-  saveDrawings();
+  if (generatedPosition) saveIndicatorObjectOverrides();
+  else saveDrawings();
   updateToolbar();
   drawAll();
 });
@@ -4687,8 +4942,9 @@ function changeStyle(persist = true) {
     indicatorItem.lineStyle = $("#lineStyle").value;
     indicatorItem.opacity = +$("#fillOpacity").value;
     indicatorItem.customized = true;
-    if (indicatorItem.type === "indicator-label") indicatorItem.text = $("#objectText").value;
-    if (indicatorItem.type === "indicator-label") indicatorItem.size = +$("#objectSize").value;
+    const hasText = ["indicator-label", "indicator-liquidity"].includes(indicatorItem.type) || indicatorItem.primaryKind === "MBL";
+    if (hasText) indicatorItem.text = $("#objectText").value;
+    if (hasText || indicatorItem.type === "indicator-icon") indicatorItem.size = +$("#objectSize").value;
     saveIndicatorObjectOverrides();
     if (persist) renderObjectTree();
     drawAll();
@@ -4698,20 +4954,28 @@ function changeStyle(persist = true) {
     state.selectedIds.includes(drawing.id),
   );
   if (!targets.length) return;
+  const style = {
+    stroke: $("#strokeColor").value,
+    fill: $("#fillColor").value,
+    width: +$("#lineWidth").value,
+    style: $("#lineStyle").value,
+    opacity: +$("#fillOpacity").value,
+  };
   targets.forEach((d) => {
-    d.style = {
-      stroke: $("#strokeColor").value,
-      fill: $("#fillColor").value,
-      width: +$("#lineWidth").value,
-      style: $("#lineStyle").value,
-      opacity: +$("#fillOpacity").value,
-    };
+    d.style = { ...style };
     if (d.type === "text") {
       d.text = $("#objectText").value || d.text;
       d.textSize = +$("#objectSize").value || d.textSize || 13;
     }
   });
-  if (persist) saveDrawings();
+  if (persist) {
+    state.defaults = style;
+    workspacePreferences.set("drawing-style", style);
+    if (targets.some((drawing) => drawing.type === "text")) {
+      workspacePreferences.set("drawing-text-size", Number($("#objectSize").value));
+    }
+    saveDrawings();
+  }
   drawAll();
 }
 ["strokeColor", "fillColor", "lineWidth", "lineStyle", "fillOpacity", "objectText", "objectSize"].forEach(
@@ -4728,6 +4992,7 @@ $("#lockDrawing").onclick = () => {
     saveIndicatorObjectOverrides();
     updateToolbar();
     renderObjectTree();
+    drawAll();
     return;
   }
   const d = selected();
@@ -5011,7 +5276,7 @@ function openObjectActionMenu(row, trigger) {
   queueMicrotask(() => menu.querySelector('[role="menuitem"]')?.focus());
 }
 function focusObjectOnChart(item) {
-  const time = item?.a?.time ?? item?.time;
+  const time = item?.a?.time ?? item?.positionEdit?.time ?? item?.time;
   if (!Number.isFinite(Number(time)) || !state.data.length) return;
   const target = Number(time);
   const first = Number(state.data[0].time);
@@ -5273,10 +5538,10 @@ function applyVisualSettings(settings = indicatorSettings()) {
     drawAll();
   }
 }
-function setCalculationProgress(value, stage) {
-  const progress = Math.max(0, Math.min(100, Math.round(value)));
-  $("#calculationPercent").textContent = `${progress}%`;
-  $("#calculationBar").style.width = `${progress}%`;
+function setCalculationProgress(percent, stage) {
+  $("#calculationPercent").textContent = `${percent}%`;
+  $("#calculationBar").style.width = `${percent}%`;
+  $(".calculation-track").setAttribute("aria-valuenow", String(percent));
   $("#calculationStage").textContent = stage;
 }
 const calculationStageDescriptions = Object.freeze({
@@ -5289,7 +5554,9 @@ const calculationStageDescriptions = Object.freeze({
   "Load A engine": "Loads the maintained A calculation module.",
   "Load S engine": "Loads the maintained S calculation module.",
   "Load E engine": "Loads the maintained E calculation module.",
-  "Load StopAll engine": "Loads the maintained StopAll calculation module.",
+  "Load Lifecycle engine": "Loads the maintained StopAll and order lifecycle module.",
+  "Build live market chronology": "Prepares the RAW chronology used by the Live worker.",
+  "Order_B reset legs": "Checks whether finalized Order_B reset legs require a new lifecycle pass.",
   "Normalize raw candles": "Converts OHLC values to exact Decimal values and builds time buckets.",
   "Build lower candle views": "Creates chronological lower-timeframe candle objects for rule evaluation.",
   "Build timeframe candle views": "Creates the selected-timeframe candle objects for chart calculations.",
@@ -5304,6 +5571,13 @@ const calculationStageDescriptions = Object.freeze({
   "Apply visibility filters": "Applies deterministic ownership and reset visibility rules to output objects.",
   "Serialize Reaction": "Converts reaction and reset objects to the stable response schema.",
   "Serialize output": "Converts all calculated objects to the stable response schema.",
+  "Evaluate T/F": "Applies final verdicts and repair evidence to one direction.",
+  "Evaluate positions": "Calculates Foundation, StopAll, and primary Buy/Sell positions for one direction.",
+  "Evaluate liquidity": "Calculates Foundation F liquidity and its chart visibility for one direction.",
+  "PH/PL": "Calculates accepted directional primary structures.",
+  "Verify RAW input": "Checks the selected RAW file and its identity.",
+  "Verify calculation inputs": "Confirms that the RAW file and calculation source have not changed.",
+  "Save calculation result": "Validates and saves the finalized result.",
   "Encode response JSON": "Encodes the completed calculation payload for transport to the browser.",
   "Calculation pipeline": "Marks completion of the deterministic Python calculation pipeline.",
   "Start Python calculation": "Starts the isolated Python calculation process.",
@@ -5325,161 +5599,177 @@ function calculationStageDescription(label) {
 function calculationStageTitle(label) {
   return ` title="${escapeHtml(calculationStageDescription(label))}"`;
 }
-function plannedCalculationStages(direction) {
-  const selectedDirections = direction === "both" ? ["Bullish", "Bearish"] : [String(direction || "bullish").replace(/^./, (letter) => letter.toUpperCase())];
-  const common = [
-    "Validate request", "Read source file", "Parse source JSON", "Filter raw range",
-    "Load Reaction engine", "Load Blue Line engine", "Load A engine", "Load S engine",
-    "Load E engine", "Load StopAll engine", "Normalize raw candles", "Build lower candle views",
-    "Build timeframe candle views", "Select candle range", "Reaction geometry • Bullish",
-    "Reaction geometry • Bearish", "Start Python calculation", "Cached result",
-  ];
-  const directional = selectedDirections.flatMap((name) => [
-    `Blue Line • ${name}`, `A • ${name}`, `S • ${name}`,
-    `E • ${name} • initial`, `E • ${name} • S reconciliation`, `E • ${name} • final audit`,
-    `Serialize Reaction - ${name}`, `Reconcile S visibility - ${name}`,
-    `StopAll - ${name}`, `E - ${name} - StopAll reconciliation`,
-    `Apply visibility filters - ${name}`, `Serialize output - ${name}`,
-  ]);
-  return [...common, ...directional,
-    "Calculation pipeline", "Encode response JSON", "Response ready",
-    "HTTP request and server", "Server cache read", "Response parsing",
-    "Prepare chart objects", "Canvas render", "Pipeline error", "Unexpected pipeline event",
-  ];
-}
-function calculationStageKey(label, status, planned) {
-  if (status === "failed") return "Pipeline error";
-  const text = String(label || "Pipeline event");
-  const visibility = text.match(/^Reconcile S visibility - (Bullish|Bearish) - pass \d+$/);
-  if (visibility) return `Reconcile S visibility - ${visibility[1]}`;
-  const stopAll = text.match(/^StopAll - (Bullish|Bearish) - pass \d+$/);
-  if (stopAll) return `StopAll - ${stopAll[1]}`;
-  const eReconciliation = text.match(/^E - (Bullish|Bearish) - StopAll reconciliation \d+$/);
-  if (eReconciliation) return `E - ${eReconciliation[1]} - StopAll reconciliation`;
-  if (text.startsWith("Cached result")) return "Cached result";
-  return planned.has(text) ? text : "Unexpected pipeline event";
-}
+let calculationProgressCloseTimer;
 function startCalculationProgress(requestId, direction) {
+  clearTimeout(calculationProgressCloseTimer);
   $("#indicatorLoading").classList.remove("hidden");
-  const plannedStages = plannedCalculationStages(direction);
-  const planned = new Set(plannedStages);
-  const stageAggregates = new Map(plannedStages.map((key) => [key, {
-    key, label: key, runs: 0, totalDurationMs: 0, active: false, status: "pending",
-  }]));
-  $("#calculationSteps").innerHTML = plannedStages.map((stage, index) =>
-    `<li data-stage="${escapeHtml(stage)}"><i aria-hidden="true">${index + 1}</i><span class="calculation-stage-copy"${calculationStageTitle(stage)}><b>${escapeHtml(stage)}</b><small></small></span><time>Pending</time></li>`,
-  ).join("");
-  $("#calculationStageCount").textContent = `${plannedStages.length} planned`;
-  const started = performance.now();
-  const completed = new Set();
-  const startedStages = new Map();
-  const events = [];
-  let progressState = null;
+  $(".calculation-scroll-region").scrollTop = 0;
+  const list = $("#calculationSteps");
+  const cancel = $("#cancelIndicatorCalculation");
+  cancel.disabled = false;
+  cancel.title = "Cancel calculation";
+  $(".calculation-scroll-region").focus({ preventScroll: true });
+  list.replaceChildren();
+  const stageAggregates = new Map(), rows = new Map(), startedStages = new Map();
+  const started = performance.now(), events = [];
   const source = new EventSource(`/api/reactions/progress?requestId=${encodeURIComponent(requestId)}`);
-  const updateStage = (key, event) => {
-    const { aggregate } = updateStageAggregate(stageAggregates, key, key, event);
-    const stage = $(`#calculationSteps [data-stage="${CSS.escape(key)}"]`);
-    return { stage, aggregate };
-  };
-  const update = () => {
-    const active = [...startedStages.keys()].at(-1) || "Waiting for Python";
-    const percent = Math.min(96, Math.round((completed.size / plannedStages.length) * 100));
-    setCalculationProgress(percent, active);
-    $("#calculationRemaining").textContent = `${completed.size} completed • ${plannedStages.length - completed.size - startedStages.size} remaining`;
-    $("#calculationElapsed").textContent = `Elapsed ${formatDuration(performance.now() - started)}`;
-  };
-  const refreshActiveTimers = () => {
-    const now = performance.now();
-    startedStages.forEach((stageStarted, key) => {
-      const stage = $(`#calculationSteps [data-stage="${CSS.escape(key)}"]`);
-      const aggregate = stageAggregates.get(key);
-      if (stage && aggregate)
-        stage.querySelector("time").textContent = formatDuration(aggregate.totalDurationMs + now - stageStarted);
-    });
+  let finishStream;
+  const streamFinished = new Promise(resolve => { finishStream = resolve; });
+  let stopped = false, lastLabel = "Connecting to local Python pipeline";
+
+  function addRow(label) {
+    list.insertAdjacentHTML("beforeend", `<li data-stage="${escapeHtml(label)}"><i aria-hidden="true">${rows.size + 1}</i><span class="calculation-stage-copy"${calculationStageTitle(label)}><b>${escapeHtml(label)}</b><small></small></span><span class="calculation-stage-result"><span>Pending</span><time></time></span></li>`);
+    rows.set(label, list.lastElementChild);
+  }
+  for (const stage of plannedCalculationStages(direction)) {
+    const { label } = stage;
+    stageAggregates.set(label, { ...stage, runs: 0, totalDurationMs: 0, status: "pending", active: false });
+    addRow(label);
+  }
+
+  function paintStage(key) {
+    const stage = stageAggregates.get(key);
+    const row = rows.get(key);
+    row.className = { started: "active", completed: "done", finished: "done", failed: "failed",
+      skipped: "skipped", unreported: "unreported" }[stage.status] || "pending";
+    row.classList.toggle("bottleneck", stage.totalDurationMs >= 60_000);
+    row.querySelector("small").textContent = stage.runs > 1 ? `${stage.runs}×` : "";
+    row.querySelector(".calculation-stage-result > span").textContent = {
+      started: "Running", completed: "Done", finished: "Done", failed: "Failed",
+      skipped: "Not needed", unreported: "Not reported",
+    }[stage.status] || "Pending";
+    row.querySelector("time").textContent = stage.active
+      ? formatDuration(stage.totalDurationMs + performance.now() - startedStages.get(key))
+      : stage.timedRuns ? formatDuration(stage.totalDurationMs) : "";
+  }
+  function settle(scope, observed) {
+    for (const [key, stage] of stageAggregates) {
+      if ((scope && stage.scope !== scope) || !["pending", "started"].includes(stage.status)) continue;
+      stage.active = false;
+      stage.status = observed && stage.optional && !startedStages.has(key) ? "skipped" : "unreported";
+      startedStages.delete(key);
+      paintStage(key);
+    }
+  }
+  const update = (complete = false) => {
+    const active = [...startedStages.keys()].at(-1);
+    const { percent, completed, total, skipped, unreported } = calculationStageProgress(stageAggregates.values(), complete);
+    setCalculationProgress(percent, complete ? "Calculation complete" : active || lastLabel);
+    const notes = [skipped && `${skipped} not needed`, unreported && `${unreported} not reported`].filter(Boolean);
+    $("#calculationStageCount").textContent = `${rows.size} stages`;
+    const progressSummary = complete && unreported ? `${completed} stages confirmed` : `${completed} of ${total} stages completed`;
+    $("#calculationRemaining").textContent = [progressSummary, ...notes].join(" · ");
+    $("#calculationElapsed").textContent = `${complete ? "Completed in" : "Elapsed"} ${formatDuration(performance.now() - started)}`;
   };
   const recordEvent = (event) => {
-    if (event.liveProgress) return;
-    events.push({
-      status: event.status || "info",
-      label: event.label || "Pipeline event",
-      durationMs: Number.isFinite(Number(event.durationMs)) ? Number(event.durationMs) : null,
-      elapsedMs: Math.round((performance.now() - started) * 100) / 100,
-    });
-    const stageKey = calculationStageKey(event.label, event.status, planned);
-    const { stage, aggregate } = updateStage(stageKey, event);
+    if (stopped || !["started", "completed", "finished", "failed"].includes(event.status)) return;
+
+    const key = calculationStageKey(event.label);
+    const durationMs = typeof event.durationMs === "number" && Number.isFinite(event.durationMs) ? event.durationMs : null;
+    events.push({ status: event.status, label: event.label || key, durationMs, elapsedMs: performance.now() - started });
+    const { created } = updateStageAggregate(stageAggregates, key, key, { ...event, durationMs });
+    if (created) addRow(key);
     if (event.status === "started") {
-      startedStages.delete(stageKey);
-      startedStages.set(stageKey, performance.now());
+      startedStages.delete(key);
+      startedStages.set(key, performance.now());
+    } else {
+      startedStages.delete(key);
     }
-    if (["completed", "finished"].includes(event.status)) { completed.add(stageKey); startedStages.delete(stageKey); }
-    if (stage && ["started", "completed", "finished", "failed"].includes(event.status)) {
-      stage.className = event.status === "started" ? "active" : event.status === "failed" ? "failed" : "done";
-      stage.classList.toggle("bottleneck", aggregate.totalDurationMs >= 60_000);
-      stage.querySelector("small").textContent = aggregate.runs > 1 ? `${aggregate.runs}×` : "";
-      stage.querySelector("small").title = aggregate.runs > 1 ? `${aggregate.runs} executions; time is the total.` : "";
-      stage.querySelector("time").textContent = event.status === "started"
-        ? formatDuration(aggregate.totalDurationMs)
-        : event.status === "failed"
-          ? "Failed"
-          : aggregate.runs && aggregate.totalDurationMs >= 0
-            ? formatDuration(aggregate.totalDurationMs)
-            : "Completed";
+    paintStage(key);
+    if (key === "Save calculation result" || key === "Response ready") lockCancellation();
+    if (key === "Start Python calculation") {
+      settle("input-range", true);
+      if (event.status === "completed") settle("engine", true);
     }
+    if (event.status === "finished" && key === "Response ready") {
+      settle("engine", true);
+      finishStream();
+      // HTTP can still be receiving the body while SSE reports that the result is ready.
+      if (!startedStages.has("HTTP request and server")) settle("server", true);
+    }
+    lastLabel = event.status === "failed" ? "Calculation failed" : key;
     update();
   };
-  source.onmessage = (message) => {
-    try { recordEvent(JSON.parse(message.data)); } catch { /* Ignore malformed progress events. */ }
+  source.onmessage = ({ data }) => {
+    try { recordEvent(JSON.parse(data)); } catch { /* Ignore malformed progress events. */ }
   };
   source.onerror = () => {
-    if (!progressState?.stopped)
+    if (!stopped) {
+      source.close();
+      finishStream();
       pushIndicatorActivity("WARNING", "Progress stream disconnected; the calculation request is still being verified.");
+    }
   };
-  setCalculationProgress(0, "Connecting to local Python pipeline");
-  $("#calculationRemaining").textContent = `${plannedStages.length} planned stages`;
+  function lockCancellation() {
+    cancel.disabled = true;
+    cancel.title = "The result is being finalized";
+  }
+  update();
   const timer = setInterval(() => {
     $("#calculationElapsed").textContent = `Elapsed ${formatDuration(performance.now() - started)}`;
-    refreshActiveTimers();
+    for (const key of startedStages.keys()) paintStage(key);
   }, 250);
-  progressState = { timer, started, source, completed, events, update, recordEvent, stopped: false, plannedStages, startedStages, stageAggregates };
-  return progressState;
+  return { events, recordEvent, lockCancellation, complete() {
+    lockCancellation();
+    settle("server", stageAggregates.get("Response ready").runs > 0);
+    settle(null, false);
+    update(true);
+  }, async waitForServer() {
+    let deadline;
+    try {
+      await Promise.race([streamFinished, new Promise(resolve => { deadline = setTimeout(resolve, 400); })]);
+    } finally { clearTimeout(deadline); }
+  }, close() {
+    stopped = true;
+    clearInterval(timer);
+    source.close();
+    finishStream();
+  } };
 }
 function stopCalculationProgress(progressState, success = true) {
-  clearInterval(progressState.timer);
-  progressState.stopped = true;
-  progressState.source.close();
+  progressState.close();
   if (success) {
-    setCalculationProgress(100, "Calculation complete");
-    let skipped = 0;
-    $$("#calculationSteps li").forEach((stage) => {
-      if (stage.className) return;
-      stage.className = "skipped";
-      stage.querySelector("time").textContent = "Not needed";
-      skipped++;
-    });
-    $("#calculationRemaining").textContent = `${progressState.completed.size} completed • ${skipped} not needed`;
-    $("#calculationElapsed").textContent = `Completed in ${formatDuration(performance.now() - progressState.started)}`;
-    setTimeout(() => $("#indicatorLoading").classList.add("hidden"), 350);
-  } else {
-    $("#indicatorLoading").classList.add("hidden");
-  }
+    progressState.complete();
+    calculationProgressCloseTimer = setTimeout(() => $("#indicatorLoading").classList.add("hidden"), 550);
+  } else $("#indicatorLoading").classList.add("hidden");
 }
+function cancelIndicatorCalculation() {
+  if (!indicatorCalculationOwner || $("#cancelIndicatorCalculation").disabled) return;
+  invalidateIndicatorCalculation();
+  indicatorStatus("Calculation cancelled");
+  pushIndicatorActivity("INFO", "Calculation cancelled");
+  const indicatorOpen = !$("#indicatorModal").classList.contains("hidden");
+  (indicatorOpen ? $("#applyIndicator") : $("#applyIndicatorRangeBtn")).focus();
+}
+$("#cancelIndicatorCalculation").onclick = cancelIndicatorCalculation;
+$("#indicatorLoading").onkeydown = event => {
+  if (event.key !== "Escape") return;
+  event.preventDefault();
+  event.stopPropagation();
+  cancelIndicatorCalculation();
+};
 function eventDetails(direction, group, type) {
-  const events =
-    type === "reactions"
-      ? group.reactions
-      : type === "blueLines"
-        ? group.blueLines || []
-        : type === "aZones"
-          ? group.aZones || []
-          : type === "sZones"
-          ? group.sZones || []
-          : type === "eZones"
-            ? group.eZones || []
-            : type === "stopAlls"
-              ? group.stopAlls || []
-            : group.resets;
-  return events
+  const events = group[type];
+  return (events || [])
     .map((event, index) => {
+      if (type === "liquidity") {
+        const time = value => value == null ? null : formatTehran(value, false);
+        const details = [
+          event.collectedTime == null ? "Active" : `Collected ${time(event.collectedTime)}`,
+          event.visibleFrom == null ? "Awaiting line eligibility" : `Line confirmed ${time(event.visibleFrom)}`,
+          event.repeatGroupSourceTime != null && `Repeated group ${time(event.repeatGroupSourceTime)}`,
+          event.directSweepTime != null && `Direct sweep ${time(event.directSweepTime)}`,
+          event.lineEndTime != null && `Line end ${time(event.lineEndTime)}`,
+        ];
+        return `<li><b>${time(event.sourceTime)} • ${escapeHtml(event.price)}</b><span>${details.filter(Boolean).join(" • ")}</span></li>`;
+      }
+      if (["orderAudit", "primaryHighs", "primaryLows", "matchingBehaviorLegs", "trendTransitions"].includes(type)) {
+        const source = event.sourceTime ?? event.firstTime;
+        const decision = event.decisionEventTime ?? event.decisionTime ?? event.breakTime ?? event.eventTime;
+        const details = [event.number, event.price ?? event.level ?? event.stopLevel, event.trueFalse,
+          event.direction ?? event.orderDirection, event.status, decision != null && formatTehran(decision, false)];
+        return `<li><b>${source == null ? "—" : formatTehran(source, false)}</b><span>${escapeHtml(details.filter(value => value != null && value !== false).join(" • "))}</span></li>`;
+      }
       if (type === "blueLines") {
         const detail = event.kind === "reset"
           ? `Reset after reaction ${event.reactionNumber} • broken ${event.brokenLevel} • one-fifth line ${event.linePrice}`
@@ -5552,11 +5842,10 @@ function formatDuration(durationMs) {
   const minutes = Math.floor(seconds / 60);
   return `${minutes}m ${(seconds % 60).toFixed(3).padStart(6, "0")}s`;
 }
-function calculationTraceAggregates(events, direction) {
-  const planned = new Set(plannedCalculationStages(direction));
+function calculationTraceAggregates(events) {
   const aggregates = new Map();
   for (const event of events || []) {
-    const key = calculationStageKey(event.label, event.status, planned);
+    const key = calculationStageKey(event.label);
     updateStageAggregate(aggregates, key, key, event);
   }
   return [...aggregates.values()];
@@ -5565,6 +5854,24 @@ function indicatorLogTime(timestamp) {
   const date = new Date(timestamp);
   const base = tehranIndicatorLogTime.format(date);
   return `${base}.${String(date.getMilliseconds()).padStart(3, "0")}`;
+}
+function activityPositionRows(group) {
+  const rows = group.positions?.length ? group.positions
+    : (group.calculationSegments || []).flatMap(segment => segment.positions || []);
+  return [...new Map(rows.filter(row => row?.id).map(row => [row.id, row])).values()]
+    .sort((a, b) => Number(a.entryTime) - Number(b.entryTime));
+}
+function activityPositions(rows) {
+  return rows.map(row => {
+    const time = value => Number.isFinite(Number(value)) && value != null ? formatTehran(Number(value), false) : "—";
+    const values = [
+      `Entry ${row.entryPrice ?? "—"}`, `Stop ${row.stopPrice ?? "—"}`, `Target ${row.targetPrice ?? "—"}`,
+      `Anchor ${time(row.anchorSourceTime)}`,
+      row.stopEventTime == null ? "No strict stop recorded"
+        : `${row.preEntryStop ? "Stop before confirmation close" : "Strict stop"} ${time(row.stopEventTime)}`,
+    ];
+    return `<li><b>${escapeHtml(row.type || "Position")} • ${escapeHtml(time(row.entryTime))}</b><span>${escapeHtml(values.join(" • "))}</span></li>`;
+  }).join("");
 }
 function renderIndicatorActivity() {
   const root = $("#indicatorInfo");
@@ -5586,8 +5893,6 @@ function pushIndicatorActivity(level, message, details = {}) {
     message,
     durationMs: details.durationMs,
   });
-  if (state.indicator.activity.length > 150)
-    state.indicator.activity.splice(0, state.indicator.activity.length - 150);
   if ($("#infoBadge")) $("#infoBadge").textContent = String(state.indicator.activity.length);
   if (!state.indicator.infoDetailsDirty
       && $("#indicatorModal:not(.hidden)") && $('[data-indicator-tab="info"].active'))
@@ -5610,11 +5915,14 @@ function renderIndicatorInfo() {
     stopAllTotal = 0,
     phTotal = 0,
     plTotal = 0,
-    mblTotal = 0;
+    mblTotal = 0,
+    positionTotal = 0,
+    liquidityTotal = 0;
   const groups = Object.entries(payload.directions)
     .map(([direction, group]) => {
       reactionTotal += group.reactions.length;
-      resetTotal += group.resets.length;
+      const resetCount = group.resets?.length || 0;
+      resetTotal += resetCount;
       blueLineTotal += (group.blueLines || []).length;
       aTotal += (group.aZones || []).length;
       sTotal += (group.sZones || []).length;
@@ -5624,7 +5932,14 @@ function renderIndicatorInfo() {
       phTotal += primary.highs;
       plTotal += primary.lows;
       mblTotal += primary.legs;
-      return `<section class="info-direction ${direction}"><header><i></i><strong>${direction === "bullish" ? "Bullish" : "Bearish"}</strong><span>${group.reactions.length} reactions • ${(group.blueLines || []).length} Blue Lines • ${(group.aZones || []).length} A • ${(group.sZones || []).length} S • ${(group.eZones || []).length} E • ${(group.stopAlls || []).length} StopAll • ${primary.highs} PH • ${primary.lows} PL • ${primary.legs} MBL</span></header><p class="info-primary-status" data-primary-status="${escapeHtml(direction)}">${escapeHtml(primary.statusLabel)}</p><details><summary>Reactions <b>${group.reactions.length}</b></summary><ol>${eventDetails(direction, group, "reactions")}</ol></details><details><summary>Blue Lines <b>${(group.blueLines || []).length}</b></summary><ol>${eventDetails(direction, group, "blueLines")}</ol></details><details><summary>A <b>${(group.aZones || []).length}</b></summary><ol>${eventDetails(direction, group, "aZones")}</ol></details><details><summary>S <b>${(group.sZones || []).length}</b></summary><ol>${eventDetails(direction, group, "sZones")}</ol></details><details><summary>E <b>${(group.eZones || []).length}</b></summary><ol>${eventDetails(direction, group, "eZones")}</ol></details><details><summary>StopAll <b>${(group.stopAlls || []).length}</b></summary><ol>${eventDetails(direction, group, "stopAlls")}</ol></details><details><summary>Resets <b>${group.resets.length}</b></summary><ol>${eventDetails(direction, group, "resets")}</ol></details></section>`;
+      const positions = activityPositionRows(group);
+      positionTotal += positions.length;
+      liquidityTotal += group.liquidity?.length || 0;
+      const additional = [
+        ["liquidity", "Liquidity"], ["orderAudit", "Order Audit"], ["primaryHighs", "PH"],
+        ["primaryLows", "PL"], ["matchingBehaviorLegs", "MBL"], ["trendTransitions", "Trend changes"],
+      ].map(([key, label]) => `<details><summary>${label} <b>${group[key]?.length || 0}</b></summary><ol>${eventDetails(direction, group, key)}</ol></details>`).join("");
+      return `<section class="info-direction ${direction}"><header><strong>${direction === "bullish" ? "Bullish" : "Bearish"}</strong><span>${group.reactions.length} reactions • ${(group.blueLines || []).length} Blue Lines • ${(group.aZones || []).length} A • ${(group.sZones || []).length} S • ${(group.eZones || []).length} E • ${(group.stopAlls || []).length} StopAll • ${primary.highs} PH • ${primary.lows} PL • ${primary.legs} MBL • ${positions.length} positions</span></header><p class="info-primary-status" data-primary-status="${escapeHtml(direction)}">${escapeHtml(primary.statusLabel)}</p><details class="info-positions"><summary>Positions <b>${positions.length}</b></summary><ol>${activityPositions(positions) || "<li>No positions in this direction.</li>"}</ol></details><details><summary>Reactions <b>${group.reactions.length}</b></summary><ol>${eventDetails(direction, group, "reactions")}</ol></details><details><summary>Blue Lines <b>${(group.blueLines || []).length}</b></summary><ol>${eventDetails(direction, group, "blueLines")}</ol></details><details><summary>A <b>${(group.aZones || []).length}</b></summary><ol>${eventDetails(direction, group, "aZones")}</ol></details><details><summary>S <b>${(group.sZones || []).length}</b></summary><ol>${eventDetails(direction, group, "sZones")}</ol></details><details><summary>E <b>${(group.eZones || []).length}</b></summary><ol>${eventDetails(direction, group, "eZones")}</ol></details><details><summary>StopAll <b>${(group.stopAlls || []).length}</b></summary><ol>${eventDetails(direction, group, "stopAlls")}</ol></details><details><summary>Resets <b>${resetCount}</b></summary><ol>${eventDetails(direction, group, "resets")}</ol></details>${additional}</section>`;
     })
     .join("");
   if (!$("#infoBadge") || !$("#indicatorInfo")) {
@@ -5639,23 +5954,27 @@ function renderIndicatorInfo() {
     ["Response parsing", calculationTiming.responseParseMs],
     ["Prepare chart objects", calculationTiming.objectPreparationMs],
     ["Canvas render", calculationTiming.canvasRenderMs],
-  ].filter(([, duration]) => Number.isFinite(Number(duration)));
+  ].filter(([, duration]) => duration != null && Number.isFinite(Number(duration)));
   const timingRows = [
     ...backendPhases.map(([label, duration]) => ["Python • " + label, duration]),
     ...frontendPhases.map(([label, duration]) => ["Browser • " + label, duration]),
   ].map(([label, duration]) => `<div><span${calculationStageTitle(label)}>${escapeHtml(label)}</span><strong class="${Number(duration) >= 60_000 ? "bottleneck" : ""}">${formatDuration(duration)}</strong></div>`).join("") || '<p class="info-empty">Timing data will appear after the next calculation.</p>';
-  const progressTrace = calculationTiming.progressEvents || [];
-  const stageTotals = calculationTraceAggregates(progressTrace, state.indicator.lastCalculation?.direction || state.indicator.settings?.direction);
+  const recordedTrace = calculationTiming.progressEvents || [];
+  const progressTrace = recordedTrace.length ? recordedTrace : backendPhases.map(([label, durationMs]) =>
+    ({ label, status: "completed", durationMs }));
+  const stageTotals = calculationTraceAggregates(progressTrace);
   const stageRows = stageTotals
-    .map((stage, index) => `<li data-status="${escapeHtml(stage.status)}"><i>${index + 1}</i><span${calculationStageTitle(stage.label)}>${escapeHtml(stage.label)}</span>${stage.runs > 1 ? `<small title="${stage.runs} executions; time is the total.">${stage.runs}×</small>` : ""}<b class="${stage.totalDurationMs >= 60_000 ? "bottleneck" : ""}">${stage.runs ? formatDuration(stage.totalDurationMs) : stage.status === "failed" ? "Failed" : "Pending"}</b></li>`)
+    .map((stage, index) => `<li data-status="${escapeHtml(stage.status)}"><i>${index + 1}</i><span${calculationStageTitle(stage.label)}>${escapeHtml(stage.label)}</span>${stage.runs > 1 ? `<small title="${stage.runs} executions; time is the total.">${stage.runs}×</small>` : ""}<b class="${stage.totalDurationMs >= 60_000 ? "bottleneck" : ""}">${stage.timedRuns ? formatDuration(stage.totalDurationMs) : stage.runs ? "Completed" : stage.status === "failed" ? "Failed" : "Pending"}</b></li>`)
     .join("") || '<li class="timeline-empty"><span>No execution stages were recorded.</span></li>';
   const progressRows = progressTrace
-    .map((event) => `<li data-status="${escapeHtml(event.status)}"><time>${formatDuration(event.elapsedMs)}</time><span${calculationStageTitle(event.label)}>${escapeHtml(event.label)}</span><b>${event.durationMs != null ? formatDuration(event.durationMs) : escapeHtml(event.status)}</b></li>`)
+    .map((event) => `<li data-status="${escapeHtml(event.status)}"><time>${event.elapsedMs == null ? "—" : formatDuration(event.elapsedMs)}</time><span${calculationStageTitle(event.label)}>${escapeHtml(event.label)}</span><b>${event.durationMs != null ? formatDuration(event.durationMs) : escapeHtml(event.status)}</b></li>`)
     .join("") || '<li><span>No popup trace was captured for this calculation.</span></li>';
-  const timingSource = state.indicator.lastCalculation?.cache || "unknown";
+  const cacheSource = state.indicator.lastCalculation?.cache;
+  const timingSource = { bypass: "Fresh calculation", file: "File cache", memory: "Memory cache", hit: "Cache" }[cacheSource]
+    || "Unknown";
   const engineDuration = state.indicator.lastCalculation?.durationMs;
   const executionDuration = engineDuration == null ? "—" : formatDuration(engineDuration);
-  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>PH</span><strong>${phTotal}</strong></div><div><span>PL</span><strong>${plTotal}</strong></div><div><span>MBL</span><strong>${mblTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Original Engine timing</span><strong>${executionDuration}</strong></header><p>Result source: ${escapeHtml(timingSource)}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"} • PH/PL ${payload.primaryVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
+  state.indicator.infoDetails = `<details class="info-analysis-details" open><summary>Calculation details <b>${reactionTotal} reactions</b></summary><div class="info-metrics"><div><span>Reactions</span><strong>${reactionTotal}</strong></div><div><span>Blue Lines</span><strong>${blueLineTotal}</strong></div><div><span>A</span><strong>${aTotal}</strong></div><div><span>S</span><strong>${sTotal}</strong></div><div><span>E</span><strong>${eTotal}</strong></div><div><span>StopAll</span><strong>${stopAllTotal}</strong></div><div><span>PH</span><strong>${phTotal}</strong></div><div><span>PL</span><strong>${plTotal}</strong></div><div><span>MBL</span><strong>${mblTotal}</strong></div><div><span>Positions</span><strong>${positionTotal}</strong></div><div><span>Liquidity</span><strong>${liquidityTotal}</strong></div><div><span>Resets</span><strong>${resetTotal}</strong></div><div><span>Timeframe</span><strong>${payload.timeframe || "—"}s</strong></div></div><section class="info-timing info-stage-summary"><header><span>Original Engine timing</span><strong>${executionDuration}</strong></header><p>Result source: ${escapeHtml(timingSource)}</p><ol>${stageRows}</ol></section><section class="info-timing info-engine-timing"><header><span>Engine timing details</span><strong>${backendPhases.length} measurements</strong></header><div class="info-timing-grid">${timingRows}</div></section><section class="info-timing info-progress-trace"><header><span>Complete execution log</span><strong>${progressTrace.length} events</strong></header><ol>${progressRows}</ol></section><div class="info-meta"><span>Engines</span><b>Reaction ${payload.version || "9.2.1"} • Blue Line ${payload.blueLineVersion || "3.0.0"} • A ${payload.aVersion || "2.0.0"} • S ${payload.sVersion || "4.0.0"} • E ${payload.eVersion || "—"} • StopAll ${payload.stopAllVersion || "—"} • PH/PL ${payload.primaryVersion || "—"}</b><span>Range</span><b>${formatTehran(payload.actualFrom, false)} → ${formatTehran(payload.actualTo, false)}</b></div>${groups}</details>`;
   renderIndicatorActivity();
 }
 const pickerState = { target: null, trigger: null, year: 0, month: 0, day: 1, applyAfterSave: false };
@@ -5799,14 +6118,13 @@ function openIndicator() {
   });
   if (openIndicator.restoredFor !== state.file?.id) {
     try {
-      const saved = JSON.parse(
-        localStorage.getItem(indicatorStateKey()) || "null",
-      );
-      if (saved?.form) {
-        applyIndicatorForm(saved.form);
-        if (saved.from) setDateTimeValue("#indicatorFrom", saved.from);
-        if (saved.to) setDateTimeValue("#indicatorTo", saved.to);
-        $("#indicatorEnabled").checked = false;
+      const saved = readPersistedIndicatorState();
+      const shared = workspacePreferences.get("indicator-default", saved?.form);
+      if (shared) {
+        applyIndicatorForm(shared);
+        if (saved?.from) setDateTimeValue("#indicatorFrom", saved.from);
+        if (saved?.to) setDateTimeValue("#indicatorTo", saved.to);
+        $("#indicatorEnabled").checked = workspacePreferences.get("indicator-enabled", saved?.enabled === true);
       } else if (saved?.settings) {
         const savedDirection = ["bullish", "bearish"].includes(
           saved.settings.direction,
@@ -5996,12 +6314,14 @@ async function calculateIndicator() {
       }),
       responseReceived = performance.now();
     if (!operationIsCurrent()) return;
+    if (r.ok) progressTimer.lockCancellation();
     progressTimer.recordEvent({
       status: "completed",
       label: "HTTP request and server",
       durationMs: responseReceived - requestStarted,
     });
     pushIndicatorActivity("STEP", "Python pipeline response received");
+    progressTimer.recordEvent({ status: "started", label: "Response parsing" });
     const payload = await r.json(),
       responseParsed = performance.now();
     if (!operationIsCurrent()) return;
@@ -6011,6 +6331,8 @@ async function calculateIndicator() {
       durationMs: responseParsed - responseReceived,
     });
     if (!r.ok) throw new Error(payload.error || "Calculation failed");
+    if (r.headers.has("X-QG-Server-Ms")) await progressTimer.waitForServer();
+    if (!operationIsCurrent()) return;
     state.indicator.enabled = $("#indicatorEnabled").checked;
     state.indicator.settings = settings;
     state.indicator.results = removeInvalidIndicatorCalculations(payload);
@@ -6023,6 +6345,7 @@ async function calculateIndicator() {
     };
     capturedInputs = captureCurrentInputs();
     state.indicator.calculationKey = nextKey;
+    progressTimer.recordEvent({ status: "started", label: "Prepare chart objects" });
     const objectPreparationStarted = performance.now();
     rebuildIndicatorObjects();
     if (typeof saveChartIndicatorContext === "function") saveChartIndicatorContext();
@@ -6049,6 +6372,7 @@ async function calculateIndicator() {
         enabled: state.indicator.enabled,
       }),
     );
+    progressTimer.recordEvent({ status: "started", label: "Canvas render" });
     const renderStarted = performance.now();
     drawAll();
     const renderCompleted = performance.now();
@@ -6072,14 +6396,16 @@ async function calculateIndicator() {
         },
       ]),
     );
+    const serverCache = r.headers.get("X-QG-Cache") || "unknown";
     const completedTiming = {
       durationMs: Math.round((performance.now() - calculationStarted) * 100) / 100,
-      serverCache: r.headers.get("X-QG-Cache") || "unknown",
+      serverCache,
       timing: {
         requestAndComputeMs: Math.round((responseReceived - requestStarted) * 100) / 100,
         detectorMs: Number(r.headers.get("X-QG-Detector-Ms") || 0),
         serverMs: Number(r.headers.get("X-QG-Server-Ms") || 0),
-        cacheReadMs: Number(r.headers.get("X-QG-Cache-Read-Ms") || 0),
+        cacheReadMs: ["file", "memory", "hit"].includes(serverCache) && r.headers.has("X-QG-Cache-Read-Ms")
+          ? Number(r.headers.get("X-QG-Cache-Read-Ms")) : null,
         responseParseMs: Math.round((responseParsed - responseReceived) * 100) / 100,
         objectPreparationMs: Math.round((objectPreparationCompleted - objectPreparationStarted) * 100) / 100,
         canvasRenderMs: Math.round((renderCompleted - renderStarted) * 100) / 100,
@@ -6097,7 +6423,9 @@ async function calculateIndicator() {
       timing: completedTiming.timing,
     };
     state.indicator.infoDetailsDirty = true;
-    pushIndicatorActivity("SUCCESS", "Indicator calculation completed", {
+    const positionCount = Object.values(payload.directions).reduce((n, group) => n + activityPositionRows(group).length, 0);
+    const liquidityCount = Object.values(payload.directions).reduce((n, group) => n + (group.liquidity?.length || 0), 0);
+    pushIndicatorActivity("SUCCESS", `Indicator calculation completed • ${positionCount} positions • ${liquidityCount} liquidity levels`, {
       durationMs: state.indicator.lastCalculation.durationMs,
     });
     window.__QG_PERF__ = {
@@ -6119,6 +6447,7 @@ async function calculateIndicator() {
     log.indicator.error("CALCULATION_FAILED", error, {
       durationMs: failedDurationMs,
       symbol: state.file?.symbol,
+      direction, timeframe, from, to, stages: progressTimer?.events,
     });
     $("#indicatorStatusFooter").dataset.state = "error";
     $("#indicatorStatusFooter").title = "Indicator calculation error";
@@ -6133,12 +6462,9 @@ async function calculateIndicator() {
       indicatorCalculationOwner = null;
       state.indicator.loading = false;
       $("#applyIndicator").disabled = false;
-    } else if (progressTimer && !progressTimer.stopped) {
-      clearInterval(progressTimer.timer);
-      progressTimer.stopped = true;
-      progressTimer.source.close();
-    }
+    } else progressTimer?.close();
   }
+  return succeeded;
 }
 $("#indicatorBtn").onclick = openIndicator;
 $("#indicatorStatusFooter").onclick = openIndicator;
@@ -6151,6 +6477,9 @@ let realtimeHistoryRevision = 0;
 let realtimeIndicatorRunning = false;
 let queuedRealtimeIndicator = null;
 let recentVerification = null;
+let realtimeIndicatorConnectionFailure = null;
+const LIVE_INDICATOR_RECONNECT_DELAYS_MS = [500, 1500];
+const LIVE_INDICATOR_READINESS_DELAYS_MS = [3000, 5000, 8000, 12000, 15000, 15000, 15000];
 
 function invalidateRealtimeIndicatorHistory() {
   realtimeHistoryRevision += 1;
@@ -6184,6 +6513,38 @@ async function drainRealtimeIndicatorQueue() {
   }
 }
 
+function waitForLiveIndicatorReconnect(delay, signal) {
+  return new Promise(resolve => {
+    const resume = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", resume);
+      resolve();
+    };
+    const timer = setTimeout(resume, delay);
+    signal.addEventListener("abort", resume, { once: true });
+    if (signal.aborted) resume();
+  });
+}
+
+async function waitForLiveIndicatorService(isCurrent, signal, deadline) {
+  for (const delay of LIVE_INDICATOR_READINESS_DELAYS_MS) {
+    const remaining = deadline - performance.now();
+    if (remaining <= 0 || !isCurrent()) return false;
+    await waitForLiveIndicatorReconnect(Math.min(remaining, delay), signal);
+    if (!isCurrent()) return false;
+    try {
+      const response = await fetch("/api/reactions/source", {
+        cache: "no-store", signal: AbortSignal.any([signal, AbortSignal.timeout(2000)]),
+      });
+      if (response.ok) return true;
+    } catch (error) {
+      if (!isCurrent()) return false;
+      if (!["TypeError", "TimeoutError"].includes(error?.name)) throw error;
+    }
+  }
+  return false;
+}
+
 async function continueRealtimeIndicator(context, file, signal, operationIsCurrent, repairOnly = false, reportProgress) {
   const rawTo = state.raw.at(-1).time;
   const isCurrent = () => !signal.aborted && operationIsCurrent() && state.indicator.resultContext === context;
@@ -6195,19 +6556,35 @@ async function continueRealtimeIndicator(context, file, signal, operationIsCurre
     && context.to === Math.floor(rawTo / context.chartTimeframe) * context.chartTimeframe;
   if (!isCurrent() || restoredAtTail || (keepAlive && performance.now() - context.liveContactAt < 10 * 60_000))
     return false;
-  const progress = !keepAlive && reportProgress && startLiveIndicatorProgress({ operationId: createUniqueId(), signal, report: reportProgress });
-  let outcome = "idle";
-  try {
-    const applied = await fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent, keepAlive, repairOnly, rawTo,
-      requestId: progress?.operationId });
-    if (applied) outcome = "applied";
-    return applied;
-  } catch (error) {
-    if (isCurrent()) outcome = "deferred";
-    throw error;
-  } finally {
-    progress?.finish(outcome);
+  let reconnectDeadline = null;
+  for (let attempt = 0; isCurrent(); attempt += 1) {
+    const progress = !keepAlive && reportProgress && startLiveIndicatorProgress({ operationId: createUniqueId(), signal, report: reportProgress });
+    let outcome = "idle";
+    let connectionError;
+    try {
+      const applied = await fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent, keepAlive, repairOnly, rawTo,
+        requestId: progress?.operationId });
+      if (applied) outcome = "applied";
+      return applied;
+    } catch (error) {
+      if (!isCurrent()) return false;
+      if (error.code !== "LIVE_INDICATOR_CONNECTION_LOST" || attempt > LIVE_INDICATOR_RECONNECT_DELAYS_MS.length) {
+        outcome = "deferred";
+        throw error;
+      }
+      connectionError = error;
+      reconnectDeadline ??= performance.now() + LOCAL_CHART_RESTART_GRACE_MS;
+    } finally {
+      progress?.finish(outcome);
+    }
+    if (attempt < LIVE_INDICATOR_RECONNECT_DELAYS_MS.length) {
+      await waitForLiveIndicatorReconnect(LIVE_INDICATOR_RECONNECT_DELAYS_MS[attempt], signal);
+    } else if (!(await waitForLiveIndicatorService(isCurrent, signal, reconnectDeadline))) {
+      if (!isCurrent()) return false;
+      throw connectionError;
+    }
   }
+  return false;
 }
 
 async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent, keepAlive, repairOnly, rawTo, requestId }) {
@@ -6222,19 +6599,31 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
     liveSession: true, rebuildCached: proof.cached === true,
   } : { id: file.id, chartId: file.chartId, tabId: liveIndicatorTabId, sessionId: context.liveSessionId, proof,
     ...(keepAlive ? { keepAlive: true } : {}) };
-  const response = await fetch(rebuild ? "/api/reactions" : "/api/reactions/continue", {
+  const endpoint = rebuild ? "/api/reactions" : "/api/reactions/continue";
+  const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestId ? { ...request, requestId } : request),
+    body: JSON.stringify({ ...request, requestId, rawSha256: file.metadata?.dataSha256 }),
     signal,
-  });
+  };
+  let response, payload;
+  try {
+    response = await fetch(endpoint, options);
+    if (!isCurrent()) return false;
+    if (response.status !== 204 || rebuild) payload = await response.json();
+  } catch (error) {
+    if (error?.name !== "TypeError" || signal.aborted) throw error;
+    throw Object.assign(new Error("Connection to the local indicator service was interrupted.", { cause: error }), {
+      code: "LIVE_INDICATOR_CONNECTION_LOST", endpoint, requestId,
+    });
+  }
   if (!isCurrent()) return false;
+  realtimeIndicatorConnectionFailure = null;
   if (response.status === 204 && !rebuild) {
     if (!(await waitForRealtimeCandles(isCurrent)) || !isCurrent()) return false;
     state.indicator.resultContext = { ...context, liveRawTo: rawTo, liveContactAt: performance.now() };
     return false;
   }
-  const payload = await response.json();
   if (!(await waitForRealtimeCandles(isCurrent)) || !isCurrent()) return false;
   if (!response.ok) {
     if (payload.code === "CALCULATION_CACHE_CLEARED") clearDisplayedCalculationCache();
@@ -6267,6 +6656,11 @@ async function fetchAndApplyRealtimeIndicator({ context, file, signal, isCurrent
     status: "Live calculation completed", cache: "bypass", timeframe: analysisTimeframe, direction,
     durationMs: engineCalculationDuration(payload),
   };
+  state.indicator.infoDetailsDirty = true;
+  const liquidityCount = Object.values(payload.directions).reduce((count, group) => count + (group.liquidity?.length || 0), 0);
+  pushIndicatorActivity("SUCCESS", `Live calculation completed • ${liquidityCount} liquidity levels`, {
+    durationMs: state.indicator.lastCalculation.durationMs,
+  });
   setFooterCacheStatus("bypass");
   if (!state.indicatorRange.dragging && parseTehranInput($("#indicatorFrom").value) === context.from
       && parseTehranInput($("#indicatorTo").value) === context.to) {
@@ -6351,7 +6745,7 @@ function applyRealtimeCandles(file, candles, corrections = [], gapCandles = []) 
   scheduleDraw();
 }
 
-async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll,
+async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, indicatorSignal, indicatorOnly, verifyAll, manualVerification,
   reportProgress, reportVerification, reportIndicatorProgress, refreshIndicatorSource = false }) {
   if (chartUpdateRunning || indicatorCalculationOwner) return "Chart is busy. Retrying at the next interval.";
   const file = state.file;
@@ -6394,6 +6788,18 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
           return { status: "Indicator updated." };
       } catch (error) {
         if (continuationSignal.aborted || !operationIsCurrent() || state.indicator.resultContext !== context) return;
+        if (error.code === "LIVE_INDICATOR_CONNECTION_LOST") {
+          if (realtimeIndicatorConnectionFailure !== context) {
+            realtimeIndicatorConnectionFailure = context;
+            log.indicator.warn("REALTIME_INDICATOR_CONNECTION_UNAVAILABLE", { chartId, endpoint: error.endpoint,
+              requestId: error.requestId, ...errorDetails(error) });
+          }
+          return { status: "Waiting for the local indicator service. Retrying at the next check.", indicatorError: error.message };
+        }
+        if (error.code === "RAW_SNAPSHOT_SUPERSEDED") {
+          await refreshSymbolInventory({ background: true }).catch(error => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
+          return { status: "Synchronizing the indicator with the latest RAW." };
+        }
         log.indicator.warn("REALTIME_INDICATOR_CONTINUATION_DEFERRED", { chartId, code: error.code, message: error.message });
         return { status: "Indicator update deferred. Retrying at the next check.", indicatorError: error.message };
       }
@@ -6445,6 +6851,8 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
         verifyAll ? value : phase === "latest" ? Math.floor(value * .7) : 70 + Math.floor(value * .29)));
       if (status !== 200) {
         refreshRequired = status === 404 || result.code === "RAW_CHANGED";
+        if (!manualVerification && result.code === "RAW_BUSY") return { ...earlyIndicator, status: "Another check is already running for this RAW." };
+        if (!manualVerification && result.code === "RAW_CHANGED") return { status: "Synchronizing with the latest RAW." };
         throw Object.assign(new Error(result.error || "Could not update the RAW file."), { code: result.code, status });
       }
       if (signal.aborted || loadRevision !== symbolLoadRevision || state.file?.chartId !== chartId || state.file?.id !== base.id)
@@ -6511,7 +6919,7 @@ async function runRealtimeChartUpdate({ chartId, signal, indicatorCalculation, i
     chartUpdateRunning = false;
     finished(refreshRequired || (signal.aborted && !rawVerified));
     if (refreshRequired && !signal.aborted)
-      void refreshSymbolInventory().catch(error => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
+      void refreshSymbolInventory({ background: true }).catch(error => log.chart.warn("SYMBOL_INVENTORY_REFRESH_FAILED", { message: error.message }));
   }
 }
 
@@ -7031,6 +7439,7 @@ $$("[data-indicator-tab]").forEach(
 $$("[data-direction]").forEach(
   (button) =>
     (button.onclick = () => {
+      if (button.classList.contains("active")) return;
       $$("[data-direction]").forEach((x) =>
         x.classList.toggle("active", x === button),
       );
@@ -7041,10 +7450,13 @@ $$("[data-direction]").forEach(
         "data-trend",
         button.dataset.direction,
       );
-      clearActiveIndicatorCalculation();
+      invalidateIndicatorCalculation();
+      saveIndicatorConfiguration();
+      saveChartIndicatorContext();
     }),
 );
 $("#indicatorEnabled").onchange = () => {
+  workspacePreferences.set("indicator-enabled", $("#indicatorEnabled").checked);
   const enabled = $("#indicatorEnabled").checked;
   if (!enabled) invalidateIndicatorCalculation();
   setIndicatorVisibility(enabled);
@@ -7053,8 +7465,7 @@ $("#indicatorEnabled").onchange = () => {
     : "");
 };
 $("#applyIndicator").onclick = async () => {
-  await calculateIndicator();
-  if (state.indicator.enabled && !$("#indicatorModal").classList.contains("is-pinned"))
+  if (await calculateIndicator() && state.indicator.enabled && !$("#indicatorModal").classList.contains("is-pinned"))
     closeSidePanel($("#indicatorModal"));
 };
 document.addEventListener("click", (event) => {
@@ -7154,12 +7565,13 @@ const visualSettingIds = [
 ];
 for (const id of visualSettingIds) {
   $("#" + id).oninput = () => {
-    if (!id.endsWith("TfVisible")) invalidateIndicatorCalculation();
+    if (!id.endsWith("TfVisible") && !id.startsWith("liquidity")) invalidateIndicatorCalculation();
     const valueLabel = $("#" + id + "Value");
     if (valueLabel)
       valueLabel.textContent =
         $("#" + id).value + (id.includes("Opacity") ? "%" : id.includes("Width") ? "" : "px");
     refreshAppearancePreviews();
+    saveIndicatorConfiguration();
     if (state.indicator.results) applyVisualSettings();
     else saveChartIndicatorContext();
   };
@@ -7199,6 +7611,9 @@ function captureIndicatorForm() {
     controls,
     direction: $("[data-direction].active")?.dataset.direction || null,
   };
+}
+function saveIndicatorConfiguration() {
+  workspacePreferences.set("indicator-default", captureIndicatorForm());
 }
 const indicatorDefaults = captureIndicatorForm();
 function applyIndicatorForm(snapshot) {
@@ -7277,7 +7692,10 @@ $("#templateBtn").onclick = (e) => {
     if (rect.bottom > window.innerHeight) m.style.top = "auto";
   }
 };
-$("#indicatorTf").addEventListener("change", () => clearActiveIndicatorCalculation());
+$("#indicatorTf").addEventListener("change", () => {
+  saveIndicatorConfiguration();
+  clearActiveIndicatorCalculation();
+});
 $("#templateClose").onclick = () => {
   $("#templateMenu").classList.add("hidden");
   $("#templateBtn").setAttribute("aria-expanded", "false");
@@ -7320,8 +7738,12 @@ $("#templateMenu").onclick = async (event) => {
   } else if (action === "default") {
     event.stopPropagation();
     applyIndicatorForm(indicatorDefaults);
+    saveIndicatorConfiguration();
+    saveChartIndicatorContext();
   } else if (name) {
     applyIndicatorForm(readTemplates()[name]);
+    saveIndicatorConfiguration();
+    saveChartIndicatorContext();
     activeTemplateName = name;
     $("#templateMenu").classList.add("hidden");
     $("#templateBtn").setAttribute("aria-expanded", "false");
@@ -7354,32 +7776,31 @@ $$('[data-range="visible"]').forEach(
       );
     }),
 );
-shell.addEventListener(
-  "dblclick",
-  (event) => {
-    if (!state.indicator.enabled || !state.indicator.hitBoxes.length) return;
-    const bounds = shell.getBoundingClientRect(),
-      x = event.clientX - bounds.left,
-      y = event.clientY - bounds.top,
-      tolerance = 7;
-    const hit = state.indicator.hitBoxes.find((box) => {
-      const withinX = x >= box.left - tolerance && x <= box.right + tolerance,
-        withinY = y >= box.top - tolerance && y <= box.bottom + tolerance,
-        onVertical =
-          Math.abs(x - box.left) <= tolerance ||
-          Math.abs(x - box.right) <= tolerance,
-        onHorizontal =
-          Math.abs(y - box.top) <= tolerance ||
-          Math.abs(y - box.bottom) <= tolerance;
-      return withinX && withinY && (onVertical || onHorizontal);
-    });
-    if (!hit) return;
-    event.preventDefault();
-    event.stopPropagation();
-    openIndicator();
-  },
-  true,
-);
+function behaviorCopyLabel(label, family, verdict) {
+  const color = family ? family[0].toUpperCase() + family.slice(1) : "";
+  return [label, color, verdict && `(${verdict})`].filter(Boolean).join(" ");
+}
+shell.addEventListener("dblclick", async (event) => {
+  if (state.tool !== "cursor" || !state.indicator.enabled || event.target.closest("#drawingToolbar")) return;
+  const p = point(event);
+  if (!isDrawingSurface(p) || hitTest(p)) return;
+  const item = indicatorHitTest(p);
+  if (!item) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const parent = indicatorObject(item.id.replace(/:(verdict|stars|x|na|number|repeat-count)$/, ""));
+  const entry = parent ?? item;
+  const direction = entry.direction || entry.id.split(":").find(part => part === "bullish" || part === "bearish");
+  const timestamp = Number.isFinite(Number(entry.time)) && Number(entry.time) > 0
+    ? formatTehran(Number(entry.time), false) : "Unknown time";
+  try {
+    await copyTextToClipboard(`${timestamp} |  ${direction ?? "unknown"} | ${entry.copyLabel || entry.name}`);
+    toast("Indicator information copied", "success");
+  } catch (error) {
+    log.indicator.error("INDICATOR_COPY_FAILED", error, { objectId: item.id });
+    toast("Unable to copy indicator information", "error");
+  }
+}, true);
 document.addEventListener("keydown", (e) => {
   if (
     (e.key === "Delete" || e.key === "Backspace") &&
@@ -7409,11 +7830,10 @@ document.addEventListener("keydown", (e) => {
     $("#redoBtn").click();
   }
 }, true);
-setInterval(
-  () => ($("#clock").textContent = formatSystemDateTime(new Date())),
-  1000,
-);
-$("#clock").textContent = formatSystemDateTime(new Date());
+mountMarketClock({
+  trigger: $("#clock"),
+  getInstrument: () => state.file,
+});
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !$("#errorLogModal").classList.contains("hidden")) closeErrorLog();
 });
@@ -7423,6 +7843,8 @@ realtimeChart = mountRealtimeChart({
   getChartId: () => symbolLoadController ? null : state.file?.chartId,
   getSourceTimeframeSeconds: () => sourceTimeframeSeconds(),
   getStoredVerification: () => state.file?.metadata?.candleVerification,
+  getPreferences: (chartId) => workspacePreferences.get("realtime-default", workspacePreferences.get(`realtime:${chartId}`)),
+  savePreferences: (_chartId, preferences) => workspacePreferences.set("realtime-default", preferences),
   runUpdate: runRealtimeChartUpdate,
   onStateChange(view) {
     alertLiveView = view;
@@ -7432,6 +7854,21 @@ realtimeChart = mountRealtimeChart({
   onVerificationComplete({ checkedCount, correctedCount, recoveredCount }) {
     toast(`${checkedCount.toLocaleString("en-US")} candles checked · ${correctedCount.toLocaleString("en-US")} corrected · ${recoveredCount.toLocaleString("en-US")} missing candles restored`, "info");
   },
+});
+window.addEventListener("storage", event => {
+  const key = workspacePreferences.syncStorage(event.key);
+  if (key === "realtime-default") realtimeChart.contextChanged();
+  if (key === "indicator-default") {
+    invalidateIndicatorCalculation();
+    applyIndicatorForm(workspacePreferences.get(key));
+    if (state.indicator.results) applyVisualSettings();
+  }
+  if (key === "indicator-enabled") {
+    const enabled = workspacePreferences.get(key);
+    $("#indicatorEnabled").checked = enabled;
+    if (!enabled) invalidateIndicatorCalculation();
+    setIndicatorVisibility(enabled);
+  }
 });
 function loadVerdictFonts({ TRUE_FALSE_LABEL_WEIGHT, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT }) {
   for (const weight of [TRUE_FALSE_LABEL_WEIGHT, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT]) {
@@ -7517,7 +7954,20 @@ if (import.meta.hot) {
     queueEngineSourceRefresh(state.file?.chartId);
   });
 }
-loadInventory().then(restoreWorkspaceAfterRefresh).catch((err) => {
+async function loadChartWorkspace() {
+  await workspacePreferences.load();
+  const storedOrder = workspacePreferences.get("drawing-order");
+  drawingTools.splice(0, drawingTools.length, ...drawingToolOrder(drawingToolDefinitions, storedOrder ?? legacyDrawingToolOrder));
+  if (!storedOrder && Array.isArray(legacyDrawingToolOrder)) {
+    workspacePreferences.set("drawing-order", drawingTools);
+  }
+  Object.assign(state.defaults, workspacePreferences.get("drawing-style"));
+  manualToolbarPosition = workspacePreferences.get("drawing-toolbar-position");
+  applyIndicatorForm(workspacePreferences.get("indicator-default", indicatorDefaults));
+  renderDrawingToolbar();
+  await loadInventory();
+}
+loadChartWorkspace().then(restoreWorkspaceAfterRefresh).catch((err) => {
   const message = err?.name === "TimeoutError"
     ? "Loading the local RAW inventory timed out. Reload this tab to retry."
     : (err?.message || "Unable to load local market data.");

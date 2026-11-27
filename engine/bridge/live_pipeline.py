@@ -160,9 +160,13 @@ def _send_worker_message(kind, **fields):
     print(json.dumps({"type": kind, **fields}, separators=(",", ":")), flush=True)
 
 
+def _send_worker_progress(event):
+    _send_worker_message("progress", event=event)
+
+
 def _report_worker_progress(event):
     if event["status"] == "started" or "completedStages" in event:
-        _send_worker_message("progress", event=event)
+        _send_worker_progress(event)
 
 
 def main():
@@ -176,9 +180,12 @@ def main():
         original = selected if args.data == original_path else _decode_raw(original_data)
         lineage = LiveRawSource(selected, original_data, original)
         del original, selected_data, original_data
-        pipeline = LivePipelineContinuation(args, load_engines(args, {}))
-        _send_worker_message("seed", ready=True, payload=pipeline.append(selected))
-        del selected
+        seed_progress = _send_worker_progress if os.environ.get("TRADINGBOT_LIVE_SEED_PROGRESS") == "1" else None
+        with progress_events_to(seed_progress):
+            pipeline = LivePipelineContinuation(args, load_engines(args, {}))
+            payload = pipeline.append(selected)
+        _send_worker_message("seed", ready=True, payload=payload)
+        del selected, payload
         # The server supplies exact append bytes when it owns the commit lineage.
         pipe = sys.stdin.buffer
         while header := pipe.readline(256):

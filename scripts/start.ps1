@@ -23,6 +23,7 @@ $script:pendingUpdate = $null
 $script:updateProgress = @{ Stage = ''; Complete = 0; Download = -1 }
 $script:activity = [Collections.Generic.List[object]]::new()
 $script:addresses = @('Waiting for the Chart server')
+$script:openedBrowserUrl = ''
 $script:controls = 'Ctrl+C  Stop'
 $script:screenView = @{ Mode = 'Activity'; Offset = 0; Size = ''; Previous = @(); Message = '' }
 
@@ -533,7 +534,7 @@ function Ensure-Runtimes {
   & { $ErrorActionPreference = 'Continue'; & $python -B -c $checkImports @PythonPackages 2>&1 | Write-NativeLog }
   if ($LASTEXITCODE -ne 0) { throw 'Python Engine packages could not be imported.' }
 
-  $checkSyntax = "import ast,pathlib,sys; engine=pathlib.Path(sys.argv[1])/'engine'; paths=[engine/'__init__.py', *(engine/'bridge').rglob('*.py'), *(engine/'pipeline').rglob('*.py')]; [ast.parse(path.read_bytes(), filename=str(path)) for path in paths if '__pycache__' not in path.parts]"
+  $checkSyntax = "import ast,pathlib,sys; engine=pathlib.Path(sys.argv[1])/'engine'; paths=[*engine.glob('*.py'), *(engine/'bridge').rglob('*.py'), *(engine/'pipeline').rglob('*.py')]; [ast.parse(path.read_bytes(), filename=str(path)) for path in paths if '__pycache__' not in path.parts]"
   & { $ErrorActionPreference = 'Continue'; & $python -B -c $checkSyntax $Root 2>&1 | Write-NativeLog }
   if ($LASTEXITCODE -ne 0) { throw 'Python Engine syntax validation failed.' }
 
@@ -630,6 +631,14 @@ function Start-DevServer([string]$Node, [string]$Python) {
             $ready = $true
             Write-LauncherEvent 'Ready' $Matches[1] Green
             Write-Step 'TradingBot responded over HTTP.' Green
+            if ($script:OnWindows -and $script:openedBrowserUrl -ne $script:runner.LocalUrl) {
+              try {
+                Start-Process -FilePath $script:runner.LocalUrl -ErrorAction Stop
+                $script:openedBrowserUrl = $script:runner.LocalUrl
+              } catch {
+                Write-Step "Could not open the default browser: $($_.Exception.Message)" Yellow
+              }
+            }
             if ($AfterUpdate -and $script:updateProgress.Complete -lt 100) { Write-UpdateProgress 'Update complete' 100 }
           } elseif ($line.Trim()) {
             $level = if ($stream -eq 'Error') { 'Red' } else { 'Gray' }

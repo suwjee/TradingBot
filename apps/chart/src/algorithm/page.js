@@ -672,7 +672,6 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
   let visible = false;
   let currentRoute = null;
   let lastAlgorithmHash = "#algorithm-overview";
-  let previousExternalHash = "";
   let direction = "bullish";
   const applyDirectionalCopy = createDirectionalCopy();
 
@@ -1036,7 +1035,6 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     if (visible) return;
     visible = true;
     mountWorkspaceHeader(headerRoot, header);
-    previousExternalHash = isAlgorithmHash(window.location.hash) ? "" : window.location.hash;
     view.classList.remove("hidden");
     setIsolation(true);
     if (isAlgorithmHash(window.location.hash)) showPage(window.location.hash, { restore: true });
@@ -1051,7 +1049,6 @@ export function initAlgorithmPage({ root, headerRoot, icon, showChart }) {
     view.classList.add("hidden");
     restoreWorkspaceHeader(view, header);
     setIsolation(false);
-    if (isAlgorithmHash(window.location.hash)) window.history.replaceState(null, "", previousExternalHash || `${window.location.pathname}${window.location.search}`);
     document.title = "TradingBot Chart";
     return true;
   }

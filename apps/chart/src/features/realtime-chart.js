@@ -203,7 +203,8 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
       notify();
     }
     const request = { chartId, signal, indicatorCalculation: Boolean(indicatorSignal), indicatorSignal, pollIntervalMs: intervalMs, reportIndicatorProgress,
-      ...(verifyAll ? { verifyAll: true } : {}), ...(indicatorOnly ? { indicatorOnly: true } : { reportProgress, reportVerification }) };
+      ...(verifyAll ? { verifyAll: true, manualVerification } : {}),
+      ...(indicatorOnly ? { indicatorOnly: true } : { reportProgress, reportVerification }) };
     active = checkRun;
     setCheckProgress(0);
     if (verifyAll) verifyAllOutcome = "idle";
@@ -297,16 +298,24 @@ export function createRealtimeChartScheduler({ runUpdate, render, onVerification
     notify();
   }
 
-  function contextChanged(nextChartId, sourceTimeframeSeconds, savedVerification = null) {
+  function contextChanged(nextChartId, sourceTimeframeSeconds, savedVerification = null, preferences = null) {
     chartId = nextChartId;
     const sourceIntervalMs = sourceTimeframeSeconds * 1_000;
     minimumIntervalMs = chartId && Number.isSafeInteger(sourceIntervalMs) && sourceIntervalMs > 0 ? sourceIntervalMs : 0;
     intervals = pollingIntervals(minimumIntervalMs);
-    intervalMs = Math.max(DEFAULT_INTERVAL_MS, minimumIntervalMs);
+    const savedInterval = preferences?.intervalMs;
+    intervalMs = intervals.some(({ ms, disabled }) => ms === savedInterval && !disabled)
+      ? savedInterval : Math.max(DEFAULT_INTERVAL_MS, minimumIntervalMs);
     indicatorCalculation = false;
     verification = savedVerification;
     stop();
-    enable();
+    if (preferences?.enabled !== false) {
+      enable();
+      if (preferences?.indicatorCalculation) setIndicatorCalculation(true);
+    } else if (preferences.indicatorCalculation) {
+      indicatorCalculation = true;
+      notify();
+    }
   }
 
   function verifyAll() {
@@ -401,7 +410,7 @@ export async function readRealtimeUpdate(response, reportProgress) {
 }
 
 export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChartId, getSourceTimeframeSeconds, getStoredVerification,
-  onVerificationComplete, onStateChange }) {
+  getPreferences, savePreferences, onVerificationComplete, onStateChange }) {
   const document = trigger.ownerDocument;
   const window = document.defaultView;
   const menu = document.createElement("section");
@@ -514,6 +523,8 @@ export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChart
   let enabled = false;
   let anchor = trigger;
   let previewTimer;
+  let currentPreferences;
+  let preferredIndicatorCalculation = false;
 
   function setOpen(next, restoreFocus = false, nextAnchor = anchor) {
     if (restoreFocus) anchor.focus();
@@ -551,6 +562,7 @@ export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChart
     runUpdate,
     onVerificationComplete,
     render(view) {
+      currentPreferences = { enabled: view.enabled, intervalMs: view.intervalMs };
       enabled = view.enabled;
       toggle.disabled = !view.hasChart;
       updateText(toggle, enabled ? "Disable" : "Enable");
@@ -633,17 +645,27 @@ export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChart
   footerTrigger.addEventListener("blur", hidePreview);
   preview.addEventListener("pointerenter", showPreview);
   preview.addEventListener("pointerleave", queuePreviewHide);
+  function persistPreferences() {
+    const chartId = getChartId();
+    if (chartId) savePreferences?.(chartId, { ...currentPreferences, indicatorCalculation: preferredIndicatorCalculation });
+  }
   toggle.addEventListener("click", () => {
     if (enabled) scheduler.stop();
     else scheduler.enable();
+    persistPreferences();
   });
-  interval.addEventListener("change", () => scheduler.setInterval(Number(interval.value)));
+  interval.addEventListener("change", () => {
+    scheduler.setInterval(Number(interval.value));
+    persistPreferences();
+  });
   indicator.addEventListener("change", () => {
-    scheduler.setIndicatorCalculation(indicator.checked);
+    preferredIndicatorCalculation = indicator.checked;
+    scheduler.setIndicatorCalculation(preferredIndicatorCalculation);
+    persistPreferences();
     const chartId = getChartId();
     if (!chartId) return;
     try {
-      sessionStorage.setItem(`market-canvas:${chartId}:realtime-indicator`, String(indicator.checked));
+      sessionStorage.setItem(`market-canvas:${chartId}:realtime-indicator`, String(preferredIndicatorCalculation));
     } catch { /* The scheduler already applied the tab's current preference. */ }
   });
   verifyAll.addEventListener("click", scheduler.verifyAll);
@@ -681,15 +703,21 @@ export function mountRealtimeChart({ trigger, footerTrigger, runUpdate, getChart
 
   function contextChanged() {
     const chartId = getChartId();
-    scheduler.contextChanged(chartId, chartId ? getSourceTimeframeSeconds?.() : undefined,
-      chartId ? getStoredVerification?.() : null);
-    if (chartId) {
+    let preferences = chartId && getPreferences?.(chartId);
+    let migrateLegacyPreference = false;
+    if (chartId && !preferences) {
       try {
-        if (sessionStorage.getItem(`market-canvas:${chartId}:realtime-indicator`) === "true") {
-          scheduler.setIndicatorCalculation(true);
+        const value = sessionStorage.getItem(`market-canvas:${chartId}:realtime-indicator`);
+        if (value === "true" || value === "false") {
+          preferences = { indicatorCalculation: value === "true" };
+          migrateLegacyPreference = true;
         }
       } catch { /* The default preference is available without storage. */ }
     }
+    preferredIndicatorCalculation = Boolean(preferences?.indicatorCalculation);
+    scheduler.contextChanged(chartId, chartId ? getSourceTimeframeSeconds?.() : undefined,
+      chartId ? getStoredVerification?.() : null, preferences);
+    if (migrateLegacyPreference) persistPreferences();
     if (open) setOpen(false, menu.contains(document.activeElement));
     hidePreview();
   }

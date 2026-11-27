@@ -33,6 +33,10 @@ export function calculationInputsMatch(snapshot, current) {
 
 export function migrateIndicatorVisibility(controls) {
   const { trueFalseVisible, ...migrated } = controls;
+  for (const prefix of ["foundation", "secondary", "primary"]) {
+    const key = `${prefix}TfNaColor`;
+    if (migrated[key] === "#b8b8b8") migrated[key] = "#808080";
+  }
   if (typeof trueFalseVisible === "boolean") {
     for (const key of ["foundationTfVisible", "secondaryTfVisible", "primaryTfVisible"]) {
       migrated[key] ??= trueFalseVisible;

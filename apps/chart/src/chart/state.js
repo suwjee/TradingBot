@@ -1,3 +1,5 @@
+import { isIndicatorPosition } from "./indicator-positions.js";
+
 // Recover legacy arrays and snapshots accidentally persisted by old Undo/Redo.
 export function drawingArray(value, fallback = []) {
   const seen = new Set();
@@ -14,7 +16,7 @@ export function normalizeHistorySnapshot(snapshot, current) {
     ? snapshot.indicatorObjects
     : Array.isArray(current.indicatorObjects) ? current.indicatorObjects : [];
   return structuredClone({ drawings, indicatorObjects: indicatorObjects.filter((item) =>
-    item?.type !== "indicator-position" && !item?.setupStatusKind) });
+    (item?.type !== "indicator-position" || isIndicatorPosition(item)) && !item?.setupStatusKind) });
 }
 
 export const CHART_TIMEFRAME_KEY = "qg:last-chart-timeframe:v1";

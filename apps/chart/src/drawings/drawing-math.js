@@ -33,6 +33,15 @@ export function calculatePositionLevels(type, entryPrice, targetPrice, stopPrice
   return { entry, target, stop, risk, reward, riskReward: reward / risk };
 }
 
+export function positionLevels(drawing) {
+  if (!drawing.finalizedPosition)
+    return calculatePositionLevels(drawing.type, drawing.a?.price, drawing.b?.price, drawing.stopPrice);
+  const entry = Number(drawing.a?.price), target = Number(drawing.b?.price), stop = Number(drawing.stopPrice);
+  if (![entry, target, stop].every(Number.isFinite)) return null;
+  const risk = Math.abs(entry - stop), reward = Math.abs(target - entry);
+  return { entry, target, stop, risk, reward, riskReward: risk ? reward / risk : null };
+}
+
 export function initialPositionLevels(type, entryPrice, targetPrice) {
   const levels = calculatePositionLevels(type, entryPrice, targetPrice);
   if (!levels) return null;
@@ -42,7 +51,7 @@ export function initialPositionLevels(type, entryPrice, targetPrice) {
 
 export function editPositionLevel(drawing, level, price) {
   const value = Number(price);
-  const levels = calculatePositionLevels(drawing.type, drawing.a?.price, drawing.b?.price, drawing.stopPrice);
+  const levels = positionLevels(drawing);
   if (!levels || !Number.isFinite(value) || !["target", "stop"].includes(level)) return null;
   const sign = drawing.type === "long" ? 1 : -1;
   if ((value - levels.entry) * sign * (level === "target" ? 1 : -1) <= 0) return null;
