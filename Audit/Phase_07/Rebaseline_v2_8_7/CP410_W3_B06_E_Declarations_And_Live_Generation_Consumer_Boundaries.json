@@ -1,0 +1,214 @@
+{
+  "checkpoint": 410,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          66
+        ]
+      ],
+      "contract": "as_decimal preserves Decimal or constructs Decimal from string; reaction_identity uses int First then Break, no price/time/ordinal components. Imported alias is same binding. Record declaration does not invoke either helper."
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "ranges": [
+        [
+          20,
+          54
+        ]
+      ],
+      "contract": "Direction policy owns strict trend cross and extreme mirror, exact bullish/bearish and ValueError otherwise; no chronology, lifecycle or numbering. E01–E03 direction-neutral, no local price or geometry transformation."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          39,
+          74
+        ],
+        [
+          77,
+          77
+        ],
+        [
+          139,
+          139
+        ],
+        [
+          198,
+          198
+        ],
+        [
+          442,
+          442
+        ],
+        [
+          523,
+          527
+        ],
+        [
+          554,
+          555
+        ],
+        [
+          2035,
+          2048
+        ],
+        [
+          2101,
+          2113
+        ]
+      ],
+      "contract": "Order imports bind owner declarations and helpers; OrderMatch has nine items including optional crossing triple, cause tuple and nullable cause time. E inherits mixin later; physical identity, accepted ledger and Order provenance remain Order-owned. B05 scoped closure retained, no new cross-owner acceptance."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          1153,
+          1178
+        ]
+      ],
+      "contract": "MarketChronology retains candles/seconds references, derives main and lower times from supplied index or row timestamps, converts timeframe to timedelta and owns lower index/caches. E02 reads chronology.times/timeframe directly; no independent prefix or input identity guarantee."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          153,
+          195
+        ],
+        [
+          201,
+          214
+        ],
+        [
+          221,
+          221
+        ],
+        [
+          258,
+          309
+        ],
+        [
+          335,
+          390
+        ],
+        [
+          510,
+          517
+        ],
+        [
+          538,
+          554
+        ],
+        [
+          586,
+          594
+        ],
+        [
+          666,
+          733
+        ],
+        [
+          1125,
+          1133
+        ],
+        [
+          1294,
+          1316
+        ],
+        [
+          1480,
+          1488
+        ]
+      ],
+      "contract": "Later E consumers use current/previous stop/extreme/zone/reconciliation maps and _dirty_time; optional live continuation only when non-null. Cached cross-order hit still checks chronology identity; nonlive branch uses owner search. EZone construction separately populates main vs exact event timestamps and normalizes selected prices. Steps snapshot active tuple before source group and at terminal frontier; reopened race raises control exception with checkpoint, one catch restarts native computation. Saved record only when not reopened; restoration copies candidate/numbered lists and accepted set, updates lifecycle starts. These are bounded consumer observations, not E04+ closure."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          37,
+          39
+        ]
+      ],
+      "contract": "Shared sequence_priority normalizes kind/family and performs dictionary lookup. Passed into E construction by Bridge; E declarations do not own priority or StopAll lifecycle."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          336,
+          364
+        ],
+        [
+          2160,
+          2208
+        ],
+        [
+          2280,
+          2306
+        ],
+        [
+          2440,
+          2456
+        ],
+        [
+          2488,
+          2502
+        ],
+        [
+          2648,
+          2663
+        ],
+        [
+          2733,
+          2744
+        ],
+        [
+          3531,
+          3550
+        ],
+        [
+          3678,
+          3685
+        ],
+        [
+          3738,
+          3767
+        ]
+      ],
+      "contract": "Bridge creates E using shared chronology and lifecycle priority, optionally forwards supplied live continuation and feedback scope for initial/final/shared-order calls. In observed native live worker route _run_live_calculation invokes prepare_pipeline_state without live argument; market views update candle indices and closed regimes but no E advance call in these observed sites. Optional external/dynamic live object and its advance/dirty evidence remain conditional; do not claim native live E cache is activated merely by declaration."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          22,
+          65
+        ]
+      ],
+      "contract": "LivePipelineContinuation retains buckets and market views; append calls calculate_live_from_buckets and replaces views on BaseException following bucket transaction rollback. This outer route does not establish a direct E02 caller or local E02 transactional rollback."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local review by GPT, not independently staffed. Existing AST inventories compared directly, not regenerated.",
+    "Local source-only coverage; no RAW, runtime, ZIP, new cross-owner acceptance or production change.",
+    "Dataclass annotations and frozen slots are not input validation or deep immutability; market chronology alignment, stable comparable inputs and correct dirty evidence remain conditional.",
+    "Scope equality is not full prefix proof. The observed native live replay route does not pass a live continuation into prepare_pipeline_state; optional dynamic live receivers remain conditional, not asserted active or defective.",
+    "No independent SHA-256 assertion; Git object identities and readback are the publication checks. An initial live provider path lookup returned 404; the pinned main tree identified engine/bridge/live_pipeline.py and its source was subsequently read."
+  ]
+}
