@@ -1,0 +1,139 @@
+{
+  "checkpoint": 414,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          394,
+          419
+        ],
+        [
+          437,
+          504
+        ],
+        [
+          507,
+          517
+        ],
+        [
+          559,
+          566
+        ],
+        [
+          581,
+          606
+        ],
+        [
+          1125,
+          1130
+        ],
+        [
+          1495,
+          1506
+        ]
+      ],
+      "contract": "E10 setter copies resets, sorts times and clears four caches only when present and non-None; constructor invokes it before chronology assignment. E11 delegates reset time; E12 delegates clamped main index. E15 builds/reuses direction-keyed chronology sparse geometry; E16/E17 earliest ties, Decimal values, candle index codes. E22/extreme routes non-None continuation to live query; E23 nonlive shared query uses end+1, can lazily initialize sparse if bounds invalid. Confirmation/first-time helpers delegate chronology and index times. Native reconcile conditional on continuation; detect performs later audit clearing, leg registration, candidate discovery, consumed S and audit rebuilding, none implied by constructor. Provider review bounded to constructor dependencies, not new owner acceptance."
+    },
+    {
+      "path": "engine/pipeline/direction_policy.py",
+      "blob": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+      "ranges": [
+        [
+          20,
+          68
+        ]
+      ],
+      "contract": "Shared frozen direction policies: bullish low/high RED/GREEN, bearish high/low GREEN/RED. Exact direction names; policy_for raises on invalid direction. Opposite direction flips only direction."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          143,
+          145
+        ],
+        [
+          965,
+          1009
+        ],
+        [
+          1132,
+          1183
+        ],
+        [
+          1238,
+          1255
+        ]
+      ],
+      "contract": "MarketChronology aliases source sequences and index-provided times, creates positive timedelta, stores selected indexes and per-chronology E geometry cache. Native opposite direction delegates shared policy. Range min/max over half-open bounds, strict extreme comparison with earliest index equality. Reset time lookup may populate cache; native second_time, then display_time, else timestamp precedence. External chronology identity, source ordering and input consistency not established by constructor alone."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          557,
+          651
+        ]
+      ],
+      "contract": "Initialize current order_audit independently of initial_order_audit, caches, confirmation indexes and pending lists. Trend/opposite first time and confirmation queries preserve input order before stable confirmation sort; reset grouping by int(from_first_idx) preserves sorted reset order; opposite_by_first_index dict last wins; opposite_identity_position setdefault first wins. Initialization can cause chronology callback/cache effects before visual/consumed/candidate state exists. This is bounded W2 owner dependency, no new acceptance."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          37,
+          39
+        ]
+      ],
+      "contract": "Native resolver normalizes kind/family via str.lower and indexes authoritative priority table; constructor merely retains non-None supplied callback, does not call it."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2153,
+          2208
+        ],
+        [
+          2280,
+          2306
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3756,
+          3767
+        ]
+      ],
+      "contract": "create_e_detector uses full direction/opposite reactions, opposite resets, S input, 0 and len(candles)-1; supplies lifecycle priority resolver, geometry callback dispatch, initial ledger/blocked/exception/invalid/legs fields. No explicit sequence_resets passed. Live keywords only when continuation non-None. Native live calculation calls prepare_pipeline_state without live, which defaults None. No activation claim."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          58,
+          65
+        ]
+      ],
+      "contract": "Native live transport calls calculate_live_from_buckets with market views and bucket delta; does not by itself establish active LiveEContinuation."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Local source-only scope; no RAW payload, runtime, ZIP, production/main change, new cross-owner acceptance or empirical equivalence. Explicit current scope supersedes historical ZIP/runtime startup rules in uploaded operating protocol and AGENTS.",
+    "Prior 1170 rows, operations, spans, historical W1 text/dispositions and 12 supplements structurally checked. All 1109 CP317 links checked against canonical inventory, W1 crosswalk and partitions; five reviewed historical partitions checked, not all 25 historical files refetched. Prior semantic contracts remain scoped.",
+    "Malformed inputs, dynamic callbacks, external chronology and alias mutation are conditional; no assertion of reachability or correctness beyond source contract. New row semantic roles reference local grouped contracts rather than independent per-access execution.",
+    "Publication identity/content verification is Git readback, not independent SHA-256/signature verification."
+  ]
+}
