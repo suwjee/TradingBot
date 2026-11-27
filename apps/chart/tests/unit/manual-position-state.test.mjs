@@ -12,12 +12,14 @@ test("saved manual long and short drawings retain their order and position level
 
 test("undo snapshots retain manual positions and omit retired automatic annotations", () => {
   const native = { id: "native", type: "indicator-label", text: "S" };
+  const generated = { id: "indicator:bullish:position:stable", type: "indicator-position",
+    positionType: "1.1B", positionEdit: { bars: 34 } };
   const drawings = [{ id: "old", type: "long" }, { id: "measure", type: "measure" }];
   const snapshot = normalizeHistorySnapshot({
     drawings,
-    indicatorObjects: [native, { id: "buy", type: "indicator-position" },
+    indicatorObjects: [native, generated, { id: "buy", type: "indicator-position" },
       { id: "status", type: "indicator-label", setupStatusKind: "StopAll", text: "T" }],
   }, {});
-  assert.deepEqual(snapshot, { drawings, indicatorObjects: [native] });
+  assert.deepEqual(snapshot, { drawings, indicatorObjects: [native, generated] });
 });
 

@@ -5,6 +5,8 @@ import {
   chartTabUrl,
   resolveChartTabState,
   resolveWorkspaceRefreshState,
+  workspaceFromUrl,
+  workspaceTabUrl,
 } from "../../src/features/workspace-session.js";
 
 test("refresh state keeps the prior workspace, selected RAW resource, and supported timeframe", () => {
@@ -71,4 +73,17 @@ test("chart tab URL preserves unrelated query values and the workspace hash", ()
     "http://localhost:5173/?mode=review#algorithm-overview",
     { chartId: "11111111-1111-4111-8111-111111111111", timeframe: 30 },
   ), "/?mode=review&chartId=11111111-1111-4111-8111-111111111111&tf=30#algorithm-overview");
+});
+
+test("workspace URLs retain chart identity and support legacy Algorithm deep links", () => {
+  for (const workspace of ["chart", "faraz", "algorithm", "alert"]) {
+    const url = workspaceTabUrl("/?chartId=chart-a&tf=30", workspace);
+    assert.equal(url, `/${workspace}?chartId=chart-a&tf=30`);
+    assert.equal(workspaceFromUrl(url), workspace);
+  }
+  assert.equal(workspaceFromUrl("/#algorithm-overview"), "algorithm");
+  assert.equal(workspaceTabUrl("/algorithm?chartId=chart-a#algorithm-overview", "chart"), "/chart?chartId=chart-a");
+  assert.equal(workspaceTabUrl("/chart#other", "faraz"), "/faraz#other");
+  assert.equal(workspaceFromUrl("/index.html"), null);
+  assert.equal(workspaceFromUrl("/review.html"), null);
 });

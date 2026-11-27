@@ -9,15 +9,15 @@ scope:
   - reconstructable-Engine-Source
   - primary-and-verdict-Chart-rendering
 created_at: 2026-11-21T11:41:00+03:30
-last_modified_at: 2026-11-26T09:41:40+03:30
+last_modified_at: 2026-11-27T05:51:35+03:30
 ---
 
 # TradingBot Primary Structures and True/False Algorithm Reference
 
-**Document Version:** `1.1.4`  
+**Document Version:** `1.2.0`  
 **Status:** `ACTIVE SOURCE-SYNCHRONIZED`  
 **Directions:** `bullish` and `bearish`  
-**Production Source Behavioral Change:** `Basic T/F engulf counts base behavior independently of verdict; same-verdict stars and converged Order_B publication are retained`  
+**Production Source Behavioral Change:** `Mirrored Buy/Sell positions, Basic base-run ordinals, same-base F repair transfer and immediate-successor repetition for Basic T/F`  
 **Source provenance:** This document captures the Engine rebuilt from the GitHub v2.8.4 release base with the approved refinements. Version 1.1.0 refreshes the Chart presentation and its local imports for the three indicator groups and exact market-change timestamps. Version 1.1.2 updates Basic S/E verdict evaluation and its Chart repeat marker. Version 1.1.3 synchronizes the accepted E, StopAll and Order_B lifecycle with feedback before publication. Version 1.1.4 separates base-behavior engulf counts from same-verdict display repetition. The focused Chart snapshots and their formatter use LF checkout bytes. The source manifest identifies the exact captured bytes.
 
 ## 0. Scope, authority and reading order
@@ -31,6 +31,8 @@ The current explicit trading requirements and the project authority model govern
 - For reconstruction, read sections 1 and 13–16.
 - For acceptance examples and boundaries that need explicit treatment, read sections 11–12.
 
+The [position algorithm reference](TradingBot_Position_Algorithm_Reference.md#foundation-liquidity) defines Foundation liquidity and its line eligibility.
+
 ## 1. Source manifest
 
 Paths are relative to the reconstruction destination. The manifest is generated from the live production Engine and focused renderer imports. Versions, line counts and hashes describe this snapshot.
@@ -39,8 +41,8 @@ Paths are relative to the reconstruction destination. The manifest is generated 
 |---|---|---|---:|---:|---|
 | `engine/__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `engine/bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `engine/bridge/live_pipeline.py` | Production module | `1.3.0` | 225 | 9694 | `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d` |
-| `engine/bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.15.0 (impl 1.21.3)` | 3809 | 152299 | `9f61e63b775a018e49a5f38b69d2a89672f7d6ef0d45c7e76b5b1c8748cb6d19` |
+| `engine/bridge/live_pipeline.py` | Production module | `1.3.0` | 232 | 9968 | `682ac1ced42c41bdab93c7f18c070b089d0fb414ea3d532a4e4e38028eb6c455` |
+| `engine/bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.15.0 (impl 1.22.0)` | 3849 | 154463 | `cf2a1570e14181f170155a33dab00dc63725c7dda1d21e7ee068136194a62689` |
 | `engine/pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `engine/pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0 (impl 1.8.1)` | 1069 | 43435 | `a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593` |
 | `engine/pipeline/blue_line_detector.py` | Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix | `2.4.1` | 590 | 21498 | `0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5` |
@@ -52,12 +54,18 @@ Paths are relative to the reconstruction destination. The manifest is generated 
 | `engine/pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.5.0` | 839 | 37487 | `4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f` |
 | `engine/pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.4)` | 2907 | 127156 | `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066` |
 | `engine/pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.2)` | 1551 | 66301 | `3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78` |
-| `engine/pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 188 | 7412 | `473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39` |
+| `engine/pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 224 | 8451 | `e4be32f9654d15fed33100c9ee40856ddf6996fa629386eca280eec0fbec9579` |
 | `engine/styles/reaction-detector.css` | Engine-owned Chart stylesheet | `unversioned` | 960 | 45040 | `e222faa3b2c6313e497951cdd631a0df09983a12e0148186911d38cfbe873a2a` |
-| `apps/chart/src/chart/indicator-renderer.js` | Chart presentation | `unversioned` | 500 | 26520 | `3f5d68eb06246ce6a4186b9146da62ca3907e919b1bf1f16e6ae2c91fd48cfc3` |
-| `apps/chart/src/chart/primary-structure.js` | Chart presentation | `unversioned` | 401 | 16540 | `0fdc5c5d4d1a1c1ae4b4160f4e5aec9c0204b4850dde31e0dd50e66a1147ed3d` |
-| `apps/chart/src/chart/true-false-label.js` | Chart presentation | `unversioned` | 59 | 2523 | `c4ce132a40b5565afcfd26d72884593abba0758de3cc76862a179c4379968896` |
+| `apps/chart/src/chart/indicator-liquidity.js` | Chart presentation | `unversioned` | 84 | 3724 | `38a0aed3ab22d873955e845b663583c5f61b5cb60ec3e08f7d2f74c7b2a9271b` |
+| `apps/chart/src/chart/indicator-renderer.js` | Chart presentation | `unversioned` | 541 | 28748 | `4988f7d04eef8245f19599402f855c450c2362222d3642c156706f23acf51282` |
+| `apps/chart/src/chart/primary-structure.js` | Chart presentation | `unversioned` | 428 | 18405 | `3acc7c4322dfa5284267958101812974168144599150126e4e141c01cffb5656` |
+| `apps/chart/src/chart/true-false-label.js` | Chart presentation | `unversioned` | 102 | 5084 | `9ffd9d7764e62bd3947feb224d4c5249223229097bb586c8c5a326d16f6e2e9f` |
 | `apps/chart/src/features/raw-file-contract.js` | Tehran timestamp formatting dependency | `unversioned` | 54 | 2839 | `bba680048147f385d38a97b30e702e1c1d3a00d8777b852bcef8e95025c29616` |
+| `apps/chart/src/chart/indicator-positions.js` | Chart presentation | `unversioned` | 158 | 6467 | `285d23b006d6f5e797592caaf4bf3083b2e05b50c5fbab47c837eafc44389505` |
+| `apps/chart/src/drawings/drawing-math.js` | Chart presentation | `unversioned` | 127 | 6263 | `9ce4d7ae8b0298862ccb823e34db4871d1684d006b63a22e61575d09af7158e7` |
+| `engine/buy_algorithm.py` | Bullish Buy entry point | `unversioned` | 9 | 446 | `1ea6ae00f492fb9799089d2ade132c6570f92a7ef266780b00c67411a5f5d136` |
+| `engine/pipeline/position_rules.py` | Shared mirrored positions, strict stops and Foundation liquidity | `unversioned` | 402 | 16817 | `a114e9e822ce40be1051089ff40e4c6d279af8904312c5f301f3928b3ec71ff7` |
+| `engine/sell_algorithm.py` | Bearish Sell entry point | `unversioned` | 9 | 448 | `0ed15ed3585e84e809c007f6baabf8f924603b3cc5433110c6794ba1f218b87c` |
 
 The Engine Python inventory was captured at `2026-11-24T16:54:32+03:30`. The Chart presentation closure was refreshed at `2026-11-24T01:36:53+03:30`.
 
@@ -189,7 +197,7 @@ Find the earliest strict RAW stop strictly after confirmation of any visible, re
 
 Bridge recalculates a prefix that ends before the boundary. That independent prefix must contain a confirmed final directional number 3 matching the reversal's price and source. Without this evidence the bridge rejects the inconsistent result. It then constructs a fresh suffix from the boundary candle, without the old Reaction, lifecycle, primary or Order state. Use the authorized opening rule for the new direction. Translate local indexes back to coordinates of the input, preserving the physical identity of finalized historical output. A later reversal beyond the selected presentation horizon does not replace that horizon's outputs.
 
-Return each independent segment with its own start/end bound as applicable and attach the transition to the incoming segment. When a direction recurs, aggregate its rows in segment order. The segment arrays remain available for historical clipping, selections and renderer ownership. An MBL's end and the old cycle statuses are bounded by the stopped regime. No automated position selection is inferred from a trend reversal.
+Return each independent segment with its own start/end bound as applicable and attach the transition to the incoming segment. When a direction recurs, aggregate its rows in segment order. The segment arrays remain available for historical clipping, selections and renderer ownership. An MBL's end and the old cycle statuses are bounded by the stopped regime. Position evaluation starts a fresh window in the incoming direction. See the [position algorithm reference](TradingBot_Position_Algorithm_Reference.md) for both directions.
 
 The separate T/F repair lookup searches the existing original RAW horizon using a carried reference's original direction. The new regime's trading state and new verdict series still start fresh.
 
@@ -214,10 +222,13 @@ Start fresh Basic verdict history at the source of every published StopAll or fi
 
 Rank in ascending order is S Blue, E Blue, S Red, E Red. Greater E numbers rank higher within a family. Use the following decision order for an admitted E.
 
-1. A larger behavior following at least two consecutive occurrences of an identical smaller base behavior receives T. The base identity uses S color or E family and number. Prior T/F labels and source-price crossings do not gate this branch. A larger intervening behavior ends the smaller base run. A smaller behavior preserves larger base runs, including when it triggers its own engulf. The incoming source extends its own base identity across label changes.
-2. Without an engulf, find already classified, strictly smaller Basic sources in this history whose source prices the new E strictly crosses. Bullish requires a lower Low. Bearish requires a higher High. Use exact Decimal comparison. Choose the largest eligible rank and then its latest eligible source. Continue with the opposite verdict. If no reference qualifies, use odd-numbered E as F and even-numbered E as T.
+1. Assign T when the incoming E directly succeeds an active run of at least two identical base behaviors. An S run can set T for E1 of the same color. A run of E-n can set T for E-(n+1) of the same color. The repeat uses base identity across T/F labels. Smaller intervening behaviors preserve the run. Any larger behavior ends it. Skipped E numbers and a direct jump from a Blue run to a Red E use the price rule. S Red receives T when it follows a Blue repetition under the ordinary S verdict.
+2. Otherwise, find already classified, strictly smaller Basic sources in this history whose source prices the new E strictly crosses. Bullish requires a lower Low. Bearish requires a higher High. Use exact Decimal comparison. Choose the largest eligible rank and then its latest eligible source. Continue with the opposite verdict.
+3. With neither a qualifying direct predecessor repeat nor an eligible price reference, use odd-numbered E as F and even-numbered E as T.
 
-Display repetition is separate. When an exact-rank same-verdict display run reaches two, flag both occurrences with `trueFalseRepeated: true` and flag further members as they arrive. A changed verdict opens a new display run. Preserve the display restart when a lower same-verdict run engulfs. Ending a run leaves the repeat flags on its already assessed members.
+Use only sources within the current Basic history of the current trend segment. Every trend reversal begins a fresh segment, including when a direction recurs later.
+
+A Basic run continues while the same base rank recurs, including across T/F changes and smaller behaviors. On the second member, publish ordinal 1 for the first member and 2 for the new member. Each later member receives its own ordinal. A larger behavior or a Basic reset starts a new run. Mark the F members of a run once at least two Fs share the base rank. A smaller repeated group does not end a larger run.
 
 Basic verdict restarts affect price references and verdict repeat counts. F repair history remains separate.
 
@@ -225,7 +236,7 @@ Basic verdict restarts affect price references and verdict repeat counts. F repa
 
 Use the finest available RAW and a strict crossing of the reference level. In bullish a lower Low repairs the reference. In bearish a higher High repairs the reference. Equality does not qualify, and the RAW Close need not cross. The reference's original market direction governs its test even after a reversal.
 
-- For a repeated same-rank F record, the latest occurrence supplies the active reference. Look for the first strict crossing at or after that occurrence's source time. A crossing belonging to an older occurrence strictly before the new source may remain historical evidence. If the older occurrence's repair was at or after the new source, remove that attribution when the new reference supersedes it.
+- The latest F of a repeated base run supplies its active reference. An intervening T of the same base rank preserves that F run; larger behaviors and Basic boundaries end eligibility for transfer. Look for the first strict crossing at or after that occurrence's source time. A crossing belonging to an older occurrence strictly before the new source may remain historical evidence. If the older occurrence's repair was at or after the new source, remove that attribution when the new reference supersedes it.
 - When a larger Basic behavior displaces a singleton lower-rank F, the larger behavior's source time supplies the singleton's earliest search time. An already-classified F can be repaired even when the newer behavior has its own T verdict.
 - Search through the end of the last visible main bucket, inclusive, using RAW rows actually supplied in that window. The bridge computes an inclusive horizon of visible bucket start + analysis duration - 1 second. Lower RAW from within that bucket is allowed. Re-evaluate as the horizon advances.
 - Publish the first eligible crossing as `trueFalseRepairTime` on the owner row. The original Basic T/F label remains as assessed. A prior segment can supply a historical reference only if its source row is in the published result.
@@ -267,6 +278,8 @@ Only the final PL in bullish and final PH in bearish participate in this track. 
 | `trueFalse: null` | Assessed source owner with no assigned T/F, such as a directional primary outside 1–3 or an E before the first admitted S. |
 | absent `trueFalse` | Row outside the verdict projection, suppressed/noneligible source owner, or a legacy payload. |
 | `trueFalseRepeated: true` | A member of a repeated Basic run or a StopAll repeated prefix. The row retains its T/F. Non-repeated rows omit this flag. |
+| `trueFalseRepeatCount` | Ordinal of a member in a repeated Basic run. The first member is updated when a second member arrives. |
+| `trueFalseRepeatF: true` | Marks each F member of a Basic run containing multiple Fs. |
 | `trueFalseRepairTime` | Exact first recognized repair RAW event time in Unix seconds. Its absence means no published repair evidence. |
 
 ## 9. Public payload and runtime interfaces
@@ -311,7 +324,7 @@ The current production worker stages incremental normalized RAW buckets and inde
 
 Chart consumes the normalized public result as presentation data. Default primary label and directional-chevron extent are 12 CSS px. The directional primary chevron is pink upward for bullish PL and green downward for bearish PH. The opposite point is a filled circle with its kind's color, default radius 4 px and opacity 100%. PH labels are above their markers, PL labels below. The default candle-to-marker gap is 12 px and marker-to-label gap is 10 px. Per-object appearance uses stable IDs and the existing settings owner. The PH and PL visibility switches each cover their marker and label. The MBL switch covers its line and label.
 
-Configuration and Appearance use the same three groups. Foundation controls verdicts on S/E, Secondary controls verdicts on StopAll, and PH-PL controls verdicts on the directional primary structure. Each group has independent visibility, T/F/N/A colors, and font sizing. The default automatic verdict size is `max(1, min(9, parentSize - 2))` CSS px. **PL and PH T/F add 2 px after applying that formula**, so their default T/F size is 11 px. Unassigned N/A uses the standard size. Basic weight is 300, StopAll and primary verdict weight is 700, and N/A weight is 300. Colors are T `#047857`, F `#be123c`, and N/A `#b8b8b8`. The first verdict mark starts 3 px beyond the native label. For a repeated StopAll, draw N/A first and the actual T/F farther outward by the standard badge size + 2 px. For a repeated Basic row, draw `*` above its label and verdict, using the same font size as its Foundation T/F and the Secondary N/A color. The Foundation verdict visibility controls the star. StopAll and Basic render outward from the direction-specific label side. Primary markers use the side belonging to the point kind.
+Configuration and Appearance group Foundation verdicts on S/E, Secondary verdicts on StopAll, and PH-PL verdicts on directional primary structures. Each group has visibility, T/F/N/A colors, and font sizing. Foundation also has individual switches for stars and X. Secondary has an individual N/A switch. The default automatic verdict size is `max(1, min(9, parentSize - 2))` CSS px. **PL and PH T/F add 2 px after applying that formula**, so their default T/F size is 11 px. Unassigned N/A uses the standard size. Basic weight is 300, StopAll and primary verdict weight is 700, and N/A weight is 300. Colors are T `#047857`, F `#be123c`, and N/A `#808080`. Stars and X share the Secondary N/A color by default. T/F begins 3 px beyond the native label. The auxiliary labels sit below T/F in bullish regimes and above T/F in bearish regimes. When a Basic row has an ordinal and the final F marker, X follows the stars outward. Primary markers use the side belonging to the point kind. Each mark has its own chart object identity and supports presentation overrides and deletion from the Object Tree.
 
 MBL uses its engine-supplied source, level, break/cap and owning segment bounds. Defaults are a dotted line, width 2, color `#b22833`, and 9 px MBL label. The Change market line is dashed by default and uses the Engine's published boundary candle. The badge beneath it shows the plotted candle's exact `sourceTime` in Asia/Tehran through seconds. The Engine's distinct intrabar crossing time remains in `eventTime`. Overlapping badges are staggered within the chart plot. The transition icon uses the actual 50th candle inclusive, 28 × 28 CSS px by default, with 100 px default clearance above the bullish target High or below the bearish target Low. A missing target leaves the boundary and its timestamp visible. The market-change visibility switch controls the line, icon and badge together.
 
@@ -356,6 +369,10 @@ On `RAW FOREXCOM_XAUUSD 5S FROM 2026-09-28 20-44-00 TO 2026-10-06 19-32-40.json`
 ### 11.5 Basic verdict and repeat anchors on November XAUUSD
 
 Use the FOREXCOM/XAUUSD 5-second history beginning `2026-11-04 16:01:00`, 30-second analysis and initial bullish. These are source candle times in Tehran.
+
+On the full RAW ending `2026-11-26 20:08:55`, the displayed direction changes to bearish at `2026-11-06 08:51:30`. On November 5 at `02:40:00` and `09:03:30`, and on November 6 at `20:28:30`, E1 Red is T from a same-color S run. Bearish E2 Red at `2026-11-06 22:30:00` is F, and E2 Red at `2026-11-09 02:51:30` is T. Their immediate successor E3 Red at `03:46:00` is T from the repeated base. On November 9 at `23:58:30`, E7 Red at High 4148.655 takes F from E6 Red T at `05:36:30`, High 4134.25. E6 Red has the highest rank among the strictly crossed prior sources. The later E2 Red run qualifies only E3 Red for a repetition verdict.
+
+The following table records the earlier repetition-first implementation's acceptance evidence.
 
 | Source range | Expected result |
 |---|---|
@@ -454,7 +471,7 @@ def safe_relative(raw: bytes) -> PurePosixPath:
         or ":" in name
         or any(part in {"", ".", ".."} for part in name.split("/"))
         or path.as_posix() != name
-        or (not name.startswith(("engine/", "apps/chart/src/chart/"))
+        or (not name.startswith(("engine/", "apps/chart/src/chart/", "apps/chart/src/drawings/"))
             and name != "apps/chart/src/features/raw-file-contract.js")
     ):
         raise ValueError(f"Unsafe or unsupported snapshot path: {name}")
@@ -539,212 +556,209 @@ Python signatures, classes, nested callables, and module/class assignments are i
 - Function `LiveRawSource.append(self, data, pipeline)` (L129-L145).
 - Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L147-L156).
 - Function `_send_worker_message(kind, **fields)` (L159-L160).
-- Function `_report_worker_progress(event)` (L163-L165).
-- Function `main()` (L168-L221).
+- Function `_send_worker_progress(event)` (L163-L164).
+- Function `_report_worker_progress(event)` (L167-L169).
+- Function `main()` (L172-L228).
 
 #### `engine/bridge/trading_pipeline.py`
 - Assignment `_ENGINE_ROOT = Path(__file__).resolve().parents[1]` (L32).
 - Assignment `_PIPELINE_DIR = _ENGINE_ROOT / 'pipeline'` (L33).
-- Assignment `_pipeline_dir_text = str(_PIPELINE_DIR)` (L34).
-- Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L42).
-- Assignment `TRADING_PIPELINE_VERSION = '1.15.0'` (L45).
-- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.21.3'` (L46).
-- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-26T09:41:40+03:30'` (L47).
-- Assignment `MBL_EXTENSION_CANDLES = 400` (L48).
-- Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L50).
-- Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L51).
-- Function `progress_events_to(sink)` (L55-L60).
-- Function `emit_progress(status: str, label: str, duration_ms: float | None=None, **details)` (L63-L72).
-- Function `timed(timings: dict[str, float], label: str, work)` (L75-L84).
-- Function `load_module(name: str, path: Path)` (L87-L94).
-- Function `load_engine(path: Path)` (L97-L98).
-- Assignment `_local_dt_cache: dict[int, datetime] = {}` (L101).
-- Function `local_datetime(epoch: int)` (L104-L110).
-- Assignment `_epoch_cache: dict[datetime, int] = {}` (L113).
-- Function `epoch(local: datetime)` (L116-L122).
-- Assignment `_display_epoch_cache: dict[str, int] = {}` (L125).
-- Function `display_epoch(value: str | datetime)` (L128-L137).
-- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None, lower_only: bool=False)` (L140-L184).
-- Function `build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool=False)` (L187-L202).
-- Function `build_candle_buckets.cached_decimal(value: object)` (L192-L200).
-- Class `BucketAppend` (L206-L210).
-- Assignment `first_dirty_second: int` (L207).
-- Assignment `first_dirty_main: int` (L208).
-- Assignment `settled_seconds: int` (L209).
-- Assignment `settled_main: int` (L210).
-- Class `LiveMarketBuckets` (L213-L303).
-- Function `LiveMarketBuckets.__init__(self, timeframe: int)` (L216-L223).
-- Function `LiveMarketBuckets.append(self, rows: Sequence[dict])` (L225-L227).
-- Function `LiveMarketBuckets.stage_append(self, rows: Sequence[dict])` (L230-L295).
-- Function `LiveMarketBuckets.stage_append.checked_rows()` (L255-L264).
-- Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L266-L272).
-- Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L297-L303).
-- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L306-L333).
-- Class `LiveMarketViews` (L336-L364).
-- Function `LiveMarketViews.__init__(self)` (L339-L344).
-- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L347-L353).
-- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L355-L364).
-- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L366-L371).
-- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L374-L394).
-- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L397-L438).
-- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L441-L458).
-- Function `serialize_a_zones(items)` (L461-L485).
-- Function `serialize_s_zones(items)` (L488-L550).
-- Function `serialize_e_zones(items)` (L553-L593).
-- Function `serialize_stopalls(items)` (L596-L660).
-- Function `bridge_datetime(value: object | None)` (L663-L674).
-- Function `bridge_direction(direction: str)` (L677-L678).
-- Function `bridge_mode(mode: object)` (L681-L682).
-- Function `bridge_color(value: object | None)` (L685-L688).
-- Function `_bridge_horizon(market: MarketContext)` (L691-L695).
-- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L698-L699).
-- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L702-L739).
-- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L742-L759).
-- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L762-L783).
-- Function `_bridge_order_identity(item: object)` (L786-L791).
-- Class `BridgeProjection` (L794-L985).
-- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L802-L819).
-- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L821-L864).
-- Function `BridgeProjection.parent_order(self, behavior: object)` (L866-L871).
-- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L873-L926).
-- Function `BridgeProjection.order_audit(self, prepared: object)` (L928-L985).
-- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L988-L1006).
-- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1009-L1027).
-- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1030-L1042).
-- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1045-L1065).
-- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1068-L1108).
-- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1111-L1131).
-- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1134-L1167).
-- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1170-L1179).
-- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1182-L1269).
-- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1272-L1325).
-- Function `_bridge_source_index(item: object)` (L1328-L1333).
-- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1336-L1377).
-- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1380-L1424).
-- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1427-L1493).
-- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1496-L1503).
-- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1506-L1608).
-- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1611-L1676).
-- Function `serialize_order_audit(prepared_items, detector)` (L1679-L1729).
-- Class `EngineBundle` (L1733-L1740).
-- Assignment `reaction: object` (L1734).
-- Assignment `blue_line: object` (L1735).
-- Assignment `a_zone: object` (L1736).
-- Assignment `s_zone: object` (L1737).
-- Assignment `e_zone: object | None` (L1738).
-- Assignment `lifecycle: object | None` (L1739).
-- Assignment `primary: object | None = None` (L1740).
-- Class `MarketContext` (L1744-L1753).
-- Assignment `seconds: list[object]` (L1745).
-- Assignment `candles: list[object]` (L1746).
-- Assignment `lower_index: object` (L1747).
-- Assignment `chronology: object` (L1748).
-- Assignment `start_index: int` (L1749).
-- Assignment `end_index: int` (L1750).
-- Assignment `index_offset: int = 0` (L1751).
-- Assignment `initial_bullish_trend: bool = False` (L1752).
-- Assignment `initial_bearish_trend: bool = False` (L1753).
-- Class `LiveClosedRegimes` (L1756-L1785).
-- Function `LiveClosedRegimes.__init__(self)` (L1759-L1760).
-- Function `LiveClosedRegimes.stage(self, first_dirty_main)` (L1763-L1785).
-- Function `LiveClosedRegimes.stage.resolve(direction, market, boundary, calculate)` (L1767-L1781).
-- Class `MarketIndexWindow` (L1788-L1823).
-- Function `MarketIndexWindow.__init__(self, index, candles, start, stop)` (L1791-L1798).
-- Function `MarketIndexWindow._first(self, query, left, right, level)` (L1800-L1805).
-- Function `MarketIndexWindow.first_less(self, left, right, level)` (L1807-L1808).
-- Function `MarketIndexWindow.first_greater(self, left, right, level)` (L1810-L1811).
-- Function `MarketIndexWindow._extreme(self, query, left, right)` (L1813-L1817).
-- Function `MarketIndexWindow.range_minimum(self, left, right)` (L1819-L1820).
-- Function `MarketIndexWindow.range_maximum(self, left, right)` (L1822-L1823).
-- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None, indexed_reaction=None)` (L1826-L1857).
-- Function `absolute_payload_indexes(value, offset)` (L1860-L1871).
-- Function `serialize_trend_transition(transition, market)` (L1874-L1894).
-- Function `parse_arguments(argv=None)` (L1897-L1971).
-- Function `load_engines(args, timings: dict[str, float])` (L1974-L2009).
-- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L2012-L2027).
-- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L2030-L2052).
-- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L2055-L2111).
-- Class `PipelineState` (L2114-L2133).
-- Assignment `directions: tuple[str, ...]` (L2117).
-- Assignment `results: dict[str, object]` (L2118).
-- Assignment `reusable_full_context: bool` (L2119).
-- Assignment `initial_order_geometry: dict[str, object]` (L2120).
-- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2121).
-- Assignment `full_e_zones: dict[str, list[object]]` (L2122).
-- Assignment `full_stopalls_by_direction: dict[str, list[object]]` (L2123).
-- Assignment `full_e_detectors: dict[str, object]` (L2124).
-- Assignment `full_s_detectors: dict[str, object]` (L2125).
-- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2126).
-- Assignment `full_a_by_direction: dict[str, list[object]]` (L2127).
-- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2128).
-- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2129).
-- Assignment `full_s_by_direction: dict[str, list[object]]` (L2130).
-- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2131).
-- Assignment `primary_result: object | None = None` (L2132).
-- Assignment `live_stages: object | None = None` (L2133).
-- Class `FullDirectionState` (L2137-L2150).
-- Assignment `e_zones: list[object]` (L2140).
-- Assignment `e_detector: object` (L2141).
-- Assignment `s_detector: object` (L2142).
-- Assignment `blue_lines: list[object]` (L2143).
-- Assignment `a_zones: list[object]` (L2144).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2145).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2146).
-- Assignment `s_zones: list[object]` (L2147).
-- Assignment `s_candidates: list[object]` (L2148).
-- Assignment `initial_s_zones: list[object]` (L2149).
-- Assignment `stopalls: list[object] = field(default_factory=list)` (L2150).
-- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2153-L2208).
-- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2175-L2188).
-- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2211-L2566).
-- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2569-L2645).
-- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2648-L2802).
-- Class `DirectionRangeState` (L2806-L2815).
-- Assignment `blue_lines: list[object]` (L2809).
-- Assignment `a_zones: list[object]` (L2810).
-- Assignment `s_candidates: list[object]` (L2811).
-- Assignment `accepted_s_zones: list[object]` (L2812).
-- Assignment `e_zones: list[object]` (L2813).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2814).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2815).
-- Class `DirectionVisibilityState` (L2819-L2834).
-- Assignment `blue_lines: list[object]` (L2822).
-- Assignment `a_zones: list[object]` (L2823).
-- Assignment `s_zones: list[object]` (L2824).
-- Assignment `e_zones: list[object]` (L2825).
-- Assignment `stopalls: list[object]` (L2826).
-- Assignment `prepared_order_audit: list[object]` (L2827).
-- Assignment `projection_s_zones: list[object]` (L2831).
-- Assignment `projection_e_zones: list[object]` (L2832).
-- Assignment `projection_stopalls: list[object]` (L2833).
-- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2834).
-- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2837-L2936).
-- Function `finalize_direction_visibility(direction: str, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2939-L3110).
-- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3113-L3251).
-- Function `serialize_direction_payload.build_legacy_payload()` (L3140-L3163).
-- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3172-L3180).
-- Function `serialize_direction_payload.build_payload()` (L3213-L3247).
-- Function `serialize_primary_order(order, market, owner_direction)` (L3254-L3280).
-- Function `serialize_primary_order.value(item)` (L3257-L3262).
-- Function `serialize_primary_structures(primary, market)` (L3283-L3402).
-- Function `serialize_primary_structures.cycle_identity(value)` (L3294-L3299).
-- Function `serialize_primary_structures.point(item)` (L3300-L3323).
-- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3405-L3458).
-- Function `calculate_primary_structures.commit_high(point)` (L3428-L3436).
-- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3461-L3500).
-- Function `merge_regime_outputs(regimes)` (L3502-L3528).
-- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None, closed_regime=None)` (L3531-L3630).
-- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3542-L3550).
-- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3552-L3569).
-- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3576-L3592).
-- Function `build_reversed_trend_outputs.empty_lists(item)` (L3602-L3607).
-- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float, *, closed_regime=None)` (L3633-L3710).
-- Function `build_response_payload.stopall_confirmation_closed(row)` (L3697-L3698).
-- Function `_market_calculation_scope(reaction)` (L3714-L3728).
-- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3731-L3735).
-- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3738-L3753).
-- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage, *, closed_regime=None)` (L3756-L3767).
-- Function `main()` (L3770-L3801).
+- Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L45).
+- Assignment `TRADING_PIPELINE_VERSION = '1.15.0'` (L48).
+- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.22.0'` (L49).
+- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-26T16:04:42+03:30'` (L50).
+- Assignment `MBL_EXTENSION_CANDLES = 400` (L51).
+- Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L53).
+- Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L54).
+- Function `progress_events_to(sink)` (L58-L63).
+- Function `emit_progress(status: str, label: str, duration_ms: float | None=None, **details)` (L66-L75).
+- Function `timed(timings: dict[str, float], label: str, work)` (L78-L87).
+- Function `load_module(name: str, path: Path)` (L90-L97).
+- Function `load_engine(path: Path)` (L100-L101).
+- Assignment `_local_dt_cache: dict[int, datetime] = {}` (L104).
+- Function `local_datetime(epoch: int)` (L107-L113).
+- Assignment `_epoch_cache: dict[datetime, int] = {}` (L116).
+- Function `epoch(local: datetime)` (L119-L125).
+- Assignment `_display_epoch_cache: dict[str, int] = {}` (L128).
+- Function `display_epoch(value: str | datetime)` (L131-L140).
+- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None, lower_only: bool=False)` (L143-L187).
+- Function `build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool=False)` (L190-L205).
+- Function `build_candle_buckets.cached_decimal(value: object)` (L195-L203).
+- Class `BucketAppend` (L209-L213).
+- Assignment `first_dirty_second: int` (L210).
+- Assignment `first_dirty_main: int` (L211).
+- Assignment `settled_seconds: int` (L212).
+- Assignment `settled_main: int` (L213).
+- Class `LiveMarketBuckets` (L216-L306).
+- Function `LiveMarketBuckets.__init__(self, timeframe: int)` (L219-L226).
+- Function `LiveMarketBuckets.append(self, rows: Sequence[dict])` (L228-L230).
+- Function `LiveMarketBuckets.stage_append(self, rows: Sequence[dict])` (L233-L298).
+- Function `LiveMarketBuckets.stage_append.checked_rows()` (L258-L267).
+- Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L269-L275).
+- Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L300-L306).
+- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L309-L336).
+- Class `LiveMarketViews` (L339-L367).
+- Function `LiveMarketViews.__init__(self)` (L342-L347).
+- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L350-L356).
+- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L358-L367).
+- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L369-L374).
+- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L377-L397).
+- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L400-L441).
+- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L444-L461).
+- Function `serialize_a_zones(items)` (L464-L488).
+- Function `serialize_s_zones(items)` (L491-L553).
+- Function `serialize_e_zones(items)` (L556-L596).
+- Function `serialize_stopalls(items)` (L599-L663).
+- Function `bridge_datetime(value: object | None)` (L666-L677).
+- Function `bridge_direction(direction: str)` (L680-L681).
+- Function `bridge_mode(mode: object)` (L684-L685).
+- Function `bridge_color(value: object | None)` (L688-L691).
+- Function `_bridge_horizon(market: MarketContext)` (L694-L698).
+- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L701-L702).
+- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L705-L742).
+- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L745-L762).
+- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L765-L786).
+- Function `_bridge_order_identity(item: object)` (L789-L794).
+- Class `BridgeProjection` (L797-L988).
+- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L805-L822).
+- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L824-L867).
+- Function `BridgeProjection.parent_order(self, behavior: object)` (L869-L874).
+- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L876-L929).
+- Function `BridgeProjection.order_audit(self, prepared: object)` (L931-L988).
+- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L991-L1009).
+- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1012-L1030).
+- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1033-L1045).
+- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1048-L1068).
+- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1071-L1111).
+- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1114-L1134).
+- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1137-L1170).
+- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1173-L1182).
+- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1185-L1272).
+- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1275-L1328).
+- Function `_bridge_source_index(item: object)` (L1331-L1336).
+- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1339-L1380).
+- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1383-L1427).
+- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1430-L1496).
+- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1499-L1506).
+- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1509-L1611).
+- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1614-L1679).
+- Function `serialize_order_audit(prepared_items, detector)` (L1682-L1732).
+- Class `EngineBundle` (L1736-L1743).
+- Assignment `reaction: object` (L1737).
+- Assignment `blue_line: object` (L1738).
+- Assignment `a_zone: object` (L1739).
+- Assignment `s_zone: object` (L1740).
+- Assignment `e_zone: object | None` (L1741).
+- Assignment `lifecycle: object | None` (L1742).
+- Assignment `primary: object | None = None` (L1743).
+- Class `MarketContext` (L1747-L1756).
+- Assignment `seconds: list[object]` (L1748).
+- Assignment `candles: list[object]` (L1749).
+- Assignment `lower_index: object` (L1750).
+- Assignment `chronology: object` (L1751).
+- Assignment `start_index: int` (L1752).
+- Assignment `end_index: int` (L1753).
+- Assignment `index_offset: int = 0` (L1754).
+- Assignment `initial_bullish_trend: bool = False` (L1755).
+- Assignment `initial_bearish_trend: bool = False` (L1756).
+- Class `LiveClosedRegimes` (L1759-L1788).
+- Function `LiveClosedRegimes.__init__(self)` (L1762-L1763).
+- Function `LiveClosedRegimes.stage(self, first_dirty_main)` (L1766-L1788).
+- Function `LiveClosedRegimes.stage.resolve(direction, market, boundary, calculate)` (L1770-L1784).
+- Class `MarketIndexWindow` (L1791-L1826).
+- Function `MarketIndexWindow.__init__(self, index, candles, start, stop)` (L1794-L1801).
+- Function `MarketIndexWindow._first(self, query, left, right, level)` (L1803-L1808).
+- Function `MarketIndexWindow.first_less(self, left, right, level)` (L1810-L1811).
+- Function `MarketIndexWindow.first_greater(self, left, right, level)` (L1813-L1814).
+- Function `MarketIndexWindow._extreme(self, query, left, right)` (L1816-L1820).
+- Function `MarketIndexWindow.range_minimum(self, left, right)` (L1822-L1823).
+- Function `MarketIndexWindow.range_maximum(self, left, right)` (L1825-L1826).
+- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None, indexed_reaction=None)` (L1829-L1860).
+- Function `absolute_payload_indexes(value, offset)` (L1863-L1874).
+- Function `serialize_trend_transition(transition, market)` (L1877-L1897).
+- Function `parse_arguments(argv=None)` (L1900-L1974).
+- Function `load_engines(args, timings: dict[str, float])` (L1977-L2012).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L2015-L2030).
+- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L2033-L2055).
+- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L2058-L2114).
+- Class `PipelineState` (L2117-L2136).
+- Assignment `directions: tuple[str, ...]` (L2120).
+- Assignment `results: dict[str, object]` (L2121).
+- Assignment `reusable_full_context: bool` (L2122).
+- Assignment `initial_order_geometry: dict[str, object]` (L2123).
+- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2124).
+- Assignment `full_e_zones: dict[str, list[object]]` (L2125).
+- Assignment `full_stopalls_by_direction: dict[str, list[object]]` (L2126).
+- Assignment `full_e_detectors: dict[str, object]` (L2127).
+- Assignment `full_s_detectors: dict[str, object]` (L2128).
+- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2129).
+- Assignment `full_a_by_direction: dict[str, list[object]]` (L2130).
+- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2131).
+- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2132).
+- Assignment `full_s_by_direction: dict[str, list[object]]` (L2133).
+- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2134).
+- Assignment `primary_result: object | None = None` (L2135).
+- Assignment `live_stages: object | None = None` (L2136).
+- Class `FullDirectionState` (L2140-L2153).
+- Assignment `e_zones: list[object]` (L2143).
+- Assignment `e_detector: object` (L2144).
+- Assignment `s_detector: object` (L2145).
+- Assignment `blue_lines: list[object]` (L2146).
+- Assignment `a_zones: list[object]` (L2147).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2148).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2149).
+- Assignment `s_zones: list[object]` (L2150).
+- Assignment `s_candidates: list[object]` (L2151).
+- Assignment `initial_s_zones: list[object]` (L2152).
+- Assignment `stopalls: list[object] = field(default_factory=list)` (L2153).
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2156-L2211).
+- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2178-L2191).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2214-L2569).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2572-L2648).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2651-L2805).
+- Class `DirectionRangeState` (L2809-L2818).
+- Assignment `blue_lines: list[object]` (L2812).
+- Assignment `a_zones: list[object]` (L2813).
+- Assignment `s_candidates: list[object]` (L2814).
+- Assignment `accepted_s_zones: list[object]` (L2815).
+- Assignment `e_zones: list[object]` (L2816).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2817).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2818).
+- Class `DirectionVisibilityState` (L2822-L2837).
+- Assignment `blue_lines: list[object]` (L2825).
+- Assignment `a_zones: list[object]` (L2826).
+- Assignment `s_zones: list[object]` (L2827).
+- Assignment `e_zones: list[object]` (L2828).
+- Assignment `stopalls: list[object]` (L2829).
+- Assignment `prepared_order_audit: list[object]` (L2830).
+- Assignment `projection_s_zones: list[object]` (L2834).
+- Assignment `projection_e_zones: list[object]` (L2835).
+- Assignment `projection_stopalls: list[object]` (L2836).
+- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2837).
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2840-L2939).
+- Function `finalize_direction_visibility(direction: str, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2942-L3113).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3116-L3254).
+- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3175-L3183).
+- Function `serialize_direction_payload.build_payload()` (L3216-L3250).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3257-L3283).
+- Function `serialize_primary_order.value(item)` (L3260-L3265).
+- Function `serialize_primary_structures(primary, market)` (L3286-L3405).
+- Function `serialize_primary_structures.cycle_identity(value)` (L3297-L3302).
+- Function `serialize_primary_structures.point(item)` (L3303-L3326).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3408-L3461).
+- Function `calculate_primary_structures.commit_high(point)` (L3431-L3439).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3464-L3503).
+- Function `merge_regime_outputs(regimes)` (L3505-L3531).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None, closed_regime=None)` (L3534-L3633).
+- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3545-L3553).
+- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3555-L3572).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float, *, closed_regime=None)` (L3636-L3750).
+- Function `build_response_payload.stopall_confirmation_closed(row)` (L3700-L3701).
+- Function `_market_calculation_scope(reaction)` (L3754-L3768).
+- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3771-L3775).
+- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3778-L3793).
+- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage, *, closed_regime=None)` (L3796-L3807).
+- Function `main()` (L3810-L3841).
 
 #### `engine/pipeline/__init__.py`
 - Assignment `_pipeline_dir = str(Path(__file__).resolve().parent)` (L10).
@@ -1710,20 +1724,74 @@ Python signatures, classes, nested callables, and module/class assignments are i
 - Assignment `VERDICT = 'trueFalse'` (L13).
 - Assignment `REPAIR = 'trueFalseRepairTime'` (L14).
 - Assignment `REPEATED = 'trueFalseRepeated'` (L15).
-- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L18-L30).
-- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L22-L28).
-- Class `BasicRepeat` (L34-L38).
-- Assignment `latest: dict` (L35).
-- Assignment `repair_count: int` (L36).
-- Assignment `verdict_count: int` (L37).
-- Assignment `base_count: int` (L38).
-- Function `_basic_rank(key, row)` (L41-L44).
-- Function `_crossed_verdict(references, rank, price)` (L47-L55).
-- Function `_basic_verdicts(direction, events, first_crossing)` (L58-L128).
-- Function `_basic_verdicts.repair(row, start)` (L64-L68).
-- Function `_stopall_verdicts(rows, confirmation_closed)` (L131-L159).
-- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L162-L188).
+- Assignment `REPEAT_COUNT = 'trueFalseRepeatCount'` (L16).
+- Assignment `REPEAT_F = 'trueFalseRepeatF'` (L17).
+- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L20-L32).
+- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L24-L30).
+- Class `BasicRun` (L36-L41).
+- Assignment `first: dict` (L37).
+- Assignment `history_id: int` (L38).
+- Assignment `count: int = 0` (L39).
+- Assignment `latest_f: dict | None = None` (L40).
+- Assignment `singleton_f: dict | None = None` (L41).
+- Function `_basic_rank(key, row)` (L44-L47).
+- Function `_repeat_predecessor_rank(rank, family)` (L50-L55).
+- Function `_crossed_verdict(references, rank, price)` (L58-L66).
+- Function `_basic_verdicts(direction, events, first_crossing)` (L69-L162).
+- Function `_basic_verdicts.repair(row, start)` (L78-L82).
+- Function `_stopall_verdicts(rows, confirmation_closed)` (L165-L193).
+- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L196-L224).
 
+#### `engine/buy_algorithm.py`
+- Function `calculate_buy_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None)` (L6-L9).
+
+#### `engine/pipeline/position_rules.py`
+- Assignment `FOUNDATION = frozenset(('sZones', 'eZones'))` (L13).
+- Assignment `TARGET_RISK_MULTIPLE = Decimal(4)` (L14).
+- Assignment `LIQUIDITY_LINE_BARS = 1500` (L15).
+- Function `source_event_lookup(lower_index, from_epoch, to_epoch, timeframe)` (L18-L31).
+- Function `source_event_lookup.find(direction, source, price)` (L20-L29).
+- Class `PositionEvent` (L35-L49).
+- Assignment `collection: str` (L36).
+- Assignment `source_time: int` (L37).
+- Assignment `formation_time: int` (L38).
+- Assignment `decision_time: int` (L39).
+- Assignment `decision_event_time: int` (L40).
+- Assignment `closed_at: int` (L41).
+- Assignment `price: Decimal` (L42).
+- Assignment `verdict: str | None` (L43).
+- Assignment `number: int` (L44).
+- Assignment `rank: tuple[int, int] | None` (L45).
+- Function `PositionEvent.confirmation_order(self)` (L48-L49).
+- Class `PositionSetup` (L53-L57).
+- Assignment `anchor: PositionEvent` (L54).
+- Assignment `trigger: PositionEvent` (L55).
+- Assignment `entry_price: Decimal` (L56).
+- Assignment `stopped_at: int | None` (L57).
+- Function `position_source_events(group, direction, timeframe, closed_through, source_event_at)` (L60-L84).
+- Class `PositionRules` (L87-L239).
+- Function `PositionRules.__init__(self, direction, timeframe, closed_through, close_at, first_crossing)` (L90-L98).
+- Function `PositionRules.stop_time(self, anchor)` (L100-L108).
+- Function `PositionRules.setup(self, anchor, trigger)` (L110-L114).
+- Function `PositionRules.first_s(self, pairs, *, ready_at=0, before=None, strict=False)` (L116-L132).
+- Function `PositionRules.two_stage(self, pairs_for_verdict, ready_at)` (L134-L144).
+- Function `PositionRules.foundation(self, events)` (L146-L163).
+- Function `PositionRules.stopall(self, events)` (L165-L176).
+- Function `PositionRules.primary(self, events)` (L178-L209).
+- Function `PositionRules.serialize(self, number, setup)` (L211-L239).
+- Function `stopped_by(setup, time)` (L242-L243).
+- Function `position_windows(events, boundaries)` (L246-L258).
+- Function `foundation_anchors(events)` (L261-L270).
+- Function `foundation_pairs(signals, anchors)` (L273-L278).
+- Function `stopall_signal_pairs(events)` (L281-L289).
+- Function `calculate_positions(group, close_at: Callable, first_crossing: Callable, *, direction, timeframe, closed_through, source_event_at: Callable | None=None)` (L292-L305).
+- Function `_liquidity_runs(events)` (L308-L321).
+- Function `_liquidity_triggers(events, index, direct_sweep, bullish)` (L324-L333).
+- Function `_liquidity_line_end(times, source, direct_sweep, timeframe)` (L336-L347).
+- Function `calculate_liquidity(group, first_crossing, *, direction, timeframe, closed_through, source_event_at, candle_times)` (L350-L402).
+
+#### `engine/sell_algorithm.py`
+- Function `calculate_sell_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None)` (L6-L9).
 
 ## Appendix A. Upstream directional formation and ownership rules
 
@@ -2426,7 +2494,7 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 ## 16. Exact production Source snapshot
 
-Each block's path is relative to the reconstruction destination. Copy its contents without byte normalization, or use the extractor. The manifest is the complete inventory for this snapshot. The files under `engine/` include every current production Python module and the Engine-owned stylesheet. The Chart entries are the exact rendering module closure for primary structures and T/F, not the complete workstation.
+Each block's path is relative to the reconstruction destination. Copy its contents without byte normalization, or use the extractor. The manifest is the complete inventory for this snapshot. The files under `engine/` include every current production Python module and the Engine-owned stylesheet. The Chart entries are the exact rendering module closure for primary structures, T/F and positions, not the complete workstation.
 
 ### 16.1 `engine/__init__.py` — Engine package marker
 
@@ -2453,9 +2521,9 @@ Each block's path is relative to the reconstruction destination. Copy its conten
 
 ### 16.3 `engine/bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d`  
-**Bytes:** `9694`  
-**LF count:** `225`
+**SHA-256:** `682ac1ced42c41bdab93c7f18c070b089d0fb414ea3d532a4e4e38028eb6c455`  
+**Bytes:** `9968`  
+**LF count:** `232`
 
 <!-- EXACT-SOURCE-BEGIN:engine/bridge/live_pipeline.py -->
 ````python
@@ -2621,9 +2689,13 @@ def _send_worker_message(kind, **fields):
     print(json.dumps({"type": kind, **fields}, separators=(",", ":")), flush=True)
 
 
+def _send_worker_progress(event):
+    _send_worker_message("progress", event=event)
+
+
 def _report_worker_progress(event):
     if event["status"] == "started" or "completedStages" in event:
-        _send_worker_message("progress", event=event)
+        _send_worker_progress(event)
 
 
 def main():
@@ -2637,9 +2709,12 @@ def main():
         original = selected if args.data == original_path else _decode_raw(original_data)
         lineage = LiveRawSource(selected, original_data, original)
         del original, selected_data, original_data
-        pipeline = LivePipelineContinuation(args, load_engines(args, {}))
-        _send_worker_message("seed", ready=True, payload=pipeline.append(selected))
-        del selected
+        seed_progress = _send_worker_progress if os.environ.get("TRADINGBOT_LIVE_SEED_PROGRESS") == "1" else None
+        with progress_events_to(seed_progress):
+            pipeline = LivePipelineContinuation(args, load_engines(args, {}))
+            payload = pipeline.append(selected)
+        _send_worker_message("seed", ready=True, payload=payload)
+        del selected, payload
         # The server supplies exact append bytes when it owns the commit lineage.
         pipe = sys.stdin.buffer
         while header := pipe.readline(256):
@@ -2689,9 +2764,9 @@ if __name__ == "__main__":
 
 ### 16.4 `engine/bridge/trading_pipeline.py` — Final reconciled calculation objects
 
-**SHA-256:** `9f61e63b775a018e49a5f38b69d2a89672f7d6ef0d45c7e76b5b1c8748cb6d19`  
-**Bytes:** `152299`  
-**LF count:** `3809`
+**SHA-256:** `cf2a1570e14181f170155a33dab00dc63725c7dda1d21e7ee068136194a62689`  
+**Bytes:** `154463`  
+**LF count:** `3849`
 
 <!-- EXACT-SOURCE-BEGIN:engine/bridge/trading_pipeline.py -->
 ````python
@@ -2728,10 +2803,13 @@ from zoneinfo import ZoneInfo
 # every production module aligned with the deployed folder structure.
 _ENGINE_ROOT = Path(__file__).resolve().parents[1]
 _PIPELINE_DIR = _ENGINE_ROOT / "pipeline"
-_pipeline_dir_text = str(_PIPELINE_DIR)
-if _pipeline_dir_text not in sys.path:
-    sys.path.insert(0, _pipeline_dir_text)
+for _import_root in (_ENGINE_ROOT.parent, _PIPELINE_DIR):
+    if str(_import_root) not in sys.path:
+        sys.path.insert(0, str(_import_root))
 
+from engine.buy_algorithm import calculate_buy_positions
+from engine.sell_algorithm import calculate_sell_positions
+from engine.pipeline.position_rules import calculate_liquidity, source_event_lookup
 from core_utils import as_decimal, order_identity
 from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 from true_false import apply_true_false, repair_crossing_lookup
@@ -2740,8 +2818,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.15.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.3"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T09:41:40+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.22.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T16:04:42+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -6394,10 +6472,47 @@ def build_response_payload(
     def stopall_confirmation_closed(row):
         return row["decisionTime"] + args.timeframe <= closed_through
 
+    source_event_at = source_event_lookup(market.lower_index, local_datetime, epoch, args.timeframe)
+    closes = {epoch(candle.timestamp): candle.close
+              for candle in market.candles[market.start_index:market.end_index + 1]}
+    candle_times = tuple(closes)
     for direction, group in payload["directions"].items():
-        for segment in group.get("calculationSegments", (group,)):
-            apply_true_false(direction, segment, find_repair,
-                             stopall_confirmation_closed=stopall_confirmation_closed)
+        calculate_positions = (calculate_buy_positions if direction == "bullish"
+                               else calculate_sell_positions)
+        segments = group.get("calculationSegments", (group,))
+        for segment in segments:
+            timed(timings, f"Evaluate T/F - {direction.title()}", lambda: apply_true_false(
+                direction, segment, find_repair, stopall_confirmation_closed=stopall_confirmation_closed,
+            ))
+            positions = timed(timings, f"Evaluate positions - {direction.title()}", lambda: calculate_positions(
+                segment, closes.get, find_repair,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at,
+            ))
+            if positions:
+                segment["positions"] = positions
+            else:
+                segment.pop("positions", None)
+            liquidity = timed(timings, f"Evaluate liquidity - {direction.title()}", lambda: calculate_liquidity(
+                segment, find_repair, direction=direction,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at, candle_times=candle_times,
+            ))
+            if liquidity:
+                segment["liquidity"] = liquidity
+            else:
+                segment.pop("liquidity", None)
+        if "calculationSegments" in group:
+            positions = [position for segment in segments for position in segment.get("positions", ())]
+            if positions:
+                group["positions"] = positions
+            else:
+                group.pop("positions", None)
+            liquidity = [level for segment in segments for level in segment.get("liquidity", ())]
+            if liquidity:
+                group["liquidity"] = liquidity
+            else:
+                group.pop("liquidity", None)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
@@ -19611,9 +19726,9 @@ def detect_s_zones(
 
 ### 16.16 `engine/pipeline/true_false.py` — Independent final behavior T/F and strict repair evidence
 
-**SHA-256:** `473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39`  
-**Bytes:** `7412`  
-**LF count:** `188`
+**SHA-256:** `e4be32f9654d15fed33100c9ee40856ddf6996fa629386eca280eec0fbec9579`  
+**Bytes:** `8451`  
+**LF count:** `224`
 
 <!-- EXACT-SOURCE-BEGIN:engine/pipeline/true_false.py -->
 ````python
@@ -19632,6 +19747,8 @@ from lifecycle_engine import sequence_priority
 VERDICT = "trueFalse"
 REPAIR = "trueFalseRepairTime"
 REPEATED = "trueFalseRepeated"
+REPEAT_COUNT = "trueFalseRepeatCount"
+REPEAT_F = "trueFalseRepeatF"
 
 
 def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
@@ -19650,17 +19767,26 @@ def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
 
 
 @dataclass(slots=True)
-class BasicRepeat:
-    latest: dict
-    repair_count: int
-    verdict_count: int
-    base_count: int
+class BasicRun:
+    first: dict
+    history_id: int
+    count: int = 0
+    latest_f: dict | None = None
+    singleton_f: dict | None = None
 
 
 def _basic_rank(key, row):
     if key == "sZones":
         return sequence_priority("s", row["color"]), 0
     return sequence_priority("e", row["family"]), row["number"]
+
+
+def _repeat_predecessor_rank(rank, family):
+    """Return the only repeat rank that can directly set this E to T."""
+    priority, number = rank
+    if number == 1:
+        return sequence_priority("s", family), 0
+    return priority, number - 1
 
 
 def _crossed_verdict(references, rank, price):
@@ -19675,8 +19801,11 @@ def _crossed_verdict(references, rank, price):
 
 
 def _basic_verdicts(direction, events, first_crossing):
-    repeats = {}
+    # Active ranks descend from the oldest run to the newest. A larger
+    # behavior only ends smaller runs, which are at the top of the stack.
+    runs = []
     references = {}
+    history_id = 0
     started = False
     lower_is_further = policy_for(direction).extreme_attr == "low"
 
@@ -19688,12 +19817,11 @@ def _basic_verdicts(direction, events, first_crossing):
 
     for key, row in events:
         if key not in ("sZones", "eZones"):
-            # A published StopAll or directional primary starts new Basic verdict history.
+            # Restarts end runs but keep the existing independent repair
+            # eligibility of singleton Fs displaced by a later larger rank.
             references.clear()
+            history_id += 1
             started = False
-            for repeat in repeats.values():
-                repeat.verdict_count = 0
-                repeat.base_count = 0
             continue
 
         is_s = key == "sZones"
@@ -19703,20 +19831,25 @@ def _basic_verdicts(direction, events, first_crossing):
             continue
         rank = _basic_rank(key, row)
         time = row["sourceTime"]
-        lower = [other for other in repeats if other < rank]
+        predecessor_rank = None if is_s else _repeat_predecessor_rank(rank, row["family"])
+        repeated_predecessor = False
+        while runs and runs[-1][0] < rank:
+            prior_rank, prior = runs.pop()
+            if prior_rank == predecessor_rank and prior.history_id == history_id:
+                repeated_predecessor = prior.count >= 2
+            if prior.singleton_f is not None:
+                repair(prior.singleton_f, time)
         price = Decimal(row["price"])
         if lower_is_further:
             price = price.copy_negate()
-        engulf = any(repeats[other].base_count >= 2 for other in lower)
-        display_restart = any(repeats[other].verdict_count >= 2 for other in lower)
-        if is_s or engulf:
+        if is_s or repeated_predecessor:
             verdict = "T"
         else:
             reference = _crossed_verdict(references, rank, price)
-            if reference is None:
-                verdict = "F" if row["number"] % 2 else "T"
-            else:
+            if reference is not None:
                 verdict = "F" if reference == "T" else "T"
+            else:
+                verdict = "F" if row["number"] % 2 else "T"
         row[VERDICT] = verdict
 
         # An equally or more easily crossed newer reference always wins at this rank.
@@ -19725,26 +19858,42 @@ def _basic_verdicts(direction, events, first_crossing):
             history.pop()
         history.append((price, verdict))
 
-        for other in lower:
-            prior = repeats.pop(other)
-            if prior.latest[VERDICT] == "F" and prior.repair_count == 1:
-                repair(prior.latest, time)
+        if runs and runs[-1][0] == rank:
+            run = runs[-1][1]
+            if run.history_id != history_id:
+                run = BasicRun(row, history_id)
+                runs[-1] = rank, run
+        else:
+            run = BasicRun(row, history_id)
+            runs.append((rank, run))
 
-        previous = repeats.get(rank)
-        repair_count = verdict_count = 1
-        if previous is not None and previous.latest[VERDICT] == verdict:
-            repair_count += previous.repair_count
-            if not display_restart:
-                # The star keeps its existing same-verdict restart rule.
-                verdict_count += previous.verdict_count
-                if verdict_count >= 2:
-                    previous.latest[REPEATED] = row[REPEATED] = True
-            if verdict == "F":
-                if previous.latest.get(REPAIR, -1) >= time:
-                    previous.latest.pop(REPAIR)
-                repair(row, time)
-        base_count = previous.base_count + 1 if previous is not None else 1
-        repeats[rank] = BasicRepeat(row, repair_count, verdict_count, base_count)
+        run.count += 1
+        if run.count == 2:
+            run.first[REPEAT_COUNT] = 1
+            run.first[REPEATED] = True
+        if run.count >= 2:
+            row[REPEAT_COUNT] = run.count
+            row[REPEATED] = True
+
+        if verdict == "T":
+            run.singleton_f = None
+            continue
+
+        previous_f = run.latest_f
+        run.latest_f = row
+        if previous_f is None:
+            run.singleton_f = row
+            continue
+
+        run.singleton_f = None
+        previous_f[REPEAT_F] = row[REPEAT_F] = True
+        # A strict crossing before replacement is historical evidence.
+        # From this source onward the newest F supplies the repair level.
+        repair(previous_f, previous_f["sourceTime"])
+        previous_crossing = previous_f.get(REPAIR)
+        if previous_crossing is not None and previous_crossing >= time:
+            del previous_f[REPAIR]
+        repair(row, time)
 
 
 def _stopall_verdicts(rows, confirmation_closed):
@@ -19789,6 +19938,8 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
             row.pop(VERDICT, None)
             row.pop(REPAIR, None)
             row.pop(REPEATED, None)
+            row.pop(REPEAT_COUNT, None)
+            row.pop(REPEAT_F, None)
             if row.get("calculationValid") is not False:
                 by_source.setdefault(row["sourceTime"], (key, row))
     events = sorted(by_source.values(), key=lambda event: event[1]["sourceTime"])
@@ -20781,14 +20932,16 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
 
 ### 16.18 `apps/chart/src/chart/indicator-renderer.js` — Chart presentation
 
-**SHA-256:** `3f5d68eb06246ce6a4186b9146da62ca3907e919b1bf1f16e6ae2c91fd48cfc3`  
-**Bytes:** `26520`  
-**LF count:** `500`
+**SHA-256:** `4988f7d04eef8245f19599402f855c450c2362222d3642c156706f23acf51282`  
+**Bytes:** `28748`  
+**LF count:** `541`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/indicator-renderer.js -->
 ````javascript
 import { clipHistoricalHitBoxes, drawPrimaryStructures, drawTrendTransitions, indicatorCalculationSegments } from "./primary-structure.js";
-import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawIndicatorText, drawTrueFalseLabel, trueFalseAppearance, trueFalseVisualObjects, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawIndicatorPositions } from "./indicator-positions.js";
+import { drawLiquidityLines } from "./indicator-liquidity.js";
 
 export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
   aSize: 10,
@@ -20798,24 +20951,86 @@ export const INDICATOR_MARKER_DEFAULTS = Object.freeze({
   stopAllRadius: 5,
 });
 
+const liquiditySourceMarkers = new WeakMap();
+
+function behaviorLabelSize(object, settings, key) {
+  return (object?.customized ? object.size : undefined) ?? settings[key] ?? INDICATOR_MARKER_DEFAULTS[key];
+}
+
+function reactionNumbers(group, mode) {
+  const boundaries = mode === "reset"
+    ? (group.__sortedResets ||= [...(group.resets || [])].sort((a, b) => a.index - b.index))
+    : mode === "a"
+      ? (group.__sortedAZones ||= [...(group.aZones || [])]
+        .filter(zone => zone.calculationValid !== false)
+        .sort((a, b) => Number(a.sourceIndex) - Number(b.sourceIndex)))
+      : [];
+  let count = 0, previousFirst = -1, cursor = 0;
+  return (group.reactions || []).map(reaction => {
+    let restart = false;
+    while (cursor < boundaries.length) {
+      const index = Number(mode === "reset" ? boundaries[cursor].index : boundaries[cursor].sourceIndex);
+      if (index > reaction.firstIndex) break;
+      if (index > previousFirst) restart = true;
+      cursor++;
+    }
+    count = restart ? 1 : count + 1;
+    previousFirst = reaction.firstIndex;
+    return String(count);
+  });
+}
+
+export function indicatorDecorationObjects(group, direction, settings, offsets) {
+  const foundation = trueFalseAppearance(settings, "foundation");
+  const secondary = trueFalseAppearance(settings, "secondary");
+  const sourceOfE = new Set((group.eZones || []).map(item => Number(item.sourceIndex)));
+  const sourceOfStopAll = new Set((group.stopAlls || []).map(item => Number(item.sourceIndex)));
+  const numbers = settings.numberEnabled ? reactionNumbers(group, settings.numberMode) : [];
+  const objects = numbers.map((number, index) => {
+    const item = group.reactions[index];
+    const ordinal = index + offsets.reactions;
+    return {
+      id: `indicator:${direction}:reaction:${ordinal}:number`, type: "indicator-label",
+      name: `Reaction ${ordinal + 1} number`, text: number,
+      time: item.firstTime, price: direction === "bullish" ? item.boxBottom : item.boxTop,
+      size: settings.numberSize, weight: settings.numberWeight, color: settings.numberColor,
+    };
+  });
+  for (const [field, key, appearance, weight] of [
+    ["sZones", "s", foundation], ["eZones", "e", foundation],
+    ["stopAlls", "stopall", secondary, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT],
+  ]) {
+    for (const [index, item] of (group[field] || []).entries()) {
+      if (key === "s" && (sourceOfE.has(Number(item.sourceIndex)) || sourceOfStopAll.has(Number(item.sourceIndex)))) continue;
+      const id = `indicator:${direction}:${key}:${index + offsets[field]}`;
+      const sizeKey = key === "stopall" ? "stopAllSize" : `${key}Size`;
+      const size = settings[sizeKey] ?? INDICATOR_MARKER_DEFAULTS[sizeKey];
+      const label = key === "s" ? "S" : key === "e" ? `E${item.number}` : `StopAll ${item.number}`;
+      for (const object of trueFalseVisualObjects(id, item, size, appearance, { weight, repeated: item.trueFalseRepeated === true })) {
+        objects.push({ ...object, name: `${label} ${object.text}` });
+      }
+    }
+  }
+  return objects;
+}
+
 export function drawIndicator(canvasWidth, canvasHeight, {
   ctx, state, indicatorTimeToCoordinate, overlayPriceCoordinate, priceToY,
   indicatorObject, indicatorOffsetPixels, offsetIndicatorPoint, offsetIndicatorRect,
   rgba, dash, plotWidth = canvasWidth, plotHeight = canvasHeight,
+  positionTimeToCoordinate = indicatorTimeToCoordinate,
 }) {
   state.indicator.hitBoxes = [];
   if (!state.indicator.enabled || !state.indicator.results) return;
   const settings = state.indicator.settings,
     timeframe = Number(state.indicator.results.timeframe || state.tf),
     secondaryVerdict = trueFalseAppearance(settings, "secondary"),
-    foundationVerdict = {
-      ...trueFalseAppearance(settings, "foundation"),
-      repeatStarColor: secondaryVerdict.colors["N/A"],
-    };
+    foundationVerdict = trueFalseAppearance(settings, "foundation");
+  const onHit = hit => state.indicator.hitBoxes.push(hit);
+  const textObjects = { objectFor: indicatorObject, offsetPoint: offsetIndicatorPoint, onHit };
   const trendTransitions = [];
   for (const { direction, group, objectOffsets } of indicatorCalculationSegments(state.indicator.results)) {
     ctx.save();
-    const firstHitIndex = state.indicator.hitBoxes.length;
     const bullish = direction === "bullish",
       eSourceIndices = group.__eSourceIndices ||= new Set(
         (group.eZones || []).map((zone) => Number(zone.sourceIndex)),
@@ -20832,6 +21047,48 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       border = bullish ? settings.bullBorder : settings.bearBorder,
       opacity = (bullish ? settings.bullOpacity : settings.bearOpacity) / 100,
       width = bullish ? settings.bullWidth : settings.bearWidth;
+    if (group.liquidity?.length) {
+      let sources = liquiditySourceMarkers.get(group);
+      if (!sources) {
+        sources = new Map();
+        for (const [field, kind] of [["eZones", "e"], ["sZones", "s"]]) {
+          for (const [index, zone] of (group[field] || []).entries()) {
+            if (zone.calculationValid !== false && !sources.has(zone.sourceTime)) {
+              sources.set(zone.sourceTime, { kind, field, index });
+            }
+          }
+        }
+        liquiditySourceMarkers.set(group, sources);
+      }
+      drawLiquidityLines(ctx, group.liquidity, {
+        settings, timeToX: positionTimeToCoordinate, priceToY: overlayPriceCoordinate,
+        direction, objectFor: indicatorObject, onHit, dash,
+        labelSizeAt: time => {
+          const marker = sources.get(time);
+          const object = marker && indicatorObject?.(
+            `indicator:${direction}:${marker.kind}:${marker.index + objectOffsets[marker.field]}`,
+          );
+          return behaviorLabelSize(object, settings, marker?.kind === "s" ? "sSize" : "eSize");
+        },
+        width: plotWidth, height: plotHeight,
+      });
+    }
+    if (group.positions?.length) {
+      ctx.save();
+      if (plotWidth < canvasWidth || plotHeight < canvasHeight) {
+        ctx.beginPath();
+        ctx.rect(0, 0, plotWidth, plotHeight);
+        ctx.clip();
+      }
+      drawIndicatorPositions(ctx, group.positions, {
+        direction, candles: state.data ?? [], timeframe: state.tf, timeToX: positionTimeToCoordinate,
+        priceToY: overlayPriceCoordinate, settings, objectFor: indicatorObject ?? (() => undefined),
+        hits: state.indicator.hitBoxes, dash,
+        rightBoundary: plotWidth,
+      });
+      ctx.restore();
+    }
+    const firstHitIndex = state.indicator.hitBoxes.length;
     const historicalEndX = group.calculationEndTime != null
       ? indicatorTimeToCoordinate(group.calculationEndTime) : null;
     if (Number.isFinite(historicalEndX)) {
@@ -20839,45 +21096,11 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       ctx.rect(0, 0, Math.max(0, historicalEndX), canvasHeight);
       ctx.clip();
     }
-    let count = 0,
-      lastFirst = -1,
-      resetCursor = 0,
-      aCursor = 0;
-    const resets = settings.numberEnabled && settings.numberMode === "reset"
-        ? (group.__sortedResets ||= [...group.resets].sort((a, b) => a.index - b.index))
-        : [],
-      aZones = settings.numberEnabled && settings.numberMode === "a"
-        ? (group.__sortedAZones ||= [...(group.aZones || [])]
-          .filter((zone) => zone.calculationValid !== false)
-          .sort((a, b) => Number(a.sourceIndex) - Number(b.sourceIndex)))
-        : [];
+    const numbers = settings.numberEnabled ? reactionNumbers(group, settings.numberMode) : [];
     for (const [reactionIndex, reaction] of group.reactions.entries()) {
-      if (settings.numberMode === "reset") {
-        let reset = false;
-        while (
-          resetCursor < resets.length &&
-          resets[resetCursor].index <= reaction.firstIndex
-        ) {
-          if (resets[resetCursor].index > lastFirst) reset = true;
-          resetCursor++;
-        }
-        count = reset ? 1 : count + 1;
-      } else if (settings.numberMode === "a") {
-        let restart = false;
-        while (
-          aCursor < aZones.length &&
-          Number(aZones[aCursor].sourceIndex) <= reaction.firstIndex
-        ) {
-          if (Number(aZones[aCursor].sourceIndex) > lastFirst) restart = true;
-          aCursor++;
-        }
-        count = restart ? 1 : count + 1;
-      } else count++;
-      lastFirst = reaction.firstIndex;
       const reactionObjectId = `indicator:${direction}:reaction:${reactionIndex + objectOffsets.reactions}`;
       if (!settings.reactionVisible) continue;
       const reactionObject = indicatorObject(reactionObjectId);
-      if (reactionObject?.hidden) continue;
       const startTime = bullish
           ? reaction.boxTopSourceTime
           : reaction.boxBottomSourceTime,
@@ -20888,44 +21111,31 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       const left = Math.min(x1, x2) + offset.x, right = Math.max(x1, x2) + offset.x;
       const appearance = reactionObject?.customized ? reactionObject : null;
       const strokeWidth = appearance?.width ?? width;
-      const label = settings.numberEnabled ? String(count) : "";
+      const label = numbers[reactionIndex] ?? "";
       const padding = Math.max(9, strokeWidth, label.length * settings.numberSize || 0);
       if (right < -padding || left > canvasWidth + padding) continue;
       const yTop = overlayPriceCoordinate(+reaction.boxTop), yBottom = overlayPriceCoordinate(+reaction.boxBottom);
       if (yTop == null || yBottom == null) continue;
       const top = Math.min(yTop, yBottom) + offset.y, bottom = Math.max(yTop, yBottom) + offset.y;
-      state.indicator.hitBoxes.push({
-        objectId: reactionObjectId,
-        shape: "rect",
-        left,
-        right,
-        top,
-        bottom,
-        direction,
-        reaction,
-      });
-      ctx.save();
-      ctx.fillStyle = rgba(appearance?.fill ?? fill, appearance?.opacity ?? opacity);
-      ctx.strokeStyle = appearance?.color ?? border;
-      ctx.lineWidth = strokeWidth;
-      ctx.setLineDash(dash(appearance?.lineStyle ?? (bullish ? settings.bullLineStyle : settings.bearLineStyle)));
-      ctx.beginPath();
-      ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
-      ctx.fill();
-      if (width > 0) ctx.stroke();
-      ctx.restore();
-      if (settings.numberEnabled) {
+      if (!reactionObject?.hidden) {
+        onHit({ objectId: reactionObjectId, shape: "rect", left, right, top, bottom, direction, reaction });
         ctx.save();
-        ctx.font = `${settings.numberWeight} ${settings.numberSize}px Inter`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = bullish ? "top" : "bottom";
-        ctx.fillStyle = settings.numberColor;
-        ctx.fillText(
-          label,
-          (left + right) / 2,
-          bullish ? bottom + settings.numberGap : top - settings.numberGap,
-        );
+        ctx.fillStyle = rgba(appearance?.fill ?? fill, appearance?.opacity ?? opacity);
+        ctx.strokeStyle = appearance?.color ?? border;
+        ctx.lineWidth = strokeWidth;
+        ctx.setLineDash(dash(appearance?.lineStyle ?? (bullish ? settings.bullLineStyle : settings.bearLineStyle)));
+        ctx.beginPath();
+        ctx.rect(left, top, Math.max(1, right - left), Math.max(1, bottom - top));
+        ctx.fill();
+        if (strokeWidth > 0) ctx.stroke();
         ctx.restore();
+      }
+      if (settings.numberEnabled) {
+        drawIndicatorText(ctx, label, (left + right) / 2,
+          bullish ? bottom + settings.numberGap : top - settings.numberGap, {
+            ...textObjects, objectId: `${reactionObjectId}:number`, below: bullish,
+            size: settings.numberSize, weight: settings.numberWeight, color: settings.numberColor,
+          });
       }
     }
     if (settings.blueLineEnabled) {
@@ -20953,9 +21163,8 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       }
     }
     for (const [zoneIndex, zone] of (group.aZones || []).entries()) {
-      const labelObject = indicatorObject(`indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`);
+      const objectId = `indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`;
       if (!settings.aVisible) continue;
-      if (labelObject?.hidden) continue;
       if (
         eSourceIndices.has(Number(zone.sourceIndex)) ||
         stopAllSourceIndices.has(Number(zone.sourceIndex)) ||
@@ -20965,23 +21174,16 @@ export function drawIndicator(canvasWidth, canvasHeight, {
       const x = indicatorTimeToCoordinate(zone.sourceTime),
         y = priceToY(+zone.price);
       if (x == null || y == null) continue;
-      const shifted = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.aGap : y - settings.aGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:a:${zoneIndex + objectOffsets.aZones}`, shape: "point", x: shifted.x, y: shifted.y, radius: 14 });
-      const appearance = labelObject?.customized ? labelObject : null;
-      ctx.save();
-      ctx.fillStyle = appearance?.color ?? (settings.aColor || "#7c3aed");
-      ctx.font = `${labelObject?.weight || 500} ${
-        appearance?.size ?? settings.aSize ?? INDICATOR_MARKER_DEFAULTS.aSize
-      }px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? "A", shifted.x, shifted.y);
-      ctx.restore();
+      drawIndicatorText(ctx, "A", x, bullish ? y + settings.aGap : y - settings.aGap, {
+        ...textObjects, objectId, below: bullish, size: settings.aSize ?? INDICATOR_MARKER_DEFAULTS.aSize,
+        color: settings.aColor || "#7c3aed", weight: 500,
+      });
     }
     for (const [zoneIndex, zone] of (group.sZones || []).entries()) {
       const hasOrder = zone.calculationValid !== false && zone.orderFirstTime != null;
-      const orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`),
-        labelObject = indicatorObject(`indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`);
+      const objectId = `indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`,
+        orderObject = indicatorObject(`indicator:${direction}:s-order:${zoneIndex + objectOffsets.sZones}`),
+        labelObject = indicatorObject(objectId);
       const orderBullish = zone.orderDirection === "bullish",
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
@@ -21013,29 +21215,23 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         y = priceToY(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.sGap : y - settings.sGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:s:${zoneIndex + objectOffsets.sZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
       if (eSourceIndices.has(Number(zone.sourceIndex)) || stopAllSourceIndices.has(Number(zone.sourceIndex))) continue;
       if (!settings.sVisible) continue;
-      if (labelObject?.hidden) continue;
-      const appearance = labelObject?.customized ? labelObject : null;
       const defaultColor = zone.color === "red"
         ? settings.sBearColor || "#f23645"
         : settings.sBullColor || "#2563eb";
-      ctx.save();
-      ctx.fillStyle = appearance?.color ?? defaultColor;
-      const labelSize = appearance?.size ?? settings.sSize ?? INDICATOR_MARKER_DEFAULTS.sSize;
-      ctx.font = `${labelObject?.weight || 500} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? "S", shiftedLabel.x, shiftedLabel.y);
+      const labelSize = behaviorLabelSize(labelObject, settings, "sSize");
+      drawIndicatorText(ctx, "S", shiftedLabel.x, shiftedLabel.y, {
+        objectId, objectFor: () => labelObject, onHit, below: bullish, size: labelSize, color: defaultColor, weight: 500,
+      });
       drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
         shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
-        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict);
-      ctx.restore();
+        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict, zone, { ...textObjects, parentId: objectId });
     }
     for (const [zoneIndex, zone] of (group.eZones || []).entries()) {
-      const orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`),
-        labelObject = indicatorObject(`indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`);
+      const objectId = `indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`,
+        orderObject = indicatorObject(`indicator:${direction}:e-order:${zoneIndex + objectOffsets.eZones}`),
+        labelObject = indicatorObject(objectId);
       const orderBullish = zone.orderDirection === "bullish",
         orderStartTime = orderBullish
           ? zone.orderBoxTopSourceTime
@@ -21067,24 +21263,17 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         y = priceToY(+zone.price);
       if (x == null || y == null) continue;
       const shiftedLabel = offsetIndicatorPoint(labelObject, x, bullish ? y + settings.eGap : y - settings.eGap);
-      state.indicator.hitBoxes.push({ objectId: `indicator:${direction}:e:${zoneIndex + objectOffsets.eZones}`, shape: "point", x: shiftedLabel.x, y: shiftedLabel.y, radius: 14 });
       if (!settings.eVisible) continue;
-      if (labelObject?.hidden) continue;
-      const appearance = labelObject?.customized ? labelObject : null;
       const defaultColor = zone.family === "red"
         ? settings.eRedColor || "#7f1d1d"
         : settings.eBlueColor || "#1e3a8a";
-      ctx.save();
-      ctx.fillStyle = appearance?.color ?? defaultColor;
-      const labelSize = appearance?.size ?? settings.eSize ?? INDICATOR_MARKER_DEFAULTS.eSize;
-      ctx.font = `${labelObject?.weight || 500} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(labelObject?.text ?? `E${zone.number}`, shiftedLabel.x, shiftedLabel.y);
+      const labelSize = behaviorLabelSize(labelObject, settings, "eSize");
+      drawIndicatorText(ctx, `E${zone.number}`, shiftedLabel.x, shiftedLabel.y, {
+        objectId, objectFor: () => labelObject, onHit, below: bullish, size: labelSize, color: defaultColor, weight: 600,
+      });
       drawTrueFalseLabel(ctx, zone.trueFalse, foundationVerdict.visible, labelSize,
         shiftedLabel.x, shiftedLabel.y + (bullish ? labelSize : -labelSize), bullish,
-        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict);
-      ctx.restore();
+        undefined, zone.trueFalseRepeated === true, 0, foundationVerdict, zone, { ...textObjects, parentId: objectId });
     }
     for (const [zoneIndex, zone] of (group.stopAlls || []).entries()) {
       const objectId = `indicator:${direction}:stopall:${zoneIndex + objectOffsets.stopAlls}`,
@@ -21119,31 +21308,33 @@ export function drawIndicator(canvasWidth, canvasHeight, {
         ctx.stroke();
         ctx.restore();
       }
-      if (!settings.stopAllVisible || object?.hidden || x == null || y == null) continue;
+      if (!settings.stopAllVisible || x == null || y == null) continue;
       const radius = settings.stopAllRadius ?? INDICATOR_MARKER_DEFAULTS.stopAllRadius,
         shifted = offsetIndicatorPoint(object, x, y);
-      state.indicator.hitBoxes.push({ objectId, shape: "point", x: shifted.x, y: shifted.y, radius: radius + 2 });
       const appearance = object?.customized ? object : null;
       const color = appearance?.color ?? settings.stopAllBorder;
-      ctx.save();
-      ctx.fillStyle = rgba(settings.stopAllFill, settings.stopAllOpacity / 100);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = appearance?.width ?? settings.stopAllWidth;
-      ctx.beginPath();
-      ctx.arc(shifted.x, shifted.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = color;
+      if (!object?.hidden) {
+        onHit({ objectId, shape: "point", x: shifted.x, y: shifted.y, radius: radius + 2 });
+        ctx.save();
+        ctx.fillStyle = rgba(settings.stopAllFill, settings.stopAllOpacity / 100);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = appearance?.width ?? settings.stopAllWidth;
+        ctx.beginPath();
+        ctx.arc(shifted.x, shifted.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       const labelSize = appearance?.size ?? settings.stopAllSize ?? INDICATOR_MARKER_DEFAULTS.stopAllSize;
       const labelY = shifted.y + (bullish ? 1 : -1) * (radius + settings.stopAllGap);
-      ctx.font = `${object?.weight || 600} ${labelSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = bullish ? "top" : "bottom";
-      ctx.fillText(object?.text ?? String(zone.number), shifted.x, labelY);
+      drawIndicatorText(ctx, String(zone.number), shifted.x, labelY, {
+        objectId, objectFor: () => object, onHit, below: bullish,
+        size: labelSize, weight: object?.weight || 600, color,
+      });
       drawTrueFalseLabel(ctx, zone.trueFalse, secondaryVerdict.visible, labelSize,
         shifted.x, labelY + (bullish ? labelSize : -labelSize), bullish,
-        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true, 0, secondaryVerdict);
-      ctx.restore();
+        TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, zone.trueFalseRepeated === true, 0, secondaryVerdict, zone,
+        { ...textObjects, parentId: objectId });
     }
     if (settings.orderStopVisible) {
       const seen = new Set();
@@ -21285,6 +21476,7 @@ export function drawIndicator(canvasWidth, canvasHeight, {
     width: plotWidth,
     height: plotHeight,
     settings,
+    ...textObjects,
   });
 }
 ````
@@ -21292,16 +21484,16 @@ export function drawIndicator(canvasWidth, canvasHeight, {
 
 ### 16.19 `apps/chart/src/chart/primary-structure.js` — Chart presentation
 
-**SHA-256:** `0fdc5c5d4d1a1c1ae4b4160f4e5aec9c0204b4850dde31e0dd50e66a1147ed3d`  
-**Bytes:** `16540`  
-**LF count:** `401`
+**SHA-256:** `3acc7c4322dfa5284267958101812974168144599150126e4e141c01cffb5656`  
+**Bytes:** `18405`  
+**LF count:** `428`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/primary-structure.js -->
 ````javascript
 // Presentation of finalized Engine PH, PL and matching-behavior-leg results.
 // Price crossings, structure validity and numbering remain Engine-owned.
 import { formatTehranMetadataTime } from "../features/raw-file-contract.js";
-import { drawTrueFalseLabel, trueFalseAppearance, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
+import { drawTrueFalseLabel, trueFalseAppearance, trueFalseVisualObjects, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT } from "./true-false-label.js";
 
 export const PRIMARY_VISUAL_DEFAULTS = Object.freeze({
   phVisible: true,
@@ -21332,8 +21524,6 @@ export const TREND_VISUAL_DEFAULTS = Object.freeze({
   trendBearColor: "#f23645",
   trendLineWidth: 1,
   trendLineStyle: "dash",
-  trendIconSize: 28,
-  trendIconGap: 100,
   trendLabelSize: 10,
 });
 
@@ -21359,25 +21549,47 @@ export function clipHistoricalHitBoxes(hits, right) {
   });
 }
 
-export function trendTransitionLayout(transition, { timeToX, priceToY, height, settings = {} }) {
-  const lineX = timeToX(transition.sourceTime);
-  const bullish = transition.direction !== "bearish";
-  const targetPrice = bullish ? transition.iconCandleHigh : transition.iconCandleLow;
-  let icon = null;
-  if (transition.iconCandleTime != null && targetPrice != null) {
-    const centerX = timeToX(transition.iconCandleTime);
-    const priceY = priceToY(Number(targetPrice));
-    if (Number.isFinite(centerX) && Number.isFinite(priceY)) {
-      const size = settings.trendIconSize ?? TREND_VISUAL_DEFAULTS.trendIconSize;
-      const gap = settings.trendIconGap ?? TREND_VISUAL_DEFAULTS.trendIconGap;
-      const top = bullish ? priceY - gap - size : priceY + gap;
-      icon = { left: centerX - size / 2, top, right: centerX + size / 2, bottom: top + size, size };
-    }
-  }
-  return { lineX, lineBottom: height, icon };
+export function trendTransitionLayout(transition, { timeToX, height }) {
+  return { lineX: timeToX(transition.sourceTime), lineBottom: height };
 }
 
-export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = Infinity, height, settings = {} }) {
+function trendObjectId(transition, part) {
+  return `indicator:market:${transition.id ?? `${transition.direction}:${transition.sourceTime}`}:${part}`;
+}
+
+function trendTimestamp(sourceTime) {
+  const epoch = Number(sourceTime);
+  return Number.isSafeInteger(epoch) && epoch > 0 ? formatTehranMetadataTime(epoch).slice(0, 19) : null;
+}
+
+export function trendVisualObjects(group, settings) {
+  const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
+  const output = [];
+  for (const transition of group.trendTransitions || []) {
+    const bullish = transition.direction !== "bearish";
+    const direction = bullish ? "Bullish" : "Bearish";
+    const price = transition.level ?? (bullish ? transition.iconCandleHigh : transition.iconCandleLow);
+    const color = bullish ? style.trendBullColor : style.trendBearColor;
+    output.push({
+      id: trendObjectId(transition, "line"), type: "indicator-stop", name: `${direction} market line`,
+      time: transition.sourceTime, direction: transition.direction, price, color, width: style.trendLineWidth, lineStyle: style.trendLineStyle,
+    });
+    const text = trendTimestamp(transition.sourceTime);
+    if (text) {
+      output.push({
+        id: trendObjectId(transition, "time"), type: "indicator-label", name: `${direction} market timestamp`,
+        text, color: "#111827", size: style.trendLabelSize, weight: 600, time: transition.sourceTime,
+        direction: transition.direction, price,
+      });
+    }
+  }
+  return output;
+}
+
+export function drawTrendTransitions(ctx, group, {
+  timeToX, width = Infinity, height, settings = {},
+  objectFor = () => null, offsetPoint = (_object, x, y) => ({ x, y }), onHit = () => {},
+}) {
   const transitions = group.trendTransitions;
   if (!transitions?.length || settings.trendLineVisible === false) return;
   const style = settingsWithDefaults(settings, TREND_VISUAL_DEFAULTS);
@@ -21385,54 +21597,53 @@ export function drawTrendTransitions(ctx, group, { timeToX, priceToY, width = In
   for (const transition of transitions) {
     const bullish = transition.direction !== "bearish";
     const color = bullish ? style.trendBullColor : style.trendBearColor;
-    const marker = trendTransitionLayout(transition, { timeToX, priceToY, height, settings });
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = style.trendLineWidth;
-    ctx.lineCap = style.trendLineStyle === "dot" ? "round" : "butt";
-    ctx.setLineDash(style.trendLineStyle === "dot" ? [0, style.trendLineWidth * 3]
-      : style.trendLineStyle === "dash" ? [6, 5] : []);
+    const lineId = trendObjectId(transition, "line"), line = objectFor(lineId);
+    const labelId = trendObjectId(transition, "time"), timestamp = objectFor(labelId);
+    const lineStyle = line?.customized ? line : null;
+    const labelStyle = timestamp?.customized ? timestamp : null;
+    const marker = trendTransitionLayout(transition, { timeToX, height });
+    let label = null;
     if (Number.isFinite(marker.lineX) && marker.lineX >= 0 && marker.lineX <= width) {
-      const label = trendTimestampLayout(ctx, transition.sourceTime, marker.lineX, width, height, style.trendLabelSize, labels);
-      ctx.beginPath();
-      ctx.moveTo(marker.lineX, 0);
-      ctx.lineTo(marker.lineX, label?.top ?? marker.lineBottom);
-      ctx.stroke();
-      if (label) labels.push({ ...label, color });
+      const text = labelStyle?.text ?? trendTimestamp(transition.sourceTime);
+      if (!timestamp?.hidden && text) {
+        const layout = trendTimestampLayout(ctx, text, marker.lineX, width, height,
+          labelStyle?.size ?? style.trendLabelSize, labels);
+        if (layout) {
+          const position = offsetPoint(timestamp, layout.left, layout.top);
+          label = { ...layout, left: position.x, top: position.y, color, textColor: labelStyle?.color, objectId: labelId };
+          labels.push(label);
+        }
+      }
     }
-    if (marker.icon) {
-      const { left, top, size } = marker.icon;
-      ctx.translate(left, top + (bullish ? 0 : size));
-      ctx.scale(size / 20, (bullish ? 1 : -1) * size / 20);
-      ctx.setLineDash([]);
-      ctx.lineWidth = 2.4;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
+    const lineStart = offsetPoint(line, marker.lineX, 0);
+    if (!line?.hidden && Number.isFinite(marker.lineX) && lineStart.x >= 0 && lineStart.x <= width) {
+      const thickness = lineStyle?.width ?? style.trendLineWidth;
+      const pattern = lineStyle?.lineStyle ?? style.trendLineStyle;
+      const baseline = label && lineStart.x >= label.left && lineStart.x <= label.left + label.width
+        ? label.top : marker.lineBottom;
+      const top = Math.max(0, lineStart.y), bottom = Math.min(height, baseline + lineStart.y);
+      ctx.save();
+      ctx.strokeStyle = lineStyle?.color ?? color;
+      ctx.lineWidth = thickness;
+      ctx.lineCap = pattern === "dot" ? "round" : "butt";
+      ctx.setLineDash(pattern === "dot" ? [0, thickness * 3] : pattern === "dash" ? [6, 5] : []);
       ctx.beginPath();
-      ctx.moveTo(1.2, 18.8);
-      ctx.lineTo(6.1, 12.2);
-      ctx.lineTo(9.3, 15.4);
-      ctx.lineTo(13.7, 8.4);
-      ctx.lineTo(16, 10.5);
-      ctx.lineTo(18.8, 1.2);
+      ctx.moveTo(lineStart.x, top);
+      ctx.lineTo(lineStart.x, bottom);
       ctx.stroke();
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(13.2, 3);
-      ctx.lineTo(18.8, 1.2);
-      ctx.lineTo(18.1, 7);
-      ctx.closePath();
-      ctx.fill();
+      ctx.restore();
+      onHit({ objectId: lineId, shape: "line", x1: lineStart.x, y1: top, x2: lineStart.x, y2: bottom });
     }
-    ctx.restore();
   }
-  for (const label of labels) drawTrendTimestamp(ctx, label);
+  for (const label of labels) {
+    drawTrendTimestamp(ctx, label);
+    onHit({ objectId: label.objectId, shape: "rect", area: true, left: label.left, top: label.top,
+      right: label.left + label.width, bottom: label.top + label.height });
+  }
 }
 
-function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, labels) {
-  const epoch = Number(sourceTime);
-  if (!Number.isSafeInteger(epoch) || epoch < 1 || width < 32 || height < size + 12) return null;
-  const text = formatTehranMetadataTime(epoch).slice(0, 19);
+function trendTimestampLayout(ctx, text, lineX, width, height, size, labels) {
+  if (width < 32 || height < size + 12) return null;
   const font = `600 ${size}px ${FONT}`;
   const margin = 2;
   const padding = 4;
@@ -21451,7 +21662,7 @@ function trendTimestampLayout(ctx, sourceTime, lineX, width, height, size, label
 }
 
 function drawTrendTimestamp(ctx, label) {
-  const { text, font, left, top, width, height, padding, color } = label;
+  const { text, font, left, top, width, height, padding, color, textColor = "#111827" } = label;
   ctx.save();
   ctx.setLineDash([]);
   ctx.lineWidth = 0.75;
@@ -21459,7 +21670,7 @@ function drawTrendTimestamp(ctx, label) {
   ctx.fillRect(left, top, width, height);
   ctx.strokeStyle = color;
   ctx.strokeRect(left, top, width, height);
-  ctx.fillStyle = "#111827";
+  ctx.fillStyle = textColor;
   ctx.font = font;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -21524,19 +21735,25 @@ export function primaryLabelLayout(marker, metrics) {
 
 export function primaryVisualObjects(group, direction, settings = {}) {
   const style = settingsWithDefaults(settings);
+  const verdict = trueFalseAppearance(settings, "primary");
   const output = [];
   for (const [kind, rows] of [["PH", group.primaryHighs], ["PL", group.primaryLows]]) {
     for (const item of rows || []) {
       if (item.calculationValid === false) continue;
       const marker = primaryMarkerLayout(kind, direction, 0, 0, settings);
+      const objectId = primaryObjectId(direction, kind, item);
+      const name = `${kind}-${item.number}`;
       output.push({
-        id: primaryObjectId(direction, kind, item),
+        id: objectId,
         type: "indicator-label", primaryKind: kind,
-        name: `${kind}-${item.number}`, text: `${kind}-${item.number}`,
+        name, text: name, copyLabel: item.trueFalse ? `${name} (${item.trueFalse})` : name,
         time: item.sourceTime, price: item.price,
         color: marker.color, fill: marker.color, size: marker.fontSize,
         opacity: marker.opacity, weight: 600,
       });
+      for (const object of trueFalseVisualObjects(objectId, item, marker.fontSize, verdict, {
+        weight: TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, verdictSizeOffset: 2,
+      })) output.push({ ...object, name: `${name} ${object.text}` });
     }
   }
   for (const item of group.matchingBehaviorLegs || []) {
@@ -21603,7 +21820,6 @@ export function drawPrimaryStructures(ctx, group, {
       if (item.calculationValid === false) continue;
       const objectId = primaryObjectId(direction, kind, item);
       const object = objectFor(objectId);
-      if (object?.hidden) continue;
       const x = timeToX(item.sourceTime), y = priceToY(Number(item.price));
       if (x == null || y == null || !Number.isFinite(x) || !Number.isFinite(y)) continue;
       const shifted = offsetPoint(object, x, y);
@@ -21615,7 +21831,7 @@ export function drawPrimaryStructures(ctx, group, {
       ctx.fillStyle = color;
       ctx.globalAlpha = appearance?.opacity ?? marker.opacity;
       ctx.setLineDash([]);
-      if (visible) {
+      if (visible && !object?.hidden) {
         if (marker.shape === "circle") {
           ctx.beginPath();
           ctx.arc(marker.x, marker.y, marker.radius, 0, Math.PI * 2);
@@ -21633,12 +21849,15 @@ export function drawPrimaryStructures(ctx, group, {
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
         const label = primaryLabelLayout({ ...marker, fontSize: size }, ctx.measureText(text));
-        ctx.fillText(text, marker.x, label.baselineY);
         const below = marker.textBaseline === "top";
+        if (!object?.hidden) {
+          ctx.fillText(text, marker.x, label.baselineY);
+          onHit({ objectId, shape: "rect", left: label.left, right: label.right,
+            top: label.top, bottom: label.bottom });
+        }
         drawTrueFalseLabel(ctx, item.trueFalse, verdict.visible, size,
-          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2, verdict);
-        onHit({ objectId, shape: "rect", left: label.left, right: label.right,
-          top: label.top, bottom: label.bottom });
+          marker.x, below ? label.bottom : label.top, below, TRUE_FALSE_STOPALL_PRIMARY_WEIGHT, false, 2,
+          verdict, item, { parentId: objectId, objectFor, offsetPoint, onHit });
       }
       ctx.restore();
     }
@@ -21704,14 +21923,14 @@ export function drawPrimaryStructures(ctx, group, {
 
 ### 16.20 `apps/chart/src/chart/true-false-label.js` — Chart presentation
 
-**SHA-256:** `c4ce132a40b5565afcfd26d72884593abba0758de3cc76862a179c4379968896`  
-**Bytes:** `2523`  
-**LF count:** `59`
+**SHA-256:** `9ffd9d7764e62bd3947feb224d4c5249223229097bb586c8c5a326d16f6e2e9f`  
+**Bytes:** `5084`  
+**LF count:** `102`
 
 <!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/true-false-label.js -->
 ````javascript
 const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-const LABEL_COLORS = { T: "#047857", F: "#be123c", "N/A": "#b8b8b8" };
+const LABEL_COLORS = { T: "#047857", F: "#be123c", "N/A": "#808080" };
 const LABEL_SETTINGS = { T: "TrueColor", F: "FalseColor", "N/A": "NaColor" };
 export const TRUE_FALSE_LABEL_WEIGHT = 300;
 export const TRUE_FALSE_STOPALL_PRIMARY_WEIGHT = 700;
@@ -21728,46 +21947,89 @@ export function trueFalseAppearance(settings, group) {
   return {
     visible: settings[`${prefix}Visible`] ?? settings.trueFalseVisible,
     size: settings[`${prefix}Size`],
+    showNA: group !== "secondary" || settings.secondaryNaVisible !== false,
+    showStars: settings.foundationStarsVisible !== false,
+    showX: settings.foundationXVisible !== false,
+    repeatStarColor: group === "foundation" ? settings.secondaryTfNaColor ?? LABEL_COLORS["N/A"] : undefined,
     colors: Object.fromEntries(Object.entries(LABEL_SETTINGS).map(([label, key]) => [
       label, settings[`${prefix}${key}`] ?? LABEL_COLORS[label],
     ])),
   };
 }
 
-export function drawTrueFalseLabel(ctx, verdict, visible, parentSize, x, edgeY, below,
-  weight = TRUE_FALSE_LABEL_WEIGHT, repeated = false, verdictSizeOffset = 0, appearance = {}) {
+function verdictMarkers(verdict, parentSize, weight, repeated, verdictSizeOffset, appearance, basic) {
   const label = verdict === null ? "N/A" : verdict;
-  if (visible === false || !Object.hasOwn(LABEL_COLORS, label)) return;
+  if (!Object.hasOwn(LABEL_COLORS, label)) return [];
   const customSize = Number(appearance.size);
   const useCustomSize = customSize > 0 && Number.isFinite(customSize);
   const autoSize = Math.max(1, Math.min(9, parentSize - 2));
   const size = useCustomSize ? customSize : autoSize;
   const labelSize = label !== "N/A" && !useCustomSize ? size + verdictSizeOffset : size;
-  const labelWeight = label === "N/A" ? 300 : weight;
   const colors = appearance.colors ?? LABEL_COLORS;
-  const direction = below ? 1 : -1;
-  let y = edgeY + 3 * direction;
+  const starColor = appearance.repeatStarColor;
+  const repeatCount = basic.trueFalseRepeatCount;
+  const ordinal = Number.isSafeInteger(repeatCount) && repeatCount > 0;
+  const markers = [];
+  if (label !== "N/A") markers.push({ key: "verdict", text: label, size: labelSize, weight, color: colors[label] });
+  if ((!starColor && repeated && label !== "N/A") || label === "N/A") {
+    markers.push({ key: "na", text: "N/A", size, weight: 300, color: colors["N/A"], visible: appearance.showNA });
+  }
+  if (label !== "N/A" && starColor && (ordinal || repeated)) {
+    markers.push({ key: "stars", text: "*".repeat(ordinal ? repeatCount : 1),
+      size: labelSize, weight, color: starColor, visible: appearance.showStars });
+    if (ordinal && label === "F" && basic.trueFalseRepeatF === true) {
+      markers.push({ key: "x", text: "X", size: labelSize, weight, color: starColor, visible: appearance.showX });
+    }
+  }
+  return markers;
+}
+
+export function trueFalseVisualObjects(parentId, item, parentSize, appearance, {
+  weight = TRUE_FALSE_LABEL_WEIGHT, repeated = false, verdictSizeOffset = 0,
+} = {}) {
+  return verdictMarkers(item.trueFalse, parentSize, weight, repeated, verdictSizeOffset, appearance, item)
+    .map(({ key, text, size, weight: fontWeight, color }) => ({
+      id: `${parentId}:${key}`, type: "indicator-label", name: text, text,
+      time: item.sourceTime, price: item.price, size, weight: fontWeight, color,
+    }));
+}
+
+export function drawIndicatorText(ctx, text, x, y, {
+  below, size, weight, color, objectId, objectFor, offsetPoint, onHit,
+}) {
+  const object = objectId ? objectFor?.(objectId) : null;
+  if (object?.hidden) return;
+  const style = object?.customized ? object : null;
+  const position = offsetPoint?.(object, x, y) ?? { x, y };
+  const fontSize = style?.size ?? size;
+  const label = style?.text ?? text;
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = below ? "top" : "bottom";
-  const showRepeat = repeated && label !== "N/A";
-  const starColor = appearance.repeatStarColor;
-  if (showRepeat && !starColor) {
-    ctx.fillStyle = colors["N/A"];
-    ctx.font = `300 ${size}px ${FONT}`;
-    ctx.fillText("N/A", x, y);
-    y += (size + 2) * direction;
-  }
-  ctx.fillStyle = colors[label];
-  ctx.font = `${labelWeight} ${labelSize}px ${FONT}`;
-  ctx.fillText(label, x, y);
-  if (showRepeat && starColor) {
-    ctx.fillStyle = starColor;
-    ctx.textBaseline = "bottom";
-    const starY = below ? edgeY - parentSize - 3 : y - labelSize - 2;
-    ctx.fillText("*", x, starY);
+  ctx.fillStyle = style?.color ?? color;
+  ctx.font = `${style?.weight ?? weight} ${fontSize}px ${FONT}`;
+  ctx.fillText(label, position.x, position.y);
+  if (objectId && onHit) {
+    const width = Math.max(8, ctx.measureText?.(label)?.width ?? label.length * fontSize * 0.6);
+    const top = below ? position.y : position.y - fontSize;
+    onHit({ objectId, shape: "rect", area: true, padding: 1, left: position.x - width / 2,
+      right: position.x + width / 2, top, bottom: top + fontSize });
   }
   ctx.restore();
+  return fontSize;
+}
+
+export function drawTrueFalseLabel(ctx, verdict, visible, parentSize, x, edgeY, below,
+  weight = TRUE_FALSE_LABEL_WEIGHT, repeated = false, verdictSizeOffset = 0, appearance = {}, basic = {}, objects = {}) {
+  if (visible === false) return;
+  const direction = below ? 1 : -1;
+  let y = edgeY + 3 * direction;
+  for (const marker of verdictMarkers(verdict, parentSize, weight, repeated, verdictSizeOffset, appearance, basic)) {
+    if (marker.visible === false) continue;
+    const size = drawIndicatorText(ctx, marker.text, x, y, { ...marker, ...objects, below,
+      objectId: objects.parentId ? `${objects.parentId}:${marker.key}` : undefined });
+    if (size != null) y += (size + 2) * direction;
+  }
 }
 ````
 <!-- EXACT-SOURCE-END:apps/chart/src/chart/true-false-label.js -->
@@ -21836,3 +22098,858 @@ export function parseRawFilename(filename) {
 }
 ````
 <!-- EXACT-SOURCE-END:apps/chart/src/features/raw-file-contract.js -->
+
+### 16.22 `apps/chart/src/chart/indicator-positions.js` — Chart presentation
+
+**SHA-256:** `285d23b006d6f5e797592caaf4bf3083b2e05b50c5fbab47c837eafc44389505`  
+**Bytes:** `6467`  
+**LF count:** `158`
+
+<!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/indicator-positions.js -->
+````javascript
+import {
+  positionEndTime, positionLevels, positionRightTime, positionWidthBars,
+} from "../drawings/drawing-math.js";
+
+const POSITION_WIDTH_BARS = 50;
+const POSITION_TYPES = ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "3.3"];
+export const POSITION_VISIBILITY_GROUPS = [
+  ["Buy", POSITION_TYPES.map(type => `${type}B`)],
+  ["Sell", POSITION_TYPES.map(type => `${type}S`)],
+];
+const typesBySide = { buy: POSITION_VISIBILITY_GROUPS[0][1], sell: POSITION_VISIBILITY_GROUPS[1][1] };
+const validTypes = new Set(POSITION_VISIBILITY_GROUPS.flatMap(([, types]) => types));
+const POSITION_FONT = '500 10px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+export function positionVisibilityKey(type) {
+  return `position${type.replace(".", "_")}Visible`;
+}
+
+export function isIndicatorPosition(item) {
+  return item?.type === "indicator-position" && validTypes.has(item.positionType);
+}
+
+export function isPositionOverrideId(id) {
+  return /^indicator:(bullish|bearish):position:/.test(id);
+}
+
+function positionObject(row, direction) {
+  const side = row?.side;
+  if ((side !== "buy" && side !== "sell") || !typesBySide[side].includes(row.type) || typeof row.id !== "string" || !row.id
+    || [row.entryTime, row.entryPrice, row.targetPrice, row.stopPrice].some(value =>
+      value == null || value === "" || !Number.isFinite(Number(value)))) return null;
+  return {
+    id: `indicator:${direction}:position:${encodeURIComponent(row.id)}`,
+    type: "indicator-position",
+    positionType: row.type,
+    side,
+    name: row.type,
+    time: Number(row.entryTime),
+    price: Number(row.entryPrice),
+    targetPrice: Number(row.targetPrice),
+    stopPrice: Number(row.stopPrice),
+    color: "#2962ff",
+  };
+}
+
+export function indicatorPositionObjects(group, direction) {
+  const rows = [...(group.positions || []),
+    ...(group.calculationSegments || []).flatMap(segment => segment.positions || [])];
+  const unique = new Map();
+  for (const row of rows) {
+    const item = positionObject(row, direction);
+    if (item && !unique.has(item.id)) unique.set(item.id, item);
+  }
+  return [...unique.values()];
+}
+
+export function indicatorPositionDrawing(item, candles, timeframe) {
+  const edit = item.positionEdit;
+  const time = edit?.time ?? item.time;
+  return {
+    type: item.side === "buy" ? "long" : "short",
+    finalizedPosition: true,
+    locked: item.locked,
+    a: { time, price: edit?.entry ?? item.price },
+    b: {
+      time: positionEndTime(candles, time, timeframe, edit?.bars ?? POSITION_WIDTH_BARS),
+      price: edit?.target ?? item.targetPrice,
+    },
+    stopPrice: edit?.stop ?? item.stopPrice,
+  };
+}
+
+export function saveIndicatorPositionEdit(item, previous, edited, candles, timeframe) {
+  const edit = { ...item.positionEdit };
+  if (previous.a.time !== edited.a.time) edit.time = edited.a.time;
+  if (previous.a.price !== edited.a.price) edit.entry = edited.a.price;
+  if (previous.b.price !== edited.b.price) edit.target = edited.b.price;
+  if (previous.stopPrice !== edited.stopPrice) edit.stop = edited.stopPrice;
+  if (previous.a.time !== edited.a.time || previous.b.time !== edited.b.time) {
+    edit.bars = positionWidthBars(candles, edited.a.time, edited.b.time, timeframe);
+  }
+  item.positionEdit = edit;
+}
+
+export function positionGeometry(drawing, { candles, timeframe, timeToX, priceToY }) {
+  const levels = positionLevels(drawing);
+  if (!levels) return null;
+  const left = timeToX(drawing.a.time);
+  const right = timeToX(positionRightTime(drawing, candles, timeframe));
+  const entry = priceToY(levels.entry), target = priceToY(levels.target), stop = priceToY(levels.stop);
+  if (![left, right, entry, target, stop].every(Number.isFinite)) return null;
+  const handles = [
+    { x: left, y: target, level: "target" },
+    { x: right, y: target, level: "target" },
+    { x: left, y: stop, level: "stop" },
+    { x: right, y: stop, level: "stop" },
+    { x: left, y: entry, level: "start" },
+    { x: right, y: entry, level: "end" },
+  ];
+  return { left, right, entry, target, stop, levels, handles };
+}
+
+export function paintPositionBoxes(ctx, { left, right, entry, target, stop }, { stroke, width, entryDash = [4, 3] }) {
+  const reward = [left, Math.min(entry, target), right - left, Math.abs(entry - target)];
+  const risk = [left, Math.min(entry, stop), right - left, Math.abs(entry - stop)];
+  ctx.fillStyle = "rgba(8, 153, 129, 0.10)";
+  ctx.fillRect(...reward);
+  ctx.fillStyle = "rgba(242, 54, 69, 0.10)";
+  ctx.fillRect(...risk);
+  ctx.lineWidth = width;
+  ctx.strokeStyle = "#089981";
+  ctx.strokeRect(...reward);
+  ctx.strokeStyle = "#f23645";
+  ctx.strokeRect(...risk);
+  ctx.strokeStyle = stroke;
+  ctx.setLineDash(entryDash);
+  ctx.beginPath();
+  ctx.moveTo(left, entry);
+  ctx.lineTo(right, entry);
+  ctx.stroke();
+}
+
+export function drawIndicatorPositions(ctx, rows, {
+  direction, candles, timeframe, timeToX, priceToY, rightBoundary, settings, objectFor, hits, dash,
+}) {
+  for (const row of rows) {
+    const base = positionObject(row, direction);
+    if (!base || settings[positionVisibilityKey(base.positionType)] === false) continue;
+    const item = objectFor(base.id) ?? base;
+    if (item.hidden) continue;
+    const drawing = indicatorPositionDrawing(item, candles, timeframe);
+    const geometry = positionGeometry(drawing, { candles, timeframe, timeToX, priceToY });
+    if (!geometry) continue;
+    const { left, right, entry, target, stop, handles } = geometry;
+    const visibleLeft = Math.max(left, 0), visibleRight = Math.min(right, rightBoundary);
+    if (visibleRight <= visibleLeft) continue;
+    const buy = base.side === "buy";
+    const labelY = buy ? Math.max(entry, stop) + 3 : Math.min(entry, stop) - 3;
+    const labelX = (visibleLeft + visibleRight) / 2;
+    hits.push({
+      objectId: base.id, shape: "rect", area: true, left, right: visibleRight,
+      top: Math.min(entry, target, stop), bottom: Math.max(entry, target, stop),
+      clipRight: rightBoundary, handles: handles.filter(handle => handle.x >= 0 && handle.x <= rightBoundary),
+    });
+    ctx.save();
+    paintPositionBoxes(ctx, geometry, {
+      stroke: item.color ?? base.color,
+      width: item.width ?? 0.5,
+      entryDash: item.lineStyle ? dash(item.lineStyle) : undefined,
+    });
+    ctx.fillStyle = "#171a21";
+    ctx.font = POSITION_FONT;
+    ctx.textAlign = "center";
+    ctx.textBaseline = buy ? "top" : "bottom";
+    ctx.fillText(base.positionType, labelX, labelY);
+    ctx.restore();
+  }
+}
+````
+<!-- EXACT-SOURCE-END:apps/chart/src/chart/indicator-positions.js -->
+
+### 16.23 `apps/chart/src/drawings/drawing-math.js` — Chart presentation
+
+**SHA-256:** `9ce4d7ae8b0298862ccb823e34db4871d1684d006b63a22e61575d09af7158e7`  
+**Bytes:** `6263`  
+**LF count:** `127`
+
+<!-- EXACT-SOURCE-BEGIN:apps/chart/src/drawings/drawing-math.js -->
+````javascript
+function durationLabel(seconds) {
+  const value = Math.max(0, Math.round(Number(seconds) || 0));
+  if (value >= 86400) return `${(value / 86400).toFixed(value % 86400 ? 1 : 0)}d`;
+  if (value >= 3600) return `${(value / 3600).toFixed(value % 3600 ? 1 : 0)}h`;
+  if (value >= 60) return `${(value / 60).toFixed(value % 60 ? 1 : 0)}m`;
+  return `${value}s`;
+}
+
+export function calculateMeasureStats(a, b, timeframeSeconds = 1) {
+  const durationSeconds = Math.abs(Number(b?.time) - Number(a?.time));
+  const priceDelta = Number(b?.price) - Number(a?.price);
+  const base = Number(a?.price);
+  return {
+    durationSeconds,
+    bars: Math.round(durationSeconds / Math.max(1, Number(timeframeSeconds) || 1)),
+    priceDelta,
+    percentage: base ? (priceDelta / base) * 100 : 0,
+    durationLabel: durationLabel(durationSeconds),
+  };
+}
+
+export function calculatePositionLevels(type, entryPrice, targetPrice, stopPrice) {
+  const entry = Number(entryPrice);
+  const anchor = Number(targetPrice);
+  if (!["long", "short"].includes(type) || !Number.isFinite(entry) || !Number.isFinite(anchor)) return null;
+  const distance = Math.abs(anchor - entry) || Math.max(Math.abs(entry) * 0.01, Number.EPSILON);
+  const long = type === "long";
+  const target = long ? entry + distance : entry - distance;
+  const stop = stopPrice === undefined ? (long ? entry - distance : entry + distance) : Number(stopPrice);
+  const risk = (entry - stop) * (long ? 1 : -1);
+  if (!Number.isFinite(stop) || risk <= 0) return null;
+  const reward = Math.abs(target - entry);
+  return { entry, target, stop, risk, reward, riskReward: reward / risk };
+}
+
+export function positionLevels(drawing) {
+  if (!drawing.finalizedPosition)
+    return calculatePositionLevels(drawing.type, drawing.a?.price, drawing.b?.price, drawing.stopPrice);
+  const entry = Number(drawing.a?.price), target = Number(drawing.b?.price), stop = Number(drawing.stopPrice);
+  if (![entry, target, stop].every(Number.isFinite)) return null;
+  const risk = Math.abs(entry - stop), reward = Math.abs(target - entry);
+  return { entry, target, stop, risk, reward, riskReward: risk ? reward / risk : null };
+}
+
+export function initialPositionLevels(type, entryPrice, targetPrice) {
+  const levels = calculatePositionLevels(type, entryPrice, targetPrice);
+  if (!levels) return null;
+  return calculatePositionLevels(type, levels.entry, levels.target,
+    levels.entry + (type === "long" ? -1 : 1) * levels.reward / 4);
+}
+
+export function editPositionLevel(drawing, level, price) {
+  const value = Number(price);
+  const levels = positionLevels(drawing);
+  if (!levels || !Number.isFinite(value) || !["target", "stop"].includes(level)) return null;
+  const sign = drawing.type === "long" ? 1 : -1;
+  if ((value - levels.entry) * sign * (level === "target" ? 1 : -1) <= 0) return null;
+  return {
+    ...drawing,
+    b: { ...drawing.b, price: level === "target" ? value : levels.target },
+    stopPrice: level === "stop" ? value : levels.stop,
+  };
+}
+
+export function editPositionTime(drawing, edge, time, rightTime = drawing.b?.time) {
+  const value = Number(time);
+  if (!Number.isFinite(value) || value <= 0) return null;
+  if (edge === "end" && value > Number(drawing.a.time))
+    return { ...drawing, b: { ...drawing.b, time: value } };
+  if (edge === "start" && value < Number(rightTime))
+    return { ...drawing, a: { ...drawing.a, time: value }, b: { ...drawing.b, time: Number(rightTime) } };
+  return null;
+}
+
+export function positionRightTime(drawing, candles, timeframe) {
+  return Number(drawing.b?.time) > Number(drawing.a.time)
+    ? Number(drawing.b.time) : positionEndTime(candles, drawing.a.time, timeframe);
+}
+
+export function translatePosition(drawing, candles, timeframe, deltaBars, deltaPrice) {
+  if (!drawing.a || !drawing.b || !Number.isFinite(Number(deltaBars)) || !Number.isFinite(Number(deltaPrice))) return null;
+  const moved = {
+    ...drawing,
+    a: { ...drawing.a, time: positionEndTime(candles, drawing.a.time, timeframe, Number(deltaBars)), price: Number(drawing.a.price) + Number(deltaPrice) },
+    b: { ...drawing.b, time: positionEndTime(candles, positionRightTime(drawing, candles, timeframe), timeframe, Number(deltaBars)), price: Number(drawing.b.price) + Number(deltaPrice) },
+  };
+  if (drawing.stopPrice !== undefined) moved.stopPrice = Number(drawing.stopPrice) + Number(deltaPrice);
+  if (!(moved.a.time > 0) || !(moved.b.time > moved.a.time) ||
+      ![moved.a.time, moved.b.time, moved.a.price, moved.b.price].every(Number.isFinite)) return null;
+  return moved;
+}
+
+// Count actual chart candles, including across closed-market gaps. Beyond the
+// supplied data, extend using the current chart timeframe into future space.
+function positionCandleIndex(candles, time, timeframe) {
+  const anchor = Number(time);
+  const step = Math.max(1, Number(timeframe) || 1);
+  if (!candles.length) return anchor / step;
+  let lo = 0, hi = candles.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (Number(candles[mid].time) < anchor) lo = mid + 1;
+    else hi = mid;
+  }
+  const first = Number(candles[0].time), last = Number(candles.at(-1).time);
+  return lo === 0 ? (anchor - first) / step
+    : lo === candles.length ? candles.length - 1 + (anchor - last) / step
+      : lo - 1 + (anchor - Number(candles[lo - 1].time)) /
+        (Number(candles[lo].time) - Number(candles[lo - 1].time));
+}
+
+export function positionWidthBars(candles, start, end, timeframe) {
+  if (!candles.length) return (Number(end) - Number(start)) / Math.max(1, Number(timeframe) || 1);
+  return positionCandleIndex(candles, end, timeframe) - positionCandleIndex(candles, start, timeframe);
+}
+
+export function positionEndTime(candles, time, timeframe, bars = 20) {
+  const step = Math.max(1, Number(timeframe) || 1);
+  if (!candles.length) return Number(time) + bars * step;
+  const first = Number(candles[0].time), last = Number(candles.at(-1).time);
+  const end = positionCandleIndex(candles, time, timeframe) + bars;
+  if (end < 0) return first + end * step;
+  if (end >= candles.length - 1) return last + (end - candles.length + 1) * step;
+  const left = Math.floor(end);
+  return Number(candles[left].time) + (end - left) *
+    (Number(candles[left + 1].time) - Number(candles[left].time));
+}
+````
+<!-- EXACT-SOURCE-END:apps/chart/src/drawings/drawing-math.js -->
+
+### 16.24 `engine/buy_algorithm.py` — Bullish Buy entry point
+
+**SHA-256:** `1ea6ae00f492fb9799089d2ade132c6570f92a7ef266780b00c67411a5f5d136`  
+**Bytes:** `446`  
+**LF count:** `9`
+
+<!-- EXACT-SOURCE-BEGIN:engine/buy_algorithm.py -->
+````python
+"""Bullish Buy position entry point."""
+
+from .pipeline.position_rules import calculate_positions
+
+
+def calculate_buy_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None):
+    return calculate_positions(group, close_at, first_crossing, direction="bullish",
+                               timeframe=timeframe, closed_through=closed_through,
+                               source_event_at=source_event_at)
+````
+<!-- EXACT-SOURCE-END:engine/buy_algorithm.py -->
+
+### 16.25 `engine/pipeline/position_rules.py` — Shared mirrored positions, strict stops and Foundation liquidity
+
+**SHA-256:** `a114e9e822ce40be1051089ff40e4c6d279af8904312c5f301f3928b3ec71ff7`  
+**Bytes:** `16817`  
+**LF count:** `402`
+
+<!-- EXACT-SOURCE-BEGIN:engine/pipeline/position_rules.py -->
+````python
+"""Calculate the fourteen chart position types from finalized indicator events."""
+from __future__ import annotations
+
+from bisect import bisect_left, bisect_right
+from dataclasses import dataclass
+from decimal import Decimal
+from heapq import nsmallest
+from typing import Callable
+
+from .direction_policy import policy_for
+from .lifecycle_engine import sequence_priority
+
+FOUNDATION = frozenset(("sZones", "eZones"))
+TARGET_RISK_MULTIPLE = Decimal(4)
+LIQUIDITY_LINE_BARS = 1500
+
+
+def source_event_lookup(lower_index, from_epoch, to_epoch, timeframe):
+    """Locate the first RAW occurrence of the accepted source price."""
+    def find(direction, source, price):
+        extreme = policy_for(direction).extreme_attr
+        level = Decimal(price)
+        left = bisect_left(lower_index.times, from_epoch(source))
+        right = bisect_left(lower_index.times, from_epoch(source + timeframe), lo=left)
+        for index in range(left, right):
+            candle = lower_index.candles[index]
+            if getattr(candle, extreme) == level:
+                return to_epoch(candle.timestamp)
+        return source
+
+    return find
+
+
+@dataclass(frozen=True, slots=True)
+class PositionEvent:
+    collection: str
+    source_time: int
+    formation_time: int
+    decision_time: int
+    decision_event_time: int
+    closed_at: int
+    price: Decimal
+    verdict: str | None
+    number: int
+    rank: tuple[int, int] | None
+
+    @property
+    def confirmation_order(self):
+        return self.decision_event_time, self.source_time
+
+
+@dataclass(frozen=True, slots=True)
+class PositionSetup:
+    anchor: PositionEvent
+    trigger: PositionEvent
+    entry_price: Decimal
+    stopped_at: int | None
+
+
+def position_source_events(group, direction, timeframe, closed_through, source_event_at):
+    """Resolve one owner per source candle, in the order used for T/F."""
+    primary_key = "primaryLows" if direction == "bullish" else "primaryHighs"
+    owners = {}
+    for collection in (primary_key, "stopAlls", "eZones", "sZones"):
+        for row in group.get(collection, ()):
+            source = row["sourceTime"]
+            decision = row.get("decisionTime")
+            if (source in owners or source >= closed_through or decision is None
+                    or row.get("calculationValid") is False):
+                continue
+            number = row.get("number", 0)
+            rank = None
+            if collection == "sZones":
+                rank = sequence_priority("s", row["color"]), 0
+            elif collection == "eZones":
+                rank = sequence_priority("e", row["family"]), number
+            raw_price = row["price"]
+            formation = (source if source_event_at is None else
+                         source_event_at(direction, source, raw_price))
+            owners[source] = PositionEvent(
+                collection, source, formation, decision, row.get("decisionEventTime") or decision,
+                decision + timeframe, Decimal(raw_price), row.get("trueFalse"), number, rank,
+            )
+    return sorted(owners.values(), key=lambda event: event.source_time)
+
+
+class PositionRules:
+    """Resolve setups in one independent trend segment."""
+
+    def __init__(self, direction, timeframe, closed_through, close_at, first_crossing):
+        self.policy = policy_for(direction)
+        self.timeframe = timeframe
+        self.closed_through = closed_through
+        self.close_at = close_at
+        self.first_crossing = first_crossing
+        self.buy = direction == "bullish"
+        self.primary_key = "primaryLows" if self.buy else "primaryHighs"
+        self.stop_events: dict[PositionEvent, int | None] = {}
+
+    def stop_time(self, anchor):
+        if anchor not in self.stop_events:
+            crossed = self.first_crossing(
+                self.policy.direction, anchor.formation_time, str(anchor.price),
+            )
+            self.stop_events[anchor] = (
+                crossed if crossed is not None and crossed < self.closed_through else None
+            )
+        return self.stop_events[anchor]
+
+    def setup(self, anchor, trigger):
+        entry = self.close_at(trigger.decision_time)
+        if entry is None:
+            return None
+        return PositionSetup(anchor, trigger, Decimal(entry), self.stop_time(anchor))
+
+    def first_s(self, pairs, *, ready_at=0, before=None, strict=False):
+        for anchor, signal in pairs:
+            if (signal.closed_at > self.closed_through or signal.closed_at < ready_at
+                    or (before is not None and signal.closed_at >= before)
+                    or anchor.decision_event_time > signal.decision_event_time
+                    or anchor.closed_at > signal.closed_at
+                    or signal.formation_time <= anchor.formation_time
+                    or self.policy.strict_cross(signal.price, anchor.price)
+                    or (strict and signal.price == anchor.price)):
+                continue
+            stopped_at = self.stop_time(anchor)
+            if stopped_at is not None and stopped_at <= signal.formation_time:
+                continue
+            setup = self.setup(anchor, signal)
+            if setup is not None:
+                return setup
+        return None
+
+    def two_stage(self, pairs_for_verdict, ready_at):
+        first = self.first_s(pairs_for_verdict("T", None), ready_at=ready_at)
+        if first is None:
+            return None, None
+        if first.stopped_at is None:
+            return first, None
+        second = self.first_s(
+            pairs_for_verdict("F", first.stopped_at),
+            ready_at=max(ready_at, first.trigger.closed_at),
+        )
+        return first, second
+
+    def foundation(self, events):
+        for ready_at, window in position_windows(events, {"stopAlls", self.primary_key}):
+            fundamentals = [event for event in window if event.collection in FOUNDATION]
+            signals = sorted((event for event in fundamentals if event.collection == "sZones"),
+                             key=lambda event: event.confirmation_order)
+            if not signals:
+                continue
+            t_anchors, f_anchors = foundation_anchors(fundamentals)
+
+            def pairs(verdict, stopped_at):
+                anchors = t_anchors if verdict == "T" else (
+                    anchor for anchor in f_anchors if anchor.formation_time >= stopped_at
+                )
+                return foundation_pairs(signals, tuple(anchors))
+
+            first, second = self.two_stage(pairs, ready_at)
+            yield "1.1", first
+            yield "1.2", second
+
+    def stopall(self, events):
+        for ready_at, window in position_windows(events, {self.primary_key}):
+            owned = stopall_signal_pairs(window)
+
+            def pairs(verdict, stopped_at):
+                return ((anchor, signal) for anchor, signal in owned
+                        if anchor.verdict == verdict
+                        and (stopped_at is None or anchor.formation_time >= stopped_at))
+
+            first, second = self.two_stage(pairs, ready_at)
+            yield "2.1", first
+            yield "2.2", second
+
+    def primary(self, events):
+        first = second = third = None
+        for event in events:
+            if event.collection != self.primary_key:
+                continue
+            if first is None and event.number == 1:
+                first = event
+            elif first is not None and second is None and event.number == 2:
+                second = event
+            elif second is not None and event.number == 3:
+                third = event
+                break
+
+        if first is None:
+            return
+        signals = sorted(
+            (event for event in events if event.collection == "sZones"
+             and first.source_time < event.source_time
+             and (second is None or event.source_time < second.source_time)),
+            key=lambda event: event.confirmation_order,
+        )
+        entry_one = self.first_s(((first, signal) for signal in signals), strict=True,
+                                 before=second.closed_at if second is not None else None)
+        yield "3.1", entry_one
+        if (second is None or second.closed_at > self.closed_through
+                or first.closed_at > second.closed_at or not stopped_by(entry_one, second.closed_at)):
+            return
+        entry_two = self.setup(second, second)
+        yield "3.2", entry_two
+        if (entry_one is None and third is not None and third.closed_at <= self.closed_through
+                and second.closed_at <= third.closed_at and stopped_by(entry_two, third.closed_at)):
+            yield "3.3", self.setup(third, third)
+
+    def serialize(self, number, setup):
+        side = "Buy" if self.buy else "Sell"
+        label = number + ("B" if self.buy else "S")
+        anchor, trigger = setup.anchor, setup.trigger
+        entry = setup.entry_price
+        stop = anchor.price
+        reward = abs(entry - stop) * TARGET_RISK_MULTIPLE
+        if number.startswith("3."):
+            owner = ("PL" if self.buy else "PH") + number[-1]
+        else:
+            owner = ("Foundation_" if number.startswith("1.") else "StopAll_") + anchor.verdict
+
+        output = {
+            "id": f"{label}:{anchor.source_time}:{trigger.source_time}",
+            "type": label,
+            "algorithm": f"{side}_{owner}",
+            "side": side.lower(),
+            "anchorSourceTime": anchor.source_time,
+            "triggerSourceTime": trigger.source_time,
+            "entryTime": trigger.decision_time,
+            "entryPrice": str(entry),
+            "stopPrice": str(stop),
+            "targetPrice": str(entry + reward if self.buy else entry - reward),
+        }
+        if setup.stopped_at is not None:
+            output["stopEventTime"] = setup.stopped_at
+            if setup.stopped_at < trigger.closed_at:
+                output["preEntryStop"] = True
+        return output
+
+
+def stopped_by(setup, time):
+    return setup is None or (setup.stopped_at is not None and setup.stopped_at < time)
+
+
+def position_windows(events, boundaries):
+    ready_at = 0
+    window = []
+    for event in events:
+        if event.collection in boundaries:
+            if window:
+                yield ready_at, window
+            ready_at = event.closed_at
+            window = []
+        else:
+            window.append(event)
+    if window:
+        yield ready_at, window
+
+
+def foundation_anchors(events):
+    t_anchors, f_anchors = [], []
+    largest_rank = (0, 0)
+    for event in events:
+        if event.verdict == "T":
+            t_anchors.append(event)
+        elif event.verdict == "F" and event.rank > largest_rank:
+            f_anchors.append(event)
+        largest_rank = max(largest_rank, event.rank)
+    return t_anchors, f_anchors
+
+
+def foundation_pairs(signals, anchors):
+    for signal in signals:
+        for anchor in anchors:
+            if anchor.source_time >= signal.source_time:
+                break
+            yield anchor, signal
+
+
+def stopall_signal_pairs(events):
+    pairs = []
+    owner = None
+    for event in events:
+        if event.collection == "stopAlls":
+            owner = event
+        elif owner is not None and event.collection == "sZones":
+            pairs.append((owner, event))
+    return sorted(pairs, key=lambda pair: pair[1].confirmation_order)
+
+
+def calculate_positions(group, close_at: Callable, first_crossing: Callable, *, direction,
+                        timeframe, closed_through, source_event_at: Callable | None = None):
+    """Publish positions from final T/F and confirmed trigger closes for one regime."""
+    end = group.get("calculationEndTime")
+    limit = closed_through if end is None else min(closed_through, end)
+    rules = PositionRules(direction, timeframe, limit, close_at, first_crossing)
+    events = position_source_events(group, direction, timeframe, limit, source_event_at)
+    output = [
+        rules.serialize(label, setup)
+        for family in (rules.foundation, rules.stopall, rules.primary)
+        for label, setup in family(events)
+        if setup is not None
+    ]
+    return sorted(output, key=lambda row: (row["entryTime"], row["type"], row["anchorSourceTime"]))
+
+
+def _liquidity_runs(events):
+    """Group identical F anchors until a larger Foundation rank ends their run."""
+    active, runs = [], []
+    for index, event in enumerate(events):
+        while active and active[-1][0] < event.rank:
+            active.pop()
+        if event.verdict != "F":
+            continue
+        if not active or active[-1][0] != event.rank:
+            run = []
+            runs.append(run)
+            active.append((event.rank, run))
+        active[-1][1].append(index)
+    return runs
+
+
+def _liquidity_triggers(events, index, direct_sweep, bullish):
+    """Find closed S/E evidence in favorable source geometry before the breach."""
+    anchor = events[index]
+    for candidate_index in range(index + 1, len(events)):
+        candidate = events[candidate_index]
+        if direct_sweep is not None and candidate.formation_time >= direct_sweep:
+            break
+        favorable = candidate.price > anchor.price if bullish else candidate.price < anchor.price
+        if favorable:
+            yield max(anchor.closed_at, candidate.closed_at)
+
+
+def _liquidity_line_end(times, source, direct_sweep, timeframe):
+    start = bisect_left(times, source)
+    if start == len(times) or times[start] != source:
+        return None
+    cap = start + LIQUIDITY_LINE_BARS
+    if direct_sweep is not None:
+        hit = bisect_right(times, direct_sweep, lo=start) - 1
+        if hit <= cap:
+            return times[hit]
+    if cap < len(times):
+        return times[cap]
+    return times[-1] + (cap - len(times) + 1) * timeframe
+
+
+def calculate_liquidity(group, first_crossing, *, direction, timeframe,
+                        closed_through, source_event_at, candle_times):
+    """Publish Foundation liquidity and its separate chart eligibility in one regime."""
+    end = group.get("calculationEndTime")
+    limit = closed_through if end is None else min(closed_through, end)
+    events = position_source_events(group, direction, timeframe, limit, source_event_at)
+    bullish = direction == "bullish"
+    primary_key = "primaryLows" if bullish else "primaryHighs"
+    favorable_direction = "bearish" if bullish else "bullish"
+    output = []
+    for _, window in position_windows(events, {"stopAlls", primary_key}):
+        confirmed = [event for event in window if event.closed_at <= limit]
+        for run in _liquidity_runs(confirmed):
+            repeated = len(run) > 1
+            group_time = confirmed[run[0]].source_time if repeated else None
+            group_confirmation = (
+                nsmallest(2, (confirmed[index].closed_at for index in run))[-1] if repeated else None
+            )
+            shared_sweep = next_formation = None
+            for index in reversed(run):
+                anchor = confirmed[index]
+                price = str(anchor.price)
+                direct = first_crossing(direction, anchor.formation_time + 1, price)
+                if direct is not None and direct >= closed_through:
+                    direct = None
+                move = first_crossing(favorable_direction, anchor.formation_time + 1, price)
+                if move is not None and (move >= limit or (direct is not None and move >= direct)):
+                    move = None
+
+                if direct is not None and (next_formation is None or direct < next_formation):
+                    shared_sweep = direct if shared_sweep is None else min(direct, shared_sweep)
+                collected = min((time for time in (direct, shared_sweep) if time is not None), default=None)
+                next_formation = anchor.formation_time
+
+                visible = None if group_confirmation is None else max(anchor.closed_at, group_confirmation)
+                if visible != anchor.closed_at:
+                    ordinary = min(_liquidity_triggers(confirmed, index, direct, bullish), default=None)
+                    if ordinary is not None:
+                        visible = ordinary if visible is None else min(ordinary, visible)
+                if move is None and visible is None:
+                    continue
+                output.append({
+                    "sourceTime": anchor.source_time,
+                    "price": price,
+                    "movementTime": move,
+                    "visibleFrom": visible,
+                    "repeatGroupSourceTime": group_time,
+                    "directSweepTime": direct,
+                    "collectedTime": collected,
+                    "lineEndTime": (_liquidity_line_end(candle_times, anchor.source_time, direct, timeframe)
+                                    if visible is not None else None),
+                })
+    return sorted(output, key=lambda row: row["sourceTime"])
+````
+<!-- EXACT-SOURCE-END:engine/pipeline/position_rules.py -->
+
+### 16.26 `engine/sell_algorithm.py` — Bearish Sell entry point
+
+**SHA-256:** `0ed15ed3585e84e809c007f6baabf8f924603b3cc5433110c6794ba1f218b87c`  
+**Bytes:** `448`  
+**LF count:** `9`
+
+<!-- EXACT-SOURCE-BEGIN:engine/sell_algorithm.py -->
+````python
+"""Bearish Sell position entry point."""
+
+from .pipeline.position_rules import calculate_positions
+
+
+def calculate_sell_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None):
+    return calculate_positions(group, close_at, first_crossing, direction="bearish",
+                               timeframe=timeframe, closed_through=closed_through,
+                               source_event_at=source_event_at)
+````
+<!-- EXACT-SOURCE-END:engine/sell_algorithm.py -->
+
+### 16.27 `apps/chart/src/chart/indicator-liquidity.js` — Chart presentation
+
+**SHA-256:** `38a0aed3ab22d873955e845b663583c5f61b5cb60ec3e08f7d2f74c7b2a9271b`  
+**Bytes:** `3724`  
+**LF count:** `84`
+
+<!-- EXACT-SOURCE-BEGIN:apps/chart/src/chart/indicator-liquidity.js -->
+````javascript
+const LIQUIDITY_COLOR = "#b8b8b8";
+const LIQUIDITY_LABEL = "$$$";
+const LABEL_PADDING = 5;
+
+export function liquidityObjectId(direction, time) {
+  return `indicator:${direction}:liquidity:${time}`;
+}
+
+export function liquidityEndpoints(item) {
+  return item.liquidityEdit ?? {
+    a: { time: item.time, price: Number(item.price) },
+    b: { time: item.endTime, price: Number(item.price) },
+  };
+}
+
+export function liquidityVisualObjects(group, direction) {
+  return (group.liquidity || []).filter(level => level.visibleFrom != null && level.lineEndTime != null)
+    .map(level => ({
+      id: liquidityObjectId(direction, level.sourceTime), type: "indicator-liquidity", direction,
+      name: level.collectedTime == null ? "Active liquidity" : "Collected liquidity",
+      time: level.sourceTime, price: level.price, endTime: level.lineEndTime, color: LIQUIDITY_COLOR,
+      text: LIQUIDITY_LABEL, width: 0.5, lineStyle: "solid",
+    }));
+}
+
+export function drawLiquidityLines(ctx, levels, { settings, timeToX, priceToY, labelSizeAt, width, height, direction, objectFor = () => null, onHit = () => {}, dash = () => [] }) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, width, height);
+  ctx.clip();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const gapsBySize = new Map();
+
+  for (const level of levels) {
+    if (level.visibleFrom == null || level.lineEndTime == null) continue;
+    const visibility = level.collectedTime == null ? "liquidityActiveVisible" : "liquidityCollectedVisible";
+    if (settings[visibility] === false) continue;
+    if (level.repeatGroupSourceTime != null && settings.liquidityRepeatedVisible === false) continue;
+
+    const objectId = liquidityObjectId(direction, level.sourceTime);
+    const object = objectFor(objectId);
+    if (object?.hidden) continue;
+    const style = object?.customized ? object : null;
+    const { a, b } = liquidityEndpoints(object ?? {
+      time: level.sourceTime, endTime: level.lineEndTime, price: level.price,
+    });
+    const ax = timeToX(a.time), bx = timeToX(b.time);
+    const ay = priceToY(a.price), by = priceToY(b.price);
+    if (![ax, bx, ay, by].every(Number.isFinite)) continue;
+    const [x1, x2, y1, y2] = ax <= bx ? [ax, bx, ay, by] : [bx, ax, by, ay];
+    if (x2 <= x1 || x2 < 0 || x1 > width || Math.max(y1, y2) < 0 || Math.min(y1, y2) > height) continue;
+
+    const top = Math.floor(y1) + 0.5, bottom = Math.floor(y2) + 0.5;
+    const middle = (x1 + x2) / 2;
+    const middleY = (top + bottom) / 2;
+    const labelSize = style?.size ?? labelSizeAt(level.sourceTime);
+    const label = style?.text ?? LIQUIDITY_LABEL;
+    ctx.font = `500 ${labelSize}px system-ui, sans-serif`;
+    const metricKey = `${labelSize}:${label}`;
+    if (!gapsBySize.has(metricKey)) {
+      gapsBySize.set(metricKey, ctx.measureText(label).width / 2 + LABEL_PADDING);
+    }
+    const labelHalfGap = label ? gapsBySize.get(metricKey) : 0;
+    const gapRise = (bottom - top) / (x2 - x1) * labelHalfGap;
+    ctx.strokeStyle = ctx.fillStyle = style?.color ?? LIQUIDITY_COLOR;
+    ctx.lineWidth = style?.width ?? 0.5;
+    ctx.setLineDash(dash(style?.lineStyle ?? "solid"));
+    ctx.beginPath();
+    ctx.moveTo(x1, top);
+    if (label && x2 - x1 > 2 * labelHalfGap + 2) {
+      ctx.lineTo(middle - labelHalfGap, middleY - gapRise);
+      ctx.moveTo(middle + labelHalfGap, middleY + gapRise);
+      if (middle + labelHalfGap > 0 && middle - labelHalfGap < width) {
+        ctx.fillText(label, middle, middleY);
+      }
+    }
+    ctx.lineTo(x2, bottom);
+    ctx.stroke();
+    onHit({ objectId, shape: "line", x1, y1: top, x2, y2: bottom, clipRight: width,
+      handles: [{ x: ax, y: ay, level: "a" }, { x: bx, y: by, level: "b" }] });
+  }
+  ctx.restore();
+}
+````
+<!-- EXACT-SOURCE-END:apps/chart/src/chart/indicator-liquidity.js -->

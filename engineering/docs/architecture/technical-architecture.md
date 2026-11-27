@@ -10,7 +10,7 @@ scope:
   - engine
   - runtime-boundaries
   - state-and-transport
-last_modified_at: 2026-11-26T09:57:50+03:30
+last_modified_at: 2026-11-27T06:39:30+03:30
 ---
 
 # TradingBot Technical Architecture
@@ -82,6 +82,8 @@ The diagram is conceptual. Internal files may be reorganized without changing th
 
 This path does not perform trading calculation.
 
+The workstation exposes direct `/chart`, `/faraz`, `/algorithm`, and `/alert` links. Chart links retain `chartId` and `tf` where applicable. Algorithm article links retain their section fragment, and a Manual Review link remains `/info/<id>`. The root URL and legacy algorithm fragments remain compatible. Workspace navigation, history and presentation stay in the browser. Vite matches the local API routes explicitly and returns a JSON 404 for unknown `/api` paths. `GET` and `PATCH /api/workspace-preferences` manage local preferences. The preferences store uses stable chart identity for per-chart settings and RAW bookmarks. The clock reads the selected broker-symbol profile and its verified holiday exceptions in the presentation layer.
+
 ### 5.2 Trading calculation
 
 1. Chart builds a calculation request containing the selected chart identity, analysis/chart timeframes, inclusive user-selected range, direction, and request identity.
@@ -90,13 +92,15 @@ This path does not perform trading calculation.
 4. Vite either supplies the original RAW path or prepares a selected in-memory row stream.
 5. Vite launches the Python bridge as a child process with the current Engine component paths and calculation arguments.
 6. The bridge loads the configured Engine components, reads the entire supplied input, normalizes chronology/candles, runs the required calculation/lifecycle pipeline, finalizes visibility/state, and serializes the requested direction output.
-7. Python writes machine-readable progress events to stderr and the final JSON result to stdout.
+7. The standalone Python bridge writes progress to stderr and the final JSON result to stdout. A dedicated Live worker sends progress and the result as ordered messages on one stream. Vite forwards measured Engine and server stages through `/api/reactions/progress` using the calculation request identity. Chart records response parsing, object preparation and drawing time for the same request.
 8. Vite returns the freshly serialized result to Chart and can retain a snapshot for Manual Review.
 9. Chart renders the result and may open the Manual Review surface using the persisted calculation identity.
 
 A manual Apply can start a dedicated Engine session scoped to its selected start, direction and analysis timeframe. The worker retains epoch-aligned RAW buckets, append lineage, and their market indexes. A verified append refreshes affected input buckets and index ranges, including the provisional tail. The trading stages recalculate at the requested horizon, including the last analysis candle. The bridge publishes the same indicator schema as the CLI.
 
-The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. It computes the closed-candle horizon from the RAW duration supplied by Vite. Repeated StopAll rows carry both their evaluated verdict and the repetition flag. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The previous automatic position/setup stage remains retired.
+The Engine publishes Basic, StopAll and directional primary T/F labels on final behavior rows. Each finalized directional primary resets the StopAll verdict history at its source candle. The shared response builder applies this stage for manual and live calculation. It computes the closed-candle horizon from the RAW duration supplied by Vite. Repeated StopAll rows carry both their evaluated verdict and the repetition flag. RAW repair lookup uses the reference direction, including after reversal. Chart renders those labels as presentation, and Manual Review continues to present finalized events. The Buy and Sell position stage consumes the finalized rows and closed analysis candles. It publishes stable position identities with entry, stop and visual target levels per regime. Chart owns generated position selection and presentation overrides. The [position algorithm reference](../../../engine/algorithms/TradingBot_Position_Algorithm_Reference.md) defines the shared Buy/Sell calculation.
+
+The shared response builder publishes Foundation liquidity alongside positions. The Engine owns movement, repetition, collection, and line eligibility. Chart paints the published geometry and applies visibility preferences. The [position algorithm reference](../../../engine/algorithms/TradingBot_Position_Algorithm_Reference.md#foundation-liquidity) defines the liquidity contract.
 
 During development, Vite polls the Chart sources, UI assets, Engine styles and the registered active Python files. Chart's indicator renderer can be replaced in memory while the chart instance and its state stay in place. Vite sends a status event for changes that require loading a new interface shell. Python source changes reuse the existing indicator calculation context for a new request that validates RAW and the active Source fingerprint. The recalculation refreshes the alert baseline. RAW, cache, tests, historical artifacts and server configuration remain outside this source watcher.
 
@@ -120,7 +124,7 @@ The browser checks the latest-candle response for recent verification support be
 
 A committed verification correction or restored gap requests a rebuild from the start of the applied range. Chart keeps the last successful result visible while the rebuild is pending or deferred. With automatic continuation enabled, the rebuild covers the current RAW tail at the chart timeframe. Otherwise it retains the applied end boundary. An accepted rebuild replaces the result and Live session and refreshes the alert baseline.
 
-The continuation API binds the worker to the chart and the browser tab that applied or restored the calculation. Candle polling can continue while the indicator calculates. One continuation runs per tab, and newer candle batches request a catch-up to the latest committed RAW. The RAW store retains a bounded, in-memory chain of committed, byte-exact appends across file renames. Other tabs can replay an append using the prior file ID, last candle time and digest. This lets an inventory refresh apply only the committed candles and request a continuation immediately. When the chain reaches the worker's checkpoint, the server sends only the appended bytes. The worker verifies the complete new digest from its retained prefix hash, adds the new rows in order and calculates from the full session RAW. A newer append can supersede an in-flight snapshot without invalidating it. Historical corrections break the append chain and invalidate affected publications. The continuation streams Engine progress and the chart reports completion once the accepted result is applied.
+The continuation API binds the worker to the chart and the browser tab that applied or restored the calculation. Candle polling can continue while the indicator calculates. One continuation runs per tab, and newer candle batches request a catch-up to the latest committed RAW. The RAW store retains a bounded, in-memory chain of committed, byte-exact appends across file renames. Other tabs can replay an append using the prior file ID, last candle time and digest. This lets an inventory refresh apply only the committed candles and request a continuation immediately. When the chain reaches the worker's checkpoint, the server sends only the appended bytes. The worker verifies the complete new digest from its retained prefix hash, adds the new rows in order and calculates from the full session RAW. A newer append can supersede an in-flight snapshot without invalidating it. Apply can also publish a verified snapshot that the Engine has already consumed when its original file was renamed by a committed append. The append lineage must still reach the current RAW at publication. Historical corrections break the append chain and invalidate affected publications. Automatic indicator requests carry the digest of the RAW revision displayed in the requesting tab. A superseded revision prompts the tab to refresh the RAW and resume from its applied settings. Competing automatic candle checks and superseded calculation snapshots are reported as synchronization status. Interrupted Live HTTP requests or response bodies retry with the tab's last applied checkpoint and a fresh progress channel. If the short retries are exhausted, Live probes the local calculation API during the launcher's 75-second readiness window and resumes as soon as the service responds. The last valid result remains visible throughout the interruption. Background RAW inventory refreshes keep their last snapshot during the same startup window. A persistent connection failure is journaled once per interruption in each affected tab while later polls can still recover. Unexpected calculation and I/O failures enter the error journal. The continuation streams Engine progress and the chart reports completion once the accepted result is applied.
 
 Each Live update reruns the Engine on the session’s validated RAW history. A worker verifies the exact append prefix and keeps normalized RAW, immutable candle views, and range indexes for its own session. An append refreshes only the affected tail, including an unfinished analysis bucket, and reuses bounded strict-crossing evidence over settled rows. The worker checks trend boundaries against the current chronology. It reuses a closed regime's independently calculated output when the new boundary and display bounds match and the entire prefix precedes the earliest changed candle. Each independent regime queries bounded windows of the worker's range indexes in local coordinates. The bridge reapplies T/F verdicts at the current horizon. A failed replay rolls back staged RAW and Decimal normalization and discards the derived indexes and retained prefixes before retrying. When the append proof is unavailable, the worker verifies the full RAW snapshot. After a restart or a historical revision, the server recovers the tab’s applied range and verifies or rebuilds it against current RAW. Chart can load the latest finalized calculation for its chart identity and display timeframe before starting any new Engine work. The server keeps the original RAW provenance with the saved result and rebinds the recovery proof to the requesting tab. The next Live recovery validates the proof against the Engine and current RAW. See [Local state](../operations/local-state.md) for the storage and cleanup contract.
 
@@ -193,7 +197,7 @@ The Vite/local-server layer owns:
 
 ### Engine process boundary
 
-Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments, collects stdout as the final JSON response, and interprets prefixed stderr records as progress events.
+Vite launches the Python bridge as a separate process. It provides Engine component locations and request arguments. The standalone bridge returns JSON on stdout and sends prefixed progress records on stderr. A dedicated Live worker sends framed progress and results on stdout, preserving each request's event order through the result message.
 
 Apply, active Live replays, and Live recovery share one FIFO coordinator. It defaults to one active calculation and accepts a limit of 1 through 8 through `TRADINGBOT_MAX_ENGINE_CONCURRENCY`. The server reads and verifies the selected RAW at admission and verifies RAW and the active calculation Source before publishing.
 
@@ -316,7 +320,7 @@ Chart controls what the user selects and displays. Engine/bridge controls calcul
 | Selected-range server ↔ bridge | Ephemeral in-memory named-pipe stream in the current Windows path |
 | Full-source server ↔ bridge | Project-local RAW file path |
 | Python bridge → local server | Final JSON on stdout |
-| Python bridge → local server progress | Prefixed machine-readable events on stderr |
+| Python bridge → local server progress | Prefixed stderr events from the standalone bridge, or ordered stdout messages from the dedicated Live worker |
 | Local server ↔ project state | Filesystem through project-local state owners |
 | FARAZ integration ↔ external service | Network requests constrained by current FARAZ integration policy |
 | FARAZ integration ↔ browser process | Chromium automation/session boundary where required for authentication |
@@ -377,7 +381,7 @@ The complete public schema remains owned by current Source/contracts and accepte
 
 Calculation progress follows this path:
 
-`Engine/bridge phase → progress record on stderr → Vite progress channel → SSE → Chart progress UI`.
+`Engine/bridge phase → worker progress record → Vite progress channel → SSE → Chart progress UI`.
 
 The final calculation follows:
 

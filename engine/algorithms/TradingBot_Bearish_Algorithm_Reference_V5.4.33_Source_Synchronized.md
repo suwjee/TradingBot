@@ -1,16 +1,16 @@
 # TradingBot Bearish Algorithm Reference — Current Standalone Specification
 
 **Document Version:** `5.4.33`  
-**Last Modified:** `2026-11-26T09:41:40+03:30`  
-**last_modified_at:** `2026-11-26T09:41:40+03:30`  
+**Last Modified:** `2026-11-26T16:16:13+03:30`  
+**last_modified_at:** `2026-11-27T03:19:30+03:30`  
 **document_role:** `reference`  
 **lifecycle:** `maintained`  
 **owner:** `engine/algorithms`  
 **scope:** `accepted directional specification and exact Source; bidirectional primary structures and isolated alternating regimes; independent T/F labels`  
-**Status:** `ACTIVE SOURCE-SYNCHRONIZED — primary structures and independent T/F verdicts`  
+**Status:** `ACTIVE SOURCE-SYNCHRONIZED — primary structures, T/F and positions`  
 **Target Direction:** `bearish`  
 **Opposite Direction:** `bullish`  
-**Production Source Behavioral Change:** `Basic T/F engulf counts base behavior independently of verdict; same-verdict stars and converged Order_B publication are retained`  
+**Production Source Behavioral Change:** `Mirrored Buy/Sell positions, Basic base-run ordinals, same-base F repair transfer and immediate-successor repetition for Basic T/F`  
 **Mirror Contract:** Standard upstream geometry retains its directional mirror contract. The user-approved primary mirror and first-Reaction bootstrap apply symmetrically to newly isolated regimes; time, physical identity, provenance and S/E families remain invariant.
 
 > **Historical baseline source lineage:** V5.4.33 starts from the exact newly uploaded V5.4.32 `engine(1).zip`. V5.4.32 remains the historical baseline; older unmerged branches are not silently introduced.
@@ -125,14 +125,16 @@ The fix is general and contains no timestamp, symbol, price, fixture or RAW-name
 
 This earlier synchronization described a supplied `engine.zip` without a root package marker. The current live Engine includes `engine/__init__.py`, which is recorded in the Source manifest and embedded in Section 16.
 
+The [position algorithm reference](TradingBot_Position_Algorithm_Reference.md#foundation-liquidity) defines Foundation liquidity and its line eligibility.
+
 ## 1. Source manifest
 
 | Module | Owner | Version | Lines | Bytes | SHA-256 |
 |---|---|---|---:|---:|---|
 | `__init__.py` | Engine package marker | `unversioned` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `bridge/__init__.py` | Bridge package marker | `unversioned` | 1 | 64 | `2bc59770b9d4313c0e6306287d074487b9e1672dbaf3ada9a8be381e7123f0b8` |
-| `bridge/live_pipeline.py` | Production module | `1.3.0` | 225 | 9694 | `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d` |
-| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.15.0 (impl 1.21.3)` | 3809 | 152299 | `9f61e63b775a018e49a5f38b69d2a89672f7d6ef0d45c7e76b5b1c8748cb6d19` |
+| `bridge/live_pipeline.py` | Production module | `1.3.0` | 232 | 9968 | `682ac1ced42c41bdab93c7f18c070b089d0fb414ea3d532a4e4e38028eb6c455` |
+| `bridge/trading_pipeline.py` | Final reconciled calculation objects | `1.15.0 (impl 1.22.0)` | 3849 | 154463 | `cf2a1570e14181f170155a33dab00dc63725c7dda1d21e7ee068136194a62689` |
 | `pipeline/__init__.py` | Compatibility package wrapper | `unversioned` | 28 | 653 | `d22a1b81495a6c97b5eccc4d921b1ba4b709bfbcd39be6ef34b9014690b9f460` |
 | `pipeline/a_zone_detector.py` | BlueState and first-stop/inherited/double-stop routes | `1.7.0 (impl 1.8.1)` | 1069 | 43435 | `a77c57d1c2e148461e5c9a5f1f9ea569a1a66c64e5b97b08380ec0d6a16d8593` |
 | `pipeline/blue_line_detector.py` | Confirmed Reaction/Reset, Fibonacci, exact confirmation prefix | `2.4.1` | 590 | 21498 | `0171a1bfc48bc40b3b82781ac935614b75905a740e69b703ef3654d897d76df5` |
@@ -144,7 +146,10 @@ This earlier synchronization described a supplied `engine.zip` without a root pa
 | `pipeline/PL_PH_detector.py` | Primary High / Low / Matching Behavior Leg | `1.5.0` | 839 | 37487 | `4fcc4820ddd4d374440698d3fcc8fc827e618268b2e378581ac54b5e865b7e6f` |
 | `pipeline/reaction_engine.py` | Canonical First candidate, Break, strict Reset, lower-TF chronology | `9.9.1 (impl 9.13.4)` | 2907 | 127156 | `0b37fbf91a0f2cdd65fec85eee6c39095e835bc928a98c657f1fe808e204b066` |
 | `pipeline/s_zone_detector.py` | Accepted A stop, aligned Reaction, physical opposite Order | `4.20.1 (impl 4.22.2)` | 1551 | 66301 | `3da3424c2a292ee8fb0f08854462bce57f075721bb370c9619d3e795fd134b78` |
-| `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 188 | 7412 | `473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39` |
+| `pipeline/true_false.py` | Independent final behavior T/F and strict repair evidence | `unversioned` | 224 | 8451 | `e4be32f9654d15fed33100c9ee40856ddf6996fa629386eca280eec0fbec9579` |
+| `buy_algorithm.py` | Bullish Buy entry point | `unversioned` | 9 | 446 | `1ea6ae00f492fb9799089d2ade132c6570f92a7ef266780b00c67411a5f5d136` |
+| `pipeline/position_rules.py` | Shared mirrored positions, strict stops and Foundation liquidity | `unversioned` | 402 | 16817 | `a114e9e822ce40be1051089ff40e4c6d279af8904312c5f301f3928b3ec71ff7` |
+| `sell_algorithm.py` | Bearish Sell entry point | `unversioned` | 9 | 448 | `0ed15ed3585e84e809c007f6baabf8f924603b3cc5433110c6794ba1f218b87c` |
 
 Generated Source-inventory evidence at `2026-11-21T11:08:13+03:30`. Recursive live production discovery includes package markers and all production Python under Bridge and Pipeline. Tests, historical archives and caches are excluded.
 
@@ -807,212 +812,209 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Function `LiveRawSource.append(self, data, pipeline)` (L129-L145).
 - Function `LiveRawSource._append_rows(self, new_rows, pipeline)` (L147-L156).
 - Function `_send_worker_message(kind, **fields)` (L159-L160).
-- Function `_report_worker_progress(event)` (L163-L165).
-- Function `main()` (L168-L221).
+- Function `_send_worker_progress(event)` (L163-L164).
+- Function `_report_worker_progress(event)` (L167-L169).
+- Function `main()` (L172-L228).
 
 #### `bridge/trading_pipeline.py`
 - Assignment `_ENGINE_ROOT = Path(__file__).resolve().parents[1]` (L32).
 - Assignment `_PIPELINE_DIR = _ENGINE_ROOT / 'pipeline'` (L33).
-- Assignment `_pipeline_dir_text = str(_PIPELINE_DIR)` (L34).
-- Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L42).
-- Assignment `TRADING_PIPELINE_VERSION = '1.15.0'` (L45).
-- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.21.3'` (L46).
-- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-26T09:41:40+03:30'` (L47).
-- Assignment `MBL_EXTENSION_CANDLES = 400` (L48).
-- Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L50).
-- Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L51).
-- Function `progress_events_to(sink)` (L55-L60).
-- Function `emit_progress(status: str, label: str, duration_ms: float | None=None, **details)` (L63-L72).
-- Function `timed(timings: dict[str, float], label: str, work)` (L75-L84).
-- Function `load_module(name: str, path: Path)` (L87-L94).
-- Function `load_engine(path: Path)` (L97-L98).
-- Assignment `_local_dt_cache: dict[int, datetime] = {}` (L101).
-- Function `local_datetime(epoch: int)` (L104-L110).
-- Assignment `_epoch_cache: dict[datetime, int] = {}` (L113).
-- Function `epoch(local: datetime)` (L116-L122).
-- Assignment `_display_epoch_cache: dict[str, int] = {}` (L125).
-- Function `display_epoch(value: str | datetime)` (L128-L137).
-- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None, lower_only: bool=False)` (L140-L184).
-- Function `build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool=False)` (L187-L202).
-- Function `build_candle_buckets.cached_decimal(value: object)` (L192-L200).
-- Class `BucketAppend` (L206-L210).
-- Assignment `first_dirty_second: int` (L207).
-- Assignment `first_dirty_main: int` (L208).
-- Assignment `settled_seconds: int` (L209).
-- Assignment `settled_main: int` (L210).
-- Class `LiveMarketBuckets` (L213-L303).
-- Function `LiveMarketBuckets.__init__(self, timeframe: int)` (L216-L223).
-- Function `LiveMarketBuckets.append(self, rows: Sequence[dict])` (L225-L227).
-- Function `LiveMarketBuckets.stage_append(self, rows: Sequence[dict])` (L230-L295).
-- Function `LiveMarketBuckets.stage_append.checked_rows()` (L255-L264).
-- Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L266-L272).
-- Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L297-L303).
-- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L306-L333).
-- Class `LiveMarketViews` (L336-L364).
-- Function `LiveMarketViews.__init__(self)` (L339-L344).
-- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L347-L353).
-- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L355-L364).
-- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L366-L371).
-- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L374-L394).
-- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L397-L438).
-- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L441-L458).
-- Function `serialize_a_zones(items)` (L461-L485).
-- Function `serialize_s_zones(items)` (L488-L550).
-- Function `serialize_e_zones(items)` (L553-L593).
-- Function `serialize_stopalls(items)` (L596-L660).
-- Function `bridge_datetime(value: object | None)` (L663-L674).
-- Function `bridge_direction(direction: str)` (L677-L678).
-- Function `bridge_mode(mode: object)` (L681-L682).
-- Function `bridge_color(value: object | None)` (L685-L688).
-- Function `_bridge_horizon(market: MarketContext)` (L691-L695).
-- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L698-L699).
-- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L702-L739).
-- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L742-L759).
-- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L762-L783).
-- Function `_bridge_order_identity(item: object)` (L786-L791).
-- Class `BridgeProjection` (L794-L985).
-- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L802-L819).
-- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L821-L864).
-- Function `BridgeProjection.parent_order(self, behavior: object)` (L866-L871).
-- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L873-L926).
-- Function `BridgeProjection.order_audit(self, prepared: object)` (L928-L985).
-- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L988-L1006).
-- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1009-L1027).
-- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1030-L1042).
-- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1045-L1065).
-- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1068-L1108).
-- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1111-L1131).
-- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1134-L1167).
-- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1170-L1179).
-- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1182-L1269).
-- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1272-L1325).
-- Function `_bridge_source_index(item: object)` (L1328-L1333).
-- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1336-L1377).
-- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1380-L1424).
-- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1427-L1493).
-- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1496-L1503).
-- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1506-L1608).
-- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1611-L1676).
-- Function `serialize_order_audit(prepared_items, detector)` (L1679-L1729).
-- Class `EngineBundle` (L1733-L1740).
-- Assignment `reaction: object` (L1734).
-- Assignment `blue_line: object` (L1735).
-- Assignment `a_zone: object` (L1736).
-- Assignment `s_zone: object` (L1737).
-- Assignment `e_zone: object | None` (L1738).
-- Assignment `lifecycle: object | None` (L1739).
-- Assignment `primary: object | None = None` (L1740).
-- Class `MarketContext` (L1744-L1753).
-- Assignment `seconds: list[object]` (L1745).
-- Assignment `candles: list[object]` (L1746).
-- Assignment `lower_index: object` (L1747).
-- Assignment `chronology: object` (L1748).
-- Assignment `start_index: int` (L1749).
-- Assignment `end_index: int` (L1750).
-- Assignment `index_offset: int = 0` (L1751).
-- Assignment `initial_bullish_trend: bool = False` (L1752).
-- Assignment `initial_bearish_trend: bool = False` (L1753).
-- Class `LiveClosedRegimes` (L1756-L1785).
-- Function `LiveClosedRegimes.__init__(self)` (L1759-L1760).
-- Function `LiveClosedRegimes.stage(self, first_dirty_main)` (L1763-L1785).
-- Function `LiveClosedRegimes.stage.resolve(direction, market, boundary, calculate)` (L1767-L1781).
-- Class `MarketIndexWindow` (L1788-L1823).
-- Function `MarketIndexWindow.__init__(self, index, candles, start, stop)` (L1791-L1798).
-- Function `MarketIndexWindow._first(self, query, left, right, level)` (L1800-L1805).
-- Function `MarketIndexWindow.first_less(self, left, right, level)` (L1807-L1808).
-- Function `MarketIndexWindow.first_greater(self, left, right, level)` (L1810-L1811).
-- Function `MarketIndexWindow._extreme(self, query, left, right)` (L1813-L1817).
-- Function `MarketIndexWindow.range_minimum(self, left, right)` (L1819-L1820).
-- Function `MarketIndexWindow.range_maximum(self, left, right)` (L1822-L1823).
-- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None, indexed_reaction=None)` (L1826-L1857).
-- Function `absolute_payload_indexes(value, offset)` (L1860-L1871).
-- Function `serialize_trend_transition(transition, market)` (L1874-L1894).
-- Function `parse_arguments(argv=None)` (L1897-L1971).
-- Function `load_engines(args, timings: dict[str, float])` (L1974-L2009).
-- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L2012-L2027).
-- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L2030-L2052).
-- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L2055-L2111).
-- Class `PipelineState` (L2114-L2133).
-- Assignment `directions: tuple[str, ...]` (L2117).
-- Assignment `results: dict[str, object]` (L2118).
-- Assignment `reusable_full_context: bool` (L2119).
-- Assignment `initial_order_geometry: dict[str, object]` (L2120).
-- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2121).
-- Assignment `full_e_zones: dict[str, list[object]]` (L2122).
-- Assignment `full_stopalls_by_direction: dict[str, list[object]]` (L2123).
-- Assignment `full_e_detectors: dict[str, object]` (L2124).
-- Assignment `full_s_detectors: dict[str, object]` (L2125).
-- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2126).
-- Assignment `full_a_by_direction: dict[str, list[object]]` (L2127).
-- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2128).
-- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2129).
-- Assignment `full_s_by_direction: dict[str, list[object]]` (L2130).
-- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2131).
-- Assignment `primary_result: object | None = None` (L2132).
-- Assignment `live_stages: object | None = None` (L2133).
-- Class `FullDirectionState` (L2137-L2150).
-- Assignment `e_zones: list[object]` (L2140).
-- Assignment `e_detector: object` (L2141).
-- Assignment `s_detector: object` (L2142).
-- Assignment `blue_lines: list[object]` (L2143).
-- Assignment `a_zones: list[object]` (L2144).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2145).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2146).
-- Assignment `s_zones: list[object]` (L2147).
-- Assignment `s_candidates: list[object]` (L2148).
-- Assignment `initial_s_zones: list[object]` (L2149).
-- Assignment `stopalls: list[object] = field(default_factory=list)` (L2150).
-- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2153-L2208).
-- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2175-L2188).
-- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2211-L2566).
-- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2569-L2645).
-- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2648-L2802).
-- Class `DirectionRangeState` (L2806-L2815).
-- Assignment `blue_lines: list[object]` (L2809).
-- Assignment `a_zones: list[object]` (L2810).
-- Assignment `s_candidates: list[object]` (L2811).
-- Assignment `accepted_s_zones: list[object]` (L2812).
-- Assignment `e_zones: list[object]` (L2813).
-- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2814).
-- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2815).
-- Class `DirectionVisibilityState` (L2819-L2834).
-- Assignment `blue_lines: list[object]` (L2822).
-- Assignment `a_zones: list[object]` (L2823).
-- Assignment `s_zones: list[object]` (L2824).
-- Assignment `e_zones: list[object]` (L2825).
-- Assignment `stopalls: list[object]` (L2826).
-- Assignment `prepared_order_audit: list[object]` (L2827).
-- Assignment `projection_s_zones: list[object]` (L2831).
-- Assignment `projection_e_zones: list[object]` (L2832).
-- Assignment `projection_stopalls: list[object]` (L2833).
-- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2834).
-- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2837-L2936).
-- Function `finalize_direction_visibility(direction: str, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2939-L3110).
-- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3113-L3251).
-- Function `serialize_direction_payload.build_legacy_payload()` (L3140-L3163).
-- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3172-L3180).
-- Function `serialize_direction_payload.build_payload()` (L3213-L3247).
-- Function `serialize_primary_order(order, market, owner_direction)` (L3254-L3280).
-- Function `serialize_primary_order.value(item)` (L3257-L3262).
-- Function `serialize_primary_structures(primary, market)` (L3283-L3402).
-- Function `serialize_primary_structures.cycle_identity(value)` (L3294-L3299).
-- Function `serialize_primary_structures.point(item)` (L3300-L3323).
-- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3405-L3458).
-- Function `calculate_primary_structures.commit_high(point)` (L3428-L3436).
-- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3461-L3500).
-- Function `merge_regime_outputs(regimes)` (L3502-L3528).
-- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None, closed_regime=None)` (L3531-L3630).
-- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3542-L3550).
-- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3552-L3569).
-- Function `build_reversed_trend_outputs.calculate_closed(current=current, boundary=boundary, current_direction=current_direction)` (L3576-L3592).
-- Function `build_reversed_trend_outputs.empty_lists(item)` (L3602-L3607).
-- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float, *, closed_regime=None)` (L3633-L3710).
-- Function `build_response_payload.stopall_confirmation_closed(row)` (L3697-L3698).
-- Function `_market_calculation_scope(reaction)` (L3714-L3728).
-- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3731-L3735).
-- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3738-L3753).
-- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage, *, closed_regime=None)` (L3756-L3767).
-- Function `main()` (L3770-L3801).
+- Assignment `_DTFMT = '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'` (L45).
+- Assignment `TRADING_PIPELINE_VERSION = '1.15.0'` (L48).
+- Assignment `TRADING_PIPELINE_IMPLEMENTATION_VERSION = '1.22.0'` (L49).
+- Assignment `TRADING_PIPELINE_LAST_MODIFIED = '2026-11-26T16:04:42+03:30'` (L50).
+- Assignment `MBL_EXTENSION_CANDLES = 400` (L51).
+- Assignment `TEHRAN = ZoneInfo('Asia/Tehran')` (L53).
+- Assignment `_progress_sink = ContextVar('progress_sink', default=None)` (L54).
+- Function `progress_events_to(sink)` (L58-L63).
+- Function `emit_progress(status: str, label: str, duration_ms: float | None=None, **details)` (L66-L75).
+- Function `timed(timings: dict[str, float], label: str, work)` (L78-L87).
+- Function `load_module(name: str, path: Path)` (L90-L97).
+- Function `load_engine(path: Path)` (L100-L101).
+- Assignment `_local_dt_cache: dict[int, datetime] = {}` (L104).
+- Function `local_datetime(epoch: int)` (L107-L113).
+- Assignment `_epoch_cache: dict[datetime, int] = {}` (L116).
+- Function `epoch(local: datetime)` (L119-L125).
+- Assignment `_display_epoch_cache: dict[str, int] = {}` (L128).
+- Function `display_epoch(value: str | datetime)` (L131-L140).
+- Function `_aggregate_candle_buckets(rows: Iterable[dict], timeframe: int, cached_decimal: Callable[[object], Decimal], *, second_tail: dict | None=None, main_tail: dict | None=None, lower_only: bool=False)` (L143-L187).
+- Function `build_candle_buckets(rows: list[dict], timeframe: int, *, lower_only: bool=False)` (L190-L205).
+- Function `build_candle_buckets.cached_decimal(value: object)` (L195-L203).
+- Class `BucketAppend` (L209-L213).
+- Assignment `first_dirty_second: int` (L210).
+- Assignment `first_dirty_main: int` (L211).
+- Assignment `settled_seconds: int` (L212).
+- Assignment `settled_main: int` (L213).
+- Class `LiveMarketBuckets` (L216-L306).
+- Function `LiveMarketBuckets.__init__(self, timeframe: int)` (L219-L226).
+- Function `LiveMarketBuckets.append(self, rows: Sequence[dict])` (L228-L230).
+- Function `LiveMarketBuckets.stage_append(self, rows: Sequence[dict])` (L233-L298).
+- Function `LiveMarketBuckets.stage_append.checked_rows()` (L258-L267).
+- Function `LiveMarketBuckets.stage_append.cached_decimal(value: object)` (L269-L275).
+- Function `LiveMarketBuckets._delta(self, dirty_second: int, dirty_main: int)` (L300-L306).
+- Function `build_candle_objects(engine, buckets: list[dict], *, start_index: int=0)` (L309-L336).
+- Class `LiveMarketViews` (L339-L367).
+- Function `LiveMarketViews.__init__(self)` (L342-L347).
+- Function `LiveMarketViews._update_series(engine, buckets, candles, index, first_dirty)` (L350-L356).
+- Function `LiveMarketViews.update(self, engine, timeframe, second_buckets, main_buckets, delta, timings)` (L358-L367).
+- Function `_index_selected(index: object, start_index: int | None, end_index: int | None)` (L369-L374).
+- Function `select_reaction_serialization_items(result, start_index=None, end_index=None, reaction_transform=None)` (L377-L397).
+- Function `serialize(result, start_index=None, end_index=None, reaction_transform=None, selected_items=None)` (L400-L441).
+- Function `serialize_blue_lines(items, start_index=None, end_index=None)` (L444-L461).
+- Function `serialize_a_zones(items)` (L464-L488).
+- Function `serialize_s_zones(items)` (L491-L553).
+- Function `serialize_e_zones(items)` (L556-L596).
+- Function `serialize_stopalls(items)` (L599-L663).
+- Function `bridge_datetime(value: object | None)` (L666-L677).
+- Function `bridge_direction(direction: str)` (L680-L681).
+- Function `bridge_mode(mode: object)` (L684-L685).
+- Function `bridge_color(value: object | None)` (L688-L691).
+- Function `_bridge_horizon(market: MarketContext)` (L694-L698).
+- Function `_bridge_in_horizon(market: MarketContext, value: datetime | None)` (L701-L702).
+- Function `_bridge_proven_strict_event(market: MarketContext, direction: str, level: object | None, event_time: datetime | None)` (L705-L742).
+- Function `_bridge_stop_view(market: MarketContext, direction: str, price: object | None, stop_time: datetime | None, stop_event_time: datetime | None)` (L745-L762).
+- Function `_bridge_reaction_confirmation(market: MarketContext, direction: str, reaction: object, *, use_intrabar_start: bool=True)` (L765-L786).
+- Function `_bridge_order_identity(item: object)` (L789-L794).
+- Class `BridgeProjection` (L797-L988).
+- Function `BridgeProjection.__init__(self, *, direction: str, market: MarketContext, prepared_order_audit: list[object], order_direction: str)` (L805-L822).
+- Function `BridgeProjection.physical_order(self, prepared: object | None)` (L824-L867).
+- Function `BridgeProjection.parent_order(self, behavior: object)` (L869-L874).
+- Function `BridgeProjection.current_order(self, behavior: object, parent_type: str, parent_family: str | None, strict_stop_event: datetime | None)` (L876-L929).
+- Function `BridgeProjection.order_audit(self, prepared: object)` (L931-L988).
+- Function `_bridge_parent_stop(projection: BridgeProjection, detector: object | None, parent_type: str, item: object)` (L991-L1009).
+- Function `_bridge_a_stop(projection: BridgeProjection, s_detector: object | None, item: object)` (L1012-L1030).
+- Function `_bridge_behavior_stop(projection: BridgeProjection, direction: str, price: object, stop_time: datetime | None, stop_event_time: datetime | None)` (L1033-L1045).
+- Function `_bridge_blue_formation(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1048-L1068).
+- Function `_bridge_project_reaction(projection: BridgeProjection, direction: str, raw: object, public: object)` (L1071-L1111).
+- Function `_bridge_project_reset(projection: BridgeProjection, direction: str, reset: object)` (L1114-L1134).
+- Function `_bridge_project_blue(projection: BridgeProjection, direction: str, line: object, reactions: list[object])` (L1137-L1170).
+- Function `_bridge_full_lines_by_ordinal(lines: list[object])` (L1173-L1182).
+- Function `_bridge_project_a(projection: BridgeProjection, direction: str, item: object, lines_by_ordinal: dict[int, object], reactions: list[object], s_detector: object | None)` (L1185-L1272).
+- Function `_bridge_project_s(projection: BridgeProjection, direction: str, item: object, e_detector: object | None)` (L1275-L1328).
+- Function `_bridge_source_index(item: object)` (L1331-L1336).
+- Function `_bridge_parent_behavior_for_e(projection: BridgeProjection, direction: str, item: object, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1339-L1380).
+- Function `_bridge_project_e(projection: BridgeProjection, direction: str, item: object, e_detector: object | None, s_by_source: dict[tuple[int, datetime], object], e_by_source: dict[tuple[int, datetime], object], stopall_by_source: dict[tuple[int, datetime], object])` (L1383-L1427).
+- Function `_bridge_project_stopall(projection: BridgeProjection, direction: str, item: object)` (L1430-L1496).
+- Function `_bridge_audit_order_key(prepared: object, detector: object)` (L1499-L1506).
+- Function `build_bridge_output(direction: str, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, selected_reactions: list[tuple[object, object]], selected_resets: list[object], selected_blue_lines: list[object], selected_a_zones: list[object], selected_s_zones: list[object], selected_e_zones: list[object], selected_stopalls: list[object], selected_order_audit: list[object])` (L1509-L1611).
+- Function `validate_order_audit_bridge(prepared_items, s_zones, e_zones, stopalls)` (L1614-L1679).
+- Function `serialize_order_audit(prepared_items, detector)` (L1682-L1732).
+- Class `EngineBundle` (L1736-L1743).
+- Assignment `reaction: object` (L1737).
+- Assignment `blue_line: object` (L1738).
+- Assignment `a_zone: object` (L1739).
+- Assignment `s_zone: object` (L1740).
+- Assignment `e_zone: object | None` (L1741).
+- Assignment `lifecycle: object | None` (L1742).
+- Assignment `primary: object | None = None` (L1743).
+- Class `MarketContext` (L1747-L1756).
+- Assignment `seconds: list[object]` (L1748).
+- Assignment `candles: list[object]` (L1749).
+- Assignment `lower_index: object` (L1750).
+- Assignment `chronology: object` (L1751).
+- Assignment `start_index: int` (L1752).
+- Assignment `end_index: int` (L1753).
+- Assignment `index_offset: int = 0` (L1754).
+- Assignment `initial_bullish_trend: bool = False` (L1755).
+- Assignment `initial_bearish_trend: bool = False` (L1756).
+- Class `LiveClosedRegimes` (L1759-L1788).
+- Function `LiveClosedRegimes.__init__(self)` (L1762-L1763).
+- Function `LiveClosedRegimes.stage(self, first_dirty_main)` (L1766-L1788).
+- Function `LiveClosedRegimes.stage.resolve(direction, market, boundary, calculate)` (L1770-L1784).
+- Class `MarketIndexWindow` (L1791-L1826).
+- Function `MarketIndexWindow.__init__(self, index, candles, start, stop)` (L1794-L1801).
+- Function `MarketIndexWindow._first(self, query, left, right, level)` (L1803-L1808).
+- Function `MarketIndexWindow.first_less(self, left, right, level)` (L1810-L1811).
+- Function `MarketIndexWindow.first_greater(self, left, right, level)` (L1813-L1814).
+- Function `MarketIndexWindow._extreme(self, query, left, right)` (L1816-L1820).
+- Function `MarketIndexWindow.range_minimum(self, left, right)` (L1822-L1823).
+- Function `MarketIndexWindow.range_maximum(self, left, right)` (L1825-L1826).
+- Function `market_segment(market, start, stop, *, initial_bullish_trend=None, initial_bearish_trend=None, indexed_reaction=None)` (L1829-L1860).
+- Function `absolute_payload_indexes(value, offset)` (L1863-L1874).
+- Function `serialize_trend_transition(transition, market)` (L1877-L1897).
+- Function `parse_arguments(argv=None)` (L1900-L1974).
+- Function `load_engines(args, timings: dict[str, float])` (L1977-L2012).
+- Function `prepare_market_context(args, engines: EngineBundle, timings: dict[str, float])` (L2015-L2030).
+- Function `_prepare_market_context_from_rows(args, engines: EngineBundle, timings: dict[str, float], source_rows: list[dict])` (L2033-L2055).
+- Function `_prepare_market_context_from_buckets(args, engines: EngineBundle, timings: dict[str, float], second_buckets: list[dict], timeframe_buckets: list[dict], live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None)` (L2058-L2114).
+- Class `PipelineState` (L2117-L2136).
+- Assignment `directions: tuple[str, ...]` (L2120).
+- Assignment `results: dict[str, object]` (L2121).
+- Assignment `reusable_full_context: bool` (L2122).
+- Assignment `initial_order_geometry: dict[str, object]` (L2123).
+- Assignment `internal_reaction_identities: dict[str, set[tuple[int, int]]]` (L2124).
+- Assignment `full_e_zones: dict[str, list[object]]` (L2125).
+- Assignment `full_stopalls_by_direction: dict[str, list[object]]` (L2126).
+- Assignment `full_e_detectors: dict[str, object]` (L2127).
+- Assignment `full_s_detectors: dict[str, object]` (L2128).
+- Assignment `full_lines_by_direction: dict[str, list[object]]` (L2129).
+- Assignment `full_a_by_direction: dict[str, list[object]]` (L2130).
+- Assignment `invalid_a_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2131).
+- Assignment `invalid_s_identities_by_direction: dict[str, set[tuple[datetime, int]]]` (L2132).
+- Assignment `full_s_by_direction: dict[str, list[object]]` (L2133).
+- Assignment `full_s_candidates_by_direction: dict[str, list[object]]` (L2134).
+- Assignment `primary_result: object | None = None` (L2135).
+- Assignment `live_stages: object | None = None` (L2136).
+- Class `FullDirectionState` (L2140-L2153).
+- Assignment `e_zones: list[object]` (L2143).
+- Assignment `e_detector: object` (L2144).
+- Assignment `s_detector: object` (L2145).
+- Assignment `blue_lines: list[object]` (L2146).
+- Assignment `a_zones: list[object]` (L2147).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2148).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2149).
+- Assignment `s_zones: list[object]` (L2150).
+- Assignment `s_candidates: list[object]` (L2151).
+- Assignment `initial_s_zones: list[object]` (L2152).
+- Assignment `stopalls: list[object] = field(default_factory=list)` (L2153).
+- Function `create_e_detector(direction: str, e_engine, full_results: dict[str, object], s_zones: list[object], chronology, geometry_detectors: dict[str, object], initial_order_audit, lifecycle_engine, *, blocked_order_first_times: set[datetime] | None=None, e_parent_order_first_exceptions: frozenset[tuple[datetime, datetime]]=frozenset(), invalid_s_root_identities: set[tuple[datetime, int]] | None=None, order_b_legs: Sequence[object]=(), live_continuation=None, order_geometry=None, live_scope=())` (L2156-L2211).
+- Function `create_e_detector.direct_geometry(geometry_direction, geometry_start, geometry_end, gate_event)` (L2178-L2191).
+- Function `calculate_full_direction_state(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], order_b_legs: Sequence[object]=(), shared_stages: FullDirectionState | None=None, live=None, feedback_index: int=0)` (L2214-L2569).
+- Function `calculate_direction_with_order_b_feedback(direction: str, engines: EngineBundle, market: MarketContext, full_results: dict[str, object], geometry_detectors: dict[str, object], initial_order_geometry: dict[str, object], timings: dict[str, float], *, stopall_enabled: bool, live=None)` (L2572-L2648).
+- Function `prepare_pipeline_state(args, engines: EngineBundle, market: MarketContext, timings: dict[str, float], *, live=None, report_stage=None)` (L2651-L2805).
+- Class `DirectionRangeState` (L2809-L2818).
+- Assignment `blue_lines: list[object]` (L2812).
+- Assignment `a_zones: list[object]` (L2813).
+- Assignment `s_candidates: list[object]` (L2814).
+- Assignment `accepted_s_zones: list[object]` (L2815).
+- Assignment `e_zones: list[object]` (L2816).
+- Assignment `invalid_a_identities: set[tuple[datetime, int]]` (L2817).
+- Assignment `invalid_s_identities: set[tuple[datetime, int]]` (L2818).
+- Class `DirectionVisibilityState` (L2822-L2837).
+- Assignment `blue_lines: list[object]` (L2825).
+- Assignment `a_zones: list[object]` (L2826).
+- Assignment `s_zones: list[object]` (L2827).
+- Assignment `e_zones: list[object]` (L2828).
+- Assignment `stopalls: list[object]` (L2829).
+- Assignment `prepared_order_audit: list[object]` (L2830).
+- Assignment `projection_s_zones: list[object]` (L2834).
+- Assignment `projection_e_zones: list[object]` (L2835).
+- Assignment `projection_stopalls: list[object]` (L2836).
+- Assignment `primary_groups: dict[str, list[object]] = field(default_factory=dict, kw_only=True)` (L2837).
+- Function `calculate_direction_range_state(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L2840-L2939).
+- Function `finalize_direction_visibility(direction: str, engines: EngineBundle, market: MarketContext, state: PipelineState, direction_state: DirectionRangeState, timings: dict[str, float])` (L2942-L3113).
+- Function `serialize_direction_payload(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, visibility: DirectionVisibilityState, timings: dict[str, float])` (L3116-L3254).
+- Function `serialize_direction_payload.serialize_reactions_from_one_selection()` (L3175-L3183).
+- Function `serialize_direction_payload.build_payload()` (L3216-L3250).
+- Function `serialize_primary_order(order, market, owner_direction)` (L3257-L3283).
+- Function `serialize_primary_order.value(item)` (L3260-L3265).
+- Function `serialize_primary_structures(primary, market)` (L3286-L3405).
+- Function `serialize_primary_structures.cycle_identity(value)` (L3297-L3302).
+- Function `serialize_primary_structures.point(item)` (L3303-L3326).
+- Function `calculate_primary_structures(args, engines, market, state, visibility, timings, direction='bearish')` (L3408-L3461).
+- Function `calculate_primary_structures.commit_high(point)` (L3431-L3439).
+- Function `build_direction_output(direction: str, args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float])` (L3464-L3503).
+- Function `merge_regime_outputs(regimes)` (L3505-L3531).
+- Function `build_reversed_trend_outputs(args, engines, market, transition, timings, *, live=None, closed_regime=None)` (L3534-L3633).
+- Function `build_reversed_trend_outputs.calculate(context, direction, continuation=None)` (L3545-L3553).
+- Function `build_reversed_trend_outputs.publish(group, index_offset, first_time, *, stopped=False)` (L3555-L3572).
+- Function `build_response_payload(args, engines: EngineBundle, market: MarketContext, state: PipelineState, timings: dict[str, float], pipeline_started: float, *, closed_regime=None)` (L3636-L3750).
+- Function `build_response_payload.stopall_confirmation_closed(row)` (L3700-L3701).
+- Function `_market_calculation_scope(reaction)` (L3754-L3768).
+- Function `calculate_live_from_raw(args, engines: EngineBundle, rows: list[dict], *, report_stage=None)` (L3771-L3775).
+- Function `calculate_live_from_buckets(args, engines: EngineBundle, buckets: LiveMarketBuckets, *, live_views: LiveMarketViews | None=None, bucket_delta: BucketAppend | None=None, report_stage=None)` (L3778-L3793).
+- Function `_run_live_calculation(args, engines, prepare_market, market_inputs, report_stage, *, closed_regime=None)` (L3796-L3807).
+- Function `main()` (L3810-L3841).
 
 #### `pipeline/__init__.py`
 - Assignment `_pipeline_dir = str(Path(__file__).resolve().parent)` (L10).
@@ -1978,19 +1980,74 @@ MBL retains the red dotted line, fixed source/price, 9px label and maximum 400 a
 - Assignment `VERDICT = 'trueFalse'` (L13).
 - Assignment `REPAIR = 'trueFalseRepairTime'` (L14).
 - Assignment `REPEATED = 'trueFalseRepeated'` (L15).
-- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L18-L30).
-- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L22-L28).
-- Class `BasicRepeat` (L34-L38).
-- Assignment `latest: dict` (L35).
-- Assignment `repair_count: int` (L36).
-- Assignment `verdict_count: int` (L37).
-- Assignment `base_count: int` (L38).
-- Function `_basic_rank(key, row)` (L41-L44).
-- Function `_crossed_verdict(references, rank, price)` (L47-L55).
-- Function `_basic_verdicts(direction, events, first_crossing)` (L58-L128).
-- Function `_basic_verdicts.repair(row, start)` (L64-L68).
-- Function `_stopall_verdicts(rows, confirmation_closed)` (L131-L159).
-- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L162-L188).
+- Assignment `REPEAT_COUNT = 'trueFalseRepeatCount'` (L16).
+- Assignment `REPEAT_F = 'trueFalseRepeatF'` (L17).
+- Function `repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through)` (L20-L32).
+- Function `repair_crossing_lookup.find(direction: str, start: int, level: str)` (L24-L30).
+- Class `BasicRun` (L36-L41).
+- Assignment `first: dict` (L37).
+- Assignment `history_id: int` (L38).
+- Assignment `count: int = 0` (L39).
+- Assignment `latest_f: dict | None = None` (L40).
+- Assignment `singleton_f: dict | None = None` (L41).
+- Function `_basic_rank(key, row)` (L44-L47).
+- Function `_repeat_predecessor_rank(rank, family)` (L50-L55).
+- Function `_crossed_verdict(references, rank, price)` (L58-L66).
+- Function `_basic_verdicts(direction, events, first_crossing)` (L69-L162).
+- Function `_basic_verdicts.repair(row, start)` (L78-L82).
+- Function `_stopall_verdicts(rows, confirmation_closed)` (L165-L193).
+- Function `apply_true_false(direction, group, first_crossing=None, *, stopall_confirmation_closed=None)` (L196-L224).
+
+#### `buy_algorithm.py`
+- Function `calculate_buy_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None)` (L6-L9).
+
+#### `pipeline/position_rules.py`
+- Assignment `FOUNDATION = frozenset(('sZones', 'eZones'))` (L13).
+- Assignment `TARGET_RISK_MULTIPLE = Decimal(4)` (L14).
+- Assignment `LIQUIDITY_LINE_BARS = 1500` (L15).
+- Function `source_event_lookup(lower_index, from_epoch, to_epoch, timeframe)` (L18-L31).
+- Function `source_event_lookup.find(direction, source, price)` (L20-L29).
+- Class `PositionEvent` (L35-L49).
+- Assignment `collection: str` (L36).
+- Assignment `source_time: int` (L37).
+- Assignment `formation_time: int` (L38).
+- Assignment `decision_time: int` (L39).
+- Assignment `decision_event_time: int` (L40).
+- Assignment `closed_at: int` (L41).
+- Assignment `price: Decimal` (L42).
+- Assignment `verdict: str | None` (L43).
+- Assignment `number: int` (L44).
+- Assignment `rank: tuple[int, int] | None` (L45).
+- Function `PositionEvent.confirmation_order(self)` (L48-L49).
+- Class `PositionSetup` (L53-L57).
+- Assignment `anchor: PositionEvent` (L54).
+- Assignment `trigger: PositionEvent` (L55).
+- Assignment `entry_price: Decimal` (L56).
+- Assignment `stopped_at: int | None` (L57).
+- Function `position_source_events(group, direction, timeframe, closed_through, source_event_at)` (L60-L84).
+- Class `PositionRules` (L87-L239).
+- Function `PositionRules.__init__(self, direction, timeframe, closed_through, close_at, first_crossing)` (L90-L98).
+- Function `PositionRules.stop_time(self, anchor)` (L100-L108).
+- Function `PositionRules.setup(self, anchor, trigger)` (L110-L114).
+- Function `PositionRules.first_s(self, pairs, *, ready_at=0, before=None, strict=False)` (L116-L132).
+- Function `PositionRules.two_stage(self, pairs_for_verdict, ready_at)` (L134-L144).
+- Function `PositionRules.foundation(self, events)` (L146-L163).
+- Function `PositionRules.stopall(self, events)` (L165-L176).
+- Function `PositionRules.primary(self, events)` (L178-L209).
+- Function `PositionRules.serialize(self, number, setup)` (L211-L239).
+- Function `stopped_by(setup, time)` (L242-L243).
+- Function `position_windows(events, boundaries)` (L246-L258).
+- Function `foundation_anchors(events)` (L261-L270).
+- Function `foundation_pairs(signals, anchors)` (L273-L278).
+- Function `stopall_signal_pairs(events)` (L281-L289).
+- Function `calculate_positions(group, close_at: Callable, first_crossing: Callable, *, direction, timeframe, closed_through, source_event_at: Callable | None=None)` (L292-L305).
+- Function `_liquidity_runs(events)` (L308-L321).
+- Function `_liquidity_triggers(events, index, direct_sweep, bullish)` (L324-L333).
+- Function `_liquidity_line_end(times, source, direct_sweep, timeframe)` (L336-L347).
+- Function `calculate_liquidity(group, first_crossing, *, direction, timeframe, closed_through, source_event_at, candle_times)` (L350-L402).
+
+#### `sell_algorithm.py`
+- Function `calculate_sell_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None)` (L6-L9).
 
 ### 13.6 Master Bullish ↔ Bearish directional mirror matrix
 
@@ -2104,13 +2161,14 @@ This table makes the stage chain reconstructable without relying on examples. Th
 
 - Evaluate final native source-candle owners in each published calculation segment. At an equal source time, the first valid row wins in the order directional primary, StopAll, E, S. A suppressed same-source donor cannot produce a second Basic result. The opposite primary and the nested `bridgeOutput` projection are outside this annotation pass. Because verdicts are calculated on already-selected published rows, an omitted pre-range source does not supply a Basic parent or a StopAll comparison baseline.
 - Basic starts fresh at every published StopAll and finalized directional primary source, in addition to the segment start. S is T and opens classification. An E before the first S in that history is neutral.
-- A larger Basic behavior is T when a smaller base identity (S color or E family and number) has at least two consecutive occurrences in this history. Prior verdicts and price crossings do not gate this rule. Larger intervening behaviors end smaller runs. Smaller ones, including their own engulfs, preserve larger runs. The incoming source extends its own base count across label changes. The star has a separate exact-rank, same-verdict display run and retains the existing lower same-verdict engulf restart.
-- Without an engulf, an E takes the opposite verdict of the largest strictly smaller prior Basic behavior whose source price it strictly crosses. For equal rank use the most recent crossed source. Use strict lower Low in bullish and strict higher High in bearish. If no source qualifies, use odd E as F and even E as T. This price reference and the native formation parent are independent.
+- An E receives T from an active repeat of at least two identical direct predecessors. E1 requires an S of the same color. E-n above 1 requires E-(n-1) of the same family. Prior verdicts do not distinguish the base identity. Smaller intervening behaviors preserve the run. Any larger behavior ends it. S Red following a Blue repeat receives the ordinary S verdict T.
+- Otherwise, an E takes the opposite verdict of the largest strictly smaller prior Basic behavior whose source price it strictly crosses. For equal rank use the most recent crossed source. Use a strictly lower Low in bullish and a strictly higher High in bearish. This includes skipped E numbers and direct transitions from a Blue run to a Red E. If no price reference qualifies, use odd E as F and even E as T. The native formation parent is independent.
+- The incoming source extends its own base count across label changes. The ordinal follows that entire base run. Two or more F members of the same base run carry the F-match flag, even when T members intervene. A trend reversal starts a fresh segment with independent history, including when a direction recurs later.
 - A finalized PL in bullish or PH in bearish restarts StopAll verdict evaluation at its source candle. Within that history, an equal or decreasing published number opens a new series. It starts at its first published number with T and alternates by native number distance. The two comparison endpoints are the immediately preceding series' last number and the largest last number among all preceding series in the same history. Reaching either exact endpoint with a closed confirmation candle marks the current prefix through it as N/A. When the largest endpoint is greater and then qualifies, extend N/A through it and recompute T/F from the original group start. The first higher entry after each qualifying endpoint starts a fresh count at T. If the series ends below the preceding endpoint, its T/F is ordinary and its rows have no repeat flag. Section 8.4 of the standalone companion gives the A–G example and pending-close cases.
 - Bridge recognizes that close when `decisionTime + analysisDuration <= min(lastVisibleMainStart + analysisDuration, lastSuppliedRawStart + rawDuration)`. The reference at series start is the actual published native number. Native StopAll ownership and numbering remain upstream of this verdict pass. Starting a fresh verdict series after a primary does not renumber native objects.
 - In the directional primary collection, final number 1 is T and numbers 2 and 3 are F. Other eligible directional numbers are neutral. An admitted finalized directional primary still resets StopAll verdicts. A fresh trend starts its own label calculation.
-- For a repeated F group use its latest occurrence, searching at or after that occurrence's source. If a new matching F supersedes a prior repair attributed at or after the new source, move the active reference to the new row. An earlier valid historical repair may remain. A larger distinct behavior can arm a displaced singleton F from the larger behavior's source. Search available original RAW through the last visible main bucket inclusively. Strict repair uses the original reference direction, Low below the level in bullish or High above it in bearish, including for historical reference rows in earlier regimes. Repair does not rewrite the displayed F. Each eligible F reference is searched independently. The Engine does not wait for one F to be repaired before evaluating another, and no global newest-first or oldest-first queue exists. If a single RAW event strictly crosses several separately eligible references after their own search starts, each may receive that same epoch in `trueFalseRepairTime`. The rule that the latest occurrence represents a repeated F group still applies within that group.
-- A chosen owner publishes `trueFalse` as T, F or null. An unassessed row omits the field. Repeated Basic and StopAll rows add `trueFalseRepeated: true` next to their T/F. A recognized Basic repair adds `trueFalseRepairTime` in epoch seconds. Chart draws N/A and T/F for a repeated StopAll. For a repeated Basic row, it draws a star above the label in the Secondary N/A color and the Foundation T/F font size. PL/PH T and F render at `max(1, min(9, parentSize - 2)) + 2` CSS px (11 px by default). Neutral N/A uses the standard size. The automatic position/setup extension is outside this evaluation.
+- For a repeated F group use its latest F in the same Basic run, searching at or after its source. Intervening same-rank T events preserve the group. If a new matching F supersedes a prior repair attributed at or after the new source, move the active reference to the new row. An earlier valid historical repair may remain. A larger distinct behavior can arm a displaced singleton F from the larger behavior's source. Search available original RAW through the last visible main bucket inclusively. Strict repair uses the original reference direction, Low below the level in bullish or High above it in bearish, including for historical reference rows in earlier regimes. Repair does not rewrite the displayed F. Each eligible F reference is searched independently. The Engine does not wait for one F to be repaired before evaluating another, and no global newest-first or oldest-first queue exists. If a single RAW event strictly crosses several separately eligible references after their own search starts, each may receive that same epoch in `trueFalseRepairTime`. The rule that the latest occurrence represents a repeated F group still applies within that group.
+- A chosen owner publishes `trueFalse` as T, F or null. An unassessed row omits the field. Repeated Basic and StopAll rows add `trueFalseRepeated: true` next to their T/F. Basic rows also carry their ordinal and, when applicable, the matching-F display flag. A recognized Basic repair adds `trueFalseRepairTime` in epoch seconds. Chart draws N/A and T/F for a repeated StopAll. For a repeated Basic row, it draws the ordinal stars and optional X outward from T/F using the Secondary N/A color and Foundation T/F size. PL/PH T and F render at `max(1, min(9, parentSize - 2)) + 2` CSS px (11 px by default). Neutral N/A uses the standard size. The Buy/Sell position evaluator consumes the final indicator rows after this pass. The [position algorithm reference](TradingBot_Position_Algorithm_Reference.md) specifies the fourteen entry types, strict stop evidence, and visual target.
 
 ## 14. Verification scope and historical evidence
 
@@ -2344,7 +2402,7 @@ The later Blue-consumption feedback, Blue publication suppression, and dominant 
 
 ## 16. Exact Production Source snapshot
 
-Every discovered production Python file in the live Engine package, Bridge and Pipeline is embedded byte-for-byte. Reconstruct by the exact-source markers. Sections 1 and 13.5 derive from this same live set.
+Every discovered production Python file in the live Engine root, Bridge and Pipeline is embedded byte-for-byte. Reconstruct by the exact-source markers. Sections 1 and 13.5 derive from this same live set.
 
 ### 16.1 `__init__.py` — Engine package marker
 
@@ -2371,9 +2429,9 @@ Every discovered production Python file in the live Engine package, Bridge and P
 
 ### 16.3 `bridge/live_pipeline.py` — Production module
 
-**SHA-256:** `5c0effe89dd5ce47c996187ca4da2689915aa83bcc16271432f2c0ee62c2240d`  
-**Bytes:** `9694`  
-**LF count:** `225`
+**SHA-256:** `682ac1ced42c41bdab93c7f18c070b089d0fb414ea3d532a4e4e38028eb6c455`  
+**Bytes:** `9968`  
+**LF count:** `232`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/live_pipeline.py -->
 ````python
@@ -2539,9 +2597,13 @@ def _send_worker_message(kind, **fields):
     print(json.dumps({"type": kind, **fields}, separators=(",", ":")), flush=True)
 
 
+def _send_worker_progress(event):
+    _send_worker_message("progress", event=event)
+
+
 def _report_worker_progress(event):
     if event["status"] == "started" or "completedStages" in event:
-        _send_worker_message("progress", event=event)
+        _send_worker_progress(event)
 
 
 def main():
@@ -2555,9 +2617,12 @@ def main():
         original = selected if args.data == original_path else _decode_raw(original_data)
         lineage = LiveRawSource(selected, original_data, original)
         del original, selected_data, original_data
-        pipeline = LivePipelineContinuation(args, load_engines(args, {}))
-        _send_worker_message("seed", ready=True, payload=pipeline.append(selected))
-        del selected
+        seed_progress = _send_worker_progress if os.environ.get("TRADINGBOT_LIVE_SEED_PROGRESS") == "1" else None
+        with progress_events_to(seed_progress):
+            pipeline = LivePipelineContinuation(args, load_engines(args, {}))
+            payload = pipeline.append(selected)
+        _send_worker_message("seed", ready=True, payload=payload)
+        del selected, payload
         # The server supplies exact append bytes when it owns the commit lineage.
         pipe = sys.stdin.buffer
         while header := pipe.readline(256):
@@ -2607,9 +2672,9 @@ if __name__ == "__main__":
 
 ### 16.4 `bridge/trading_pipeline.py` — Final reconciled calculation objects
 
-**SHA-256:** `9f61e63b775a018e49a5f38b69d2a89672f7d6ef0d45c7e76b5b1c8748cb6d19`  
-**Bytes:** `152299`  
-**LF count:** `3809`
+**SHA-256:** `cf2a1570e14181f170155a33dab00dc63725c7dda1d21e7ee068136194a62689`  
+**Bytes:** `154463`  
+**LF count:** `3849`
 
 <!-- EXACT-SOURCE-BEGIN:bridge/trading_pipeline.py -->
 ````python
@@ -2646,10 +2711,13 @@ from zoneinfo import ZoneInfo
 # every production module aligned with the deployed folder structure.
 _ENGINE_ROOT = Path(__file__).resolve().parents[1]
 _PIPELINE_DIR = _ENGINE_ROOT / "pipeline"
-_pipeline_dir_text = str(_PIPELINE_DIR)
-if _pipeline_dir_text not in sys.path:
-    sys.path.insert(0, _pipeline_dir_text)
+for _import_root in (_ENGINE_ROOT.parent, _PIPELINE_DIR):
+    if str(_import_root) not in sys.path:
+        sys.path.insert(0, str(_import_root))
 
+from engine.buy_algorithm import calculate_buy_positions
+from engine.sell_algorithm import calculate_sell_positions
+from engine.pipeline.position_rules import calculate_liquidity, source_event_lookup
 from core_utils import as_decimal, order_identity
 from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 from true_false import apply_true_false, repair_crossing_lookup
@@ -2658,8 +2726,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.15.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.3"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T09:41:40+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.22.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T16:04:42+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -6312,10 +6380,47 @@ def build_response_payload(
     def stopall_confirmation_closed(row):
         return row["decisionTime"] + args.timeframe <= closed_through
 
+    source_event_at = source_event_lookup(market.lower_index, local_datetime, epoch, args.timeframe)
+    closes = {epoch(candle.timestamp): candle.close
+              for candle in market.candles[market.start_index:market.end_index + 1]}
+    candle_times = tuple(closes)
     for direction, group in payload["directions"].items():
-        for segment in group.get("calculationSegments", (group,)):
-            apply_true_false(direction, segment, find_repair,
-                             stopall_confirmation_closed=stopall_confirmation_closed)
+        calculate_positions = (calculate_buy_positions if direction == "bullish"
+                               else calculate_sell_positions)
+        segments = group.get("calculationSegments", (group,))
+        for segment in segments:
+            timed(timings, f"Evaluate T/F - {direction.title()}", lambda: apply_true_false(
+                direction, segment, find_repair, stopall_confirmation_closed=stopall_confirmation_closed,
+            ))
+            positions = timed(timings, f"Evaluate positions - {direction.title()}", lambda: calculate_positions(
+                segment, closes.get, find_repair,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at,
+            ))
+            if positions:
+                segment["positions"] = positions
+            else:
+                segment.pop("positions", None)
+            liquidity = timed(timings, f"Evaluate liquidity - {direction.title()}", lambda: calculate_liquidity(
+                segment, find_repair, direction=direction,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at, candle_times=candle_times,
+            ))
+            if liquidity:
+                segment["liquidity"] = liquidity
+            else:
+                segment.pop("liquidity", None)
+        if "calculationSegments" in group:
+            positions = [position for segment in segments for position in segment.get("positions", ())]
+            if positions:
+                group["positions"] = positions
+            else:
+                group.pop("positions", None)
+            liquidity = [level for segment in segments for level in segment.get("liquidity", ())]
+            if liquidity:
+                group["liquidity"] = liquidity
+            else:
+                group.pop("liquidity", None)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()
@@ -19529,9 +19634,9 @@ def detect_s_zones(
 
 ### 16.16 `pipeline/true_false.py` — Independent final behavior T/F and strict repair evidence
 
-**SHA-256:** `473db6dd48b4e8a44eb70bc2c0264cd4aecfa60bbd2166a7b05ae640aa5cfa39`  
-**Bytes:** `7412`  
-**LF count:** `188`
+**SHA-256:** `e4be32f9654d15fed33100c9ee40856ddf6996fa629386eca280eec0fbec9579`  
+**Bytes:** `8451`  
+**LF count:** `224`
 
 <!-- EXACT-SOURCE-BEGIN:pipeline/true_false.py -->
 ````python
@@ -19550,6 +19655,8 @@ from lifecycle_engine import sequence_priority
 VERDICT = "trueFalse"
 REPAIR = "trueFalseRepairTime"
 REPEATED = "trueFalseRepeated"
+REPEAT_COUNT = "trueFalseRepeatCount"
+REPEAT_F = "trueFalseRepeatF"
 
 
 def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
@@ -19568,17 +19675,26 @@ def repair_crossing_lookup(lower_index, from_epoch, to_epoch, *, through):
 
 
 @dataclass(slots=True)
-class BasicRepeat:
-    latest: dict
-    repair_count: int
-    verdict_count: int
-    base_count: int
+class BasicRun:
+    first: dict
+    history_id: int
+    count: int = 0
+    latest_f: dict | None = None
+    singleton_f: dict | None = None
 
 
 def _basic_rank(key, row):
     if key == "sZones":
         return sequence_priority("s", row["color"]), 0
     return sequence_priority("e", row["family"]), row["number"]
+
+
+def _repeat_predecessor_rank(rank, family):
+    """Return the only repeat rank that can directly set this E to T."""
+    priority, number = rank
+    if number == 1:
+        return sequence_priority("s", family), 0
+    return priority, number - 1
 
 
 def _crossed_verdict(references, rank, price):
@@ -19593,8 +19709,11 @@ def _crossed_verdict(references, rank, price):
 
 
 def _basic_verdicts(direction, events, first_crossing):
-    repeats = {}
+    # Active ranks descend from the oldest run to the newest. A larger
+    # behavior only ends smaller runs, which are at the top of the stack.
+    runs = []
     references = {}
+    history_id = 0
     started = False
     lower_is_further = policy_for(direction).extreme_attr == "low"
 
@@ -19606,12 +19725,11 @@ def _basic_verdicts(direction, events, first_crossing):
 
     for key, row in events:
         if key not in ("sZones", "eZones"):
-            # A published StopAll or directional primary starts new Basic verdict history.
+            # Restarts end runs but keep the existing independent repair
+            # eligibility of singleton Fs displaced by a later larger rank.
             references.clear()
+            history_id += 1
             started = False
-            for repeat in repeats.values():
-                repeat.verdict_count = 0
-                repeat.base_count = 0
             continue
 
         is_s = key == "sZones"
@@ -19621,20 +19739,25 @@ def _basic_verdicts(direction, events, first_crossing):
             continue
         rank = _basic_rank(key, row)
         time = row["sourceTime"]
-        lower = [other for other in repeats if other < rank]
+        predecessor_rank = None if is_s else _repeat_predecessor_rank(rank, row["family"])
+        repeated_predecessor = False
+        while runs and runs[-1][0] < rank:
+            prior_rank, prior = runs.pop()
+            if prior_rank == predecessor_rank and prior.history_id == history_id:
+                repeated_predecessor = prior.count >= 2
+            if prior.singleton_f is not None:
+                repair(prior.singleton_f, time)
         price = Decimal(row["price"])
         if lower_is_further:
             price = price.copy_negate()
-        engulf = any(repeats[other].base_count >= 2 for other in lower)
-        display_restart = any(repeats[other].verdict_count >= 2 for other in lower)
-        if is_s or engulf:
+        if is_s or repeated_predecessor:
             verdict = "T"
         else:
             reference = _crossed_verdict(references, rank, price)
-            if reference is None:
-                verdict = "F" if row["number"] % 2 else "T"
-            else:
+            if reference is not None:
                 verdict = "F" if reference == "T" else "T"
+            else:
+                verdict = "F" if row["number"] % 2 else "T"
         row[VERDICT] = verdict
 
         # An equally or more easily crossed newer reference always wins at this rank.
@@ -19643,26 +19766,42 @@ def _basic_verdicts(direction, events, first_crossing):
             history.pop()
         history.append((price, verdict))
 
-        for other in lower:
-            prior = repeats.pop(other)
-            if prior.latest[VERDICT] == "F" and prior.repair_count == 1:
-                repair(prior.latest, time)
+        if runs and runs[-1][0] == rank:
+            run = runs[-1][1]
+            if run.history_id != history_id:
+                run = BasicRun(row, history_id)
+                runs[-1] = rank, run
+        else:
+            run = BasicRun(row, history_id)
+            runs.append((rank, run))
 
-        previous = repeats.get(rank)
-        repair_count = verdict_count = 1
-        if previous is not None and previous.latest[VERDICT] == verdict:
-            repair_count += previous.repair_count
-            if not display_restart:
-                # The star keeps its existing same-verdict restart rule.
-                verdict_count += previous.verdict_count
-                if verdict_count >= 2:
-                    previous.latest[REPEATED] = row[REPEATED] = True
-            if verdict == "F":
-                if previous.latest.get(REPAIR, -1) >= time:
-                    previous.latest.pop(REPAIR)
-                repair(row, time)
-        base_count = previous.base_count + 1 if previous is not None else 1
-        repeats[rank] = BasicRepeat(row, repair_count, verdict_count, base_count)
+        run.count += 1
+        if run.count == 2:
+            run.first[REPEAT_COUNT] = 1
+            run.first[REPEATED] = True
+        if run.count >= 2:
+            row[REPEAT_COUNT] = run.count
+            row[REPEATED] = True
+
+        if verdict == "T":
+            run.singleton_f = None
+            continue
+
+        previous_f = run.latest_f
+        run.latest_f = row
+        if previous_f is None:
+            run.singleton_f = row
+            continue
+
+        run.singleton_f = None
+        previous_f[REPEAT_F] = row[REPEAT_F] = True
+        # A strict crossing before replacement is historical evidence.
+        # From this source onward the newest F supplies the repair level.
+        repair(previous_f, previous_f["sourceTime"])
+        previous_crossing = previous_f.get(REPAIR)
+        if previous_crossing is not None and previous_crossing >= time:
+            del previous_f[REPAIR]
+        repair(row, time)
 
 
 def _stopall_verdicts(rows, confirmation_closed):
@@ -19707,6 +19846,8 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
             row.pop(VERDICT, None)
             row.pop(REPAIR, None)
             row.pop(REPEATED, None)
+            row.pop(REPEAT_COUNT, None)
+            row.pop(REPEAT_F, None)
             if row.get("calculationValid") is not False:
                 by_source.setdefault(row["sourceTime"], (key, row))
     events = sorted(by_source.values(), key=lambda event: event[1]["sourceTime"])
@@ -19725,3 +19866,456 @@ def apply_true_false(direction, group, first_crossing=None, *, stopall_confirmat
     _stopall_verdicts(stops, stopall_confirmation_closed)
 ````
 <!-- EXACT-SOURCE-END:pipeline/true_false.py -->
+
+### 16.17 `buy_algorithm.py` — Bullish Buy entry point
+
+**SHA-256:** `1ea6ae00f492fb9799089d2ade132c6570f92a7ef266780b00c67411a5f5d136`  
+**Bytes:** `446`  
+**LF count:** `9`
+
+<!-- EXACT-SOURCE-BEGIN:buy_algorithm.py -->
+````python
+"""Bullish Buy position entry point."""
+
+from .pipeline.position_rules import calculate_positions
+
+
+def calculate_buy_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None):
+    return calculate_positions(group, close_at, first_crossing, direction="bullish",
+                               timeframe=timeframe, closed_through=closed_through,
+                               source_event_at=source_event_at)
+````
+<!-- EXACT-SOURCE-END:buy_algorithm.py -->
+
+### 16.18 `pipeline/position_rules.py` — Shared mirrored positions, strict stops and Foundation liquidity
+
+**SHA-256:** `a114e9e822ce40be1051089ff40e4c6d279af8904312c5f301f3928b3ec71ff7`  
+**Bytes:** `16817`  
+**LF count:** `402`
+
+<!-- EXACT-SOURCE-BEGIN:pipeline/position_rules.py -->
+````python
+"""Calculate the fourteen chart position types from finalized indicator events."""
+from __future__ import annotations
+
+from bisect import bisect_left, bisect_right
+from dataclasses import dataclass
+from decimal import Decimal
+from heapq import nsmallest
+from typing import Callable
+
+from .direction_policy import policy_for
+from .lifecycle_engine import sequence_priority
+
+FOUNDATION = frozenset(("sZones", "eZones"))
+TARGET_RISK_MULTIPLE = Decimal(4)
+LIQUIDITY_LINE_BARS = 1500
+
+
+def source_event_lookup(lower_index, from_epoch, to_epoch, timeframe):
+    """Locate the first RAW occurrence of the accepted source price."""
+    def find(direction, source, price):
+        extreme = policy_for(direction).extreme_attr
+        level = Decimal(price)
+        left = bisect_left(lower_index.times, from_epoch(source))
+        right = bisect_left(lower_index.times, from_epoch(source + timeframe), lo=left)
+        for index in range(left, right):
+            candle = lower_index.candles[index]
+            if getattr(candle, extreme) == level:
+                return to_epoch(candle.timestamp)
+        return source
+
+    return find
+
+
+@dataclass(frozen=True, slots=True)
+class PositionEvent:
+    collection: str
+    source_time: int
+    formation_time: int
+    decision_time: int
+    decision_event_time: int
+    closed_at: int
+    price: Decimal
+    verdict: str | None
+    number: int
+    rank: tuple[int, int] | None
+
+    @property
+    def confirmation_order(self):
+        return self.decision_event_time, self.source_time
+
+
+@dataclass(frozen=True, slots=True)
+class PositionSetup:
+    anchor: PositionEvent
+    trigger: PositionEvent
+    entry_price: Decimal
+    stopped_at: int | None
+
+
+def position_source_events(group, direction, timeframe, closed_through, source_event_at):
+    """Resolve one owner per source candle, in the order used for T/F."""
+    primary_key = "primaryLows" if direction == "bullish" else "primaryHighs"
+    owners = {}
+    for collection in (primary_key, "stopAlls", "eZones", "sZones"):
+        for row in group.get(collection, ()):
+            source = row["sourceTime"]
+            decision = row.get("decisionTime")
+            if (source in owners or source >= closed_through or decision is None
+                    or row.get("calculationValid") is False):
+                continue
+            number = row.get("number", 0)
+            rank = None
+            if collection == "sZones":
+                rank = sequence_priority("s", row["color"]), 0
+            elif collection == "eZones":
+                rank = sequence_priority("e", row["family"]), number
+            raw_price = row["price"]
+            formation = (source if source_event_at is None else
+                         source_event_at(direction, source, raw_price))
+            owners[source] = PositionEvent(
+                collection, source, formation, decision, row.get("decisionEventTime") or decision,
+                decision + timeframe, Decimal(raw_price), row.get("trueFalse"), number, rank,
+            )
+    return sorted(owners.values(), key=lambda event: event.source_time)
+
+
+class PositionRules:
+    """Resolve setups in one independent trend segment."""
+
+    def __init__(self, direction, timeframe, closed_through, close_at, first_crossing):
+        self.policy = policy_for(direction)
+        self.timeframe = timeframe
+        self.closed_through = closed_through
+        self.close_at = close_at
+        self.first_crossing = first_crossing
+        self.buy = direction == "bullish"
+        self.primary_key = "primaryLows" if self.buy else "primaryHighs"
+        self.stop_events: dict[PositionEvent, int | None] = {}
+
+    def stop_time(self, anchor):
+        if anchor not in self.stop_events:
+            crossed = self.first_crossing(
+                self.policy.direction, anchor.formation_time, str(anchor.price),
+            )
+            self.stop_events[anchor] = (
+                crossed if crossed is not None and crossed < self.closed_through else None
+            )
+        return self.stop_events[anchor]
+
+    def setup(self, anchor, trigger):
+        entry = self.close_at(trigger.decision_time)
+        if entry is None:
+            return None
+        return PositionSetup(anchor, trigger, Decimal(entry), self.stop_time(anchor))
+
+    def first_s(self, pairs, *, ready_at=0, before=None, strict=False):
+        for anchor, signal in pairs:
+            if (signal.closed_at > self.closed_through or signal.closed_at < ready_at
+                    or (before is not None and signal.closed_at >= before)
+                    or anchor.decision_event_time > signal.decision_event_time
+                    or anchor.closed_at > signal.closed_at
+                    or signal.formation_time <= anchor.formation_time
+                    or self.policy.strict_cross(signal.price, anchor.price)
+                    or (strict and signal.price == anchor.price)):
+                continue
+            stopped_at = self.stop_time(anchor)
+            if stopped_at is not None and stopped_at <= signal.formation_time:
+                continue
+            setup = self.setup(anchor, signal)
+            if setup is not None:
+                return setup
+        return None
+
+    def two_stage(self, pairs_for_verdict, ready_at):
+        first = self.first_s(pairs_for_verdict("T", None), ready_at=ready_at)
+        if first is None:
+            return None, None
+        if first.stopped_at is None:
+            return first, None
+        second = self.first_s(
+            pairs_for_verdict("F", first.stopped_at),
+            ready_at=max(ready_at, first.trigger.closed_at),
+        )
+        return first, second
+
+    def foundation(self, events):
+        for ready_at, window in position_windows(events, {"stopAlls", self.primary_key}):
+            fundamentals = [event for event in window if event.collection in FOUNDATION]
+            signals = sorted((event for event in fundamentals if event.collection == "sZones"),
+                             key=lambda event: event.confirmation_order)
+            if not signals:
+                continue
+            t_anchors, f_anchors = foundation_anchors(fundamentals)
+
+            def pairs(verdict, stopped_at):
+                anchors = t_anchors if verdict == "T" else (
+                    anchor for anchor in f_anchors if anchor.formation_time >= stopped_at
+                )
+                return foundation_pairs(signals, tuple(anchors))
+
+            first, second = self.two_stage(pairs, ready_at)
+            yield "1.1", first
+            yield "1.2", second
+
+    def stopall(self, events):
+        for ready_at, window in position_windows(events, {self.primary_key}):
+            owned = stopall_signal_pairs(window)
+
+            def pairs(verdict, stopped_at):
+                return ((anchor, signal) for anchor, signal in owned
+                        if anchor.verdict == verdict
+                        and (stopped_at is None or anchor.formation_time >= stopped_at))
+
+            first, second = self.two_stage(pairs, ready_at)
+            yield "2.1", first
+            yield "2.2", second
+
+    def primary(self, events):
+        first = second = third = None
+        for event in events:
+            if event.collection != self.primary_key:
+                continue
+            if first is None and event.number == 1:
+                first = event
+            elif first is not None and second is None and event.number == 2:
+                second = event
+            elif second is not None and event.number == 3:
+                third = event
+                break
+
+        if first is None:
+            return
+        signals = sorted(
+            (event for event in events if event.collection == "sZones"
+             and first.source_time < event.source_time
+             and (second is None or event.source_time < second.source_time)),
+            key=lambda event: event.confirmation_order,
+        )
+        entry_one = self.first_s(((first, signal) for signal in signals), strict=True,
+                                 before=second.closed_at if second is not None else None)
+        yield "3.1", entry_one
+        if (second is None or second.closed_at > self.closed_through
+                or first.closed_at > second.closed_at or not stopped_by(entry_one, second.closed_at)):
+            return
+        entry_two = self.setup(second, second)
+        yield "3.2", entry_two
+        if (entry_one is None and third is not None and third.closed_at <= self.closed_through
+                and second.closed_at <= third.closed_at and stopped_by(entry_two, third.closed_at)):
+            yield "3.3", self.setup(third, third)
+
+    def serialize(self, number, setup):
+        side = "Buy" if self.buy else "Sell"
+        label = number + ("B" if self.buy else "S")
+        anchor, trigger = setup.anchor, setup.trigger
+        entry = setup.entry_price
+        stop = anchor.price
+        reward = abs(entry - stop) * TARGET_RISK_MULTIPLE
+        if number.startswith("3."):
+            owner = ("PL" if self.buy else "PH") + number[-1]
+        else:
+            owner = ("Foundation_" if number.startswith("1.") else "StopAll_") + anchor.verdict
+
+        output = {
+            "id": f"{label}:{anchor.source_time}:{trigger.source_time}",
+            "type": label,
+            "algorithm": f"{side}_{owner}",
+            "side": side.lower(),
+            "anchorSourceTime": anchor.source_time,
+            "triggerSourceTime": trigger.source_time,
+            "entryTime": trigger.decision_time,
+            "entryPrice": str(entry),
+            "stopPrice": str(stop),
+            "targetPrice": str(entry + reward if self.buy else entry - reward),
+        }
+        if setup.stopped_at is not None:
+            output["stopEventTime"] = setup.stopped_at
+            if setup.stopped_at < trigger.closed_at:
+                output["preEntryStop"] = True
+        return output
+
+
+def stopped_by(setup, time):
+    return setup is None or (setup.stopped_at is not None and setup.stopped_at < time)
+
+
+def position_windows(events, boundaries):
+    ready_at = 0
+    window = []
+    for event in events:
+        if event.collection in boundaries:
+            if window:
+                yield ready_at, window
+            ready_at = event.closed_at
+            window = []
+        else:
+            window.append(event)
+    if window:
+        yield ready_at, window
+
+
+def foundation_anchors(events):
+    t_anchors, f_anchors = [], []
+    largest_rank = (0, 0)
+    for event in events:
+        if event.verdict == "T":
+            t_anchors.append(event)
+        elif event.verdict == "F" and event.rank > largest_rank:
+            f_anchors.append(event)
+        largest_rank = max(largest_rank, event.rank)
+    return t_anchors, f_anchors
+
+
+def foundation_pairs(signals, anchors):
+    for signal in signals:
+        for anchor in anchors:
+            if anchor.source_time >= signal.source_time:
+                break
+            yield anchor, signal
+
+
+def stopall_signal_pairs(events):
+    pairs = []
+    owner = None
+    for event in events:
+        if event.collection == "stopAlls":
+            owner = event
+        elif owner is not None and event.collection == "sZones":
+            pairs.append((owner, event))
+    return sorted(pairs, key=lambda pair: pair[1].confirmation_order)
+
+
+def calculate_positions(group, close_at: Callable, first_crossing: Callable, *, direction,
+                        timeframe, closed_through, source_event_at: Callable | None = None):
+    """Publish positions from final T/F and confirmed trigger closes for one regime."""
+    end = group.get("calculationEndTime")
+    limit = closed_through if end is None else min(closed_through, end)
+    rules = PositionRules(direction, timeframe, limit, close_at, first_crossing)
+    events = position_source_events(group, direction, timeframe, limit, source_event_at)
+    output = [
+        rules.serialize(label, setup)
+        for family in (rules.foundation, rules.stopall, rules.primary)
+        for label, setup in family(events)
+        if setup is not None
+    ]
+    return sorted(output, key=lambda row: (row["entryTime"], row["type"], row["anchorSourceTime"]))
+
+
+def _liquidity_runs(events):
+    """Group identical F anchors until a larger Foundation rank ends their run."""
+    active, runs = [], []
+    for index, event in enumerate(events):
+        while active and active[-1][0] < event.rank:
+            active.pop()
+        if event.verdict != "F":
+            continue
+        if not active or active[-1][0] != event.rank:
+            run = []
+            runs.append(run)
+            active.append((event.rank, run))
+        active[-1][1].append(index)
+    return runs
+
+
+def _liquidity_triggers(events, index, direct_sweep, bullish):
+    """Find closed S/E evidence in favorable source geometry before the breach."""
+    anchor = events[index]
+    for candidate_index in range(index + 1, len(events)):
+        candidate = events[candidate_index]
+        if direct_sweep is not None and candidate.formation_time >= direct_sweep:
+            break
+        favorable = candidate.price > anchor.price if bullish else candidate.price < anchor.price
+        if favorable:
+            yield max(anchor.closed_at, candidate.closed_at)
+
+
+def _liquidity_line_end(times, source, direct_sweep, timeframe):
+    start = bisect_left(times, source)
+    if start == len(times) or times[start] != source:
+        return None
+    cap = start + LIQUIDITY_LINE_BARS
+    if direct_sweep is not None:
+        hit = bisect_right(times, direct_sweep, lo=start) - 1
+        if hit <= cap:
+            return times[hit]
+    if cap < len(times):
+        return times[cap]
+    return times[-1] + (cap - len(times) + 1) * timeframe
+
+
+def calculate_liquidity(group, first_crossing, *, direction, timeframe,
+                        closed_through, source_event_at, candle_times):
+    """Publish Foundation liquidity and its separate chart eligibility in one regime."""
+    end = group.get("calculationEndTime")
+    limit = closed_through if end is None else min(closed_through, end)
+    events = position_source_events(group, direction, timeframe, limit, source_event_at)
+    bullish = direction == "bullish"
+    primary_key = "primaryLows" if bullish else "primaryHighs"
+    favorable_direction = "bearish" if bullish else "bullish"
+    output = []
+    for _, window in position_windows(events, {"stopAlls", primary_key}):
+        confirmed = [event for event in window if event.closed_at <= limit]
+        for run in _liquidity_runs(confirmed):
+            repeated = len(run) > 1
+            group_time = confirmed[run[0]].source_time if repeated else None
+            group_confirmation = (
+                nsmallest(2, (confirmed[index].closed_at for index in run))[-1] if repeated else None
+            )
+            shared_sweep = next_formation = None
+            for index in reversed(run):
+                anchor = confirmed[index]
+                price = str(anchor.price)
+                direct = first_crossing(direction, anchor.formation_time + 1, price)
+                if direct is not None and direct >= closed_through:
+                    direct = None
+                move = first_crossing(favorable_direction, anchor.formation_time + 1, price)
+                if move is not None and (move >= limit or (direct is not None and move >= direct)):
+                    move = None
+
+                if direct is not None and (next_formation is None or direct < next_formation):
+                    shared_sweep = direct if shared_sweep is None else min(direct, shared_sweep)
+                collected = min((time for time in (direct, shared_sweep) if time is not None), default=None)
+                next_formation = anchor.formation_time
+
+                visible = None if group_confirmation is None else max(anchor.closed_at, group_confirmation)
+                if visible != anchor.closed_at:
+                    ordinary = min(_liquidity_triggers(confirmed, index, direct, bullish), default=None)
+                    if ordinary is not None:
+                        visible = ordinary if visible is None else min(ordinary, visible)
+                if move is None and visible is None:
+                    continue
+                output.append({
+                    "sourceTime": anchor.source_time,
+                    "price": price,
+                    "movementTime": move,
+                    "visibleFrom": visible,
+                    "repeatGroupSourceTime": group_time,
+                    "directSweepTime": direct,
+                    "collectedTime": collected,
+                    "lineEndTime": (_liquidity_line_end(candle_times, anchor.source_time, direct, timeframe)
+                                    if visible is not None else None),
+                })
+    return sorted(output, key=lambda row: row["sourceTime"])
+````
+<!-- EXACT-SOURCE-END:pipeline/position_rules.py -->
+
+### 16.19 `sell_algorithm.py` — Bearish Sell entry point
+
+**SHA-256:** `0ed15ed3585e84e809c007f6baabf8f924603b3cc5433110c6794ba1f218b87c`  
+**Bytes:** `448`  
+**LF count:** `9`
+
+<!-- EXACT-SOURCE-BEGIN:sell_algorithm.py -->
+````python
+"""Bearish Sell position entry point."""
+
+from .pipeline.position_rules import calculate_positions
+
+
+def calculate_sell_positions(group, close_at, first_crossing, *, timeframe, closed_through, source_event_at=None):
+    return calculate_positions(group, close_at, first_crossing, direction="bearish",
+                               timeframe=timeframe, closed_through=closed_through,
+                               source_event_at=source_event_at)
+````
+<!-- EXACT-SOURCE-END:sell_algorithm.py -->

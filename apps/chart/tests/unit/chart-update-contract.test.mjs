@@ -46,8 +46,8 @@ test("symbol inventory exposes non-secret RAW coverage metadata to chart updates
 });
 
 test("loading one chart resolves only its requested RAW file instead of scanning the inventory", () => {
-  const candleEndpoint = viteSource.split("server.middlewares.use('/api/candles'")[1]
-    .split("server.middlewares.use('/api/reactions/cache'")[0];
+  const candleEndpoint = viteSource.split("useExactApi(server.middlewares, '/api/candles'")[1]
+    .split("useExactApi(server.middlewares, '/api/reactions/cache'")[0];
   assert.match(candleEndpoint, /const resource = rawStore\.resolve\(id\);/);
   assert.doesNotMatch(candleEndpoint, /inventory\(\)\.find/);
 });
@@ -64,8 +64,8 @@ test("chart import and export keep the source filenames in the transfer manifest
 });
 
 test("deleting a chart removes its RAW file and durable chart artifacts", () => {
-  const deleteEndpoint = viteSource.split("server.middlewares.use('/api/candle-files/delete'")[1]
-    .split("server.middlewares.use('/api/candle-files/cut'")[0];
+  const deleteEndpoint = viteSource.split("useExactApi(server.middlewares, '/api/candle-files/delete'")[1]
+    .split("useExactApi(server.middlewares, '/api/candle-files/cut'")[0];
   assert.match(deleteEndpoint, /rawStore\.remove\(valid\.id\)/);
   assert.match(deleteEndpoint, /removeChartArtifacts\(valid\)/);
   assert.match(mainSource, /market-canvas:\$\{item\.chartId \|\| item\.id\}:drawings/);

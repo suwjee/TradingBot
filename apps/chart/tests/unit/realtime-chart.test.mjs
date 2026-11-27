@@ -22,6 +22,24 @@ function createScheduler(t, options = {}) {
 
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 
+test("restoring polling preferences respects pause, indicator choice and native RAW interval", (t) => {
+  const fixture = createScheduler(t);
+  fixture.scheduler.contextChanged("raw-chart-b", 5, null, {
+    enabled: false, intervalMs: 300_000, indicatorCalculation: true,
+  });
+  assert.equal(fixture.view.enabled, false);
+  assert.equal(fixture.view.intervalMs, 300_000);
+  assert.equal(fixture.view.indicatorCalculation, true);
+  t.mock.timers.tick(2_000);
+  assert.deepEqual(fixture.requests, []);
+  fixture.scheduler.contextChanged("raw-chart-c", 300, null, {
+    enabled: true, intervalMs: 5_000, indicatorCalculation: false,
+  });
+  assert.equal(fixture.view.enabled, true);
+  assert.equal(fixture.view.intervalMs, 300_000);
+  assert.equal(fixture.view.indicatorCalculation, false);
+});
+
 test("progress is streamed before completion, and a final error retains its application status", async () => {
   let input;
   const response = new Response(new ReadableStream({ start(controller) { input = controller; } }), {
@@ -60,6 +78,7 @@ test("polling starts enabled, shows progress, and only Verify All sends a notifi
   assert.deepEqual(notices, []);
   fixture.scheduler.verifyAll();
   assert.equal(fixture.requests[1].verifyAll, true);
+  assert.equal(fixture.requests[1].manualVerification, true);
   finish({ verification });
   await settle();
   assert.deepEqual(notices, [verification]);
@@ -116,6 +135,7 @@ test("background Verify All runs every ten minutes independently of the candle i
   assert.equal(fixture.requests.length, 1);
   t.mock.timers.tick(1);
   assert.equal(fixture.requests[1]?.verifyAll, true);
+  assert.equal(fixture.requests[1].manualVerification, false);
   await settle();
   assert.deepEqual(notices, []);
   t.mock.timers.tick(600_000);

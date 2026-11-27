@@ -3,7 +3,7 @@ title: TradingBot Engineering Documentation
 document_role: reference
 lifecycle: maintained
 owner: documentation
-last_modified_at: 2026-11-21T18:39:37+03:30
+last_modified_at: 2026-11-26T23:50:15+03:30
 ---
 
 # Engineering documentation
@@ -25,4 +25,4 @@ The [Graphify archive](../archive/repository-graphify/README.md) provides genera
 
 Use the [project README](../../README.md) to install, launch, and navigate the workstation. For a behavioral question, choose the owning document above and verify implementation details in the current Source. Open a dated verification report to see the inputs, environment, and checks from that run.
 
-Current accepted directional Algorithm References are discovered under `engine/algorithms/` according to root AGENTS. The [standalone primary-structure and T/F companion](../../engine/algorithms/TradingBot_Primary_Structures_and_True_False_Algorithm_Reference.md) covers PL, PH, MBL, alternating regimes and verdicts, including exact Source extraction.
+Current accepted directional Algorithm References are discovered under `engine/algorithms/` according to root AGENTS. The [position algorithm reference](../../engine/algorithms/TradingBot_Position_Algorithm_Reference.md) owns Buy and Sell entry rules and presentation for all fourteen types. The [standalone primary-structure and T/F companion](../../engine/algorithms/TradingBot_Primary_Structures_and_True_False_Algorithm_Reference.md) covers PL, PH, MBL, alternating regimes and verdicts, including exact Source extraction.

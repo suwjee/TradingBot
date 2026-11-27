@@ -34,7 +34,8 @@ function harness() {
     rebuildIndicatorObjects: noop, drawAll: noop, syncAlertMonitoring: noop,
     alertLiveReady: false, renderIndicatorInfo: noop, setFooterCacheStatus: noop, window: {},
     pushIndicatorActivity: noop, createUniqueId: () => "request", formatTehran: String,
-    startCalculationProgress: () => ({ events: [], recordEvent: noop, source: { close: noop } }), stopCalculationProgress: noop,
+    startCalculationProgress: () => ({ events: [], recordEvent: noop, lockCancellation: noop, waitForServer: async () => {}, close: noop }),
+    stopCalculationProgress: noop,
     setCalculationProgress: noop,
     buildIndicatorCalculationRequest: value => value,
     fetch: (url, options) => {
@@ -57,7 +58,7 @@ ${invalidate}\n${actualCalculate}`, runtime);
   return { state, controls, inputs, posts, applied, runtime,
     calculate: () => vm.runInContext("calculateIndicator()", runtime),
     resolve: (index = 0) => replies[index]({ ok: true,
-      headers: { get: () => null }, json: async () => ({ directions: {}, timings: { bridgeTotalMs: 61_250 } }) }),
+      headers: new Headers(), json: async () => ({ directions: {}, timings: { bridgeTotalMs: 61_250 } }) }),
   };
 }
 

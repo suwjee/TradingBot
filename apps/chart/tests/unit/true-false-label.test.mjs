@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { drawTrueFalseLabel } from "../../src/chart/true-false-label.js";
+import { drawTrueFalseLabel, trueFalseAppearance } from "../../src/chart/true-false-label.js";
 
 test("T/F labels are smaller and sit beyond the native label in either direction", () => {
   const rendered = [];
@@ -25,7 +25,7 @@ test("T/F labels are smaller and sit beyond the native label in either direction
   assert.ok(rendered[0].size < 12);
   assert.ok(rendered[1].size < 9);
   assert.deepEqual(rendered.map(({ weight }) => weight), [300, 700, 300]);
-  assert.equal(rendered[2].color, "#b8b8b8");
+  assert.equal(rendered[2].color, "#808080");
 });
 
 test("repeated StopAll renders N/A and its verdict outward in both directions", () => {
@@ -35,7 +35,21 @@ test("repeated StopAll renders N/A and its verdict outward in both directions", 
   drawTrueFalseLabel(ctx, "T", true, 14, 20, 40, false, 700, true);
   drawTrueFalseLabel(ctx, "F", false, 14, 20, 40, true, 700, true);
   assert.deepEqual(rendered, [
-    { text: "N/A", x: 20, y: 43 }, { text: "F", x: 20, y: 54 },
-    { text: "N/A", x: 20, y: 37 }, { text: "T", x: 20, y: 26 },
+    { text: "F", x: 20, y: 43 }, { text: "N/A", x: 20, y: 54 },
+    { text: "T", x: 20, y: 37 }, { text: "N/A", x: 20, y: 26 },
   ]);
+});
+
+test("repetition markers are independently visible and follow their verdict", () => {
+  const painted = [];
+  const ctx = { save() {}, restore() {}, fillText(text, x, y) { painted.push([text, y, this.fillStyle]); } };
+  const rule = { trueFalseRepeatCount: 2, trueFalseRepeatF: true };
+  drawTrueFalseLabel(ctx, "F", true, 10, 20, 40, true, 300, true, 0,
+    trueFalseAppearance({ foundationStarsVisible: false }, "foundation"), rule);
+  drawTrueFalseLabel(ctx, "F", true, 10, 20, 40, false, 300, true, 0,
+    trueFalseAppearance({ foundationXVisible: false }, "foundation"), rule);
+  drawTrueFalseLabel(ctx, "T", true, 10, 20, 40, true, 700, true, 0,
+    trueFalseAppearance({ secondaryNaVisible: false }, "secondary"));
+  assert.deepEqual(painted, [["F", 43, "#be123c"], ["X", 53, "#808080"],
+    ["F", 37, "#be123c"], ["**", 27, "#808080"], ["T", 43, "#047857"]]);
 });

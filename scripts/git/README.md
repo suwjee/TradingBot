@@ -3,7 +3,7 @@ title: TradingBot Release Operations
 document_role: procedure
 lifecycle: maintained
 owner: release-tooling
-last_modified_at: 2026-11-24T23:11:55+03:30
+last_modified_at: 2026-11-27T06:56:09+03:30
 ---
 
 # TradingBot release operations
@@ -56,7 +56,7 @@ Startup validates available Python executables before installing packages. It ru
 
 A new `engine/pipeline/xyz.py`, a new configuration file, or a renamed runtime folder is picked up automatically. Runtime package markers and helpers remain eligible even before a caller imports them; exclusions describe non-runtime categories rather than individual source filenames. Additions, modifications, renames, and deletions appear in the branch previews. Main includes all eligible project files; eligible files accidentally matching `.gitignore` are explicitly staged after policy and sensitive-content checks. Individual detector filenames are not a permanent production allowlist.
 
-Check release coverage whenever project files change. The release-inventory check on `main` verifies the committed tree and tests discovery of newly added runtime modules and main-only tests. The local `git.bat` dry run also exercises uncommitted changes before publication.
+Check release coverage whenever project files change. The release-inventory check on `main` verifies the committed tree and tests discovery of newly added runtime modules and main-only tests. The local `git.bat` dry run also exercises uncommitted changes before publication. The production coverage fixture verifies newly added Chart modules, styles, API handlers, and Engine modules alongside main-only tests and Algorithm References.
 
 Both branch inventories are passed to Git as UTF-8, NUL-delimited files of literal paths. Their size is independent of Windows' native command-line length limit, and filenames containing spaces, Unicode, or brackets retain their exact identities.
 

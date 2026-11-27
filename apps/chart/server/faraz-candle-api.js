@@ -6,6 +6,7 @@ import { chromium } from "playwright-core";
 import { fileURLToPath } from "node:url";
 import { pipeline } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
+import { useExactApi } from "./api-routing.js";
 import { resolveLocalStatePaths } from "./local-state-paths.js";
 import { createRawResourceStore } from "./raw-resource-store.js";
 import { buildRawFilename, formatTehranMetadataTime, parseRawFilename } from "../src/features/raw-file-contract.js";
@@ -1645,17 +1646,17 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       server.httpServer?.once("close", () => { void shutdown(); });
       // Authentication is intentionally user-driven. Status checks inspect a
       // saved file without a browser and migrate legacy DPAPI files once.
-      server.middlewares.use("/api/faraz/auth/open", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/auth/open", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try { await ensureContext({ showLogin: true }); json(res, 200, { ok: true, state: "waiting_for_login" }); }
         catch (error) { json(res, 500, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/auth/browser", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/auth/browser", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try { await ensureContext({ showBrowser: true }); json(res, 200, { ok: true }); }
         catch (error) { json(res, 500, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/auth/status", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/auth/status", async (req, res) => {
         const params = new URL(req.url || "", "http://localhost").searchParams;
         try {
           const status = await (params.get("passive") === "1"
@@ -1666,12 +1667,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 200, { connected: false, state: "expired_session", error: error.message });
         }
       });
-      server.middlewares.use("/api/faraz/auth/logout", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/auth/logout", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try { await logoutFromLoginBrowser(); json(res, 200, { ok: true, state: "not_connected" }); }
         catch (error) { json(res, 500, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/start", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/start", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           const status = await authStatus();
@@ -1679,12 +1680,12 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 202, await startJob(await readJson(req)));
         } catch (error) { json(res, 400, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/status", (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/status", (req, res) => {
         const id = new URL(req.url || "", "http://localhost").searchParams.get("id");
         const job = jobs.get(id);
         job ? json(res, 200, publicJob(job)) : json(res, 404, { error: "Extraction was not found." });
       });
-      server.middlewares.use("/api/faraz/candles/cancel", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/cancel", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           const { id } = await readJson(req);
@@ -1696,7 +1697,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 200, { ok: true });
         } catch (error) { json(res, 400, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/coverage-decision", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/coverage-decision", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           const { id, decision } = await readJson(req);
@@ -1705,7 +1706,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 200, resolveCoverageDecision(job, decision));
         } catch (error) { json(res, 400, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/open", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/open", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         const id = new URL(req.url || "", "http://localhost").searchParams.get("id");
         const job = jobs.get(id);
@@ -1715,7 +1716,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 200, { ok: true });
         } catch (error) { json(res, 404, { error: error.message }); }
       });
-      server.middlewares.use("/api/faraz/candles/download", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/candles/download", async (req, res) => {
         const id = new URL(req.url || "", "http://localhost").searchParams.get("id");
         const job = jobs.get(id);
         if (!job?.done || !job.outputPath || !fs.existsSync(job.outputPath)) return json(res, 404, { error: "Export file is not ready." });
@@ -1731,7 +1732,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
 
       // ---- Update Chart Data Endpoint ----
       // Appends new candles to an existing file and renames it with updated TO timestamp.
-      server.middlewares.use("/api/candle-files/update", async (req, res) => {
+      useExactApi(server.middlewares, "/api/candle-files/update", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           // A multi-hour 1S update can legitimately contain thousands of
@@ -1831,7 +1832,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       // proxy has checked. This is deliberately separate from candle writes:
       // an empty but retried response is still durable evidence and must not
       // trigger the same expensive request on the next chart update.
-      server.middlewares.use("/api/candle-files/verification", async (req, res) => {
+      useExactApi(server.middlewares, "/api/candle-files/verification", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           const params = await readJson(req, 25_000_000);
@@ -1853,7 +1854,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
           json(res, 400, { error: error.message });
         }
       });
-      server.middlewares.use("/api/candle-files/realtime", async (req, res) => {
+      useExactApi(server.middlewares, "/api/candle-files/realtime", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         const streamProgress = req.headers.accept === "application/x-ndjson";
         const sendResult = (status, result) => {
@@ -1960,7 +1961,7 @@ export function createFarazCandleApi({ workspaceRoot = path.resolve(path.dirname
       });
 
       // ---- Faraz History Proxy ----
-      server.middlewares.use("/api/faraz/history", async (req, res) => {
+      useExactApi(server.middlewares, "/api/faraz/history", async (req, res) => {
         if (req.method !== "POST") return json(res, 405, { error: "POST is required." });
         try {
           const params = await readJson(req);

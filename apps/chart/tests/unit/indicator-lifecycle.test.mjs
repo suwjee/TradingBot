@@ -35,3 +35,12 @@ test("legacy visibility settings migrate to the three verdict groups and linked 
   });
   assert.deepEqual(migrateIndicatorVisibility({}), {});
 });
+
+test("stored legacy marker grey upgrades while custom marker colors are retained", async () => {
+  const { migrateIndicatorVisibility } = await import("../../src/features/indicator-lifecycle.js");
+  assert.deepEqual(migrateIndicatorVisibility({
+    foundationTfNaColor: "#b8b8b8", secondaryTfNaColor: "#777777", primaryTfNaColor: "#b8b8b8",
+  }), {
+    foundationTfNaColor: "#808080", secondaryTfNaColor: "#777777", primaryTfNaColor: "#808080",
+  });
+});

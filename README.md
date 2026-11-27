@@ -3,7 +3,7 @@ title: TradingBot
 document_role: reference
 lifecycle: maintained
 owner: project-navigation
-last_modified_at: 2026-11-24T23:35:01+03:30
+last_modified_at: 2026-11-27T06:27:55+03:30
 ---
 
 # TradingBot
@@ -21,7 +21,7 @@ TradingBot is a Windows candlestick workstation for inspecting market history, d
 
 ## Install and start
 
-Double-click [`scripts/launch.bat`](scripts/launch.bat) on Windows, or run the PowerShell launcher directly.
+Double-click [`scripts/launch.bat`](scripts/launch.bat) on Windows, or run the PowerShell launcher directly. On Windows, the launcher opens Chart in the default browser at the actual local URL after the HTTP readiness check passes.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start.ps1

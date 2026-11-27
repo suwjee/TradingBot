@@ -31,10 +31,13 @@ from zoneinfo import ZoneInfo
 # every production module aligned with the deployed folder structure.
 _ENGINE_ROOT = Path(__file__).resolve().parents[1]
 _PIPELINE_DIR = _ENGINE_ROOT / "pipeline"
-_pipeline_dir_text = str(_PIPELINE_DIR)
-if _pipeline_dir_text not in sys.path:
-    sys.path.insert(0, _pipeline_dir_text)
+for _import_root in (_ENGINE_ROOT.parent, _PIPELINE_DIR):
+    if str(_import_root) not in sys.path:
+        sys.path.insert(0, str(_import_root))
 
+from engine.buy_algorithm import calculate_buy_positions
+from engine.sell_algorithm import calculate_sell_positions
+from engine.pipeline.position_rules import calculate_liquidity, source_event_lookup
 from core_utils import as_decimal, order_identity
 from order_audit_engine import accepted_audit_entries, order_b_leg_identity
 from true_false import apply_true_false, repair_crossing_lookup
@@ -43,8 +46,8 @@ _DTFMT = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}"
 
 
 TRADING_PIPELINE_VERSION = "1.15.0"
-TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.21.3"
-TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T09:41:40+03:30"
+TRADING_PIPELINE_IMPLEMENTATION_VERSION = "1.22.0"
+TRADING_PIPELINE_LAST_MODIFIED = "2026-11-26T16:04:42+03:30"
 MBL_EXTENSION_CANDLES = 400
 
 TEHRAN = ZoneInfo("Asia/Tehran")
@@ -3697,10 +3700,47 @@ def build_response_payload(
     def stopall_confirmation_closed(row):
         return row["decisionTime"] + args.timeframe <= closed_through
 
+    source_event_at = source_event_lookup(market.lower_index, local_datetime, epoch, args.timeframe)
+    closes = {epoch(candle.timestamp): candle.close
+              for candle in market.candles[market.start_index:market.end_index + 1]}
+    candle_times = tuple(closes)
     for direction, group in payload["directions"].items():
-        for segment in group.get("calculationSegments", (group,)):
-            apply_true_false(direction, segment, find_repair,
-                             stopall_confirmation_closed=stopall_confirmation_closed)
+        calculate_positions = (calculate_buy_positions if direction == "bullish"
+                               else calculate_sell_positions)
+        segments = group.get("calculationSegments", (group,))
+        for segment in segments:
+            timed(timings, f"Evaluate T/F - {direction.title()}", lambda: apply_true_false(
+                direction, segment, find_repair, stopall_confirmation_closed=stopall_confirmation_closed,
+            ))
+            positions = timed(timings, f"Evaluate positions - {direction.title()}", lambda: calculate_positions(
+                segment, closes.get, find_repair,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at,
+            ))
+            if positions:
+                segment["positions"] = positions
+            else:
+                segment.pop("positions", None)
+            liquidity = timed(timings, f"Evaluate liquidity - {direction.title()}", lambda: calculate_liquidity(
+                segment, find_repair, direction=direction,
+                timeframe=args.timeframe, closed_through=closed_through,
+                source_event_at=source_event_at, candle_times=candle_times,
+            ))
+            if liquidity:
+                segment["liquidity"] = liquidity
+            else:
+                segment.pop("liquidity", None)
+        if "calculationSegments" in group:
+            positions = [position for segment in segments for position in segment.get("positions", ())]
+            if positions:
+                group["positions"] = positions
+            else:
+                group.pop("positions", None)
+            liquidity = [level for segment in segments for level in segment.get("liquidity", ())]
+            if liquidity:
+                group["liquidity"] = liquidity
+            else:
+                group.pop("liquidity", None)
     payload["timings"] = {
         "phasesMs": {
             label: round(duration, 2) for label, duration in timings.items()

@@ -1,8 +1,8 @@
 // Presentation-only review pieces for the served /info page. Behavior
 // identities, prices and orders come exclusively from the supplied bridge
-// payload, never chart inference. The page is generated fresh per export;
-// no file is written and no candle cache is serialized.
+// payload, never chart inference.
 import { PRIMARY_VISUAL_DEFAULTS, primaryMarkerLayout, primaryObjectId } from "../../chart/primary-structure.js";
+import { engineCalculationDuration } from "../indicator-lifecycle.js";
 
 const collections = {
   reactions: ["Reaction", "firstTime"], resets: ["Reset", "time"],
@@ -11,11 +11,12 @@ const collections = {
   stopAlls: ["StopAll", "sourceTime"], orderReactions: ["Order reaction", "firstTime"],
   orderAudit: ["Order Audit", "firstTime"],
   primaryHighs: ["PH", "sourceTime"], primaryLows: ["PL", "sourceTime"],
-  matchingBehaviorLegs: ["MBL", "sourceTime"],
+  matchingBehaviorLegs: ["MBL", "sourceTime"], positions: ["Positions", "entryTime"],
+  liquidity: ["Liquidity", "sourceTime"], trendTransitions: ["Trend change", "sourceTime"],
 };
 const primaryKinds = { primaryHighs: "PH", primaryLows: "PL", matchingBehaviorLegs: "MBL" };
 const primaryFamilies = new Set(Object.values(primaryKinds));
-const defaultHiddenFamilies = new Set(["Reaction", "Reset", "Blue Line"]);
+const defaultHiddenFamilies = new Set(["Reaction", "Reset", "Blue Line", "A", "Order Audit", "MBL"]);
 const primaryFamily = (family) => primaryKinds[family] || family;
 const behaviorNumber = (value) => value != null && value !== "" && Number.isInteger(Number(value)) && Number(value) >= 0 ? Number(value) : null;
 const numberedLabel = (family, number) => {
@@ -34,6 +35,9 @@ export function reviewTime(epoch) {
   return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
 function labelFor(group, row) {
+  if (group === "positions") return row.type || "Position";
+  if (group === "liquidity") return row.collectedTime == null ? "Active liquidity" : "Collected liquidity";
+  if (group === "trendTransitions") return `${readableDirection(row.direction)} market line`;
   return numberedLabel(collections[group]?.[0] || group, behaviorNumber(row.number));
 }
 function bridgeProjection(groups, group, index) {
@@ -92,6 +96,7 @@ function bridgeCategory(group, row, direction, projected) {
 }
 
 export function reviewCategory(group, row, direction, projected = null) {
+  if (group === "positions") return { key: `positions:${row.type || "unknown"}`, family: "Positions", label: row.type || "Position" };
   const category = bridgeCategory(group, row, direction, projected);
   if (category) return category;
   if (group === "reactions") return { key: `${group}:${direction}`, family: "Reaction", label: `${direction === "bullish" ? "Bullish" : "Bearish"} Reaction` };
@@ -153,7 +158,7 @@ export function reviewRecords(payload) {
         group: family,
         row: details,
         index,
-        category: item.category ? { ...item.category, family,
+        category: item.category ? { ...item.category, key: item.category.key || family, family,
           label: originalFamily !== family && (!item.category.label || item.category.label === originalFamily)
             ? family : item.category.label }
           : { key: family, family, label: item.label || family },
@@ -265,9 +270,26 @@ export function manualInfoObject(record) {
   if (record?.reportDetails && typeof record.reportDetails === "object") return record.reportDetails;
   const { group, index, row = {}, direction, groups = {} } = record;
   const projected = bridgeProjection(groups, group, index);
-  if (projected) return projected;
+  if (projected && group !== "positions") return projected;
   const base = { type: collections[group]?.[0] || group, direction: readableDirection(direction) };
   if (primaryKinds[group]) return { ...row, ...base };
+  if (group === "positions") {
+    const behaviorAt = (sourceTime) => {
+      if (sourceTime == null) return undefined;
+      for (const collection of [direction === "bearish" ? "primaryHighs" : "primaryLows", "stopAlls", "eZones", "sZones"]) {
+        const rows = groups[collection] || [];
+        const index = rows.findIndex(item => item.sourceTime === sourceTime && item.calculationValid !== false);
+        if (index >= 0) return { collection, engine: rows[index],
+          bridge: bridgeProjection(groups, collection, index) ?? undefined };
+      }
+      return undefined;
+    };
+    return removeUndefined({ ...row, direction: readableDirection(direction), bridge: projected ?? undefined,
+      entry: pricePoint(row.entryPrice, row.entryTime),
+      strictStop: stopPoint(row.stopPrice, row.stopEventTime),
+      anchor: behaviorAt(row.anchorSourceTime), trigger: behaviorAt(row.triggerSourceTime) });
+  }
+  if (group === "liquidity" || group === "trendTransitions") return { ...row, ...base };
   if (group === "reactions") return removeUndefined({
     ...base,
     mode: readableMode(row.mode),
@@ -458,7 +480,7 @@ function yamlLines(value, depth = 0) {
 }
 export const formatInfoYaml = (value) => yamlLines(value).join("\n");
 const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
-const reportFamilyOrder = ["Reaction", "Reset", "Blue Line", "A", "S Blue", "S Red", "E Blue", "E Red", "StopAll", "Order Audit", "MBL", "PH", "PL"];
+export const reportFamilyOrder = ["Reaction", "Reset", "Blue Line", "A", "S Blue", "S Red", "E Blue", "E Red", "StopAll", "Order reaction", "Order Audit", "MBL", "PH", "PL", "Positions", "Liquidity", "Trend change"];
 export const reportFamilyColor = {
   Reaction: "var(--report-reaction)", Reset: "var(--report-reset)",
   "Blue Line": "var(--report-blue-line)", A: "var(--report-a)",
@@ -505,14 +527,23 @@ function reportFilterChildLabel(family, label) {
   return value.replace(`${family} / `, "").replace(/^(E|S|A|StopAll|PH|PL)[ -]?(\d+)$/, "$1-$2");
 }
 
+export function reviewEventLabels(record) {
+  const label = reportDisplayLabel(record).replace(/^E-(\d+)$/, "E$1");
+  const value = record.row?.trueFalse;
+  const verdict = value === "T" || value === "F" ? value : null;
+  const variant = record.category.family.match(/^[SE] (.+)$/)?.[1];
+  const copyLabel = [label, variant, verdict && `(${verdict})`].filter(Boolean).join(" ");
+  return { label, verdict, copyLabel };
+}
+
 function reportEventCard(record) {
   const { id, direction, time, category } = record;
   const safeTime = time || "Undated";
-  const label = reportDisplayLabel(record);
+  const { label, verdict, copyLabel } = reviewEventLabels(record);
   const color = primaryFamilies.has(category.family) ? record.color : reportCategoryColor(reportRecordColorKey(record), category.family);
-  return `<article class="event"${defaultHiddenFamilies.has(category.family) ? " hidden" : ""} style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${label}`)}">
-    <button class="event-time copy-line" type="button" title="Copy timestamp and event label"><time datetime="${safeTime === "Undated" ? "" : safeTime.replace(" ", "T")}">${escapeHtml(safeTime)}</time></button>
-    <div class="event-label"><span class="chip" style="--chip-color:${escapeHtml(color)};--event-color:${escapeHtml(color)}">${escapeHtml(label)}</span><small>${escapeHtml(direction)}</small></div>
+  return `<article class="event"${defaultHiddenFamilies.has(category.family) ? " hidden" : ""} style="--event-color:${escapeHtml(color)}" data-id="${escapeHtml(id)}" data-filter="${escapeHtml(category.key)}" data-filter-family="${escapeHtml(category.family)}" data-report-family="${escapeHtml(category.family)}" data-time="${escapeHtml(safeTime)}" data-time-group="${escapeHtml(reviewTimeGroup(safeTime))}" data-label="${escapeHtml(`${direction} | ${reportDisplayLabel(record)}`)}" data-direction="${escapeHtml(direction)}" data-copy-label="${escapeHtml(copyLabel)}" data-lookup-label="${escapeHtml(record.label)}">
+    <button class="event-time copy-line" type="button" title="Copy timestamp and event label"><time datetime="${escapeHtml(safeTime === "Undated" ? "" : safeTime.replace(" ", "T"))}">${escapeHtml(safeTime)}</time></button>
+    <div class="event-label"><span class="chip" style="--chip-color:${escapeHtml(color)};--event-color:${escapeHtml(color)}">${escapeHtml(label)}${verdict ? ` <span class="event-verdict" data-verdict="${verdict}">(${verdict})</span>` : ""}</span><small>${escapeHtml(direction)}</small></div>
     <details class="bridge-output" data-bridge-id="${escapeHtml(id)}"><summary>Bridge output</summary><div class="bridge-placeholder"></div></details>
   </article>`;
 }
@@ -532,10 +563,9 @@ function reportFilterMarkup(families) {
   }).join("");
 }
 
-export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
+export function reviewRuntime(initialBridgeData = null, { signal, escapeHtml, copyIcon, manualReviewFilename } = {}) {
   const q = (selector) => document.querySelector(selector);
-  let bridgeData = initialBridgeData && typeof initialBridgeData === "object" ? initialBridgeData : {};
-  q("#bridge-data")?.remove();
+  const bridgeData = initialBridgeData || {};
   const bridgeObject = (value) => value && typeof value === "object" && !Array.isArray(value);
   const bridgeScalar = (value) => value === null ? "null" : typeof value === "boolean" || typeof value === "number" ? String(value) : JSON.stringify(String(value));
   const bridgeYaml = (value) => {
@@ -567,14 +597,13 @@ export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
   };
   const renderBridgeOutput = (details) => {
     const value = bridgeData[details.dataset.bridgeId], target = details.querySelector(".bridge-placeholder");
-    if (!target || !value) return;
+    if (!target || target.childElementCount || !value) return;
     const lines = bridgeYaml(value).map((line) => {
       if (!line) return '<span class="yaml-line yaml-gap" aria-hidden="true"></span>';
       const depth = Math.min(8, Math.floor((line.match(/^ */)?.[0].length || 0) / 4));
       return `<span class="yaml-line yaml-depth-${depth}" style="--indent-px:${depth * 16}px">${escapeHtml(line)}</span>`;
     }).join("\n");
     target.innerHTML = `<div class="yaml-tools"><button class="yaml-copy" type="button" data-copy-yaml title="Copy Bridge output" aria-label="Copy Bridge output">${copyIcon}</button></div><pre class="bridge-yaml" aria-label="Bridge output in YAML">${lines}</pre>`;
-    delete bridgeData[details.dataset.bridgeId];
   };
   const events = [...document.querySelectorAll(".event")];
   const days = [...document.querySelectorAll(".day")];
@@ -583,7 +612,6 @@ export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
   const allFilters = q("#all-filters");
   const filterTreeToggle = q(".filter-all-toggle");
   const filterGroups = q("#filter-groups");
-  const line = (event) => `${event.dataset.time} | ${event.dataset.label}`;
   const metadata = [...document.querySelectorAll(".calculation-meta > div")].map((item) => [item.querySelector("dt")?.textContent || "", item.querySelector("dd")?.textContent || ""]);
   const refreshReport = () => {
     const visible = events.filter((event) => !event.hidden);
@@ -626,17 +654,50 @@ export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
       if (query && match) group.open = true;
     });
   };
+  const normalizeLookup = value => String(value ?? "").trim().replace(/[۰-۹٠-٩]/g,
+    digit => String("۰۱۲۳۴۵۶۷۸۹".includes(digit) ? "۰۱۲۳۴۵۶۷۸۹".indexOf(digit) : "٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/\s+/g, " ").toLowerCase();
+  const normalizeLabel = value => normalizeLookup(value).replace(/([a-z])-(?=\d)/g, "$1 ");
+  let lookupTarget;
+  function findRecord(scroll = false) {
+    const query = normalizeLookup(q("#record-search")?.value);
+    const parts = query.split("|").map(value => value.trim());
+    const exact = parts.length === 3 && parts.every(Boolean);
+    lookupTarget = !query ? null : events.find(event => {
+      const { time, direction, copyLabel, lookupLabel } = event.dataset;
+      const labels = [copyLabel, lookupLabel, copyLabel?.replace(/ \([TF]\)$/i, "")].map(normalizeLabel);
+      return exact ? normalizeLookup(time) === parts[0].replace("t", " ")
+        && normalizeLookup(direction) === parts[1] && labels.includes(normalizeLabel(parts[2]))
+        : !query.includes("|") && normalizeLabel(`${time} ${direction} ${labels.join(" ")}`).includes(normalizeLabel(query));
+    });
+    const status = q("#record-search-status");
+    if (status) status.textContent = query && (exact || scroll)
+      ? lookupTarget ? "Record located" : "No matching record" : "";
+    update();
+    if (lookupTarget && scroll) lookupTarget.scrollIntoView({ block: "center", behavior: "instant" });
+  }
   function update() {
     const from = q("#from")?.value.trim().replace("T", " ") || "", to = q("#to")?.value.trim().replace("T", " ") || "";
     const selected = new Set(filters.filter((input) => input.checked).map((input) => input.value));
     const invalid = !!(from && to && from > to);
     if (q("#range-error")) q("#range-error").hidden = !invalid;
     if (q("#to")) q("#to").setAttribute("aria-invalid", String(invalid));
-    const hidden = (event) => invalid || !selected.has(event.dataset.filter) || !!((from && event.dataset.time < from) || (to && event.dataset.time > to));
-    for (const event of events) event.hidden = hidden(event);
+    for (const event of events) {
+      const { time, filter } = event.dataset;
+      const located = event === lookupTarget;
+      if (located) event.dataset.located = "";
+      else delete event.dataset.located;
+      event.hidden = !located && (invalid || !selected.has(filter) || (from && time < from) || (to && time > to));
+      if (located) {
+        const bridge = event.querySelector("[data-bridge-id]");
+        bridge.open = true;
+        renderBridgeOutput(bridge);
+      }
+    }
     days.forEach((day) => {
       const visible = [...day.querySelectorAll(".event:not([hidden])")];
       day.hidden = !visible.length;
+      if (lookupTarget && day.contains(lookupTarget)) day.open = true;
       const count = day.querySelector(".day-count");
       if (count) count.textContent = visible.length.toLocaleString();
     });
@@ -647,8 +708,20 @@ export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
     updateParents();
   }
   async function copy(text) {
-    try { await navigator.clipboard.writeText(text); }
-    catch { const input = document.createElement("textarea"); input.value = text; document.body.append(input); input.select(); document.execCommand("copy"); input.remove(); }
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const active = document.activeElement;
+      const input = document.createElement("textarea");
+      input.value = text;
+      input.className = "sr-only";
+      document.body.append(input);
+      input.select();
+      try { return document.execCommand("copy"); }
+      catch { return false; }
+      finally { input.remove(); active?.focus({ preventScroll: true }); }
+    }
   }
   document.addEventListener("toggle", (event) => { const details = event.target; if (details instanceof HTMLDetailsElement && details.open && details.matches("[data-bridge-id]")) renderBridgeOutput(details); }, { capture: true, signal });
   document.addEventListener("click", async (event) => {
@@ -677,15 +750,83 @@ export function reviewRuntime(initialBridgeData = null, { signal } = {}) {
     filterTreeToggle.setAttribute("aria-label", expanded ? "Collapse all filters" : "Expand all filters");
     if (filterGroups) filterGroups.hidden = !expanded;
   });
-  events.forEach((event) => { event.querySelector(".copy-line").onclick = () => copy(line(event)); });
+  let copyFeedbackTimer;
+  let copiedButton;
+  events.forEach((event) => {
+    event.querySelector(".copy-line").onclick = async () => {
+      const { time, direction, copyLabel } = event.dataset;
+      const copied = await copy(`${time} |  ${direction ? direction.toLowerCase() : "Unknown"} | ${copyLabel}`);
+      const status = q("#copy-status");
+      if (!status || signal?.aborted) return;
+      if (copiedButton) copiedButton.removeAttribute("data-copy-result");
+      copiedButton = event.querySelector(".copy-line");
+      copiedButton.dataset.copyResult = copied ? "success" : "error";
+      status.textContent = copied ? "Copied to clipboard." : "Could not copy the event.";
+      clearTimeout(copyFeedbackTimer);
+      copyFeedbackTimer = setTimeout(() => copiedButton.removeAttribute("data-copy-result"), 1800);
+    };
+  });
   q("#from") && (q("#from").oninput = update); q("#to") && (q("#to").oninput = update);
   q("#filter-search") && (q("#filter-search").oninput = applySearch);
+  q("#record-search") && (q("#record-search").oninput = () => {
+    const query = q("#record-search").value.trim();
+    if (!query || query.split("|").length === 3) findRecord(Boolean(query));
+  });
+  q("#record-search-form") && (q("#record-search-form").onsubmit = event => {
+    event.preventDefault();
+    findRecord(true);
+  });
   q("#clear-filters") && (q("#clear-filters").onclick = () => { filters.forEach((input) => { input.checked = false; }); update(); });
   q("#reset") && (q("#reset").onclick = () => { q("#from").value = ""; q("#to").value = ""; update(); });
   q("#copy") && (q("#copy").onclick = () => copy(q("#report-text").value));
   q("#download") && (q("#download").onclick = () => { const url = URL.createObjectURL(new Blob([q("#report-text").value], { type: "text/plain;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = manualReviewFilename(new Date(), "txt"); a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  document.querySelectorAll("[data-bridge-id][open]").forEach(renderBridgeOutput);
   if (q("#filter-search")?.value) applySearch();
-  update();
+  findRecord();
+}
+
+export function mountReview(bridgeData, options) {
+  reviewRuntime(bridgeData, { ...options, escapeHtml, copyIcon, manualReviewFilename });
+}
+
+export function reviewRuntimeSource() {
+  return `const mountReview = (bridgeData) => (${reviewRuntime.toString()})(bridgeData, {
+    escapeHtml: (${escapeHtml.toString()}),
+    copyIcon: ${JSON.stringify(copyIcon)},
+    manualReviewFilename: (${manualReviewFilename.toString()})
+  });`;
+}
+
+export const reportExportFormats = [
+  ["html", "HTML", "Offline copy of this report"],
+  ["csv", "CSV", "Spreadsheet and table analysis"],
+  ["json", "JSON", "Indented calculation data"],
+  ["ndjson", "NDJSON", "One record per line"],
+];
+
+function exportDialogMarkup() {
+  return `<dialog id="export-dialog" class="archive-dialog" aria-labelledby="export-title" aria-describedby="export-description">
+  <form id="export-form">
+    <h2 id="export-title">Export calculation report</h2>
+    <p id="export-description">Choose the files to include in the ZIP.</p>
+    <fieldset class="archive-formats">
+      <legend>File formats</legend>
+      ${reportExportFormats.map(([id, label, description]) => `<label class="archive-format">
+        <input id="export-format-${id}" name="format" value="${id}" type="checkbox" checked>
+        <span><strong>${label}</strong><small>${description}</small></span>
+      </label>`).join("")}
+    </fieldset>
+    <div class="archive-bridge-option">
+      <label class="archive-option"><input id="include-bridge" type="checkbox" aria-describedby="export-bridge-hint" checked><span>Include Bridge Output in data files</span></label>
+      <p id="export-bridge-hint">Applies to CSV, JSON and NDJSON. HTML always includes Bridge Output.</p>
+    </div>
+    <p id="export-selection-status" role="status"></p>
+    <div class="archive-dialog-actions">
+      <button id="cancel-export" type="button">Cancel</button>
+      <button id="download-zip" class="archive-primary" type="submit">Download ZIP</button>
+    </div>
+  </form>
+</dialog>`;
 }
 
 export async function buildReviewBody(payload, snapshot = {}, cryptoApi = globalThis.crypto) {
@@ -714,6 +855,9 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     groups.set(collection, groups.get(collection) + 1);
   }
   const calculation = snapshot.calculation || {};
+  const duration = engineCalculationDuration(payload);
+  const durationLabel = duration === null ? "Unavailable" : duration < 1000
+    ? `${duration.toFixed(2)} ms` : `${(duration / 1000).toFixed(3)} s`;
   const rangeTime = (value) => typeof value === "number" && Number.isFinite(value) ? reviewTime(value) : "—";
   const reportMeta = [
     ["Symbol", calculation.symbol || calculation.source?.symbol || "—"],
@@ -721,12 +865,14 @@ export async function buildReviewBody(payload, snapshot = {}, cryptoApi = global
     ["Timeframe", `${calculation.timeframe ?? payload.timeframe ?? "—"} seconds`],
     ["Direction", readableDirection(calculation.direction || Object.keys(payload.directions || {}).join(", "))],
     ["Range", `${rangeTime(calculation.from ?? payload.actualFrom)} → ${rangeTime(calculation.to ?? payload.actualTo)}`],
+    ["Indicator duration", durationLabel],
   ];
   const timeline = [...days].map(([day, rows]) => `<details class="day" data-time-group="${escapeHtml(day)}"><summary class="day-head"><h2>${escapeHtml(day)}</h2><span class="day-count">${rows.length.toLocaleString()}</span></summary><div class="events">${rows.map(reportEventCard).join("")}</div></details>`).join("");
   const featureDetails = [...groups].map(([group, count]) => `<details class="feature"><summary><strong>${escapeHtml(group)}</strong><span>${count.toLocaleString()}</span></summary></details>`).join("");
-  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><span class="eyebrow">CALCULATION REPORT</span><h1>Indicator information</h1><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></header>
-<main class="report-shell"><aside class="filter-sidebar" aria-label="Behavior filters"><div class="filter-sidebar-head"><h2 class="filter-sidebar-title"><svg class="filter-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5v5.5l-3 2v-7.5L4 5Z"></path></svg>Behavior filters</h2><span class="filter-total-count">${records.length.toLocaleString()}</span><div class="filter-actions"><button id="clear-filters" class="quiet-action" type="button">Clear all</button></div></div><label class="filter-search"><span class="sr-only">Search filters</span><input id="filter-search" type="search" placeholder="Search filters…" autocomplete="off"></label><div class="filter-dates"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-error"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-error"></label><button id="reset" class="quiet-action" type="button">Reset dates</button></div><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><div class="filter-tree"><div class="filter-all-row"><button class="filter-all-toggle" type="button" aria-controls="filter-groups" aria-expanded="true" aria-label="Collapse all filters"></button><label class="filter-all-label"><input id="all-filters" type="checkbox" checked><strong>All</strong><span class="filter-all-count">${records.length.toLocaleString()}</span></label></div><div class="filter-groups" id="filter-groups">${reportFilterMarkup(families)}</div></div><footer class="filter-footer"><span id="filter-note" role="status" aria-live="polite"></span></footer></aside><section class="report-content" id="timeline" aria-labelledby="timeline-title"><div class="section-head"><h2 id="timeline-title">Chronological timeline</h2><span id="empty" class="empty" hidden>No matching events.</span></div>${timeline || "<p class=\"empty\">No events.</p>"}</section></main>
+  const body = `<a class="skip-link" href="#timeline">Skip to timeline</a><header><div class="report-heading"><div><span class="eyebrow">CALCULATION REPORT</span><h1>Indicator information</h1></div><div class="archive-controls"><button id="export-zip" class="archive-primary" type="button" aria-haspopup="dialog" aria-controls="export-dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>Export</button><span id="export-status" role="status"></span></div></div><dl class="calculation-meta" aria-label="Calculation details">${reportMeta.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl><span id="copy-status" class="sr-only" role="status"></span></header>
+<main class="report-shell"><aside class="filter-sidebar" aria-label="Behavior filters"><div class="filter-sidebar-head"><h2 class="filter-sidebar-title"><svg class="filter-heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16l-6.5 7.5v5.5l-3 2v-7.5L4 5Z"></path></svg>Behavior filters</h2><span class="filter-total-count">${records.length.toLocaleString()}</span><div class="filter-actions"><button id="clear-filters" class="quiet-action" type="button">Clear all</button></div></div><label class="filter-search"><span class="sr-only">Search filters</span><input id="filter-search" type="search" placeholder="Search filters…" autocomplete="off"></label><div class="filter-dates"><label>From<input id="from" type="datetime-local" step="1" aria-describedby="range-error"></label><label>To<input id="to" type="datetime-local" step="1" aria-describedby="range-error"></label><button id="reset" class="quiet-action" type="button">Reset dates</button></div><p class="error" id="range-error" role="alert" hidden>From must not be later than To.</p><div class="filter-tree"><div class="filter-all-row"><button class="filter-all-toggle" type="button" aria-controls="filter-groups" aria-expanded="true" aria-label="Collapse all filters"></button><label class="filter-all-label"><input id="all-filters" type="checkbox" checked><strong>All</strong><span class="filter-all-count">${records.length.toLocaleString()}</span></label></div><div class="filter-groups" id="filter-groups">${reportFilterMarkup(families)}</div></div><footer class="filter-footer"><span id="filter-note" role="status" aria-live="polite"></span></footer></aside><section class="report-content" id="timeline" aria-labelledby="timeline-title"><div class="section-head"><h2 id="timeline-title">Chronological timeline</h2><form class="record-search" id="record-search-form" role="search"><label class="sr-only" for="record-search">Find an event or position</label><input id="record-search" type="search" placeholder="Time | direction | behavior" autocomplete="off"><button type="submit">Find</button><small id="record-search-status" role="status"></small></form><span id="empty" class="empty" hidden>No matching events.</span></div>${timeline || "<p class=\"empty\">No events.</p>"}</section></main>
 <section class="report-export" id="review-report" aria-labelledby="report-title"><div class="report-export-head"><h2 id="report-title">Live review report</h2><div class="report-controls"><button id="copy" type="button">Copy</button><button id="download" type="button">Download</button></div></div><textarea id="report-text" readonly aria-label="Review report"></textarea></section>
-<section class="collections" aria-labelledby="collections-title"><h2 id="collections-title">Record collections</h2>${featureDetails}</section>`;
-  return { hash, reviewId: snapshot.exportedAt || "standalone", runtime: reviewRuntime.toString(), body, bridgeData };
+<section class="collections" aria-labelledby="collections-title"><h2 id="collections-title">Record collections</h2>${featureDetails}</section>
+${exportDialogMarkup()}`;
+  return { hash, reviewId: snapshot.exportedAt || "standalone", body, bridgeData, records };
 }

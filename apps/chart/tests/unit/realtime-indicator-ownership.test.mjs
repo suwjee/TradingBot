@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
 import { readRealtimeUpdate } from "../../src/features/realtime-chart.js";
+import { errorDetails } from "../../src/features/diagnostic-details.js";
 import { startLiveIndicatorProgress } from "../../src/features/indicator-live-progress.js";
 import { engineCalculationDuration } from "../../src/features/indicator-lifecycle.js";
 
@@ -11,12 +12,13 @@ const indicatorFlow = main.slice(main.indexOf("let chartUpdateRunning = false;")
   main.indexOf("function moveRealtimeIndicatorPreferences("));
 const updateFlow = main.slice(main.indexOf("async function runRealtimeChartUpdate("),
   main.indexOf("function setUpdateButtonState("));
-const inventoryFlow = main.slice(main.indexOf("async function requestSymbolInventory("), main.indexOf("async function loadFile("));
+const inventoryFlow = main.slice(main.indexOf("let inventoryRefreshPromise = null;"), main.indexOf("async function loadFile("));
 const tabId = "same-tab-fixture";
 const proof = to => ({ chartId: "chart", tabId, to,
   request: { from: 100, to: 200, direction: "bearish", timeframe: 30, chartTimeframe: 30, blueLines: true, bridgeOutput: true } });
 
-function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, nextRaw, nextRecent, marketAvailable = true,
+function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, checkService, nextRaw, nextRecent, marketAvailable = true,
+  candleConflict, refreshInventory,
   alertsReady = false, connectProgress = () => null, supportsRecentVerification = () => true } = {}) {
   const originalResult = { directions: { bearish: {} } };
   const state = {
@@ -47,10 +49,13 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
     corrections,
   };
   const noop = () => {};
+  let progressRequestCount = 0;
   const sandbox = vm.createContext({
-    state, AbortController, AbortSignal, performance, readRealtimeUpdate, engineCalculationDuration,
+    state, AbortController, AbortSignal, performance, readRealtimeUpdate, engineCalculationDuration, errorDetails,
+    setTimeout: callback => setImmediate(callback), clearTimeout: clearImmediate, LOCAL_CHART_RESTART_GRACE_MS: 75_000,
     symbolLoadController: null, symbolLoadRevision: 1,
-    liveIndicatorTabId: tabId, createUniqueId: () => "live-progress-fixture",
+    liveIndicatorTabId: tabId,
+    createUniqueId: () => ++progressRequestCount === 1 ? "live-progress-fixture" : `live-progress-fixture-${progressRequestCount}`,
     startLiveIndicatorProgress: options => startLiveIndicatorProgress({ ...options, connect: connectProgress }),
     alertLiveReady: alertsReady, formatSymbolWithBroker: file => file.id,
     alertController: {
@@ -66,8 +71,11 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
     $: selector => controls[selector], parseTehranInput: Number, inputFromTehran: String,
     setDateTimeValue: (selector, value) => { controls[selector].value = value; },
     scheduleDraw: noop, saveChartIndicatorContext: noop, renderIndicatorInfo: noop, renderObjectTree: noop, updateToolbar: noop,
+    pushIndicatorActivity: noop,
     indicatorSettings: () => ({}), setIndicatorVisibility: enabled => { state.indicator.enabled = enabled; },
-    log: { chart: { info: noop, warn: noop, error: name => failures.push(name) }, indicator: { info: noop, warn: noop, error: noop } },
+    log: { chart: { info: noop, warn: noop, error: name => failures.push(name) },
+      indicator: { info: noop, warn: name => failures.push(name), error: noop } },
+    refreshSymbolInventory: async () => refreshInventory?.(state),
     applyRealtimeCandles(file, rows, corrected, gapCandles = []) {
       state.file = file;
       for (const row of corrected) state.raw[state.raw.findIndex(old => old.time === row.time)] = row;
@@ -76,9 +84,11 @@ function fixture({ candles = [{ time: 330 }], corrections = [], onContinue, next
       state.data = state.raw.slice();
     },
     async fetch(url, options) {
+      if (url === "/api/reactions/source") return checkService?.(options) ?? { ok: false, status: 503 };
       requests.push([url, JSON.parse(options.body)]);
       if (url === "/api/candle-files/realtime") {
         const body = JSON.parse(options.body);
+        if (candleConflict) return { status: 409, json: async () => ({ code: candleConflict }) };
         if (body.phase === "recent") {
           return { status: 200, json: async () => nextRecent ? nextRecent(state, body) :
             { file: { ...state.file, count: state.raw.length }, candles: [], verification: { status: "verified" } } };
@@ -175,6 +185,38 @@ test("startup retries an inventory timeout during the response body once", async
   assert.deepEqual(state.inventory, [item]);
 });
 
+test("background inventory treats the server restart as transient and reports a prolonged outage once", async () => {
+  let now = 1_000;
+  let offline = true;
+  const warnings = [];
+  const state = { file: null, inventory: [] };
+  const sandbox = vm.createContext({
+    state, AbortSignal, Date: { now: () => now }, LOCAL_CHART_RESTART_GRACE_MS: 75_000,
+    indicatorCalculationOwner: null, realtimeUpdateOwner: null, realtimePublicationRevision: 0, journalUnavailable: false,
+    errorDetails, log: { chart: { warn: event => warnings.push(event) } },
+    async fetch() {
+      if (offline) throw new TypeError("Failed to fetch");
+      return { ok: true, async json() { return []; } };
+    },
+  });
+  vm.runInContext(inventoryFlow, sandbox);
+  const refresh = () => vm.runInContext("refreshSymbolInventory({ background: true })", sandbox);
+  assert.equal(await refresh(), false);
+  now += 9_000;
+  assert.equal(await refresh(), false);
+  assert.deepEqual(warnings, []);
+  now += 66_000;
+  await refresh();
+  await refresh();
+  assert.deepEqual(warnings, ["LOCAL_CHART_SERVICE_UNAVAILABLE"]);
+  offline = false;
+  await refresh();
+  offline = true;
+  now += 1_000;
+  await refresh();
+  assert.deepEqual(warnings, ["LOCAL_CHART_SERVICE_UNAVAILABLE"]);
+});
+
 test("a historical repair refreshes the alert baseline without evaluating a trigger", async () => {
   const chart = fixture({ alertsReady: true, candles: [], corrections: [{ time: 300 }] });
   chart.state.indicator.resultContext.to = 300;
@@ -186,7 +228,7 @@ test("the accepted checkpoint follows the published RAW rename and retains the c
   const chart = fixture();
   assert.match((await chart.update()).status, /Added 1.*Indicator updated/);
   assert.deepEqual(chart.requests.find(([url]) => url === "/api/reactions/continue"), ["/api/reactions/continue",
-    { id: "new.json", chartId: "chart", sessionId: "checkpoint", tabId, proof: proof(200) }]);
+    { id: "new.json", chartId: "chart", sessionId: "checkpoint", tabId, proof: proof(200), rawSha256: "old" }]);
   assert.equal(chart.state.indicator.results, chart.payload);
   assert.equal(chart.state.indicator.resultContext.from, 100);
   assert.equal(chart.state.indicator.resultContext.direction, "bearish");
@@ -201,6 +243,100 @@ test("indicator-only activation leaves the candle acquisition clock untouched", 
   const chart = fixture();
   assert.match(await chart.update({ indicatorOnly: true }), /Indicator updated/);
   assert.deepEqual(chart.requests.map(([url]) => url), ["/api/reactions/continue"]);
+});
+
+test("a superseded continuation refreshes the RAW without clearing the applied result or logging a warning", async () => {
+  let refreshed = 0;
+  const chart = fixture({ refreshInventory: () => { refreshed += 1; }, onContinue: async () => ({
+    ok: false, status: 409, json: async () => ({ code: "RAW_SNAPSHOT_SUPERSEDED" }),
+  }) });
+  const status = await chart.update({ indicatorOnly: true });
+  assert.match(status, /Synchronizing/);
+  assert.equal(refreshed, 1);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  assert.deepEqual(chart.failures, []);
+});
+
+test("Live reconnects with the same checkpoint after a dropped request or response body", async () => {
+  let attempts = 0;
+  const events = [];
+  const chart = fixture({ alertsReady: true, onContinue: async () => {
+    attempts += 1;
+    if (attempts === 1) throw new TypeError("Failed to fetch");
+    return { ok: true, status: 200, json: async () => {
+      if (attempts === 2) throw new TypeError("Network error reading the response");
+      return chart.payload;
+    }, headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Session", "recovered"],
+      ["X-QG-Live-Proof", JSON.stringify(proof(300))]]) };
+  } });
+  assert.match(await chart.update({ indicatorOnly: true, reportIndicatorProgress: event => events.push(event) }), /Indicator updated/);
+  assert.equal(chart.requests.length, 3);
+  for (const [url, { requestId, ...request }] of chart.requests) {
+    assert.equal(url, "/api/reactions/continue");
+    assert.deepEqual(request, { id: "old.json", chartId: "chart", tabId, sessionId: "checkpoint", proof: proof(200), rawSha256: "old" });
+    assert.ok(requestId);
+  }
+  assert.equal(new Set(chart.requests.map(([, request]) => request.requestId)).size, 3);
+  assert.equal(chart.state.indicator.resultContext.liveSessionId, "recovered");
+  assert.equal(chart.state.indicator.results, chart.payload);
+  assert.equal(chart.alertPublications.length, 1);
+  assert.equal(events.at(-1).percent, 100);
+  assert.deepEqual(chart.failures, []);
+});
+
+test("Live waits for server readiness after the short retries are exhausted, then applies without manual Apply", async () => {
+  let attempts = 0;
+  let readinessChecks = 0;
+  const chart = fixture({
+    async checkService() {
+      if (++readinessChecks === 1) throw new TypeError("Failed to fetch");
+      return { ok: true, status: 200 };
+    },
+    async onContinue() {
+      if (++attempts < 4) throw new TypeError("Failed to fetch");
+      return { ok: true, status: 200, json: async () => chart.payload,
+        headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Session", "recovered"],
+          ["X-QG-Live-Proof", JSON.stringify(proof(300))]]) };
+    },
+  });
+  assert.match(await chart.update({ indicatorOnly: true }), /Indicator updated/);
+  assert.equal(readinessChecks, 2);
+  assert.equal(attempts, 4);
+  assert.ok(chart.requests.every(([url, request]) => url === "/api/reactions/continue" && request.sessionId === "checkpoint"));
+  assert.equal(chart.state.indicator.resultContext.liveSessionId, "recovered");
+  assert.deepEqual(chart.failures, []);
+});
+
+test("an extended disconnect keeps the last result and records a single diagnostic until recovery", async () => {
+  let fail = true;
+  const chart = fixture({ onContinue: async () => {
+    if (fail) throw new TypeError("Failed to fetch");
+    return { ok: true, status: 200, json: async () => chart.payload,
+      headers: new Map([["X-QG-Source-Fingerprint", "source"], ["X-QG-Live-Proof", JSON.stringify(proof(300))]]) };
+  } });
+  await chart.update({ indicatorOnly: true });
+  await chart.update({ indicatorOnly: true });
+  assert.equal(chart.requests.length, 6);
+  assert.equal(chart.state.indicator.results, chart.originalResult);
+  assert.deepEqual(chart.failures, ["REALTIME_INDICATOR_CONNECTION_UNAVAILABLE"]);
+  fail = false;
+  await chart.update({ indicatorOnly: true });
+  assert.equal(chart.requests.length, 7);
+  assert.equal(chart.state.indicator.results, chart.payload);
+});
+
+test("automatic candle polling waits for or synchronizes with a competing tab quietly", async () => {
+  let refreshed = 0;
+  const busy = fixture({ candleConflict: "RAW_BUSY", refreshInventory: () => { refreshed += 1; } });
+  const changed = fixture({ candleConflict: "RAW_CHANGED", refreshInventory: () => { refreshed += 1; } });
+  assert.match((await busy.update()).status, /Another check/);
+  assert.match((await changed.update({ verifyAll: true, manualVerification: false })).status, /Synchronizing/);
+  assert.equal(refreshed, 1);
+  for (const chart of [busy, changed]) {
+    assert.deepEqual(chart.requests.map(([url]) => url), ["/api/candle-files/realtime"]);
+    assert.deepEqual(chart.failures, []);
+    assert.equal(chart.state.indicator.results, chart.originalResult);
+  }
 });
 
 test("a poll displays appended rows before requesting recent verification", async () => {
@@ -412,7 +548,7 @@ test("the tab's in-memory calculation can recover a missing worker and adopts th
   Object.assign(chart.state.indicator.resultContext, { liveSessionId: null, calculationId: "saved" });
   assert.match((await chart.update()).status, /Indicator updated/);
   assert.deepEqual(chart.requests.find(([url]) => url === "/api/reactions/continue")[1],
-    { id: "new.json", chartId: "chart", tabId, sessionId: null, proof: proof(200) });
+    { id: "new.json", chartId: "chart", tabId, sessionId: null, proof: proof(200), rawSha256: "old" });
   assert.equal(chart.state.indicator.resultContext.liveSessionId, "recovered");
 });
 
@@ -425,7 +561,7 @@ test("activation catches up this tab's calculation even if market acquisition is
   const result = await chart.update();
   assert.match(result.status, /Indicator updated/);
   assert.equal(result.verification.status, "unavailable");
-  assert.deepEqual(chart.requests[1][1], { id: "old.json", chartId: "chart", tabId, sessionId: "checkpoint", proof: proof(200) });
+  assert.deepEqual(chart.requests[1][1], { id: "old.json", chartId: "chart", tabId, sessionId: "checkpoint", proof: proof(200), rawSha256: "old" });
   assert.equal(chart.state.indicator.resultContext.chartTimeframe, 30);
   assert.equal(chart.state.indicator.resultContext.direction, "bearish");
 });

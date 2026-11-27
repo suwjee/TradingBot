@@ -100,21 +100,24 @@ test("repeated regime metadata never creates extra manual-review records or filt
   assert.doesNotMatch(body, /data-filter-family="calculationSegments"/);
 });
 
-test("default report controls and rows hide Reaction Reset and Blue Line only", async () => {
+test("default report controls and rows hide Reaction, Reset, Blue Line, A, Order Audit and MBL", async () => {
   const payload = { directions: { bearish: {
     reactions: [{ firstTime: 100 }], resets: [{ time: 110 }], blueLines: [{ sourceTime: 120 }],
     eZones: [{ sourceTime: 130, family: "red", number: 3 }],
     stopAlls: [{ sourceTime: 140, number: 9 }],
+    aZones: [{ sourceTime: 150 }],
+    orderAudit: [{ firstTime: 160 }],
+    matchingBehaviorLegs: [{ sourceTime: 170 }],
   } } };
   const { body } = await buildReviewBody(payload);
-  for (const family of ["Reaction", "Reset", "Blue Line"]) {
+  for (const family of ["Reaction", "Reset", "Blue Line", "A", "Order Audit", "MBL"]) {
     const controls = body.match(new RegExp(`<input[^>]+data-filter-family="${family}"[^>]*>`, "g"));
     assert.ok(controls?.length);
     for (const input of controls) assert.doesNotMatch(input, /\bchecked\b/);
     const article = body.match(new RegExp(`<article[^>]+data-report-family="${family}"[^>]*>`))?.[0];
     assert.match(article, /\bhidden\b/);
   }
-  for (const label of ["E-3", "StopAll-9"]) assert.match(body, new RegExp(`class="chip"[^>]*>${label}</span>`));
+  for (const label of ["E3", "StopAll-9"]) assert.match(body, new RegExp(`class="chip"[^>]*>${label}</span>`));
 });
 
 test("Reaction filter family color follows the calculation direction", async () => {
@@ -128,10 +131,45 @@ test("Reaction filter family color follows the calculation direction", async () 
 
 test("report keeps event data and export actions without verdict controls", async () => {
   const { body } = await buildReviewBody({ directions: { bearish: { eZones: [{ sourceTime: 100, number: 3, family: "red" }] } } });
-  assert.match(body, /class="chip"[^>]*>E-3<\/span>/);
+  assert.match(body, /class="chip"[^>]*>E3<\/span>/);
   assert.match(body, /id="copy"/);
   assert.match(body, /id="download"/);
   assert.doesNotMatch(body, /Review status|state-control|type="radio"|Mark True|Mark False|data-time-group-status|id="mode"|True only|False only|All selected/);
+});
+
+test("the timeline shows supplied verdicts and copies a color-qualified event label", async () => {
+  const sourceTime = Date.parse("2026-11-04T16:47:00+03:30") / 1000;
+  const { body, bridgeData } = await buildReviewBody({ timeframe: 30, timings: { bridgeTotalMs: 1250.37 }, directions: {
+    bullish: {
+      sZones: [{ sourceTime, color: "red", trueFalse: "F" }],
+      eZones: [{ sourceTime, family: "blue", number: 1, trueFalse: "T" }, { sourceTime, family: "red", number: 2, trueFalse: null }],
+      bridgeOutput: { sZones: [{ color: "red", source: { price: "10.00100" } }] },
+    },
+  } });
+  assert.match(body, /data-copy-label="S Red \(F\)"/);
+  assert.match(body, /class="chip"[^>]*>E1 <span class="event-verdict" data-verdict="T">\(T\)<\/span><\/span>/);
+  assert.match(body, /class="chip"[^>]*>S <span class="event-verdict" data-verdict="F">\(F\)<\/span><\/span>/);
+  assert.equal((body.match(/class="event-verdict"/g) || []).length, 2);
+  assert.match(body, /<dt>Indicator duration<\/dt><dd>1\.250 s<\/dd>/);
+  assert.match(body, /id="export-zip"/);
+  assert.deepEqual(bridgeData["bullish:sZones:0"], { color: "red", source: { price: "10.00100" } });
+
+  const copyButton = {};
+  const event = {
+    dataset: { time: "2026-11-04 16:47:00", label: "bullish | S", direction: "bullish", copyLabel: "S Red (F)" },
+    querySelector: () => copyButton,
+  };
+  let clipboard;
+  vm.runInNewContext(`(${reviewRuntime.toString()})()`, {
+    document: {
+      querySelector: () => null,
+      querySelectorAll: selector => selector === ".event" ? [event] : [],
+      addEventListener() {},
+    },
+    navigator: { clipboard: { writeText: value => { clipboard = value; } } },
+  });
+  await copyButton.onclick();
+  assert.equal(clipboard, "2026-11-04 16:47:00 |  bullish | S Red (F)");
 });
 
 test("serialized live report exports numbered labels as tab-separated fields", () => {
@@ -223,7 +261,7 @@ test("report records render from the bridge report payload inside a collapsed br
   assert.match(body, /class="filter-sidebar"/);
   assert.match(body, /class="chip"[^>]*>A<\/span>/);
   assert.match(body, />Normal<\/span>/);
-  assert.doesNotMatch(body, /A \/ Normal/);
+  assert.doesNotMatch(body, />A \/ Normal</);
   assert.match(body, /class="bridge-output"/);
   assert.doesNotMatch(body, /<details[^>]+class="bridge-output"[^>]*open/);
   assert.doesNotMatch(body, /Events are grouped by Tehran calendar day/);

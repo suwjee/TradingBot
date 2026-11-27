@@ -15,6 +15,7 @@ const chart = fileURLToPath(new URL("../../", import.meta.url));
 const startVite = `
   import { createServer } from "vite";
   import fs from "node:fs/promises";
+  import streams from "node:fs";
   if (process.env.TRADINGBOT_TEST_MARKET) {
     const rows = JSON.parse(await fs.readFile(process.env.TRADINGBOT_TEST_MARKET, "utf8"));
     globalThis.fetch = async (input) => {
@@ -29,10 +30,9 @@ const startVite = `
   const heldPath = process.env.TRADINGBOT_TEST_HOLD_RAW;
   let gatePlugin;
   if (heldPath) {
-    let release, reads = 0, cancelled = 0, holdAt = 1;
-    const readFile = fs.readFile;
-    fs.readFile = async (file, options) => {
-      if (file !== heldPath || ++reads !== holdAt) return readFile(file, options);
+    const heldStream = Number(process.env.TRADINGBOT_TEST_HOLD_RAW_STREAM);
+    let release, reads = 0, cancelled = 0, holdAt = heldStream || 1;
+    async function waitForRelease(options) {
       const signal = options?.signal;
       function abort() { cancelled++; release(); }
       try {
@@ -45,8 +45,23 @@ const startVite = `
       } finally {
         signal?.removeEventListener("abort", abort);
       }
-      return readFile(file, options);
-    };
+    }
+    if (heldStream) {
+      const createReadStream = streams.createReadStream;
+      streams.createReadStream = (file, options) => {
+        if (file !== heldPath || ++reads !== holdAt) return createReadStream(file, options);
+        return (async function* () {
+          await waitForRelease(options);
+          yield* createReadStream(file, options);
+        })();
+      };
+    } else {
+      const readFile = fs.readFile;
+      fs.readFile = async (file, options) => {
+        if (file === heldPath && ++reads === holdAt) await waitForRelease(options);
+        return readFile(file, options);
+      };
+    }
     gatePlugin = { name: "test-raw-read-gate", configureServer(server) {
       server.middlewares.use("/__test/raw-read-gate", (req, res) => {
         if (req.method === "POST") release?.();
@@ -64,10 +79,11 @@ const startVite = `
   process.stdin.once("end", () => server.close());
 `;
 
-async function launch(stateRoot, marketFixture = "", holdRaw = "") {
+async function launch(stateRoot, marketFixture = "", holdRaw = "", holdRawStream = 0) {
   const child = spawn(process.execPath, ["--input-type=module", "-e", startVite], {
     cwd: chart, env: { ...process.env, TRADINGBOT_LOCAL_STATE_ROOT: stateRoot,
-      TRADINGBOT_TEST_MARKET: marketFixture, TRADINGBOT_TEST_HOLD_RAW: holdRaw }, windowsHide: true,
+      TRADINGBOT_TEST_MARKET: marketFixture, TRADINGBOT_TEST_HOLD_RAW: holdRaw,
+      TRADINGBOT_TEST_HOLD_RAW_STREAM: String(holdRawStream) }, windowsHide: true,
   });
   const closed = once(child, "close");
   const output = createInterface({ input: child.stdout });
@@ -235,10 +251,34 @@ test("disconnecting calculation tabs releases abandoned work and retains identic
     await disconnect({ client: controller, pending });
     await waitForRawRead(4, 2);
     const late = progressEvents(await server.progress(applyId));
-    try { await cancelledProgress(late); }
+    try {
+      assert.deepEqual((await late.next()).value, { status: "started", label: "Verify RAW input" });
+      await cancelledProgress(late);
+    }
     finally { await late.return(); }
     assert.equal((await server.progress(applyId)).status, 204);
     assert.deepEqual(await server.rawReadGate(), { reads: 4, cancelled: 2 });
+
+    await server.rawReadGate("PUT");
+    const checkpoint = { id: raw.id, chartId: raw.chartId, tabId: "tab-survivor",
+      sessionId: response.headers.get("X-QG-Live-Session"), proof: JSON.parse(response.headers.get("X-QG-Live-Proof")) };
+    const snapshotRequestId = "request-superseded-during-raw-read";
+    const competing = server.post("/continue", { ...checkpoint, requestId: snapshotRequestId });
+    competing.catch(() => {});
+    await waitForRawRead(5, 2);
+    const current = store.get(raw.id);
+    const repaired = await store.appendLatest(current, [], 5, store.version(raw.id), new AbortController().signal,
+      { corrections: [{ ...rows[6], close: rows[6].high }] });
+    assert.notEqual(repaired.metadata.dataSha256, current.metadata.dataSha256);
+    await server.rawReadGate("POST");
+    const stale = await competing;
+    assert.equal(stale.status, 409);
+    assert.equal((await stale.json()).code, "RAW_SNAPSHOT_SUPERSEDED");
+    assert.equal(stale.headers.get("X-QG-Calculation-Id"), null);
+    const journal = await (await fetch(`${server.origin}/api/error-journal`)).json();
+    assert.ok(!journal.entries.some(entry => entry.requestId === snapshotRequestId));
+    const updated = await indicator(await server.post("/continue", { ...checkpoint, rawSha256: repaired.metadata.dataSha256 }));
+    assert.deepEqual(updated, await indicator(await server.post("", { ...request, id: repaired.id, chartId: repaired.chartId })));
   } finally {
     for (const { client, stream } of clients) {
       client.abort();
@@ -279,8 +319,19 @@ test("latest applied and live results survive server restart and are isolated by
   const request = { id: raw.id, chartId: raw.chartId, direction: "bullish", timeframe: 30,
     from: start, to: start + 1_140, blueLines: true, liveSession: true, tabId: "original-tab" };
   for (const chartTimeframe of [30, 60]) {
-    const response = await server.post("", { ...request, chartTimeframe });
+    const requestId = `durable-apply-${chartTimeframe}`;
+    const progress = indicatorProgress(await server.progress(requestId));
+    const [response, events] = await Promise.all([
+      server.post("", { ...request, chartTimeframe, requestId }), progress,
+    ]);
     results.set(chartTimeframe, await indicator(response));
+    for (const label of ["Verify RAW input", "Evaluate T/F - Bullish", "Evaluate positions - Bullish",
+      "Verify calculation inputs", "Save calculation result"]) {
+      assert.ok(events.some(event => event.label === label && event.status === "started"), label);
+      assert.ok(events.some(event => event.label === label && event.status === "completed"
+        && Number.isFinite(event.durationMs) && event.durationMs >= 0), label);
+    }
+    assert.equal(events.at(-1).label, "Response ready");
   }
   assert.equal((await cached(30, other)).status, 404);
   await server.stop();
@@ -456,9 +507,9 @@ test("latest applied and live results survive server restart and are isolated by
       const sectionNames = ["Foundation", "Secondary", "PH-PL"];
       const configure = settingsTab.locator('[data-indicator-page="inputs"]');
       const moduleSwitch = selector => configure.locator(".module-row").filter({ has: settingsTab.locator(selector) });
-      assert.deepEqual(await configure.locator(".style-group-header strong").allTextContents(), sectionNames);
-      await configure.locator('[data-style-group="secondary"] .style-group-header').click();
-      await configure.locator('[data-style-group="primary"] .style-group-header').click();
+      assert.deepEqual(await configure.locator(".style-group-header strong").allTextContents(), [...sectionNames, "Positions", "Liquidity"]);
+      assert.deepEqual(await configure.locator(".style-group-header").evaluateAll(headers =>
+        headers.map(header => header.getAttribute("aria-expanded"))), ["true", "true", "true", "true", "true"]);
       for (const viewport of [{ width: 1280, height: 820 }, { width: 700, height: 680 }]) {
         await settingsTab.setViewportSize(viewport);
         await settingsTab.locator(".indicator-body").evaluate(body => { body.scrollTop = body.scrollHeight; });
@@ -719,15 +770,28 @@ test("a confirmed realtime append continues in the same worker and matches a fre
     timeframe: 30, chartTimeframe: 30, from: first, to: Math.floor(raw.to / 30) * 30, blueLines: true };
   let server;
   try {
-    server = await launch(stateRoot, marketFixture);
-    const seed = await server.post("", { ...request, liveSession: true });
+    server = await launch(stateRoot, marketFixture, raw.dataPath, 2);
+    const pendingSeed = server.post("", { ...request, liveSession: true });
+    pendingSeed.catch(() => {});
+    const readDeadline = Date.now() + 10_000;
+    while ((await server.rawReadGate()).reads < 2) {
+      assert.ok(Date.now() < readDeadline, "Apply did not reach final RAW verification");
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
+    let response, updated;
+    try {
+      response = await server.update({ id: raw.id, chartId: raw.chartId, lastCandleTime: raw.to,
+        baseSha256: raw.metadata.dataSha256, phase: "latest" });
+      updated = await response.json();
+    } finally {
+      await server.rawReadGate("POST");
+    }
+    const seed = await pendingSeed;
     await indicator(seed);
     const sessionId = seed.headers.get("X-QG-Live-Session");
     const proof = JSON.parse(seed.headers.get("X-QG-Live-Proof"));
     assert.ok(sessionId && proof);
-    const response = await server.update({ id: raw.id, chartId: raw.chartId, lastCandleTime: raw.to,
-      baseSha256: raw.metadata.dataSha256, phase: "latest" });
-    const updated = await response.json();
+    assert.equal(proof.rawSha256, raw.metadata.dataSha256);
     assert.equal(response.status, 200, JSON.stringify(updated));
     assert.equal(updated.supportsRecentVerification, true);
     assert.deepEqual(updated.candles, rows.slice(215));
@@ -766,6 +830,26 @@ test("a confirmed realtime append continues in the same worker and matches a fre
     assert.equal(review.snapshot.calculation.calculationId, reportId);
     const { timings, ...reviewed } = review.payload;
     assert.deepEqual(reviewed, actual);
+
+    const requestForTab = { id: updated.file.id, chartId: raw.chartId, tabId: request.tabId, sessionId, proof,
+      rawSha256: updated.file.metadata.dataSha256 };
+    const current = store.get(updated.file.id);
+    const repaired = await store.appendLatest(current, [], 5, store.version(current.id), new AbortController().signal,
+      { corrections: [{ ...rows[25], close: rows[25].open }] });
+    assert.equal(repaired.id, current.id);
+    assert.notEqual(repaired.metadata.dataSha256, requestForTab.rawSha256);
+    const superseded = await server.post("/continue", { ...requestForTab, requestId: "superseded-tab-snapshot" });
+    assert.equal(superseded.status, 409);
+    assert.equal((await superseded.json()).code, "RAW_SNAPSHOT_SUPERSEDED");
+    const advanced = await indicator(await server.post("/continue", {
+      ...requestForTab, rawSha256: repaired.metadata.dataSha256,
+      proof: JSON.parse(continued.headers.get("X-QG-Live-Proof")),
+    }));
+    assert.deepEqual(advanced, await indicator(await server.post("", {
+      ...request, id: repaired.id, to: Math.floor(repaired.to / 30) * 30,
+    })));
+    const journal = await (await fetch(`${server.origin}/api/error-journal`)).json();
+    assert.ok(!journal.entries.some(entry => entry.requestId === "superseded-tab-snapshot"));
   } finally {
     if (server) await server.stop();
     assert.equal(path.dirname(stateRoot), directory);

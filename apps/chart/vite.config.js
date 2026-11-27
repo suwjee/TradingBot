@@ -1,3 +1,4 @@
+import { createErrorJournal } from "./server/error-journal.js";
 import { defineConfig } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,8 +15,10 @@ import { sendCandleFile } from './server/candle-file-response.js';
 import { resolveLocalStatePaths } from './server/local-state-paths.js';
 import { createCalculationCoordinator, parseEngineConcurrency } from './server/calculation-coordinator.js';
 import { readBoundedBody } from './server/request-body.js';
+import { createWorkspacePreferencesApi } from './server/workspace-preferences.js';
+import { apiNotFound, useExactApi } from './server/api-routing.js';
 import { createProgressChannels } from './server/progress-channels.js';
-import { assertRawInputUnchanged, captureRawInputIdentity } from './server/raw-input-identity.js';
+import { assertRawInputUnchanged, captureRawInputIdentity, RawInputChangedError } from './server/raw-input-identity.js';
 import { writeAtomicCalculationCache, writeCalculationCache } from './server/calculation-cache.js';
 import { isCalculationReportId, isLiveReportId, liveReportLocation } from './src/features/manual-review/tab.js';
 import { createLiveEngineSessions, LiveEngineError, startLiveEngineWorker } from './server/live-engine-sessions.js';
@@ -43,8 +46,13 @@ const directionPolicyPath = path.join(pipelineRoot, 'direction_policy.py');
 const coreUtilsPath = path.join(pipelineRoot, 'core_utils.py');
 const primaryEnginePath = path.join(pipelineRoot, 'PL_PH_detector.py');
 const trueFalseEnginePath = path.join(pipelineRoot, 'true_false.py');
+const positionSourcePaths = [
+  path.join(workspaceRoot, 'engine', 'buy_algorithm.py'),
+  path.join(workspaceRoot, 'engine', 'sell_algorithm.py'),
+  path.join(pipelineRoot, 'position_rules.py'),
+];
 const indicatorRangeInputPath = path.join(chartRoot, 'server', 'indicator-range-input.js');
-const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, trueFalseEnginePath, indicatorRangeInputPath];
+const calculationSources = [bridgePath, enginePath, blueEnginePath, aEnginePath, sEnginePath, eEnginePath, stopAllEnginePath, orderEnginePath, directionPolicyPath, coreUtilsPath, primaryEnginePath, trueFalseEnginePath, ...positionSourcePaths, indicatorRangeInputPath];
 const pythonCommand = process.env.TRADINGBOT_PYTHON || 'python';
 const engineArgs = ['--engine', enginePath, '--blue-engine', blueEnginePath, '--a-engine', aEnginePath,
   '--s-engine', sEnginePath, '--e-engine', eEnginePath, '--stopall-engine', stopAllEnginePath];
@@ -169,6 +177,8 @@ function calculationMetadata(item, request, reportId) {
     sourceFile: item.id,
     timeframe: request.timeframe,
     chartTimeframe: request.chartTimeframe,
+    rawTimeframeSeconds: parseResolutionToSeconds(item.timeframe),
+    calculatedAt: new Date().toISOString(),
     direction: request.direction,
     from: request.from,
     to: request.to,
@@ -272,7 +282,8 @@ function seedLiveEngine({ chartId, tabId, workerFingerprint, request, sourcePath
     () => startLiveEngineWorker({
       command: pythonCommand, args: [liveBridgePath, ...engineArgs, ...args],
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1', PYTHONUTF8: '1',
-        TRADINGBOT_LIVE_RAW_SOURCE: sourcePath, TRADINGBOT_LIVE_CHART_TIMEFRAME: String(request.chartTimeframe) },
+        TRADINGBOT_LIVE_RAW_SOURCE: sourcePath, TRADINGBOT_LIVE_CHART_TIMEFRAME: String(request.chartTimeframe),
+        TRADINGBOT_LIVE_SEED_PROGRESS: onProgress ? '1' : '0' },
       onProgress, signal,
     }));
 }
@@ -288,15 +299,16 @@ function validLiveProof(proof, selected, tabId) {
     && ['bullish', 'bearish'].includes(request.direction) && typeof request.blueLines === 'boolean';
 }
 
+const RAW_SNAPSHOT_SUPERSEDED = 'RAW_SNAPSHOT_SUPERSEDED';
+const rawSnapshotSuperseded = () => new LiveEngineError(409, 'A newer RAW revision is available. Synchronizing the indicator.', RAW_SNAPSHOT_SUPERSEDED);
+
 async function recoverLiveEngine({ selected, proof, tabId, workerFingerprint, onProgress, signal }) {
   if (!validLiveProof(proof, selected, tabId)) {
     throw new LiveEngineError(404, 'Run an indicator calculation with Apply in this tab before enabling automatic continuation.', 'NO_INDICATOR_CALCULATION');
   }
-  const current = await captureRawInputIdentity(selected.dataPath, { includeBytes: true, signal }).catch(() => null);
+  const current = await captureRawInputIdentity(selected.dataPath, { includeBytes: true, signal });
   signal.throwIfAborted();
-  if (!current || current.sha256 !== selected.metadata.dataSha256) {
-    throw new LiveEngineError(503, 'RAW changed during recovery. Retrying at the next check.', 'RAW_RETRY');
-  }
+  if (current.sha256 !== selected.metadata.dataSha256) throw rawSnapshotSuperseded();
   const request = proof.request;
   const { bytes, ...identity } = current;
   const completedSeed = (seed, request, to) => ({
@@ -494,6 +506,10 @@ function localDataApi() {
   return {
     name: 'local-candle-data-api',
     configureServer(server) {
+      const errorJournal = createErrorJournal(localState.cache);
+      server.middlewares.use(errorJournal.observe);
+      useExactApi(server.middlewares, '/api/error-journal', errorJournal.api);
+      useExactApi(server.middlewares, '/api/workspace-preferences', createWorkspacePreferencesApi(localState.cache));
       const progressOwners = new Map();
       function claimProgress(id, owner) {
         if (!id) return () => false;
@@ -509,7 +525,7 @@ function localDataApi() {
       ensureStateDirectories();
       server.watcher.once('close', shutdownCalculations);
       server.httpServer?.once('close', shutdownCalculations);
-      server.middlewares.use('/api/reactions/progress', (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions/progress', (req, res) => {
         const requestId = new URL(req.url ?? '', 'http://localhost').searchParams.get('requestId');
         if (!requestId || !/^[a-zA-Z0-9-]{8,80}$/.test(requestId)) { res.statusCode = 400; res.end('Invalid progress request'); return; }
         if (progressChannels.shouldStopReconnect(requestId)) {
@@ -522,7 +538,7 @@ function localDataApi() {
         const detach = progressChannels.attach(requestId, res);
         res.once('close', detach);
       });
-      server.middlewares.use('/api/symbols', (_req, res) => {
+      useExactApi(server.middlewares, '/api/symbols', (_req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         res.end(JSON.stringify(inventory()));
@@ -575,7 +591,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/candle-files/delete', async (req, res) => {
+      useExactApi(server.middlewares, '/api/candle-files/delete', async (req, res) => {
         if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'POST is required.' })); return; }
         try {
           const { id } = await readJson(req);
@@ -592,7 +608,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/candle-files/cut', async (req, res) => {
+      useExactApi(server.middlewares, '/api/candle-files/cut', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -609,7 +625,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/candle-files/migrate', async (req, res) => {
+      useExactApi(server.middlewares, '/api/candle-files/migrate', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -622,7 +638,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/candles', async (req, res) => {
+      useExactApi(server.middlewares, '/api/candles', async (req, res) => {
         try {
           const url = new URL(req.url ?? '', 'http://localhost');
           const id = url.searchParams.get('id');
@@ -635,7 +651,7 @@ function localDataApi() {
           if (!res.writableEnded) res.end('Unable to read candle file');
         }
       });
-      server.middlewares.use('/api/reactions/cache', (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions/cache', (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         if (req.method !== 'DELETE') {
@@ -706,7 +722,7 @@ function localDataApi() {
         if (localSessionCleared) fs.unlinkSync(farazSessionPath);
         res.end(JSON.stringify({ filesCleared, drawingsCleared, localSessionCleared, layers, scope, symbol: scope === 'symbol' ? symbol : undefined }));
       });
-      server.middlewares.use('/api/drawings', async (req, res) => {
+      useExactApi(server.middlewares, '/api/drawings', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -739,7 +755,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/chart-transfer/export', async (req, res) => {
+      useExactApi(server.middlewares, '/api/chart-transfer/export', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -759,7 +775,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/chart-transfer/import', async (req, res) => {
+      useExactApi(server.middlewares, '/api/chart-transfer/import', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -779,7 +795,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/indicator-templates', async (req, res) => {
+      useExactApi(server.middlewares, '/api/indicator-templates', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -797,7 +813,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/reactions/source', (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions/source', (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         if (req.method !== 'GET') {
@@ -812,7 +828,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: 'Calculation source identity is unavailable' }));
         }
       });
-      server.middlewares.use('/api/reactions/cached', (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions/cached', (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         try {
@@ -837,7 +853,7 @@ function localDataApi() {
           res.end(JSON.stringify({ error: error.message }));
         }
       });
-      server.middlewares.use('/api/reactions/continue', async (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions/continue', async (req, res) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
         let requestId = null;
@@ -852,13 +868,14 @@ function localDataApi() {
         const report = event => publishProgress(requestId, event);
         try {
           if (req.method !== 'POST') throw new LiveEngineError(405, 'POST is required.');
-          const { id, chartId, tabId = null, sessionId, keepAlive, proof, requestId: progressId } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
+          const { id, chartId, tabId = null, sessionId, keepAlive, proof, rawSha256, requestId: progressId } = await readJson(req).catch(error => { throw new LiveEngineError(400, error.message); });
           client.signal.throwIfAborted();
           if (typeof progressId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(progressId)) {
             requestId = progressId;
             releaseProgress = claimProgress(requestId, client);
           }
           if (typeof id !== 'string' || typeof chartId !== 'string' || !chartId ||
+              (rawSha256 !== undefined && (typeof rawSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(rawSha256))) ||
               (tabId !== null && (typeof tabId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(tabId))) ||
               (sessionId != null && (typeof sessionId !== 'string' || !/^[a-f0-9]{32}$/.test(sessionId)))) {
             throw new LiveEngineError(400, 'A valid live indicator session and RAW identity are required.');
@@ -867,9 +884,8 @@ function localDataApi() {
           const workerFingerprint = liveSourceFingerprint(sourceFingerprint);
           if (!workerFingerprint) throw new LiveEngineError(503, 'The live Engine is unavailable. Retrying at the next check.');
           const selected = rawStore.get(id);
-          if (!selected || selected.chartId !== chartId) {
-            throw new LiveEngineError(503, 'The selected RAW changed before the indicator update. The next poll will retry.');
-          }
+          if (!selected || selected.chartId !== chartId || (rawSha256 && selected.metadata.dataSha256 !== rawSha256))
+            throw rawSnapshotSuperseded();
           const { dataPath, metadata } = selected;
           if (proof?.cached && validLiveProof(proof, selected, tabId)) {
             assertActiveCalculationExists(selected, proof.request.chartTimeframe);
@@ -883,27 +899,21 @@ function localDataApi() {
               liveEngineSessions.discard(currentSessionId);
               throw new LiveEngineError(409, 'Calculation sources changed. Use Apply again.', 'ENGINE_CHANGED');
             }
-            try {
-              if (delta) {
-                if (!rawStore.canServeAppendSnapshot(selected)) throw new Error('The selected RAW changed.');
-                return;
-              }
-              if (rawIdentity) {
-                try { await assertRawInputUnchanged(dataPath, rawIdentity, { signal }); }
-                catch (error) {
-                  signal?.throwIfAborted();
-                  if (!rawStore.canServeAppendSnapshot(selected)) throw error;
-                }
-                return;
-              }
-              const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes, signal });
-              if (identity.sha256 !== metadata.dataSha256) throw new Error('The selected RAW changed.');
-              rawIdentity = identity;
-              return bytes;
-            } catch {
-              signal?.throwIfAborted();
-              throw new LiveEngineError(503, 'The selected RAW changed during the indicator update. The next poll will retry.');
+            if (delta) {
+              if (!rawStore.canServeAppendSnapshot(selected)) throw rawSnapshotSuperseded();
+              return;
             }
+            if (rawIdentity) {
+              try { await assertRawInputUnchanged(dataPath, rawIdentity, { signal }); }
+              catch (error) {
+                if (!(error instanceof RawInputChangedError) || !rawStore.canServeAppendSnapshot(selected)) throw error;
+              }
+              return;
+            }
+            const { bytes, ...identity } = await captureRawInputIdentity(dataPath, { includeBytes, signal });
+            if (identity.sha256 !== metadata.dataSha256) throw rawSnapshotSuperseded();
+            rawIdentity = identity;
+            return bytes;
           }
           const session = { chartId, tabId, sourceFingerprint: workerFingerprint };
           function advance(token, {
@@ -966,17 +976,20 @@ function localDataApi() {
           res.end(result.output);
         } catch (error) {
           if (res.destroyed) return;
-          report({ status: 'failed', label: error.message });
-          res.statusCode = error.status || 500;
-          res.end(JSON.stringify({ error: error.message, code: error.code }));
+          const problem = error instanceof RawInputChangedError ? rawSnapshotSuperseded() : error;
+          if (problem.code !== RAW_SNAPSHOT_SUPERSEDED) errorJournal.capture(res, 'LIVE_CALCULATION_FAILED', problem, { requestId });
+          report({ status: 'failed', label: problem.message });
+          res.statusCode = problem.status || 500;
+          res.end(JSON.stringify({ error: problem.message, code: problem.code }));
         } finally {
           releaseProgress();
           res.off('close', disconnect);
         }
       });
-      server.middlewares.use('/api/reactions', async (req, res) => {
+      useExactApi(server.middlewares, '/api/reactions', async (req, res) => {
         const requestStarted = performance.now();
         let requestId = null;
+        let pinnedRaw = false;
         let releaseProgress = () => false;
         const client = new AbortController();
         const disconnect = () => {
@@ -993,7 +1006,13 @@ function localDataApi() {
           client.signal.throwIfAborted();
           requestId = typeof body.requestId === 'string' && /^[a-zA-Z0-9-]{8,80}$/.test(body.requestId) ? body.requestId : null;
           releaseProgress = claimProgress(requestId, client);
+          if (body.rawSha256 !== undefined) {
+            if (typeof body.rawSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(body.rawSha256))
+              throw new LiveEngineError(400, 'A valid RAW digest is required.');
+            pinnedRaw = true;
+          }
           const valid = rawStore.getListed(body.id);
+          if (pinnedRaw && (!valid || valid.metadata.dataSha256 !== body.rawSha256)) throw rawSnapshotSuperseded();
           if (!valid) throw new Error('Candle file not found');
           if (body.chartId && body.chartId !== valid.chartId) throw new Error('Chart identity does not match the selected RAW file');
           const assertCacheNotCleared = calculationClearGuard(valid.symbol);
@@ -1021,9 +1040,12 @@ function localDataApi() {
           }
           const workerFingerprint = liveRequested && valid.chartId ? liveSourceFingerprint(sourceFingerprint) : null;
           const calculated = await calculationCoordinator.run(Symbol(), async (publish, signal) => {
+            const rawCheckStarted = performance.now();
+            publish({ status: 'started', label: 'Verify RAW input' });
             let selectedBytes = await assertRawInputUnchanged(sourcePath, rawIdentity, {
               includeBytes: inputScope === 'selected-range', signal,
             });
+            publish({ status: 'completed', label: 'Verify RAW input', durationMs: performance.now() - rawCheckStarted });
             let jobDetectorMs = 0;
             let jobLiveSessionId = null;
             const runCalculation = async (calculationInputPath, bounds, taskSignal = signal) => {
@@ -1067,14 +1089,26 @@ function localDataApi() {
                   run: runCalculation, signal,
                 });
               }
+              const verifyStarted = performance.now();
+              publish({ status: 'started', label: 'Verify calculation inputs' });
               if (calculationSourceFingerprint() !== sourceFingerprint) {
                 throw new Error('Calculation sources changed while running. Apply again with the current engines.');
               }
               if (workerFingerprint && liveSourceFingerprint(sourceFingerprint) !== workerFingerprint) {
                 throw new Error('Live calculation sources changed while running. Apply again with the current engines.');
               }
-              await assertRawInputUnchanged(sourcePath, rawIdentity, { signal });
-              return { ...result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId };
+              let completedAfterAppend = false;
+              try {
+                await assertRawInputUnchanged(sourcePath, rawIdentity, { signal });
+              } catch (error) {
+                // A committed append renames the RAW after the Engine has read
+                // it. Its byte-exact lineage must still reach the current RAW.
+                if (!(error instanceof RawInputChangedError) || error.cause?.code !== 'ENOENT'
+                    || !rawStore.canServeAppendSnapshot(valid)) throw error;
+                completedAfterAppend = true;
+              }
+              publish({ status: 'completed', label: 'Verify calculation inputs', durationMs: performance.now() - verifyStarted });
+              return { ...result, detectorMs: jobDetectorMs, liveSessionId: jobLiveSessionId, completedAfterAppend };
             } catch (error) {
               if (jobLiveSessionId) liveEngineSessions.discard(jobLiveSessionId);
               throw error;
@@ -1088,6 +1122,12 @@ function localDataApi() {
             return;
           }
           let { output } = calculated;
+          const cacheSaveStarted = performance.now();
+          publishProgress(requestId, { status: 'started', label: 'Save calculation result' });
+          if (calculated.completedAfterAppend && !rawStore.canServeAppendSnapshot(valid)) {
+            if (liveSessionId) liveEngineSessions.discard(liveSessionId);
+            throw new RawInputChangedError();
+          }
           assertCacheNotCleared();
           if (liveRequested) {
             const live = livePublication(valid, calculationRequest, to, payload ?? JSON.parse(output), sourceFingerprint, workerFingerprint, tabId);
@@ -1103,6 +1143,7 @@ function localDataApi() {
             ), 'utf8');
             res.setHeader('X-QG-Calculation-Id', reportId);
           }
+          publishProgress(requestId, { status: 'completed', label: 'Save calculation result', durationMs: performance.now() - cacheSaveStarted });
           res.setHeader('X-QG-Cache', 'bypass');
           res.setHeader('X-QG-Input-Scope', inputScope);
           res.setHeader('X-QG-Source-Fingerprint', sourceFingerprint);
@@ -1115,9 +1156,11 @@ function localDataApi() {
           res.end(output);
         } catch (error) {
           if (res.destroyed) return;
-          publishProgress(requestId, { status: 'failed', label: error.message });
-          res.statusCode = error.status || 400;
-          res.end(JSON.stringify({ error: error.message, code: error.code }));
+          const problem = pinnedRaw && error instanceof RawInputChangedError ? rawSnapshotSuperseded() : error;
+          if (problem.code !== RAW_SNAPSHOT_SUPERSEDED) errorJournal.capture(res, 'CALCULATION_FAILED', problem, { requestId });
+          publishProgress(requestId, { status: 'failed', label: problem.message });
+          res.statusCode = problem.status || 400;
+          res.end(JSON.stringify({ error: problem.message, code: problem.code }));
         } finally {
           releaseProgress();
           res.off('close', disconnect);
@@ -1146,7 +1189,7 @@ function infoPage() {
 
 export default defineConfig({
   plugins: [localDataApi(), createFarazCandleApi({ workspaceRoot, localStateRoot: localState.root, rawStore }),
-    infoPage(), preserveOpenChart({ workspaceRoot, engineStyles, engineSources: liveUpdateEngineSources })],
+    infoPage(), preserveOpenChart({ workspaceRoot, engineStyles, engineSources: liveUpdateEngineSources }), apiNotFound()],
   server: {
     port: 5173,
     strictPort: false,
@@ -1156,5 +1199,8 @@ export default defineConfig({
     watch: viteWatchOptions,
     hmr: { overlay: false },
   },
-  build: { target: 'chrome89' },
+  build: {
+    target: 'chrome89',
+    rollupOptions: { input: { chart: path.join(chartRoot, 'index.html'), review: path.join(chartRoot, 'review.html') } },
+  },
 });

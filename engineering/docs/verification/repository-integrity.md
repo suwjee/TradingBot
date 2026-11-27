@@ -9,7 +9,7 @@ scope:
   - generated-content
   - archive
   - verification
-last_modified_at: 2026-11-20T11:55:09+03:30
+last_modified_at: 2026-11-27T06:56:09+03:30
 ---
 
 # TradingBot Repository Integrity
@@ -440,7 +440,7 @@ Run the verifier's tests with:
 
 `python -m unittest discover -s scripts/verification -p "test_*.py" -v`
 
-The GitHub Actions workflow at `.github/workflows/anti-drift.yml` runs on pushes and pull requests with read-only repository permission. The anti-drift job runs the verifier tests, full-repository verification, and a repeated JSON comparison for deterministic output. For `main` and pull requests into it, a separate Windows release-inventory job checks committed repository coverage and production closure. These jobs verify structure and discovery. Publication and runtime release validation follow [Release Operations](../../../scripts/git/README.md).
+The GitHub Actions workflow at `.github/workflows/anti-drift.yml` runs on pushes and pull requests with read-only repository permission. The anti-drift job runs the verifier tests, full-repository verification, and a repeated JSON comparison for deterministic output. For `main` and pull requests into it, a separate Windows release-inventory job checks committed repository coverage and production closure. The Windows runtime job on main and its pull requests runs Engine, synchronized reference, Chart unit, integration, build, and launcher checks. Publication and runtime snapshot validation follow [Release Operations](../../../scripts/git/README.md).
 
 ### Extending the gate safely
 

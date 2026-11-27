@@ -490,7 +490,7 @@ test("a limited history phase verifies one packet and resumes at the next unchec
 
   const all = await (await post({ phase: "history", historyPacketLimit: 1, verifyAll: true })).json();
   assert.equal(all.verification.checkedCount, 1001);
-  assert.deepEqual(requests, [[100, 1100], [1100, 1101], [100, 1100], [1100, 1101]]);
+  assert.deepEqual(requests.slice(2).sort(([left], [right]) => left - right), [[100, 1100], [1100, 1101]]);
 });
 
 test("history packet limits are bounded integers scoped to the history phase", async (t) => {

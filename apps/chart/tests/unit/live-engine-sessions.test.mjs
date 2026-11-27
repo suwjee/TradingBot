@@ -273,9 +273,11 @@ test("keep-alive detects a worker that stopped while the market was idle", async
   assert.equal(f.closes, 1);
 });
 
-test("a worker update sends the exact RAW bytes and digest without a file path", async t => {
+test("the worker delivers seed progress before the result and updates with exact RAW bytes", async t => {
   const source = `
     const emit = payload => console.log(JSON.stringify(payload));
+    emit({ type: "progress", event: { status: "started", label: "Evaluate T/F" } });
+    emit({ type: "progress", event: { status: "completed", label: "Evaluate T/F", durationMs: 0.42 } });
     emit({ type: "seed", ready: true, payload: { directions: {} } });
     let input = Buffer.alloc(0);
     process.stdin.on("data", chunk => {
@@ -293,9 +295,15 @@ test("a worker update sends the exact RAW bytes and digest without a file path",
     });
   `;
   const controller = new AbortController();
-  const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source], signal: controller.signal });
+  const seedProgress = [];
+  const worker = startLiveEngineWorker({ command: process.execPath, args: ["-e", source],
+    signal: controller.signal, onProgress: event => seedProgress.push(event) });
   t.after(worker.close);
   assert.equal((await worker.seed).ready, true);
+  assert.deepEqual(seedProgress, [
+    { status: "started", label: "Evaluate T/F" },
+    { status: "completed", label: "Evaluate T/F", durationMs: 0.42 },
+  ]);
   controller.abort(); // A completed seed no longer belongs to the Apply request.
   await assert.rejects(worker.update("X:/current RAW.json", "a".repeat(64)), TypeError);
   const raw = Buffer.from('\ufeff[\r\n {"close":1.00,"note":"نفت"}\r\n]\n');

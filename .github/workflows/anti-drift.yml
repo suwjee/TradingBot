@@ -1,5 +1,5 @@
 # created_at: 2026-09-30T16:20:59+03:30
-# last_modified_at: 2026-11-18T23:29:11+03:30
+# last_modified_at: 2026-11-27T06:56:09+03:30
 name: TradingBot Anti-Drift Verification
 
 on:
@@ -45,3 +45,44 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\scripts\git\Test-ReleaseWorkflow.ps1 -Case ProductionClosure
           exit $LASTEXITCODE
+
+  runtime-tests:
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/chart/package-lock.json
+      - name: Install Engine dependencies
+        run: python -m pip install orjson tzdata pytest
+      - name: Test Engine and reference synchronization
+        shell: pwsh
+        run: |
+          python -B -m pytest -q engine/tests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B engine/tests/verification/verify_order_references.py
+      - name: Install Chart dependencies
+        working-directory: apps/chart
+        run: npm ci --include=dev
+      - name: Test Chart unit contracts
+        working-directory: apps/chart
+        run: npm test
+      - name: Test Chart, Live Engine and browser integration
+        working-directory: apps/chart
+        run: node --test --test-concurrency=1 tests/integration/*.test.mjs
+      - name: Build Chart
+        working-directory: apps/chart
+        run: npm run build
+      - name: Test the Windows launcher
+        shell: powershell
+        run: .\scripts\verification\test-launcher.ps1

@@ -3,33 +3,22 @@ import assert from "node:assert/strict";
 
 const source = "../../src/chart/primary-structure.js";
 
-test("trend icon bottom has one hundred pixel clearance from the fiftieth candle high", async () => {
+test("trend boundary uses the source time independent of the legacy arrow target", async () => {
   const { trendTransitionLayout } = await import(source);
   const marker = trendTransitionLayout({ sourceTime: 100, iconCandleTime: 900, iconCandleHigh: "10" },
     { timeToX: time => time / 2, priceToY: () => 300, height: 700 });
   assert.equal(marker.lineX, 50);
-  assert.deepEqual(marker.icon, { left: 436, top: 172, right: 464, bottom: 200, size: 28 });
+  assert.equal("icon" in marker, false);
   assert.equal(marker.lineBottom, 700);
 });
 
-test("missing fiftieth candle shows the boundary line without inventing an icon target", async () => {
+test("missing legacy arrow target still shows the boundary line", async () => {
   const { trendTransitionLayout } = await import(source);
   const marker = trendTransitionLayout({ sourceTime: 100, iconCandleTime: null, iconCandleHigh: null },
     { timeToX: time => time, priceToY: () => 300, height: 700 });
   assert.equal(marker.lineX, 100);
-  assert.equal(marker.icon, null);
+  assert.equal("icon" in marker, false);
 });
-
-test("pixel icon geometry remains fixed after price and time zoom", async () => {
-  const { trendTransitionLayout } = await import(source);
-  const marker = trendTransitionLayout({ sourceTime: 100, iconCandleTime: 900, iconCandleHigh: "10" },
-    { timeToX: time => time * 2, priceToY: () => 510, height: 700 });
-  assert.equal(marker.icon.right - marker.icon.left, 28);
-  assert.equal(marker.icon.bottom - marker.icon.top, 28);
-  assert.equal(marker.icon.bottom, 410);
-  assert.equal((marker.icon.left + marker.icon.right) / 2, 1800);
-});
-
 test("explicit bullish PH circle radius survives layout and drawing", async () => {
   const { primaryMarkerLayout, drawPrimaryStructures } = await import(source);
   assert.equal(primaryMarkerLayout("PH", "bullish", 20, 200, { primaryCircleRadius: 20 }).radius, 20);
@@ -115,15 +104,9 @@ test("circle opacity remains a shape setting in both directions", async () => {
   assert.equal(primaryMarkerLayout("PH", "bearish", 0, 0, settings).opacity, 1);
 });
 
-test("bearish trend icon top is one hundred pixels below the fiftieth candle low", async () => {
-  const { trendTransitionLayout } = await import(source);
-  const marker = trendTransitionLayout({ direction: "bearish", sourceTime: 100,
-    iconCandleTime: 900, iconCandleLow: "10" },
-    { timeToX: time => time / 2, priceToY: () => 300, height: 700 });
-  assert.deepEqual(marker.icon, { left: 436, top: 400, right: 464, bottom: 428, size: 28 });
-});
 
-test("bearish trend paints the red line and a downward reflected arrow", async () => {
+
+test("bearish trend paints only the red line at an unlabelled boundary", async () => {
   const { drawTrendTransitions } = await import(source);
   const strokes = [], scales = [], fills = [];
   const ctx = { save() {}, restore() {}, beginPath() {}, closePath() {},
@@ -134,9 +117,9 @@ test("bearish trend paints the red line and a downward reflected arrow", async (
   drawTrendTransitions(ctx, { trendTransitions: [{ direction: "bearish", sourceTime: 10,
     iconCandleTime: 20, iconCandleLow: "30" }] },
     { timeToX: value => value, priceToY: value => value, height: 700 });
-  assert.deepEqual(strokes, ["#f23645", "#f23645"]);
-  assert.deepEqual(fills, ["#f23645"]);
-  assert.deepEqual(scales, [[1.4, -1.4]]);
+  assert.deepEqual(strokes, ["#f23645"]);
+  assert.deepEqual(fills, []);
+  assert.deepEqual(scales, []);
 });
 
 test("a trend label prints the line's Tehran candle timestamp to seconds and stays in the plot", async () => {
@@ -155,10 +138,10 @@ test("a trend label prints the line's Tehran candle timestamp to seconds and sta
   assert.ok(labels[0].x >= 76 && labels[0].x < 220);
   assert.ok(labels[0].y < 240 && labels[0].y > 200);
   assert.deepEqual(strokes[0], { color: "#b12233", width: 3, dash: [0, 9] });
-  assert.equal(strokes[1].color, "#b12233");
+  assert.equal(strokes.length, 1);
 });
 
-test("the market change visibility switch hides the line, icon and timestamp", async () => {
+test("the market change visibility switch hides the line and timestamp", async () => {
   const { drawTrendTransitions } = await import(source);
   const { context, labels, strokes, fills } = trendPaintContext();
   drawTrendTransitions(context, { trendTransitions: [{ direction: "bearish", sourceTime: 15,
@@ -167,6 +150,27 @@ test("the market change visibility switch hides the line, icon and timestamp", a
     settings: { trendLineVisible: false },
   });
   assert.deepEqual([labels, strokes, fills], [[], [], []]);
+});
+
+test("the market transition line and timestamp are separately selectable and editable", async () => {
+  const { drawTrendTransitions, trendVisualObjects } = await import(source);
+  const group = { trendTransitions: [{ id: "bearish:trend:10", direction: "bearish", sourceTime: 10,
+    level: "28", iconCandleTime: 20, iconCandleLow: "30" }] };
+  const [line, time] = trendVisualObjects(group, {});
+  assert.deepEqual([line.type, time.type], ["indicator-stop", "indicator-label"]);
+  const objects = new Map([line, time].map(item => [item.id, item]));
+  line.hidden = true;
+  Object.assign(time, { customized: true, text: "Market switch", color: "#224466" });
+  const { context, labels, strokes } = trendPaintContext();
+  const hits = [];
+  drawTrendTransitions(context, group, {
+    timeToX: value => value + 100, priceToY: value => value + 25, width: 500, height: 340,
+    objectFor: id => objects.get(id), onHit: hit => hits.push(hit),
+    offsetPoint: (item, x, y) => ({ x: x + (item?.dx ?? 0), y }),
+  });
+  assert.equal(labels[0].text, "Market switch");
+  assert.deepEqual(strokes, []);
+  assert.deepEqual(hits.map(hit => hit.objectId), [time.id]);
 });
 
 test("nearby market changes keep their timestamps on separate rows", async () => {

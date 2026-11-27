@@ -12,8 +12,13 @@ PATTERN = re.compile(rb"<!-- EXACT-SOURCE-BEGIN:([^\r\n]+) -->\r?\n````python\r?
 def verify(path: Path) -> int:
     content = path.read_bytes()
     matches = list(PATTERN.finditer(content))
+    production = [
+        *ENGINE.glob("*.py"),
+        *(ENGINE / "bridge").rglob("*.py"),
+        *(ENGINE / "pipeline").rglob("*.py"),
+    ]
     actual_paths = {source.relative_to(ENGINE).as_posix(): source
-                    for source in [ENGINE / "__init__.py", *sorted((ENGINE / "bridge").rglob("*.py")), *sorted((ENGINE / "pipeline").rglob("*.py"))] if "__pycache__" not in source.parts}
+                    for source in production if "__pycache__" not in source.parts}
     embedded_paths = [match[1].decode("utf-8") for match in matches]
     assert len(embedded_paths) == len(set(embedded_paths)), f"Duplicate embedded source: {path}"
     assert set(embedded_paths) == set(actual_paths), f"Embedded inventory differs: {path}"

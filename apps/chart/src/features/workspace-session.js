@@ -1,4 +1,21 @@
 const WORKSPACES = new Set(["chart", "faraz", "algorithm", "alert"]);
+const ALGORITHM_HASH = /^#algorithm-(?:overview|[a-z0-9_-]+)$/i;
+
+export function workspaceFromUrl(currentUrl) {
+  const url = new URL(String(currentUrl || "/"), "http://localhost");
+  if (ALGORITHM_HASH.test(url.hash)) return "algorithm";
+  const workspace = url.pathname.replace(/^\/|\/$/g, "");
+  return WORKSPACES.has(workspace) ? workspace : null;
+}
+
+export function workspaceTabUrl(currentUrl, workspace) {
+  const url = new URL(String(currentUrl || "/"), "http://localhost");
+  if (WORKSPACES.has(workspace)) {
+    url.pathname = `/${workspace}`;
+    if (workspace !== "algorithm" && ALGORITHM_HASH.test(url.hash)) url.hash = "";
+  }
+  return `${url.pathname}${url.search}${url.hash}`;
+}
 
 export function resolveChartTabState(search, { inventory = [], timeframes = [] } = {}) {
   const params = new URLSearchParams(String(search || "").replace(/^[^?]*\?/, ""));

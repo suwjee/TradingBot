@@ -308,17 +308,28 @@ function Invoke-ProductionClosureTests {
       Assert-True ($currentSet.Paths -notcontains $path) "nested non-runtime file stays in main: $path"
     }
 
-    $runtime = 'apps/chart/src/features/new-runtime.js'
-    $test = 'apps/chart/tests/unit/new-runtime.test.mjs'
-    Write-FixtureFile $fixture.Root $runtime 'export const current = true;'
-    Write-FixtureFile $fixture.Root $test '// current runtime regression'
+    $newRuntime = [ordered]@{
+      'apps/chart/src/features/new-runtime.js' = "import '../styles/feature.css'; export const current = true;"
+      'apps/chart/src/styles/feature.css' = 'body { color: inherit; }'
+      'apps/chart/server/new-service.js' = 'export const service = true;'
+      'engine/new_entry.py' = 'from pipeline.new_rules import enabled'
+      'engine/pipeline/new_rules.py' = 'enabled = True'
+    }
+    $newEngineering = @('apps/chart/tests/unit/new-runtime.test.mjs',
+      'engine/tests/unit/test_new_entry.py', 'engine/algorithms/New_Algorithm_Reference.md')
+    foreach ($path in $newRuntime.Keys) { Write-FixtureFile $fixture.Root $path $newRuntime[$path] }
+    foreach ($path in $newEngineering) { Write-FixtureFile $fixture.Root $path '# Engineering fixture' }
     $fixturePolicy = Join-Path $fixture.Root 'scripts/git/production-policy.psd1'
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'production-policy.psd1') -Destination $fixturePolicy
     $draft = New-MainReleaseSource -Root $fixture.Root -CommitMessage 'new runtime files' -DryRun
     $draftPaths = Get-GitTreePaths -Root $fixture.Root -Commitish $draft.MainSha
-    Assert-True ($draftPaths -contains $runtime -and $draftPaths -contains $test) 'main candidate includes both untracked project files'
     $draftRuntime = Get-ProductionFileSet -Root $fixture.Root -MainSha $draft.MainSha -Policy $currentPolicy
-    Assert-True ($draftRuntime.Paths -contains $runtime -and $draftRuntime.Paths -notcontains $test) 'production discovers the new runtime while the test stays in main'
+    foreach ($path in $newRuntime.Keys) {
+      Assert-True ($draftPaths -contains $path -and $draftRuntime.Paths -contains $path) "new runtime path enters main and production: $path"
+    }
+    foreach ($path in $newEngineering) {
+      Assert-True ($draftPaths -contains $path -and $draftRuntime.Paths -notcontains $path) "new test or reference enters main: $path"
+    }
     Assert-True ($draftRuntime.Errors.Count -eq 0) 'new runtime paths keep the production closure valid'
 
     & git -C $fixture.Root rm --quiet -- engine/bridge/live_pipeline.py

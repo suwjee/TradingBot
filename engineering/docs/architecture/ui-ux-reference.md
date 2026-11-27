@@ -12,7 +12,7 @@ scope:
   - faraz-ui
   - algorithm-reference-ui
   - responsive-accessibility
-last_modified_at: 2026-11-26T09:43:24+03:30
+last_modified_at: 2026-11-27T06:10:14+03:30
 ---
 
 # TradingBot UI/UX Reference
@@ -121,7 +121,7 @@ The application may restore valid workspace/chart preferences across refresh, bu
 
 The symbol/data picker presents locally available RAW resources and their user-facing identity/range information. Selecting a resource loads its candles into Chart.
 
-A chart identity is stable independently of the display filename. The current chart identity and timeframe can also be represented in the tab URL so separate tabs can reopen the same chart with independent timeframe context.
+A chart identity is stable independently of the display filename. The `/chart` URL carries the selected `chartId` and `tf` so separate tabs can reopen the same chart with independent timeframe context. The symbol picker orders RAW files within each symbol by acquisition time. A bookmarked file appears first within its symbol group and stays bookmarked across RAW filename changes.
 
 Destructive RAW deletion requires confirmation and removes the selected local resource through the supported server boundary.
 
@@ -201,7 +201,7 @@ Before calculation can start, the current UI requires:
 - a selected trend direction;
 - a valid ordered range inside available data.
 
-When a required choice is missing, the user receives an error and the relevant control is focused where practical.
+When a required choice is missing, the user receives an error and the relevant control is focused where practical. Changing the trend input leaves the current indicator drawings on the chart. The new trend takes effect when Apply successfully returns a result.
 
 ### 8.2 Indicator calculation
 
@@ -211,7 +211,9 @@ Apply starts a fresh Engine calculation for the selected Source, direction, anal
 
 During a calculation the Apply control is disabled and the progress UI tracks the request from browser/server work through Engine phases and result preparation.
 
-Progress events appear incrementally. Activity shows the original Engine duration of the latest successful calculation for Apply, Live and cache restoration. Older results without measured timing display a dash. Activity builds detailed event rows only while the tab is visible.
+The progress window lists planned server, Engine, and browser stages before calculation starts. It highlights the active stage and shows elapsed time, measured durations, and run counts for repeated stages. The percentage measures completed planned stages. Conditional stages that the run did not need are marked and excluded. Missing progress reports are identified separately. The window reaches 100% after the browser successfully accepts and renders the result. Cancel aborts the current request before result publication begins and keeps the last successful result on the chart.
+
+Activity shows the original Engine duration of the latest successful calculation for Apply, Live and cache restoration, together with available timing events. Older results without measured timing display a dash. The direction sections list positions by type with entry time and price, stop, target, anchor time, and any recorded stop event. Activity builds detailed event rows only while the tab is visible.
 
 ### 8.4 Completion and failure
 
@@ -248,16 +250,15 @@ Chart projects finalized result collections into visual objects such as:
 
 These are **presentation projections of Engine output**. The frontend may filter objects explicitly marked invalid for presentation, but it does not create alternative trading decisions.
 
-For repeated directional regimes, Chart renders each Engine-finalized calculation segment independently and applies each historical segment's end bound consistently to paint, hit testing and selection. New segment anchors come from fresh finalized input; user presentation offsets may move drawings. Aggregate collections serve counts and object inspection. Directional start markers use the Engine's finalized event and actual target-candle metadata. Stable object identities preserve appearance and visibility settings; the accepted Algorithm References own marker defaults and trading rules.
+For repeated directional regimes, Chart renders each Engine-finalized calculation segment independently and applies each historical segment's end bound to native behavior overlays, hit testing and selection. A generated position box can extend across that boundary while retaining its original Engine anchor. New segment anchors come from fresh finalized input; user presentation offsets may move drawings. Aggregate collections serve counts and object inspection. Directional start markers use the Engine's finalized event and actual target-candle metadata. Stable object identities preserve appearance and visibility settings; the accepted Algorithm References own marker defaults and trading rules.
 
 ### 9.1 Visibility and appearance
 
 Users can control presentation properties such as visibility, line/fill appearance, label styling, and selected object appearance.
 
-Configure and Appearance use the same collapsible groups. Foundation contains Reaction, Blue Line, A, S, E, E stop lines, Order reactions and Order stops. Secondary contains StopAll. PH-PL contains PH, PL, MBL and Change market line. Configure links PH and PL markers with their labels, and the MBL line with its label. The Change market line switch controls the vertical line, icon and timestamp together. Its label shows the line's source candle time to the second in Asia/Tehran.
+Configure groups are expanded by default. Foundation contains Reaction, Blue Line, A, S, E, E stop lines, Order reactions and Order stops. Secondary contains StopAll. PH-PL contains PH, PL, MBL and Change market line. Configure links PH and PL markers with their labels, and the MBL line with its label. The Change market line switch controls the vertical line and timestamp together. Its label shows the line's source candle time to the second in Asia/Tehran.
 
-Each group has its own T/F visibility, color and font size controls. Foundation shows finalized S and E verdicts, Secondary shows StopAll verdicts, and PH-PL shows primary verdicts. Repeated Foundation behaviors show a star above their S/E label. Each star run uses exact behavior identity and the same final T/F. The star uses the Foundation
-verdict font size, Secondary N/A color, and Foundation verdict visibility. Existing default verdict sizes, weights and repeated StopAll placement apply unless the corresponding appearance control changes them. Changes repaint the finalized result and participate in saved preferences and templates.
+Each group has its own T/F visibility, color and font size controls. Foundation provides separate visibility switches for `*` and `X`. Secondary provides a separate switch for `N/A`. These auxiliary marks default to `#808080`. They sit below T/F in bullish results and above T/F in bearish results. Changes repaint the finalized result and participate in saved preferences and templates.
 
 Presentation objects may support UI-only customization such as:
 
@@ -271,9 +272,15 @@ Such changes do not rewrite the underlying Engine payload.
 
 ### 9.2 Object Tree
 
-The Object Tree provides a shared inspection/selection surface for user drawings and current indicator presentation objects.
+The Object Tree provides a shared inspection/selection surface for user drawings and current indicator presentation objects, including Reaction numbers, T/F and auxiliary marks, and the individual line, icon and timestamp of a market transition.
 
 Selecting an object can focus it in the Chart context. Object visibility, locking, grouping/organization, and deletion actions remain UI concerns.
+
+Finalized Buy and Sell positions appear in the Object Tree under their compact type labels. The position object supports selection, locking, visibility and deletion through the same Chart controls. Unlock the object to move its time and price coordinates or adjust its stop, target and width. Configuration includes a Positions section with separate Buy and Sell lists and one visibility switch per type. The type switch acts on the whole type, and the Object Tree acts on one drawing.
+
+Chart retains position edits and deletions by the finalized position ID. They are applied when the same position is available on a subsequent Apply, Live update or chart reload. Editing the chart changes its presentation geometry. The Engine result and Manual Review evidence keep the finalized values. See the [position algorithm reference](../../../engine/algorithms/TradingBot_Position_Algorithm_Reference.md) for the Engine contract.
+
+Configure includes a Liquidity section with visibility switches for active, collected, and repeated F liquidity. Collected visibility also applies to collected members of repetition groups. Eligible lines use the same half-pixel gray stroke regardless of status. The centered `$$$` follows its source S/E label size. A liquidity line appears in the Object Tree and supports presentation edits, movement, endpoint resizing, locking, and deletion. Shift holds the other endpoint's price during endpoint edits. Double-clicking an indicator object copies its Tehran timestamp, direction, and behavior or object label.
 
 ## 10. Drawings and annotations
 
@@ -283,7 +290,7 @@ Chart provides line, shape, text, freehand, measurement and manual position tool
 
 Drawing points are stored in canonical chart time/price coordinates so presentation-density changes do not redefine their market position.
 
-Most completed drawing tools return to cursor mode after creation; freehand brush interaction remains armed for repeated strokes until the user changes/cancels the tool.
+Most completed drawing tools return to cursor mode after creation. Freehand brush interaction remains armed for repeated strokes until the user changes or cancels the tool. The crosshair remains available when a drawing tool is selected and during pointer-captured drawing gestures, subject to the chart's Crosshair preference.
 
 ### 10.2 Selection and editing
 
@@ -307,7 +314,7 @@ The drawing toolbar itself has persistent ordering. Desktop users can reorder to
 
 Undo/redo snapshots cover user drawings and compatible presentation-object state. Indicator presentation snapshots are restored only when they belong to the same active calculation identity; stale calculation objects are not revived across a different calculation.
 
-Legacy snapshots omit retired Long/Short drawings, automatic positions and setup-assessment labels while retaining unrelated drawings and native indicator objects.
+Legacy snapshots omit the retired automatic annotation and assessment types while retaining unrelated drawings and native indicator objects. Current generated position history applies presentation overrides to matching finalized IDs.
 
 ### 10.5 Persistence
 
@@ -329,23 +336,25 @@ If no valid report identity exists, or the persisted report cannot be found/load
 
 ### 11.2 Review surface
 
-Manual Review presents a chronological event timeline based on finalized calculation/report data. Events are grouped by Tehran calendar day and organized by behavior families/subtypes.
+Manual Review presents a chronological event timeline based on finalized calculation/report data. A, Order Audit, and MBL start unchecked. Use Find with the copied Tehran timestamp, direction, and event label or position type. The timeline stays in place and opens and highlights the matched card and its Bridge disclosure. A matching card hidden by another filter is revealed while located. Events are grouped by Tehran calendar day and organized by behavior families/subtypes.
 
 The review surface provides:
 
-- calculation metadata;
+- calculation metadata, including the Engine-reported calculation duration;
 - behavior-family/subtype filters;
 - date-range filtering;
+- one-click copying of a timestamp, event direction, and behavior label;
 - expandable finalized Bridge detail;
 - copyable Bridge detail;
 - a text report of the currently visible events;
-- copy/download of the review report.
+- copy/download of the filtered text report and a ZIP export of the full calculation.
 
 Bridge detail is a display-only view of finalized supplied data. It does not infer a new behavior or Order identity from row position.
 
-Counted behavior labels retain the finalized supplied number with a hyphen
-separator, including E-3, StopAll-2, PH-5 and PL-2; the report does not infer a
-trading count from row order.
+Counted behavior labels retain the finalized supplied number, as in E3,
+StopAll-2, PH-5 and PL-2. The timeline shows the published T/F verdict inside
+the behavior chip when available. The timestamp copies the direction of that
+event, the Blue or Red family for S/E, and any published verdict.
 Reaction, Reset and Blue Line filters start unchecked and their events stay
 hidden until explicitly selected. Other behavior filters remain available.
 The aggregate All checkbox reflects partially selected families.
@@ -359,6 +368,24 @@ label; there is no verdict column or verdict-based output mode. Copy and
 download use that same filtered text. Report typography uses local styles,
 wider reading columns and responsive stacking.
 
+Export opens a dialog that selects which files to include in the ZIP. The
+choices are HTML, CSV, JSON and NDJSON. The offline HTML at `html/index.html`
+carries the current view settings, including date and category filters and
+open sections. The data files cover the full calculation regardless of those
+settings. The Bridge Output checkbox applies to CSV, JSON and NDJSON. HTML
+always includes the expandable Bridge details. Legacy calculations retain
+missing timestamps and timings as unavailable.
+
+The data files start with metadata for source identity, timeframes, directions,
+ranges, timestamps, Engine timings and collection counts. Indented JSON holds
+the published result under `payload` and the chronological event index under
+`events`. For CSV and NDJSON, `section` identifies metadata, event or payload
+records. Payload paths are JSON Pointers. Empty containers precede their child
+records, so their types and empty collections are preserved. A large CSV value
+can occupy consecutive rows with `encoding` set to `json-string-fragment`.
+Decode each fragment as a JSON string, join them in `part` order and then parse
+the result as JSON. This keeps fragments within spreadsheet cell limits.
+
 
 Primary structures use the names MBL, PH and PL. Their labels and filter colors
 share the Chart primary presentation defaults and honor supplied appearance
@@ -370,7 +397,7 @@ from this page does not remove it from the authoritative calculation payload.
 
 ### 11.3 Report identity and local state
 
-A fixed report link opens its immutable calculation snapshot. Category and date filters affect the current view and export. Manual Review creates no True/False verdict state and does not read or restore historical local verdict selections. Existing report payloads remain readable as saved evidence.
+A fixed report link opens its immutable calculation snapshot. Category and date filters affect the current view, the filtered text report and the initial view of the offline HTML. Manual Review displays Engine-supplied verdicts and leaves their assessment with the Engine. Existing report payloads remain readable as saved evidence.
 
 Opening an available Live report saves its snapshot. The latest result for each chart and timeframe can also be opened after a server restart. If an older result was never opened and is no longer available, the report page prompts the user to update the indicator in the Chart tab.
 
@@ -429,7 +456,7 @@ While Real-time Chart is enabled, Verify All runs every ten minutes independentl
 
 The popover groups candle polling, full verification and indicator calculation in separate sections. Candle polling shows its own countdown and active check progress. Full verification shows the time until the next scheduled Verify All beside its progress percentage. Candles verified is a separate coverage metric for the stored RAW. Automatic checks update the panel quietly. Manual Verify All remains available when Real-time Chart is disabled and reports the number of candles compared, corrected, and restored from gaps on completion. When FARAZ is unavailable, the panel marks verification Offline and shows the known coverage. Corrections refresh displayed candles and recalculate affected indicator results using the current tab's applied selection.
 
-Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. The panel shows the active calculation's reported percentage and stage while candle polling continues. The calculation reaches 100% when the chart accepts the updated result. Opening or refreshing a chart restores the latest saved result for that chart and display timeframe. Apply is required when that timeframe has no saved result. The tab remembers its Indicator Calculation setting across reloads. Temporary failures keep the last result visible and retry. Stored candles can be processed while the market-data source is unavailable.
+Indicator Calculation starts with the result displayed in the current browser tab. Enabling it immediately processes the backlog through the latest available RAW candle, then continues at the configured interval. The panel shows the active calculation's reported percentage and stage while candle polling continues. The calculation reaches 100% when the chart accepts the updated result. Opening or refreshing a chart restores the latest saved result for that chart and display timeframe. Apply is required when that timeframe has no saved result. Indicator Calculation and polling preferences persist across reloads and apply to every chart. Temporary failures keep the last result visible and retry. Stored candles can be processed while the market-data source is unavailable.
 
 ## 13. Algorithm reference workspace
 
@@ -453,15 +480,15 @@ The Algorithm workspace is a convenience reference surface. Its content does not
 
 | UI-relevant state | Primary owner | User contract |
 | --- | --- | --- |
-| Active workspace | Browser UI | Restored when the saved workspace remains valid. |
+| Active workspace | Browser UI + URL | `/chart`, `/faraz`, `/algorithm`, and `/alert` support direct navigation and browser history. |
 | Alert rules | Browser UI | Rule definitions persist locally. In-progress sequences belong to the open tab and current live calculation. |
 | Selected chart/timeframe | Browser UI + tab URL | Valid chart identity/timeframe can survive refresh; explicit tab URL state takes precedence where present. |
 | Visible pan/zoom range | Chart runtime | Presentation state; not the calculation-range authority. |
-| Indicator form/range preferences | Browser UI | May restore for the same chart context; active calculated truth is not reconstructed from form state. |
+| Indicator form/range preferences | Local preferences file and browser fallback | The form, including the indicator switch, restores for the same chart context. A cached result restores independently of those inputs. |
 | Active indicator result | Current calculation context | Cleared when incompatible chart/source/timeframe context changes. |
 | Indicator visual overrides | Browser UI | Presentation-only customization; not trading semantics. |
 | Drawings | Chart + server-backed local persistence | Restore with the chart; browser fallback may aid recovery. |
-| Chart display preferences | Browser UI | Persist locally where current controls support it. |
+| Real-time Chart and drawing tool preferences | Local preferences file and browser fallback | Saved controls restore after a restart. |
 | Workspace/object-tree preferences | Browser UI | Presentation organization only. |
 | FARAZ exporter form/job identity | FARAZ UI | Persists locally enough to restore workflow state when still valid. |
 | FARAZ authentication/session | FARAZ/server boundary | Connection state is visible; secret material is not UI trading state. |
@@ -541,7 +568,9 @@ Examples of current behavior include:
 - missing Manual Review reports remain an inline report error;
 - destructive RAW deletion requires explicit confirmation.
 
-The workstation footer groups Health, Indicator, Cache, FARAZ, Real-Time and Live-Calculation in one compact bordered cluster. Market context and the right-aligned clock have separate borders and dividers. At narrow widths the two left groups can scroll while the clock stays visible. Real-Time reflects candle polling and verification. Live-Calculation reflects the indicator continuation switch and its calculation errors. Active states have green indicators, inactive states have amber indicators, and errors pulse red with a steady red indicator when reduced motion is enabled. The health control opens the error log. Cache opens the Reload cache dialog. Real-Time opens the same popover as the toolbar control. Hovering over or focusing Real-Time shows the next candle poll and full verification countdowns. Clicking the From/To range copies the full filename of the selected RAW file, including its extension.
+The workstation footer groups Health, Indicator, Cache, FARAZ, Real-Time and Live-Calculation in one compact bordered cluster. Market context and the right-aligned clock have separate borders and dividers. At narrow widths the two left groups can scroll while the clock stays visible. Real-Time reflects candle polling and verification. Live-Calculation reflects the indicator continuation switch and its calculation errors. Active states have green indicators, inactive states have amber indicators, and errors pulse red with a steady red indicator when reduced motion is enabled. The health control opens the error log. Cache opens the Reload cache dialog and turns yellow when the displayed result came from cache. Real-Time opens the same popover as the toolbar control. Hovering over or focusing Real-Time shows the next candle poll and full verification countdowns. Clicking the From/To range copies the full filename of the selected RAW file, including its extension.
+
+Hover over, focus, or tap the footer clock to see the selected broker and symbol's market session. Both the footer clock and the next scheduled transition display Tehran time. The clock border shows green for open and red for closed. Broker profiles use New York time for sessions, including automatic daylight saving changes, daily breaks, and weekend closures. The bundled holiday calendar applies published shorter sessions and full closures without a network request. When an applicable holiday schedule is unavailable, the popup flags the missing hours and shows a countdown only if the next transition is known. Continuous spot markets show their regular 24/7 schedule.
 
 ## 19. Responsive layout
 

@@ -24,7 +24,16 @@ function Invoke-WebRequest {
 }
 function Show-LauncherFrame {}
 function Write-LauncherEvent([string]$Kind, [string]$Value, [string]$Color = 'Gray') {
-  if ($Kind -eq 'Ready') { $script:readyPort = $Value }
+  if ($Kind -eq 'Ready') {
+    $script:readyPort = $Value
+    $script:runner.LocalUrl = "http://localhost:$Value/"
+  }
+}
+function Start-Process {
+  [CmdletBinding()]
+  param([string]$FilePath)
+  $script:browserUrls.Add($FilePath)
+  if ($script:browserUnavailable) { throw 'Browser handler unavailable in the fixture.' }
 }
 
 function New-InstalledDependencies {
@@ -218,6 +227,8 @@ try {
   $originalProjectRoot = $env:TRADINGBOT_PROJECT_ROOT
   $nodePath = (Get-Command node -CommandType Application | Select-Object -First 1).Source
   $script:screenActive = $false
+  $script:browserUrls = [Collections.Generic.List[string]]::new()
+  $script:browserUnavailable = $false
   $ServerProgram = @'
 import { basename } from 'node:path';
 if (basename(process.cwd()) !== 'chart' || process.env.TRADINGBOT_PYTHON !== 'fixture python.exe') process.exit(15);
@@ -226,6 +237,13 @@ console.log('TRADINGBOT_VITE_READY 5188');
   try {
     Assert-Launcher ((Start-DevServer $nodePath 'fixture python.exe') -eq 'Exited' -and (Get-Location).Path -eq $originalLocation) 'Vite must run from the chart directory and preserve the caller location.'
     Assert-Launcher ($script:readyPort -eq '5188') 'The launcher must forward the actual bound port to the dashboard.'
+    if ($script:OnWindows) {
+      Assert-Launcher ($script:browserUrls.Count -eq 1 -and $script:browserUrls[0] -eq 'http://localhost:5188/') 'The launcher must open the actual ready address in the default browser.'
+      Assert-Launcher ((Start-DevServer $nodePath 'fixture python.exe') -eq 'Exited' -and $script:browserUrls.Count -eq 1) 'Restarting on the same address must not open a duplicate browser tab.'
+      $script:browserUnavailable = $true
+      $ServerProgram = $ServerProgram.Replace('5188', '5189')
+      Assert-Launcher ((Start-DevServer $nodePath 'fixture python.exe') -eq 'Exited' -and $script:browserUrls[-1] -eq 'http://localhost:5189/') 'The launcher must attempt the new address and tolerate an unavailable browser.'
+    }
     Assert-Launcher ($env:TRADINGBOT_PYTHON -eq 'fixture python.exe' -and $env:TRADINGBOT_PROJECT_ROOT -eq $root) 'The launcher must pass its runtime and checkout context to Vite.'
   } finally {
     $env:TRADINGBOT_PYTHON = $originalPython
@@ -263,7 +281,7 @@ exit 13
       $process.Dispose()
     }
   }
-  Write-Host 'PASS: terminal layout, production update and state protection, dependencies, actual Vite port, and Windows batch entry.'
+  Write-Host 'PASS: terminal layout, production update and state protection, dependencies, actual Vite port, default browser handoff, and Windows batch entry.'
 } finally {
   $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
   $absoluteFixture = [IO.Path]::GetFullPath($fixture)
