@@ -1,0 +1,1590 @@
+{
+  "checkpoint": 415,
+  "phase": "07/W3",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "entry_algorithm": "492899d21573624cc5ad05fb5369eb1989bc4082",
+  "entry_tree": "ac841da7b50d7911d0b1f5bd008d0dfbcb3189af",
+  "scope": "B06-06 E09–E12 lines 394–419; scoped local only",
+  "source": {
+    "path": "engine/pipeline/e_zone_detector.py",
+    "blob": "240369edf3352006082efe094eb68ac027d6689f",
+    "range": [
+      394,
+      419
+    ],
+    "canonical_inventory": "f535795a7a247f3fa37307be6f426270ef9e0fbf",
+    "historical_inventory": "1308a85ef49957aeb5e603c5347916fb79d616bf",
+    "historical_partition": "7b413718c05f91e4ce0eeddadc87180eec8ec87e",
+    "crosswalk": "6b94505fb94d9f11dc775fdc0b423ffe27e03de7",
+    "cp317": [
+      "c38cf82dcec0df3e2ed41fdf13a3760ac8a0200f",
+      "96c21b30d6e4a1f309443e08631c518bc4cc2c4f"
+    ]
+  },
+  "groups": [
+    {
+      "id": "E09-A",
+      "span": [
+        394,
+        396
+      ],
+      "contract": "Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery."
+    },
+    {
+      "id": "E10-A",
+      "span": [
+        398,
+        401
+      ],
+      "contract": "Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback."
+    },
+    {
+      "id": "E10-B",
+      "span": [
+        402,
+        402
+      ],
+      "contract": "Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged."
+    },
+    {
+      "id": "E10-C",
+      "span": [
+        403,
+        411
+      ],
+      "contract": "Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None."
+    },
+    {
+      "id": "E11-A",
+      "span": [
+        413,
+        414
+      ],
+      "contract": "Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it."
+    },
+    {
+      "id": "E12-A",
+      "span": [
+        416,
+        417
+      ],
+      "contract": "Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing."
+    }
+  ],
+  "rows": [
+    {
+      "category": "branches",
+      "current_row": 67,
+      "node": 1976,
+      "ast_node": 1976,
+      "span": [
+        403,
+        8,
+        411,
+        29
+      ],
+      "operation": [
+        23,
+        "For",
+        [
+          "next",
+          "exhausted"
+        ]
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Visit four named caches in literal order: candidates, carried, post-stop, direct parent-stop.",
+      "prior_w1": {
+        "original_id": 1976,
+        "disposition": "VERIFIED",
+        "interpretation": "Visit four named caches in literal order: candidates, carried, post-stop, direct parent-stop."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "branches",
+      "current_row": 68,
+      "node": 1990,
+      "ast_node": 1990,
+      "span": [
+        410,
+        12,
+        411,
+        29
+      ],
+      "operation": [
+        23,
+        "If",
+        [
+          "true",
+          "false"
+        ]
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Clear only non-None cache; empty cache still cleared; no truthiness test.",
+      "prior_w1": {
+        "original_id": 1990,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear only non-None cache; empty cache still cleared; no truthiness test."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "comparisons",
+      "current_row": 41,
+      "node": 1991,
+      "ast_node": 1991,
+      "span": [
+        410,
+        15,
+        410,
+        32
+      ],
+      "operation": [
+        23,
+        [
+          "IsNot"
+        ]
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Clear only non-None cache; empty cache still cleared; no truthiness test.",
+      "prior_w1": {
+        "original_id": 1991,
+        "disposition": "VERIFIED",
+        "interpretation": "Clear only non-None cache; empty cache still cleared; no truthiness test."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 120,
+      "node": 1966,
+      "ast_node": 1966,
+      "span": [
+        401,
+        32,
+        401,
+        44
+      ],
+      "operation": [
+        23,
+        "dict",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Create new shallow mapping from supplied resets; assign before sorting, values retained by reference.",
+      "prior_w1": {
+        "original_id": 1966,
+        "disposition": "VERIFIED",
+        "interpretation": "Create new shallow mapping from supplied resets; assign before sorting, values retained by reference."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 121,
+      "node": 1972,
+      "ast_node": 1972,
+      "span": [
+        402,
+        37,
+        402,
+        66
+      ],
+      "operation": [
+        23,
+        "sorted",
+        "BUILTIN_CANDIDATE",
+        [],
+        1,
+        []
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Sort reset keys ascending, retaining no values in sorted time list; after mapping assignment.",
+      "prior_w1": {
+        "original_id": 1972,
+        "disposition": "VERIFIED",
+        "interpretation": "Sort reset keys ascending, retaining no values in sorted time list; after mapping assignment."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 122,
+      "node": 1985,
+      "ast_node": 1985,
+      "span": [
+        409,
+        20,
+        409,
+        51
+      ],
+      "operation": [
+        23,
+        "getattr",
+        "BUILTIN_CANDIDATE",
+        [],
+        3,
+        []
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Read each named attribute with None default, tolerating absence.",
+      "prior_w1": {
+        "original_id": 1985,
+        "disposition": "VERIFIED",
+        "interpretation": "Read each named attribute with None default, tolerating absence."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 123,
+      "node": 1995,
+      "ast_node": 1995,
+      "span": [
+        411,
+        16,
+        411,
+        29
+      ],
+      "operation": [
+        23,
+        "cache.clear",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        0,
+        []
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Call cache.clear in place, preserving object identity; no local catch or rollback.",
+      "prior_w1": {
+        "original_id": 1995,
+        "disposition": "VERIFIED",
+        "interpretation": "Call cache.clear in place, preserving object identity; no local catch or rollback."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 124,
+      "node": 2006,
+      "ast_node": 2006,
+      "span": [
+        414,
+        15,
+        414,
+        48
+      ],
+      "operation": [
+        24,
+        "self.chronology.reset_time",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        []
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Delegate reset argument to chronology.reset_time; return unchanged, errors propagate.",
+      "prior_w1": {
+        "original_id": 2006,
+        "disposition": "VERIFIED",
+        "interpretation": "Delegate reset argument to chronology.reset_time; return unchanged, errors propagate."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "calls",
+      "current_row": 125,
+      "node": 2017,
+      "ast_node": 2017,
+      "span": [
+        417,
+        15,
+        417,
+        60
+      ],
+      "operation": [
+        25,
+        "self.chronology.main_index",
+        "UNRESOLVED_DYNAMIC",
+        [],
+        1,
+        [
+          "clamp"
+        ]
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Delegate value to chronology.main_index with clamp=True; no local conversion.",
+      "prior_w1": {
+        "original_id": 2017,
+        "disposition": "VERIFIED",
+        "interpretation": "Delegate value to chronology.main_index with clamp=True; no local conversion."
+      },
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1130,
+      "node": 1945,
+      "ast_node": 1945,
+      "span": [
+        396,
+        15,
+        396,
+        36
+      ],
+      "operation": [
+        22,
+        1944,
+        "Load",
+        "self._sequence_resets"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Load self._sequence_resets: Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1131,
+      "node": 1946,
+      "ast_node": 1946,
+      "span": [
+        396,
+        15,
+        396,
+        19
+      ],
+      "operation": [
+        22,
+        1944,
+        "Load",
+        "self"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1132,
+      "node": 1947,
+      "ast_node": 1947,
+      "span": [
+        394,
+        5,
+        394,
+        13
+      ],
+      "operation": [
+        19,
+        1942,
+        "Load",
+        "property"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1133,
+      "node": 1948,
+      "ast_node": 1948,
+      "span": [
+        395,
+        33,
+        395,
+        52
+      ],
+      "operation": [
+        19,
+        1942,
+        "Load",
+        "dict[]"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1134,
+      "node": 1949,
+      "ast_node": 1949,
+      "span": [
+        395,
+        33,
+        395,
+        37
+      ],
+      "operation": [
+        19,
+        1942,
+        "Load",
+        "dict"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1135,
+      "node": 1951,
+      "ast_node": 1951,
+      "span": [
+        395,
+        38,
+        395,
+        46
+      ],
+      "operation": [
+        19,
+        1942,
+        "Load",
+        "datetime"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1136,
+      "node": 1952,
+      "ast_node": 1952,
+      "span": [
+        395,
+        48,
+        395,
+        51
+      ],
+      "operation": [
+        19,
+        1942,
+        "Load",
+        "int"
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1137,
+      "node": 1956,
+      "ast_node": 1956,
+      "span": [
+        399,
+        38,
+        399,
+        57
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "dict[]"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1138,
+      "node": 1957,
+      "ast_node": 1957,
+      "span": [
+        399,
+        38,
+        399,
+        42
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "dict"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1139,
+      "node": 1959,
+      "ast_node": 1959,
+      "span": [
+        399,
+        43,
+        399,
+        51
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "datetime"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1140,
+      "node": 1960,
+      "ast_node": 1960,
+      "span": [
+        399,
+        53,
+        399,
+        56
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "int"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1141,
+      "node": 1964,
+      "ast_node": 1964,
+      "span": [
+        401,
+        8,
+        401,
+        29
+      ],
+      "operation": [
+        23,
+        1963,
+        "Store",
+        "self._sequence_resets"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Store self._sequence_resets: Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1142,
+      "node": 1965,
+      "ast_node": 1965,
+      "span": [
+        401,
+        8,
+        401,
+        12
+      ],
+      "operation": [
+        23,
+        1963,
+        "Load",
+        "self"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1143,
+      "node": 1967,
+      "ast_node": 1967,
+      "span": [
+        401,
+        32,
+        401,
+        36
+      ],
+      "operation": [
+        23,
+        1963,
+        "Load",
+        "dict"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Load dict: Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1144,
+      "node": 1968,
+      "ast_node": 1968,
+      "span": [
+        401,
+        37,
+        401,
+        43
+      ],
+      "operation": [
+        23,
+        1963,
+        "Load",
+        "resets"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Load resets: Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1145,
+      "node": 1970,
+      "ast_node": 1970,
+      "span": [
+        402,
+        8,
+        402,
+        34
+      ],
+      "operation": [
+        23,
+        1969,
+        "Store",
+        "self._sequence_reset_times"
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Store self._sequence_reset_times: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1146,
+      "node": 1971,
+      "ast_node": 1971,
+      "span": [
+        402,
+        8,
+        402,
+        12
+      ],
+      "operation": [
+        23,
+        1969,
+        "Load",
+        "self"
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1147,
+      "node": 1973,
+      "ast_node": 1973,
+      "span": [
+        402,
+        37,
+        402,
+        43
+      ],
+      "operation": [
+        23,
+        1969,
+        "Load",
+        "sorted"
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Load sorted: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1148,
+      "node": 1974,
+      "ast_node": 1974,
+      "span": [
+        402,
+        44,
+        402,
+        65
+      ],
+      "operation": [
+        23,
+        1969,
+        "Load",
+        "self._sequence_resets"
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Load self._sequence_resets: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1149,
+      "node": 1975,
+      "ast_node": 1975,
+      "span": [
+        402,
+        44,
+        402,
+        48
+      ],
+      "operation": [
+        23,
+        1969,
+        "Load",
+        "self"
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "Load self: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1150,
+      "node": 1977,
+      "ast_node": 1977,
+      "span": [
+        403,
+        12,
+        403,
+        22
+      ],
+      "operation": [
+        23,
+        1976,
+        "Store",
+        "cache_name"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Store cache_name: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1151,
+      "node": 1984,
+      "ast_node": 1984,
+      "span": [
+        409,
+        12,
+        409,
+        17
+      ],
+      "operation": [
+        23,
+        1983,
+        "Store",
+        "cache"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Store cache: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1152,
+      "node": 1986,
+      "ast_node": 1986,
+      "span": [
+        409,
+        20,
+        409,
+        27
+      ],
+      "operation": [
+        23,
+        1983,
+        "Load",
+        "getattr"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load getattr: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1153,
+      "node": 1987,
+      "ast_node": 1987,
+      "span": [
+        409,
+        28,
+        409,
+        32
+      ],
+      "operation": [
+        23,
+        1983,
+        "Load",
+        "self"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load self: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1154,
+      "node": 1988,
+      "ast_node": 1988,
+      "span": [
+        409,
+        34,
+        409,
+        44
+      ],
+      "operation": [
+        23,
+        1983,
+        "Load",
+        "cache_name"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load cache_name: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1155,
+      "node": 1992,
+      "ast_node": 1992,
+      "span": [
+        410,
+        15,
+        410,
+        20
+      ],
+      "operation": [
+        23,
+        1990,
+        "Load",
+        "cache"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load cache: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1156,
+      "node": 1996,
+      "ast_node": 1996,
+      "span": [
+        411,
+        16,
+        411,
+        27
+      ],
+      "operation": [
+        23,
+        1994,
+        "Load",
+        "cache.clear"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load cache.clear: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1157,
+      "node": 1997,
+      "ast_node": 1997,
+      "span": [
+        411,
+        16,
+        411,
+        21
+      ],
+      "operation": [
+        23,
+        1994,
+        "Load",
+        "cache"
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "Load cache: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1158,
+      "node": 1998,
+      "ast_node": 1998,
+      "span": [
+        398,
+        5,
+        398,
+        27
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "sequence_resets.setter"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1159,
+      "node": 1999,
+      "ast_node": 1999,
+      "span": [
+        398,
+        5,
+        398,
+        20
+      ],
+      "operation": [
+        19,
+        1953,
+        "Load",
+        "sequence_resets"
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1160,
+      "node": 2004,
+      "ast_node": 2004,
+      "span": [
+        413,
+        33,
+        413,
+        39
+      ],
+      "operation": [
+        19,
+        2001,
+        "Load",
+        "object"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1161,
+      "node": 2007,
+      "ast_node": 2007,
+      "span": [
+        414,
+        15,
+        414,
+        41
+      ],
+      "operation": [
+        24,
+        2005,
+        "Load",
+        "self.chronology.reset_time"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.chronology.reset_time: Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1162,
+      "node": 2008,
+      "ast_node": 2008,
+      "span": [
+        414,
+        15,
+        414,
+        30
+      ],
+      "operation": [
+        24,
+        2005,
+        "Load",
+        "self.chronology"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.chronology: Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1163,
+      "node": 2009,
+      "ast_node": 2009,
+      "span": [
+        414,
+        15,
+        414,
+        19
+      ],
+      "operation": [
+        24,
+        2005,
+        "Load",
+        "self"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1164,
+      "node": 2010,
+      "ast_node": 2010,
+      "span": [
+        414,
+        42,
+        414,
+        47
+      ],
+      "operation": [
+        24,
+        2005,
+        "Load",
+        "reset"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Load reset: Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1165,
+      "node": 2011,
+      "ast_node": 2011,
+      "span": [
+        413,
+        44,
+        413,
+        52
+      ],
+      "operation": [
+        19,
+        2001,
+        "Load",
+        "datetime"
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1166,
+      "node": 2015,
+      "ast_node": 2015,
+      "span": [
+        416,
+        33,
+        416,
+        41
+      ],
+      "operation": [
+        19,
+        2012,
+        "Load",
+        "datetime"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1167,
+      "node": 2018,
+      "ast_node": 2018,
+      "span": [
+        417,
+        15,
+        417,
+        41
+      ],
+      "operation": [
+        25,
+        2016,
+        "Load",
+        "self.chronology.main_index"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.chronology.main_index: Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1168,
+      "node": 2019,
+      "ast_node": 2019,
+      "span": [
+        417,
+        15,
+        417,
+        30
+      ],
+      "operation": [
+        25,
+        2016,
+        "Load",
+        "self.chronology"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Load self.chronology: Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1169,
+      "node": 2020,
+      "ast_node": 2020,
+      "span": [
+        417,
+        15,
+        417,
+        19
+      ],
+      "operation": [
+        25,
+        2016,
+        "Load",
+        "self"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Load self: Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1170,
+      "node": 2021,
+      "ast_node": 2021,
+      "span": [
+        417,
+        42,
+        417,
+        47
+      ],
+      "operation": [
+        25,
+        2016,
+        "Load",
+        "value"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Load value: Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "accesses",
+      "current_row": 1171,
+      "node": 2024,
+      "ast_node": 2024,
+      "span": [
+        416,
+        46,
+        416,
+        49
+      ],
+      "operation": [
+        19,
+        2012,
+        "Load",
+        "int"
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Definition metadata: decorator/property binding or postponed type annotation as applicable, not a local invocation or runtime type check. Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 125,
+      "node": 1964,
+      "ast_node": 1964,
+      "span": [
+        401,
+        8,
+        401,
+        29
+      ],
+      "operation": [
+        23,
+        "self._sequence_resets",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E10-A",
+      "contained_groups": [],
+      "semantic_role": "self._sequence_resets: Evaluate dict(resets), then assign a fresh shallow dict, retaining key/value references including falsey values. No runtime annotation validation, normalization, filtering or time conversion. Conversion failure prevents this assignment; external dynamic effects are not excluded. Assignment precedes sorting and invalidation. No rollback.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 126,
+      "node": 1970,
+      "ast_node": 1970,
+      "span": [
+        402,
+        8,
+        402,
+        34
+      ],
+      "operation": [
+        23,
+        "self._sequence_reset_times",
+        [
+          "EXPLICIT_OBJECT_MUTATION"
+        ]
+      ],
+      "group": "E10-B",
+      "contained_groups": [],
+      "semantic_role": "self._sequence_reset_times: Sort keys of the newly published mapping ascending into a fresh list and assign _sequence_reset_times. Empty input yields empty list; no values or time conversion. Incomparable keys or dynamic sorting failure can leave new mapping published, old/missing sorted times and old caches unchanged.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 127,
+      "node": 1995,
+      "ast_node": 1995,
+      "span": [
+        411,
+        16,
+        411,
+        29
+      ],
+      "operation": [
+        23,
+        "cache.clear",
+        [
+          "POTENTIAL_MUTATION",
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E10-C",
+      "contained_groups": [],
+      "semantic_role": "cache.clear: Visit _order_candidates_cache, _carried_orders_cache, _post_stop_orders_cache, _direct_parent_stop_cache in fixed order; resolve each with getattr(self,name,None) at visit time. Missing or exactly None skips it. Any other object including an empty dict or custom falsey cache receives dynamic clear() in place; no truthiness test, replacement or return-value use. A falsey non-cache without callable clear can raise. No other cache, order ledger, live continuation or chronology reset cleared by this body. Failure during lookup or clear prevents remaining visits; earlier successful mapping/key assignments and clear effects remain; failing clear may partially mutate. No catch, rollback, retry or transaction. Successful setter returns implicit None.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 128,
+      "node": 2006,
+      "ast_node": 2006,
+      "span": [
+        414,
+        15,
+        414,
+        48
+      ],
+      "operation": [
+        24,
+        "self.chronology.reset_time",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "self.chronology.reset_time: Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "effects",
+      "current_row": 129,
+      "node": 2017,
+      "ast_node": 2017,
+      "span": [
+        417,
+        15,
+        417,
+        60
+      ],
+      "operation": [
+        25,
+        "self.chronology.main_index",
+        [
+          "DYNAMIC_EFFECT_UNKNOWN"
+        ]
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "self.chronology.main_index: Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 13,
+      "node": 1944,
+      "ast_node": 1944,
+      "span": [
+        396,
+        8,
+        396,
+        36
+      ],
+      "operation": [
+        22,
+        "Return",
+        null
+      ],
+      "group": "E09-A",
+      "contained_groups": [],
+      "semantic_role": "Return the actual stored mutable _sequence_resets mapping, no defensive copy or transformation. In-place insertion, deletion, update or clear through the alias does not by itself invoke E10, refresh sorted reset keys or invalidate four dependent caches. Successful replacement detaches older aliases from the new backing mapping. Mapping and sorted-key consumers can therefore diverge after bypass mutation; actual reachability is not established. Missing backing attribute may raise. No local recovery.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 14,
+      "node": 2005,
+      "ast_node": 2005,
+      "span": [
+        414,
+        8,
+        414,
+        48
+      ],
+      "operation": [
+        24,
+        "Return",
+        null
+      ],
+      "group": "E11-A",
+      "contained_groups": [],
+      "semantic_role": "Resolve chronology.reset_time dynamically, pass reset unchanged, return provider result unchanged. No local parsing, type conversion, validation, fallback, caching or catch. Native Reaction-owned MarketChronology builds six-field key before lookup: int(index default -1), int(from_first_idx default -1), second_time default None, display_time default None, timestamp default None, str(broken_level default empty string). Cache hit iff result is not None. Miss: truthy second_time parsed with format %Y-%m-%d %H:%M:%S, else truthy display_time parsed identically, else required timestamp read unchanged. Store under key then return. Malformed truthy earlier fields do not trigger fallback. Missing timestamp can raise after key construction. Key conversion/hash, attributes, parsing and cache operations can raise; E wrapper propagates, no rollback. Chronology owns cache; E10 does not invalidate it.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "category": "exits",
+      "current_row": 15,
+      "node": 2016,
+      "ast_node": 2016,
+      "span": [
+        417,
+        8,
+        417,
+        60
+      ],
+      "operation": [
+        25,
+        "Return",
+        null
+      ],
+      "group": "E12-A",
+      "contained_groups": [],
+      "semantic_role": "Resolve chronology.main_index dynamically, pass value unchanged with clamp=True explicitly, return unchanged. Native Reaction chronology computes bisect_right(times,timestamp)-1 on ordered main timestamps. Before first returns 0 with clamp; without clamp raises ValueError. Exact duplicate timestamp selects rightmost equal index. At or after last open returns last index on nonempty ordered input; no independent check of last candle close, detector start/end/range, or explicit upper clamp. Between opens maps to preceding index. Empty times yields -1 then clamp returns 0, not evidence a candle exists. No local normalization, fallback, bounds revalidation or exception handling. Custom provider may differ; no native reachability inferred from annotation or duck typing.",
+      "prior_w1": null,
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "B06-06-S01",
+      "span": [
+        394,
+        396
+      ],
+      "prior_interpretation": "Getter returns mutable stored dict itself; external mutation does not invoke setter or refresh derived sorted keys/caches.",
+      "groups": [
+        "E09-A"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-06-S02",
+      "span": [
+        398,
+        411
+      ],
+      "prior_interpretation": "Assignment first copies mapping, then sorts keys, then clears four existing non-null caches in fixed order. Any exception leaves earlier completed mutations; no rollback.",
+      "groups": [
+        "E10-A",
+        "E10-B",
+        "E10-C"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    },
+    {
+      "id": "B06-06-S03",
+      "span": [
+        413,
+        417
+      ],
+      "prior_interpretation": "Reset time is returned unchanged; main index explicitly requests clamp=True. No local time normalization.",
+      "groups": [
+        "E11-A",
+        "E12-A"
+      ],
+      "disposition": "REVIEWED_SCOPED_SOURCE_CONTRACT"
+    }
+  ],
+  "validation": {
+    "category_counts": {
+      "branches": 2,
+      "comparisons": 1,
+      "arithmetic": 0,
+      "calls": 6,
+      "accesses": 42,
+      "effects": 5,
+      "exits": 3
+    },
+    "rows": 59,
+    "w1": 9,
+    "additional": 50,
+    "supplemental": 3,
+    "identity_errors": 0,
+    "overlap": 0,
+    "missing": 0,
+    "extra": 0,
+    "cp317_link_total": 1109,
+    "cp317_link_errors": 0,
+    "filter_resolution_count": 18,
+    "prior_rows_revalidated": 1528,
+    "prior_w1_revalidated": 260,
+    "prior_additional_revalidated": 1268,
+    "prior_supplemental_revalidated": 16,
+    "prior_identity_errors": 0,
+    "canonical_total": 5257,
+    "covered_union": 1587,
+    "remaining": 3670,
+    "range": [
+      394,
+      419
+    ],
+    "historical_current_seven_category_identity": true,
+    "ast_node_array_identity": true,
+    "method": "Pinned canonical and historical seven arrays/node array equality; resolve all 18 filter IDs by kind and start position. All 1109 CP317 links matched unique canonical category/index/id/span, W1 crosswalk site/span and exact partition. Recomputed all 25 partition memberships by start line; five prior registers and six historical partition records matched exact row metadata, historical W1 text/disposition and supplements. B05 8318 category-index union recomputed independently from CP409 inventory and partitions; no missing or duplicate indices or range errors.",
+    "runtime": "NOT RUN",
+    "raw_payload": "NOT READ"
+  },
+  "findings": [
+    {
+      "id": "CP415-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-06-F01",
+      "description": "Revalidated getter identity, older alias detachment and in-place mutation bypass; distinguish mapping and sorted-key consumers without asserting a reachable bypass writer."
+    },
+    {
+      "id": "CP415-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-06-F02",
+      "description": "Revalidated mapping-copy-before-sort, ordered exact-None invalidation, falsey non-null cache call, constructor-before-init, partial failure/no rollback, native reset key and chronology boundaries. No new cross-owner or live activation claim."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Prior 1528 rows structurally checked (category/index/node/AST/span/operation, W1 ID/disposition/interpretation) and 16 supplements (ID/span/text). All 1109 CP317 links matched canonical inventory, W1 crosswalk and partition membership; only six reviewed historical partitions refetched, not all 25. B05 category-index union independently rechecked; 159 supplements retained from CP409, not item-by-item re-audited.",
+    "Grouped source contracts qualify local rows; no per-access runtime execution, empirical equivalence, or new cross-owner acceptance. Malformed data, dynamic objects, alias mutation and dispatch are conditional, not asserted reachable.",
+    "Git identity and remote text readback, not independent SHA-256/signature verification. No RAW payload, runtime, ZIP or production/main changes. Current explicit scope overrides historical ZIP/runtime startup rules."
+  ]
+}

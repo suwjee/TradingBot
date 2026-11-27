@@ -1,0 +1,185 @@
+{
+  "checkpoint": 415,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only; no new cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          248,
+          258
+        ],
+        [
+          343,
+          347
+        ],
+        [
+          357,
+          363
+        ],
+        [
+          382,
+          392
+        ],
+        [
+          394,
+          419
+        ],
+        [
+          1449,
+          1449
+        ],
+        [
+          1488,
+          1488
+        ]
+      ],
+      "contract": "Constructor passes truthy supplied reset map or fresh empty map through setter before chronology assignment and inherited audit initialization. Fresh instance normally has absent cache attrs; explicit reinitialization or custom behavior may expose existing caches. E reads reset-map membership later. LiveEContinuation.reconcile builds frozenset of reset mapping items as evidence/key when invoked; setter does not clear that continuation's stores. Its existence does not establish activation."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          557,
+          601
+        ],
+        [
+          819,
+          826
+        ],
+        [
+          998,
+          1069
+        ],
+        [
+          1093,
+          1096
+        ],
+        [
+          1406,
+          1407
+        ],
+        [
+          1730,
+          1734
+        ],
+        [
+          1794,
+          1807
+        ],
+        [
+          1876,
+          1876
+        ],
+        [
+          1995,
+          1996
+        ],
+        [
+          2088,
+          2088
+        ],
+        [
+          2175,
+          2180
+        ]
+      ],
+      "contract": "Mixin initializes four fresh dict caches after constructor reset publication. Direct parent-stop cache can distinguish cached None by membership. Four cache contracts differ from chronology cache. Sorted reset key consumers use bisect_right; mapping consumers read membership/value, making bypass divergence possible. No complete cross-owner cache proof or actual bypass writer asserted."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          1132,
+          1192
+        ],
+        [
+          1194,
+          1209
+        ],
+        [
+          1212,
+          1221
+        ],
+        [
+          1238,
+          1255
+        ]
+      ],
+      "contract": "Reaction owns MarketChronology, sequence/time-index aliases, reset cache and mapping. E11 delegates native six-component cache key and exact None check; second/display truthiness then timestamp fallback, no fallback on parse failure. E12 delegates bisect-right lower clamp only; empty returns zero with clamp, after last open returns last index, duplicates choose last equal. Lower bounds separately use bisect_left; E12 is not lower-window clipping."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          1386,
+          1409
+        ]
+      ],
+      "contract": "Native lifecycle detects complete StopAll sequence, assigns fresh dict mapping source_time to number through setter, last value for duplicate key by iteration; returns list of E zones and stopalls, no retrospective E prefix rebuild in this function. No new cross-owner acceptance."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2166,
+          2208
+        ],
+        [
+          2280,
+          2309
+        ],
+        [
+          2439,
+          2458
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3748,
+          3767
+        ]
+      ],
+      "contract": "Native factory supplies lifecycle priority but no explicit sequence_resets; passes optional live keywords only if continuation non-None. Direction calculation takes live.e_continuation only if live supplied. Native _run_live_calculation invokes prepare_pipeline_state without live, which defaults None. No evidence of active native E continuation on this traced path; other injected paths remain conditional."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          58,
+          68
+        ]
+      ],
+      "contract": "Transport stages bucket append and invokes calculate_live_from_buckets. Separate from E continuation activation; no runtime claim."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP415-F01",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-06-F01",
+      "description": "Revalidated getter identity, older alias detachment and in-place mutation bypass; distinguish mapping and sorted-key consumers without asserting a reachable bypass writer."
+    },
+    {
+      "id": "CP415-F02",
+      "status": "RESOLVED_SCOPED_DOCUMENTATION",
+      "historical": "B06-06-F02",
+      "description": "Revalidated mapping-copy-before-sort, ordered exact-None invalidation, falsey non-null cache call, constructor-before-init, partial failure/no rollback, native reset key and chronology boundaries. No new cross-owner or live activation claim."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local forensic review by GPT, not independently staffed. Existing AST inventories directly compared, not regenerated.",
+    "Prior 1528 rows structurally checked (category/index/node/AST/span/operation, W1 ID/disposition/interpretation) and 16 supplements (ID/span/text). All 1109 CP317 links matched canonical inventory, W1 crosswalk and partition membership; only six reviewed historical partitions refetched, not all 25. B05 category-index union independently rechecked; 159 supplements retained from CP409, not item-by-item re-audited.",
+    "Grouped source contracts qualify local rows; no per-access runtime execution, empirical equivalence, or new cross-owner acceptance. Malformed data, dynamic objects, alias mutation and dispatch are conditional, not asserted reachable.",
+    "Git identity and remote text readback, not independent SHA-256/signature verification. No RAW payload, runtime, ZIP or production/main changes. Current explicit scope overrides historical ZIP/runtime startup rules."
+  ]
+}
