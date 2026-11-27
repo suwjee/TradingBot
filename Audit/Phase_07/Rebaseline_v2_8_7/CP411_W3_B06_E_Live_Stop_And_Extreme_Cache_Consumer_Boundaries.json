@@ -1,0 +1,116 @@
+{
+  "checkpoint": 411,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          128,
+          151
+        ],
+        [
+          335,
+          390
+        ],
+        [
+          416,
+          435
+        ],
+        [
+          507,
+          578
+        ],
+        [
+          581,
+          606
+        ],
+        [
+          639,
+          675
+        ]
+      ],
+      "contract": "E02 rotates maps and always clears index; E03 validates identity. Parent stop clamps start to range_start, selects less iff detector bullish, supplies bound _search_parent_stop and maps non-null event to main index. Parent type is not a search-key component; parent decision_event_time and normalized price feed start/level. Order stop uses separate per-detector (start,level) membership cache including None; hit still validates E03; miss clamps start and supplies less iff order_direction != bearish. With normal opposite direction, both callback predicates are same trend direction; shared key is conditional on equivalent provider semantics. Both native callbacks bisect lower times at start/end, seek first strict crossing, return exact lower timestamp or None; indexed result (even None) is authoritative, no scan retry. Linear fallback normalizes selected low/high. _extreme_between maps both boundary instants to main positions, clamps to detector range and raises end to start if inverted; whole boundary candle OHLC included, no partial lower clipping. _zone consumes prospective source before ownership rejection. Optional continuation switches only when non-null; nonlive route separate."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          21,
+          21
+        ],
+        [
+          893,
+          939
+        ],
+        [
+          959,
+          1017
+        ],
+        [
+          1019,
+          1069
+        ],
+        [
+          1153,
+          1178
+        ],
+        [
+          1185,
+          1192
+        ]
+      ],
+      "contract": "LowerTimeframeIndex constructor retains candles reference, copies timestamps, defaults crossing retention off, builds power-of-two segment tree for both extrema, normalizes lows/highs with imported as_decimal, stores sequence position separately. Parent aggregation chooses left on equality; range query compares numeric extremes then earliest position, including cross-segment ties. Range query rejects left<0, right>length, left>=right, absent valid result. No rounding of chosen value. First crossing clamps positions, excludes Low>=level or High<=level, descends earliest eligible segment, optional index-owned retained crossing history (not E cache). Chronology retains aligned main/lower sequences; main_index uses bisect_right-1 and lower clamp, not nearest time. E05 does not invoke refresh_suffix; provider index stability and exact alignment conditional."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ]
+      ],
+      "contract": "Decimal helper returns existing Decimal unchanged, otherwise Decimal(str(value)). E04 level key uses numeric equality not string; E05 returns provider Decimal, not a local conversion."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2190,
+          2208
+        ],
+        [
+          2280,
+          2306
+        ],
+        [
+          3738,
+          3767
+        ]
+      ],
+      "contract": "Optional live continuation is forwarded only when present. Observed native live worker route calls prepare_pipeline_state without live argument, so do not equate live transport with active E04/E05 continuation. Dynamic callers must advance correct chronology and supply valid dirty evidence; no new cross-owner acceptance."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          22,
+          65
+        ]
+      ],
+      "contract": "Live transport retains buckets and market views and invokes calculate_live_from_buckets. This does not establish direct E04/E05 dispatch."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local review by GPT, not independently staffed. Existing AST inventories compared directly, not regenerated.",
+    "Local source-only coverage; no RAW, runtime, ZIP, new cross-owner acceptance or production change.",
+    "Correct dirty evidence, equivalent callback semantics for equal keys, stable candle/timestamp alignment, comparable finite Decimal prices and normal index bounds are conditional provider/caller requirements; malformed/custom inputs may diverge or raise, not asserted present.",
+    "No independent SHA-256 assertion; Git object identities and readback are publication checks. Native live transport does not establish active E continuation; no empirical cache-versus-full-recompute equivalence claimed."
+  ]
+}
