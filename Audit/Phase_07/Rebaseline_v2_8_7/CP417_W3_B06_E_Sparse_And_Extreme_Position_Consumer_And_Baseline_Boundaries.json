@@ -1,0 +1,1181 @@
+{
+  "checkpoint": 417,
+  "status": "BLOCKED_BASELINE_DRIFT",
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded dependency review; explicit separation of pinned and observed source; no new cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          368,
+          381
+        ],
+        [
+          440,
+          456
+        ],
+        [
+          458,
+          504
+        ],
+        [
+          581,
+          606
+        ],
+        [
+          176,
+          194
+        ]
+      ],
+      "contract": "E15 first assigns normalized values, integer candle codes, then E16 return table; on non-None mapping publishes same triple by direction, cache hits alias, no copy. E16 local table mutations are not published until successful return; E17 reads shared table and values. E23 calls native shared range query only when non-None and valid main bounds, converts inclusive end to end+1, returns physical code/time/value; invalid range may lazily initialize E15 only when sparse attribute absent then use E17. E22 calls optional live continuation when present; LiveEContinuation.extreme has separate dirty-boundary result cache and native range index. These are bounded dependencies, no new owner acceptance."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          965,
+          1009
+        ],
+        [
+          1153,
+          1178
+        ]
+      ],
+      "contract": "Native min/max half-open query rejects invalid ranges; explicitly checks equal price and earlier position, distinct from E16/E17 neither-strict-wins path. For valid stable ordinary Decimal comparable data, both select earliest directional extreme. Chronology initializes fresh direction-only E cache dictionary; no local mutation guarantee."
+    },
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          53
+        ]
+      ],
+      "contract": "Inherited E15 normalization preserves Decimal identity or converts Decimal(str(value)); E16/E17 consume values without normalization or price transformation."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2281,
+          2282
+        ],
+        [
+          2648,
+          2656
+        ],
+        [
+          3756,
+          3767
+        ]
+      ],
+      "contract": "Pinned native live route invokes prepare_pipeline_state without live keyword (defaults None), direction stage derives live.e_continuation only if live supplied. Optional continuation elsewhere explicitly supplied; no general absence claim."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "3e6da13e76e98781fa8def8a1d8a5eebfcd53986",
+      "baseline": "eb43ea730e82f4002ab51b214a7775b8afd4d160",
+      "ranges": [
+        [
+          2284,
+          2285
+        ],
+        [
+          2651,
+          2659
+        ],
+        [
+          3796,
+          3807
+        ]
+      ],
+      "contract": "Observed new main: same traced native call omits live and prepare_pipeline_state defaults None; direction stage still derives continuation conditionally. This is a bounded drift inspection, not full bridge semantic comparison or acceptance."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182",
+      "ranges": [
+        [
+          58,
+          68
+        ]
+      ],
+      "contract": "Pinned native transport passes live_views and bucket_delta; not itself evidence of E continuation."
+    },
+    {
+      "path": "engine/bridge/live_pipeline.py",
+      "blob": "a69a09fce8f6e059b7b6542ce9e3151bcfc4f6f0",
+      "baseline": "eb43ea730e82f4002ab51b214a7775b8afd4d160",
+      "ranges": [
+        [
+          58,
+          67
+        ]
+      ],
+      "contract": "Observed new main transport still passes market views and bucket delta. No full semantic comparison; baseline drift remains blocking."
+    }
+  ],
+  "drift": {
+    "status": "BLOCKING_BASELINE_DRIFT",
+    "expected_main": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+    "expected_tree": "9e1ede6672cd5daf2bf099361c17b4a723fd21cc",
+    "observed_main": "eb43ea730e82f4002ab51b214a7775b8afd4d160",
+    "observed_tree": "0d76b3b551c30ee4798839cc84634d4712cbd965",
+    "observed_release": "Release v2.9.1: harden calculation report diagnostics",
+    "preexisting_at_entry": true,
+    "tree_diff": {
+      "recursive_counts": [
+        1567,
+        1594
+      ],
+      "untruncated": true,
+      "changed_leaf_files": 84,
+      "modified": 57,
+      "added": 27,
+      "removed": 0,
+      "files": [
+        {
+          "path": ".github/workflows/anti-drift.yml",
+          "previous": [
+            "100644",
+            "blob",
+            "a57297005cba07aa7c1b948848210f640d83fb92"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "25867923f8ecbe9ef5bd15298c5a4206b589ad01"
+          ]
+        },
+        {
+          "path": "README.md",
+          "previous": [
+            "100644",
+            "blob",
+            "54104780fdb1b25fe72a0c7ad2f49cadea7f9cbb"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "c83148f6a334aaa9791401bdfcab8f9f0ce9a6e7"
+          ]
+        },
+        {
+          "path": "apps/chart/package-lock.json",
+          "previous": [
+            "100644",
+            "blob",
+            "07881e8af5d4a394b462d69ae237e3e6f9984cf0"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "76f6c74db8bbaa8fdb6757a917a96622f1f1f59e"
+          ]
+        },
+        {
+          "path": "apps/chart/package.json",
+          "previous": [
+            "100644",
+            "blob",
+            "db643cdf1c1442e9f477b8fc6f969fadc6002ee8"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "392c41ba9f08a317f41de3de3149b7cc482fe27e"
+          ]
+        },
+        {
+          "path": "apps/chart/server/faraz-candle-api.js",
+          "previous": [
+            "100644",
+            "blob",
+            "e1fe840120e619714b92fdd7b0b07def0b294900"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "36fc06f23c40cd85a49ab2546ac4145a2fb816af"
+          ]
+        },
+        {
+          "path": "apps/chart/server/live-engine-sessions.js",
+          "previous": [
+            "100644",
+            "blob",
+            "31476d916ff52d862cc8b44af7bd2eb99d8344cb"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "7199b80f82d5ce247bd648431f4267fadcb8e0bf"
+          ]
+        },
+        {
+          "path": "apps/chart/server/raw-input-identity.js",
+          "previous": [
+            "100644",
+            "blob",
+            "b9aa9437cfedc48f2f17b5ed88f36de667fa3a0a"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "b9432bc13b15831be416212b4c45996277176b77"
+          ]
+        },
+        {
+          "path": "apps/chart/src/algorithm/page.js",
+          "previous": [
+            "100644",
+            "blob",
+            "80da8990f0374895712bbe91f9c0c3ea6c79b431"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "4f0376aaf799b030b18f0540be73d6ee8ac0d5eb"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/indicator-renderer.js",
+          "previous": [
+            "100644",
+            "blob",
+            "8388e5a9d77115dc43446ea47398e0371522fbbd"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "9fa8fe485443f17c29e779529ce49b864bb64e57"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/primary-structure.js",
+          "previous": [
+            "100644",
+            "blob",
+            "dbdf9a3ed44d6d3f64b54ac2ab86c8fab7c41dc4"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "28956fec319198b262cf8c87e235055ce9d6b8b3"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/progress.js",
+          "previous": [
+            "100644",
+            "blob",
+            "90a367487d3521db13f95db35f3c5976a22bea59"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "c93d14a2c6ab0c6c249aa0a52949bd3e6e4ba3e9"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/state.js",
+          "previous": [
+            "100644",
+            "blob",
+            "82ff95a9a305ab64c74a79ae9c4414ea32f00443"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "eb820becdbc65aa69a9268a4198b79ee6395c55f"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/true-false-label.js",
+          "previous": [
+            "100644",
+            "blob",
+            "8b1af688e5330b28d84fffe0dd6e4df4c76088d9"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "9149b6bab7a7723b97a21d3eb5eb6638b10bf444"
+          ]
+        },
+        {
+          "path": "apps/chart/src/drawings/drawing-math.js",
+          "previous": [
+            "100644",
+            "blob",
+            "d448deafd528d080f249ec7823db84550f93974e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "0cd1a164c345cc83781c3d16605ae9fafcd5640b"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/indicator-lifecycle.js",
+          "previous": [
+            "100644",
+            "blob",
+            "1b29277b9fc6ab622826056131c7e05008a6313d"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "2bd5ce19cbe2547540d381240a9969631001de51"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/manual-review/entry.js",
+          "previous": [
+            "100644",
+            "blob",
+            "cb7d5a702c8a5dfc1102f9efdfcfc628d8c36f5e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "d26842e62842bfbf3cd96edc06bfd45a052d213d"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/manual-review/render.js",
+          "previous": [
+            "100644",
+            "blob",
+            "4d813f94eb1ba278876d0a7152f9ba85d3b7e6ac"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "312eaad6c4ec5ff41c53be5394060f63c0917f17"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/manual-review/review.css",
+          "previous": [
+            "100644",
+            "blob",
+            "d100b13b8593bbf2cb640f66181463deeca38467"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "935074d8b13fba9d68ac630ba5bf0ee3bb4d7591"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/realtime-chart.js",
+          "previous": [
+            "100644",
+            "blob",
+            "2d543ea0497e33b628da0e0f9bc0d4f4b0a16240"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "4d062a7df80e232247da4b358a507b9af55ccdee"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/workspace-session.js",
+          "previous": [
+            "100644",
+            "blob",
+            "df0b3fb540c8c55446bef0aacf6693fd74e29d47"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "a10888826a0e2fca362dca86397232e050a80662"
+          ]
+        },
+        {
+          "path": "apps/chart/src/main.js",
+          "previous": [
+            "100644",
+            "blob",
+            "867e4afc1e7f0a223fdfb434459503136d43794e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "405f9bce21ef13b2e60c1ace3656e2812fc6f9dc"
+          ]
+        },
+        {
+          "path": "apps/chart/src/styles/app.css",
+          "previous": [
+            "100644",
+            "blob",
+            "b88bae2b52b4f1d461718f6869b47f64c01a16d0"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "5fb845ad9037787e5ed5772325ebf27582339c6d"
+          ]
+        },
+        {
+          "path": "apps/chart/src/styles/qg-modern.css",
+          "previous": [
+            "100644",
+            "blob",
+            "a8e407ee83bbb46e7b5140acb5fff69fec8ed520"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "0c078af39afed7892d7b4c314f35634f8a09f512"
+          ]
+        },
+        {
+          "path": "apps/chart/src/ui/icons.js",
+          "previous": [
+            "100644",
+            "blob",
+            "052c880c9c23b36d6d30404c45e83203e20d7ee5"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "d9694d550b748a385be4b33f0f4c106c26155ac4"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/integration/drawing-interaction.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "991c61f03cf893bf95ed210a6196a482324a813c"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "0d439f797aa178c98e52bd697b73d19c936fc8dc"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/integration/live-indicator-recovery.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "4900e50446187284228b340d99d61e1c05e26194"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "a0c32a372522ef0e7bf4e982e55b16aa11bd5ada"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/chart-update-contract.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "d2c877fa33dac1e3b59d30ef3471c31d625ce080"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "59a45c3a4665220497f29e8393759a7090e94b52"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/faraz-candle-api.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "26faeca219bcd6734ea42edbb7d3c4210f853406"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "1e5a3d24c4bd259e05267d8b91918c2a08a0731d"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/indicator-lifecycle.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "31d3744a9f0749d3ae94d032cee8c79c5c72cf38"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "45c77fe11798d635112483a69470a084056171f6"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/indicator-probe-ownership.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "5d6be1192ccc2be6a5a83d9a5486d2a4d15caf02"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "c4cad0d732d95c7258a40b582d65d5809404cd29"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/indicator-renderer.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "a68a48b7606c6981e89ce7ad4a003041984eb7a1"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "7c97849507a0112147981664e696d9985c8c78fb"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/live-engine-sessions.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "55f0333defadf176bed4fc8d939453e54c5975ae"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "e920232a8c72b29c09715fc1143b3f7a23c0bcad"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/manual-position-state.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "5b6b71b839d7e1c5b44dcfa8c51c93fd42ba1d39"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "f8f444ffacebdecae7c0be4950f1d61354875c93"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/manual-review.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "5d0232caeab1f65abd582eedc3c0b392cc956909"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "ed6753cc5c33776b5ac80f66f8ca4864b2d6c4ff"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/primary-structure.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "3613e2006ca428dc3821e94d61d3740a171f73d8"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "ec260d072e35159952d2fa1f48b4a34367aebaac"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/realtime-chart.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "a381f7bf8112e6db588aa735d6ccae591faa7201"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "cdfa4f635e9efb34a3136f4852ca2bde8059fb8a"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/realtime-indicator-ownership.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "741e5d7cbadba8caf96fa46252889349a2fb6d73"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "11cab5cc3a3821d59438f430d9e5c9d050f90d6a"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/true-false-label.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "1d64c91f9db319fb9c5ef8fb4c2b13a30731e185"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "b1b0fce3d4b68fd3b9232bd21221f9255798c594"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/workspace-session.test.mjs",
+          "previous": [
+            "100644",
+            "blob",
+            "13c6a8056987f71b0539426014756d0877c2bc18"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "0bfa102006dc9d73303f81d679024a27399a493a"
+          ]
+        },
+        {
+          "path": "apps/chart/vite.config.js",
+          "previous": [
+            "100644",
+            "blob",
+            "7e379673d165778480da03b64bef34bc4b519cca"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "c52578bb34d286b09c3c247e0254a1d0e1037c7e"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Bearish_Algorithm_Reference_V5.4.33_Source_Synchronized.md",
+          "previous": [
+            "100644",
+            "blob",
+            "5821ffee1e448b0ee9c79b01b826e73b379722d5"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "2e533476415af537f45a339f2c8c59b818c4dec8"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Bullish_Algorithm_Reference_V5.4.33_Source_Synchronized.md",
+          "previous": [
+            "100644",
+            "blob",
+            "3c81b8909c2503b2adac1de23a5d0389986ce675"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "76f027f75b7ce957e8a66cfe280d1cd4f365882c"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Primary_Structures_and_True_False_Algorithm_Reference.md",
+          "previous": [
+            "100644",
+            "blob",
+            "d6a6e19001a9c09af908a04d22994eceb07a5328"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "b6ccb336a655dbad33eed4a81417b04120882054"
+          ]
+        },
+        {
+          "path": "engine/bridge/live_pipeline.py",
+          "previous": [
+            "100644",
+            "blob",
+            "e1f1e7d3414a75ed073b67ff2ded3a5a481f6182"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "a69a09fce8f6e059b7b6542ce9e3151bcfc4f6f0"
+          ]
+        },
+        {
+          "path": "engine/bridge/trading_pipeline.py",
+          "previous": [
+            "100644",
+            "blob",
+            "e1e65ba960c5f726f9a05e2ab89e4457b65e5735"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "3e6da13e76e98781fa8def8a1d8a5eebfcd53986"
+          ]
+        },
+        {
+          "path": "engine/pipeline/true_false.py",
+          "previous": [
+            "100644",
+            "blob",
+            "ebf9999d925d1ff5cb41d8be3d42e213c5840d6e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "dc229bf59bddb9aad699e166ff69c38afac2a019"
+          ]
+        },
+        {
+          "path": "engine/tests/unit/test_true_false.py",
+          "previous": [
+            "100644",
+            "blob",
+            "e3e3a44bac08c025ea1dac4128109d35d4cdc681"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "d401d624a0db5fc6e659bacc353b0bd6ca9c3c44"
+          ]
+        },
+        {
+          "path": "engine/tests/verification/verify_order_references.py",
+          "previous": [
+            "100644",
+            "blob",
+            "b012719ec85883c8a9f88b025ed3f57cb9da499f"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "16dc692f78efc93579d39eab92dfa8f4110dd7b2"
+          ]
+        },
+        {
+          "path": "engineering/docs/README.md",
+          "previous": [
+            "100644",
+            "blob",
+            "aa36324b798c2652dc6c65026d001974ed070d22"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "b13990f33a4b1d9a4087e3d2a4e39b1b810af011"
+          ]
+        },
+        {
+          "path": "engineering/docs/architecture/technical-architecture.md",
+          "previous": [
+            "100644",
+            "blob",
+            "075a5f9caf44c1f28a209a7ab99c01eb465e43e3"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "9c52638b09c55386e57e97d9b4811e3074251ace"
+          ]
+        },
+        {
+          "path": "engineering/docs/architecture/ui-ux-reference.md",
+          "previous": [
+            "100644",
+            "blob",
+            "c1caaf5f39ac227bafad0149577df3f6a209ec0c"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "2e321462727e1835dad66db716e53e9a85142722"
+          ]
+        },
+        {
+          "path": "engineering/docs/operations/local-state.md",
+          "previous": [
+            "100644",
+            "blob",
+            "0be24360c71441ff6e6f9ede721b49197f80aa2e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "bbe7429f35d4b3fa6cb83d219a297b422661077f"
+          ]
+        },
+        {
+          "path": "engineering/docs/verification/repository-integrity.md",
+          "previous": [
+            "100644",
+            "blob",
+            "ef90db626d843487782b6e512ec3a6e9e67b47bc"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "aa0f92ec5779f0acdb80c09ac523004095470bfd"
+          ]
+        },
+        {
+          "path": "scripts/git/README.md",
+          "previous": [
+            "100644",
+            "blob",
+            "20b43fd813367272a46b11d0135f8df761a9bd3e"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "4908af62d03fd793261b8f3c9b4e716700f62ee5"
+          ]
+        },
+        {
+          "path": "scripts/git/Test-ReleaseWorkflow.ps1",
+          "previous": [
+            "100644",
+            "blob",
+            "edc209768e4772b436594abe0b029487b908c63a"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "a461108620e72bcd2f243587e3187abde64c97ab"
+          ]
+        },
+        {
+          "path": "scripts/start.ps1",
+          "previous": [
+            "100644",
+            "blob",
+            "c3cf847034452aa774c9462ce227fc7b69c851ff"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "e10f3305ec895649239db8dc713cc3656b8edc39"
+          ]
+        },
+        {
+          "path": "scripts/verification/test-launcher.ps1",
+          "previous": [
+            "100644",
+            "blob",
+            "066a3114387d5a9dd18bc7230a04e147018c3b23"
+          ],
+          "current": [
+            "100644",
+            "blob",
+            "153f466765f3cf5310781e4e27a7c9c232164580"
+          ]
+        },
+        {
+          "path": "apps/chart/server/api-routing.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "ee451b5f8b01ca7554ca4d0d4f77ff1d771f47c5"
+          ]
+        },
+        {
+          "path": "apps/chart/server/error-journal.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "decb1f67b310b16acad363310ed3c003e81290aa"
+          ]
+        },
+        {
+          "path": "apps/chart/server/workspace-preferences.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "92058937c180d6d7c10fae21541602ba8fc56d62"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/indicator-liquidity.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "a04035c26dec9a639e181b693b0d24a0228a9fcf"
+          ]
+        },
+        {
+          "path": "apps/chart/src/chart/indicator-positions.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "b86eec5f8cb403ef7fb76e8b18d06db2e7a68729"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/diagnostic-details.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "115835331c4951d4ae30f69dce19c74f7cad67c4"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/error-journal.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "d5305e7b930338c8d4478f2350c4780e3c585603"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/manual-review/archive.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "7f7f68352234adef495993b1fb16bd4816f060b3"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/manual-review/view.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "2658d427177c44785c08e85cd114d6e1b7df1451"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/market-clock.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "67d26ac0104e172aeb15d911a2c7b5fe0df47ff8"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/market-sessions.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "fe71b1d2a68de971ec35c9412253627a4b67d403"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/symbol-inventory.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "c13c4c07ec9bcc537f8d0ac9790054f372bb0d8b"
+          ]
+        },
+        {
+          "path": "apps/chart/src/features/workspace-preferences.js",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "83c69b21949e7e7bac92348c81085e67afd92845"
+          ]
+        },
+        {
+          "path": "apps/chart/src/styles/market-clock.css",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "7ae0d9d696d3db98c6812606c82c4d957bd7a226"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/integration/workspace-preferences.test.mjs",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "577c3be548cca031deb7b151f7b4357e442d952e"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/calculation-report-export.test.mjs",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "c688ad1e5742a8460ba732dec451e36b0514b807"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/indicator-liquidity.test.mjs",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "35b1e97f4cb1f7cf2e68f58d8745ecce57f8b0ff"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/market-sessions.test.mjs",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "8e7b2b51a2a8ddc00a1e384fc59eb10809f159f2"
+          ]
+        },
+        {
+          "path": "apps/chart/tests/unit/workspace-preferences.test.mjs",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "cb7a1cd3e8cb0289809ce0abf61c1b3010d36c96"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Buy_Position_Algorithm_Reference.md",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "8ca5b729da5a7369ed258d5d4df22b805514a840"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Position_Algorithm_Reference.md",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "dbd2b86e5c31ae433b0a48d80f3f4b27148c9310"
+          ]
+        },
+        {
+          "path": "engine/algorithms/TradingBot_Sell_Position_Algorithm_Reference.md",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "7a39bc99f7292ca05467f06f119f204a60b22e6b"
+          ]
+        },
+        {
+          "path": "engine/buy_algorithm.py",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "3d0d288a7d64242550aac12ccc82cfc7b7ec22de"
+          ]
+        },
+        {
+          "path": "engine/pipeline/position_rules.py",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "bd7f3967f63eea8102be9ab7af9009bcf4b6456c"
+          ]
+        },
+        {
+          "path": "engine/sell_algorithm.py",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "36126d0e6469e8ce8114d04f99fccbf47334ab91"
+          ]
+        },
+        {
+          "path": "engine/tests/unit/test_position_algorithms.py",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "61b6c8785d3505f0df9aa9cb9c1c6297bfd68d93"
+          ]
+        },
+        {
+          "path": "engine/tests/unit/test_position_liquidity.py",
+          "previous": null,
+          "current": [
+            "100644",
+            "blob",
+            "d4c9ed6cb51b60acc1d25bba4b153972b62aacf1"
+          ]
+        }
+      ]
+    },
+    "source_identical": true,
+    "unchanged_core_paths": [
+      {
+        "path": "engine/pipeline/e_zone_detector.py",
+        "old": "240369edf3352006082efe094eb68ac027d6689f",
+        "current": "240369edf3352006082efe094eb68ac027d6689f"
+      },
+      {
+        "path": "engine/pipeline/reaction_engine.py",
+        "old": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+        "current": "9adffb832ffa231ba0cb01de507a30fbe62be0b0"
+      },
+      {
+        "path": "engine/pipeline/core_utils.py",
+        "old": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+        "current": "38a1053510c5fb114e1b4290de00a2d3b27fc373"
+      },
+      {
+        "path": "engine/pipeline/direction_policy.py",
+        "old": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a",
+        "current": "f7d047abde0eb884905f86c1d2beeaaec3f6e07a"
+      },
+      {
+        "path": "engine/pipeline/order_audit_engine.py",
+        "old": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+        "current": "6ddb93ba097ef137af2405ef15356b6f6bcf97de"
+      },
+      {
+        "path": "engine/pipeline/lifecycle_engine.py",
+        "old": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+        "current": "2885dcbd3af108baadde7510ffd7968ad735c57e"
+      }
+    ],
+    "impact": "E16/E17 source remains byte-identical across main trees. However bridge/trading_pipeline.py, bridge/live_pipeline.py and true_false.py changed; new buy/sell/position rules exist. Whole W3 authority and inventory denominators cannot be silently promoted. AGENTS.md requires current source authority and does not permit waiving source identity or material dependency gates. Pinned-baseline source analysis is preserved without advancing acceptance; no rebaseline or CP418 in this attempt."
+  },
+  "findings": [
+    {
+      "id": "CP417-F01",
+      "status": "PROVISIONAL_LOCAL_CLARIFICATION_PENDING_BASELINE_RECONCILIATION",
+      "historical": "B06-08-F01",
+      "description": "E16/E17 strict left/first test, strict right/second only on false; neither wins then smaller positional index; no explicit price equality. E17 reads values and direction before inclusive length guard; nonpositive length returns original left before sparse access. Invalid/negative endpoints and malformed/stale table not locally clamped or repaired."
+    },
+    {
+      "id": "CP417-B01",
+      "status": "OPEN_BLOCKING_BASELINE_DRIFT",
+      "description": "E16/E17 source remains byte-identical across main trees. However bridge/trading_pipeline.py, bridge/live_pipeline.py and true_false.py changed; new buy/sell/position rules exist. Whole W3 authority and inventory denominators cannot be silently promoted. AGENTS.md requires current source authority and does not permit waiving source identity or material dependency gates. Pinned-baseline source analysis is preserved without advancing acceptance; no rebaseline or CP418 in this attempt."
+    }
+  ],
+  "limitations": [
+    "Prior 1735 rows structurally checked (category/index/node/AST/span/operation and W1 text/disposition), 22 supplements (ID/span/text); eight historical partitions directly matched. All 1109 CP317 links matched canonical inventory, W1 crosswalk and partition membership; remaining 17 historical partition documents not independently opened. B05 8318 category-index union recomputed, 159 supplements retained not item-by-item re-audited.",
+    "Existing AST inventories directly compared, not regenerated. New 207 records source-first grouped review, not independently staffed or empirically tested; no runtime, RAW payload, ZIP, new cross-owner acceptance or production/main changes.",
+    "Observed main drift pre-existed the task. Pinned main gate fails, not waived. Publication of blocked evidence only is distinct from a passing checkpoint. Active contract remains byte-identical and accepted plan progress remains CP416. New baseline inventory and dependencies not fully reconciled. A first oversized tool batch exceeded the call limit; recovered by splitting and rechecking the complete requested prior scope."
+  ]
+}
