@@ -1,0 +1,61 @@
+{
+  "checkpoint": 405,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1100,
+          1132
+        ],
+        [
+          2046,
+          2086
+        ],
+        [
+          2209,
+          2231
+        ],
+        [
+          2234,
+          2290
+        ]
+      ],
+      "meaning": "OA26 indexes (confirmation,First,Break) using bisect-right, appends pending if post-stop sorted audit is dict, otherwise sets sorted state None. OA27 clear invalidates carried and post-stop caches. OA29 carried invalidation clears carried cache/index/append only. OA62 publishes new accepted source set, clears/rebuilds and restores only historical valid parent-stop causes; returns sorted numbered E zones. OA65 restores absent physical rows on any remaining cause or truthy B collection without crossing recomputation and invalidates carried on normal completion."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          1495,
+          1506
+        ]
+      ],
+      "meaning": "Normal detect clears old accepted identities/audit, registers B, discovers, reconciles, applies consumed S and same-source conflict resolution, then invokes OA62 directly. The wrappers are later external paths and do not repeat those acceptance decisions."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2535,
+          2557
+        ],
+        [
+          2606,
+          2635
+        ]
+      ],
+      "meaning": "Continuation replacement precedes OA64; it forwards the final E list and a newly assembled list of consumed S items, then filters invalid public S identities. StopAll feedback reconciles or takes copied E/no stopalls on alternate branch, restores independent S roots, assigns OA65 result with default supplemental sequence before accepted Order B reset-leg discovery (which consumes E, stopalls and detectors). No independent convergence, final acceptance or arbitrary runtime dispatch claim."
+    }
+  ],
+  "limitations": [
+    "Source-first local review by GPT, not independently staffed. OA64/OA65 operate on supplied accepted zones; neither independently establishes final E/S acceptance or valid B legs. Aliased reaction/B state, dynamic dispatch, native equality/hash and malformed input paths remain source-conditional.",
+    "OA65 is ordered mutation, not transactional. Existing rebuilt identities take precedence without preserved merge; B-only absent restoration is not universal preservation. Index/cache coherence and feedback convergence are separate owner contracts; runtime equivalence and new cross-owner acceptance are not asserted.",
+    "No RAW payload, runtime, ZIP, production changes, performance measurements, fresh AST generator, or independent SHA-256 claim. Git blob identities and full recursive tree/readback are the publication evidence."
+  ]
+}
