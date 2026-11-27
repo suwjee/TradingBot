@@ -1,0 +1,134 @@
+{
+  "checkpoint": 407,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          66
+        ]
+      ],
+      "meaning": "Physical identity helper returns int(First), int(Break) in order; reaction identity similarly converts stored attributes. OA74 uses this provider but never normalizes the internal collection. Decimal normalizer exists but OA72–74 do not invoke it or change prices."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1539,
+          1558
+        ],
+        [
+          2131,
+          2142
+        ],
+        [
+          2309,
+          2328
+        ],
+        [
+          2622,
+          2654
+        ]
+      ],
+      "meaning": "Stopped-A audit producer derives normalized Reaction identity, stores first geometry/confirmation/stop and selected A fields in a new row when absent, then appends unique (source,stop) pairs in encounter order by native equality. OA72 first accepted order follows that list, not a time-sort. Initial records consumer traverses values, normalizes price in its own stage and calls crossing, then sorts by First, confirmation and integer indexes. Accepted rebuild uses initial entry causes/fallback but explicitly skips None source or stop, unlike OA72. OA67 also uses accepted-source membership but with optional None filter; not identical to OA72."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "ranges": [
+        [
+          78,
+          119
+        ],
+        [
+          178,
+          189
+        ],
+        [
+          201,
+          207
+        ],
+        [
+          217,
+          233
+        ],
+        [
+          1254,
+          1256
+        ]
+      ],
+      "meaning": "S detector validates direction/range, sorts A by reaction_break_time then int source_index, initializes its physical ledger and invokes stopped-A audit in that A order after clearing ledger. Delegated reaction confirmation and A strict-stop finder govern producer chronology; OA72 does not infer a chronological minimum from it. Sorting source A by reaction-break time does not prove all appended stop times ascending."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          17,
+          20
+        ],
+        [
+          606,
+          658
+        ],
+        [
+          660,
+          692
+        ]
+      ],
+      "meaning": "Resolve Order context directly imports and calls OA72 once per original input entry via a comprehension, retaining non-None results under original keys. Starts a fresh inherited blocked-First set, adds provisional invalid-leg-head blocks, derives accepted initial First times from retained reaction.first_time (str values parsed by exact format), removes those from blocked set. Distinct conditional E-stop exceptions are derived and optionally emitted, not global unblocking. Returns accepted ledger and blocked times. Native failures can propagate; OA72 does not perform those subsequent lifecycle decisions."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          2190,
+          2208
+        ],
+        [
+          2284,
+          2309
+        ],
+        [
+          2409,
+          2438
+        ],
+        [
+          2439,
+          2473
+        ],
+        [
+          3040,
+          3050
+        ]
+      ],
+      "meaning": "Initial bridge acceptance derives source-time set from S eligible A, calls OA73 on S ledger, passes results as initial_order_audit into E detector. Later source-time set excludes invalid (source_time,int source_index) A pairs, passes to Lifecycle resolve_order_context; resulting accepted_orders/blocked times and distinct E exceptions feed final E detector. Shared reconciliation consumes accepted_orders and E ledger values; presentation A sources separately derived without clipping history. These call sites do not invoke OA74 directly. Time-only projection can collapse distinct source indexes, so OA72 membership does not prove full pair-level validity."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          382,
+          389
+        ],
+        [
+          1008,
+          1026
+        ]
+      ],
+      "meaning": "E detector retains truthy initial ledger mapping or substitutes a fresh empty mapping; references of its rows may be shared. Invalid-S root exclusion checks raw behavior physical pair against initial ledger before own B and parent causes; no call to OA74 in these inspected paths. Distinguish initial-order presence from internal identity membership."
+    }
+  ],
+  "limitations": [
+    "Source-first local review by GPT, not independently staffed. OA72 consumes a caller-defined accepted-source collection; first surviving pair is iteration-order selection, not minimum event time, and source-time membership is not full A identity acceptance. Native container/attribute/equality and malformed input paths remain conditional.",
+    "OA72 return can alias the original row or a shallow adjusted row; OA73 retains returned references under original keys. Reiterability is not validated; a one-shot iterable may be consumed. No global proof that all physical key/geometry pairs agree, no new cross-owner acceptance, runtime equality, or production defect asserted.",
+    "No RAW payload, runtime, ZIP, production changes, performance measurements, fresh AST generator, or independent SHA-256 claim. Git blob identities and full recursive tree/readback are publication evidence."
+  ]
+}
