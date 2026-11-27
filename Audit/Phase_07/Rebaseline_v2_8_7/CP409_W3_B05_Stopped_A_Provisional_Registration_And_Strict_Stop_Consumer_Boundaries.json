@@ -1,0 +1,144 @@
+{
+  "checkpoint": 409,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Bounded source provider/consumer review only",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          66
+        ]
+      ],
+      "contract": "as_decimal preserves Decimal object or Decimal(str(value)); reaction_identity int-normalizes required first_idx then break_idx. Neither validates geometry chronology or prices."
+    },
+    {
+      "path": "engine/pipeline/s_zone_detector.py",
+      "blob": "53460e68538ac790ab969084c1c7101e5ca833d7",
+      "ranges": [
+        [
+          78,
+          119
+        ],
+        [
+          178,
+          251
+        ],
+        [
+          962,
+          988
+        ],
+        [
+          1251,
+          1299
+        ],
+        [
+          1340,
+          1385
+        ]
+      ],
+      "contract": "S validates direction; order_direction opposite; chronology-owned sequences, range and index, empty audit. A confirmation one-based valid reaction, default intrabar chronology. _first_a_stop indexed strict crossing with no retry on miss, lower scan in order, and main-candle fallback only when lower slice empty. _detect clears audit and audits all sorted A before S ownership and next-A gates. Main fallback consumer calls OA81 independently; reconciliation normalizes level, uses valid cached stop_cross or OA82, then rejects None or confirmation >= exact crossing event; sorts by exact event, confirmation, First, Break. OA82 itself includes equality in time."
+    },
+    {
+      "path": "engine/pipeline/reaction_engine.py",
+      "blob": "9adffb832ffa231ba0cb01de507a30fbe62be0b0",
+      "ranges": [
+        [
+          893,
+          916
+        ],
+        [
+          959,
+          963
+        ],
+        [
+          1028,
+          1069
+        ],
+        [
+          1095,
+          1108
+        ],
+        [
+          1153,
+          1192
+        ],
+        [
+          1257,
+          1302
+        ],
+        [
+          1305,
+          1367
+        ]
+      ],
+      "contract": "Lower index normalizes leaf prices, first_less excludes >= and first_greater excludes <=, left-first traversal and reverse deferred right nodes; reflected view negates level and reverses comparator. Chronology keeps sequence/time/index references; main_index bisect_right minus one, pre-first raises unless clamp. Confirmation exact lower strict break crossing, validated intrabar start or break start fallback. Canonical stop Mode A scans from bounded anchor/context through Break inclusive, strict better preserves first tie; non-A requires number >1, previous native edge source index/time, number zero can fail. Wrapper does not certify external implementations."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          606,
+          658
+        ]
+      ],
+      "contract": "resolve_order_context filters provisional identity-keyed entries through accepted_audit_entry with accepted sources before removing accepted First times from provisional block; not general public acceptance."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          1792,
+          1811
+        ],
+        [
+          2274,
+          2306
+        ],
+        [
+          2408,
+          2425
+        ],
+        [
+          3040,
+          3098
+        ]
+      ],
+      "contract": "MarketIndexWindow clamps local positions then translates base result; Bridge filters eligible A source set before E creation, later supplies accepted source/invalid identities to Lifecycle, and collects full calculation accepted A sources before presentation filtering and prepare_order_audit; public required identities separate. Dynamic live and callback contracts conditional."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          2300,
+          2329
+        ],
+        [
+          2442,
+          2461
+        ],
+        [
+          2462,
+          2505
+        ],
+        [
+          2517,
+          2714
+        ]
+      ],
+      "contract": "OA76/77 select independent/native match; OA78/79 register provisional geometry and cause only. accepted_audit_entry filters by source and retains identity geometry, first accepted cause and complete accepted list; may return original or shallow copy. _collect_s_ledger_entries uses nonempty causes or legacy pair, filters when requested and emits parent-stop A causes. prepare_order_audit merges and resolves parent ownership. No new cross-owner acceptance."
+    }
+  ],
+  "limitations": [
+    "Separate source-first local review by GPT, not independently staffed; existing AST inventories compared, not regenerated.",
+    "Local source-only coverage; no RAW, runtime, ZIP, new cross-owner acceptance or production change.",
+    "Sorted/aligned timestamps, stable comparable values, valid indices and correct provider state are conditional; malformed/custom objects may fail or produce divergent behavior. No claim malformed inputs occur.",
+    "Index miss does not retry and OA82 does not enforce strictly later event; S consumer enforces strict chronology separately. No empirical index/scan equivalence asserted.",
+    "No independent SHA-256 assertion; Git object identities and readback are publication checks. Initial validator used wrong historical supplemental text field for CP384–386; corrected bounded retry matched all. A 26-partition link request exceeded per-call tool limit; two bounded retries matched all. Initial candidate generation stopped before writes because structuredClone was unavailable; replaced with JSON copy."
+  ]
+}
