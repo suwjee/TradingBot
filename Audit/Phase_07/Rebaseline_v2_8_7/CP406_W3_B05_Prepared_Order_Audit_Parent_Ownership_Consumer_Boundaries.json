@@ -1,0 +1,106 @@
+{
+  "checkpoint": 406,
+  "baseline": "c99b4c957e932d9ee70c492ca03ce80711447fc1",
+  "scope": "Focused conditional source boundaries, not cross-owner acceptance",
+  "dependencies": [
+    {
+      "path": "engine/pipeline/core_utils.py",
+      "blob": "38a1053510c5fb114e1b4290de00a2d3b27fc373",
+      "ranges": [
+        [
+          51,
+          66
+        ]
+      ],
+      "meaning": "Canonical order_identity converts First and Break via int; reaction_identity uses the same int pair. OA69 converts First before invoking helper. Decimal normalizer exists but OA69 does not call it on stored price."
+    },
+    {
+      "path": "engine/pipeline/order_audit_engine.py",
+      "blob": "6ddb93ba097ef137af2405ef15356b6f6bcf97de",
+      "ranges": [
+        [
+          1167,
+          1199
+        ],
+        [
+          1403,
+          1433
+        ],
+        [
+          1459,
+          1484
+        ],
+        [
+          2622,
+          2654
+        ]
+      ],
+      "meaning": "Order B provider creates reset-leg dict including string levels and physical identity, dedups by full equality and sorts by postBehaviorStopTime/resetTime/strictBreakTime/physicalOrderIdentity. Parent registration uses raw parent label, E numbering, sequence reset override StopAllN and empty family; OA68 projects stored tuple without relabelling. S provider first stores reaction, confirmation, stop geometry, first A source/stop and a_causes then appends unique source/stop pair. Public cross_order delegates _cross_order; base cache key start/level includes cached None, strict lower search with left=max(start,range_start), right exclusive range_end and direction less unless bearish."
+    },
+    {
+      "path": "engine/pipeline/e_zone_detector.py",
+      "blob": "240369edf3352006082efe094eb68ac027d6689f",
+      "ranges": [
+        [
+          537,
+          557
+        ]
+      ],
+      "meaning": "E override delegates base when live continuation None; otherwise key start/level, cached path calls dirty-time then returns cached value, miss invokes live first_stop with clamped start and direction less flag, maps event to index/time and caches result including None. OA69's missing-key crossing path cannot assert uniform base implementation or runtime equivalence."
+    },
+    {
+      "path": "engine/pipeline/lifecycle_engine.py",
+      "blob": "2885dcbd3af108baadde7510ffd7968ad735c57e",
+      "ranges": [
+        [
+          19,
+          19
+        ]
+      ],
+      "meaning": "Imports prepare_order_audit from Order audit owner, rather than independently reconstructing the helper."
+    },
+    {
+      "path": "engine/bridge/trading_pipeline.py",
+      "blob": "e1e65ba960c5f726f9a05e2ab89e4457b65e5735",
+      "ranges": [
+        [
+          1611,
+          1718
+        ],
+        [
+          3040,
+          3050
+        ],
+        [
+          3074,
+          3098
+        ],
+        [
+          3417,
+          3457
+        ],
+        [
+          3485,
+          3499
+        ]
+      ],
+      "meaning": "Visibility derives full-history accepted A source times by excluding invalid source pairs, independently gathers normalized required physical pairs from visible S/E/StopAll with both fields non-None. Calls preparation when full E detector exists, then bridge validates missing referenced identities and duplicate exact parent keys across distinct physical identities (raises; does not choose owner). Serializer consumes prepared row and emits parent-stop/reset-leg branches, not arbitrary retained non-parent kinds. Primary stage prepares both owners over full main index range, refreshes after registration, reconciles primary labels then prepares visible range preserving prior prepared identities as required; later bridge invariant checked again. Required identity exemption does not bypass OA70; accepted A times discard index. These are source-visible boundaries, not guaranteed final coherence."
+    },
+    {
+      "path": "engine/pipeline/PL_PH_detector.py",
+      "blob": "33ecb3671c7808c7f92b494d39ac5b156a8cd67e",
+      "ranges": [
+        [
+          645,
+          680
+        ]
+      ],
+      "meaning": "NativePrimaryOrders reads prepared reaction, entry, crossed and cause kinds, recalculates reaction confirmation via chronology, applies gate, non-primary reaction number restriction and direct/reset-leg selection, rejects absent or non-later crossing, creates StructureOrder with Decimal conversion and deep-copied audit causes. This consumer imposes its own eligibility; OA70 rank is not a primary structure acceptance proof."
+    }
+  ],
+  "limitations": [
+    "Source-first local review by GPT, not independently staffed. Owner selection is limited to collected/window-eligible/required candidates, not a proof of globally accepted parent provenance or every public required identity surviving. Native protocols, malformed values, dynamic dispatch and ordering ties in unordered source collections remain conditional.",
+    "Prepared entries and reactions are aliases; parent dictionaries newly constructed, B elements shared, and later cause-list mutations are not transactional. Missing-key crossing calls may alter detector caches. No new cross-owner acceptance, runtime equality, or production defect asserted.",
+    "No RAW payload, runtime, ZIP, production changes, performance measurements, fresh AST generator, or independent SHA-256 claim. Git blob identities and full recursive tree/readback are publication evidence."
+  ]
+}
